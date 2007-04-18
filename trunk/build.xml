@@ -26,7 +26,7 @@ This file builds the JSR 113.jar.
 
 	<target name="compile" depends="-init" description="Compile the JAVA sources">
 		<echo message="compiling with debug=${debug}, optimize=${optimize}" />
-		<javac destdir="${build}" optimize="${optimize}" debug="${debug}" deprecation="on" encoding="iso-8859-1">
+		<javac source="1.4"  destdir="${build}" optimize="${optimize}" debug="${debug}" deprecation="on" encoding="iso-8859-1">
 			<src path="${src}" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
