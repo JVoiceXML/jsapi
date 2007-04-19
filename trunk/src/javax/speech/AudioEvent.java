@@ -26,6 +26,8 @@
 
 package javax.speech;
 
+import java.util.Collection;
+
 public class AudioEvent extends SpeechEvent {
 
     private int audioLevel;
@@ -44,8 +46,15 @@ public class AudioEvent extends SpeechEvent {
         return audioLevel;
     }
 
-    public String paramString() {
-        // TODO: implement AudioEvent.paramString
-        return super.paramString();
+    /**
+     * {@inheritDoc}
+     */
+    protected Collection getParameters() {
+        final Collection parameters = super.getParameters();
+        
+        final Integer level = new Integer(audioLevel);
+        parameters.add(level);
+        
+        return parameters;
     }
 }

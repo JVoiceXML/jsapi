@@ -26,6 +26,8 @@
 
 package javax.speech.recognition;
 
+import java.util.Collection;
+
 import javax.speech.SpeechEvent;
 
 public class ResultEvent extends SpeechEvent {
@@ -69,7 +71,18 @@ public class ResultEvent extends SpeechEvent {
         return unfinalizedTokensChanged;
     }
 
-    public String paramString() {
-        return super.paramString();
+    /**
+     * {@inheritDoc}
+     */
+    protected Collection getParameters() {
+        final Collection parameters = super.getParameters();
+        
+        final Boolean tokensFinalizedObject = new Boolean(tokensFinalized);
+        parameters.add(tokensFinalizedObject);
+        final Boolean unfinalizedTokensChangedObject = 
+            new Boolean(unfinalizedTokensChanged);
+        parameters.add(unfinalizedTokensChangedObject);
+        
+        return parameters;
     }
 }

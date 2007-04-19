@@ -26,6 +26,8 @@
 
 package javax.speech.recognition;
 
+import java.util.Collection;
+
 import javax.speech.SpeechEvent;
 
 public class GrammarEvent extends SpeechEvent {
@@ -70,7 +72,18 @@ public class GrammarEvent extends SpeechEvent {
         return enabledChanged;
     }
 
-    public String paramString() {
-        return super.paramString();
+    /**
+     * {@inheritDoc}
+     */
+    protected Collection getParameters() {
+        final Collection parameters = super.getParameters();
+        
+        final Boolean definitionChangedObject = new Boolean(definitionChanged);
+        parameters.add(definitionChangedObject);
+        final Boolean enabledChangedObject = new Boolean(enabledChanged);
+        parameters.add(enabledChangedObject);
+        parameters.add(grammarException);
+        
+        return parameters;
     }
 }

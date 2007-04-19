@@ -26,6 +26,8 @@
 
 package javax.speech.synthesis;
 
+import java.util.Collection;
+
 import javax.speech.EngineEvent;
 
 public class SynthesizerEvent extends EngineEvent {
@@ -51,7 +53,15 @@ public class SynthesizerEvent extends EngineEvent {
         return topOfQueueChanged;
     }
     
-    public String paramString() {
-        return super.paramString();
+    /**
+     * {@inheritDoc}
+     */
+    protected Collection getParameters() {
+        final Collection parameters = super.getParameters();
+        
+        final Boolean topOfQueueChangedObject = new Boolean(topOfQueueChanged);
+        parameters.add(topOfQueueChangedObject);
+        
+        return parameters;
     }
 }
