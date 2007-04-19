@@ -26,6 +26,8 @@
 
 package javax.speech.synthesis;
 
+import java.util.Collection;
+
 import javax.speech.SpeechEvent;
 
 public class SpeakableEvent extends SpeechEvent {
@@ -236,7 +238,33 @@ public class SpeakableEvent extends SpeechEvent {
         return wordStart;
     }
 
-    public String paramString() {
-        return super.toString();
+    /**
+     * {@inheritDoc}
+     */
+    protected Collection getParameters() {
+        final Collection parameters = super.getParameters();
+
+        final Integer requestIdObject = new Integer(requestId);
+        parameters.add(requestIdObject);
+        parameters.add(textInfo);
+        final Integer audioPositionObject = new Integer(audioPosition);
+        parameters.add(audioPositionObject);
+        final Integer wordStartObject = new Integer(wordStart);
+        parameters.add(wordStartObject);
+        final Integer wordEndObject = new Integer(wordEnd);
+        parameters.add(wordEndObject);
+        final Integer typeObject = new Integer(type);
+        parameters.add(typeObject);
+        final Integer requestedObject = new Integer(requested);
+        parameters.add(requestedObject);
+        parameters.add(description);
+        parameters.add(attributes);
+        parameters.add(phones);
+        final Integer indexObject = new Integer(index);
+        parameters.add(indexObject);
+        parameters.add(newVoice);
+        parameters.add(oldVoice);
+        
+        return parameters;
     }
 }

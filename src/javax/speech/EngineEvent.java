@@ -26,6 +26,8 @@
 
 package javax.speech;
 
+import java.util.Collection;
+
 public class EngineEvent extends SpeechEvent {
     public static int DEFAULT_MASK = 0;
 
@@ -74,8 +76,18 @@ public class EngineEvent extends SpeechEvent {
         return problem;
     }
 
-    public String paramString() {
-        // TODO: implement EngineEvent.paramString
-        return super.paramString();
+    /**
+     * {@inheritDoc}
+     */
+    protected Collection getParameters() {
+        final Collection parameters = super.getParameters();
+        
+        final Long oldEngineStateObject = new Long(oldEngineState);
+        parameters.add(oldEngineStateObject);
+        final Long newEngineStateObject = new Long(newEngineState);
+        parameters.add(newEngineStateObject);
+        parameters.add(problem);
+        
+        return parameters;
     }
 }

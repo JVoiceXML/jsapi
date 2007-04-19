@@ -26,6 +26,8 @@
 
 package javax.speech.recognition;
 
+import java.util.Collection;
+
 import javax.speech.Engine;
 import javax.speech.EngineEvent;
 
@@ -71,7 +73,16 @@ public class RecognizerEvent extends EngineEvent {
         return grammarException;
     }
 
-    public String paramString() {
-        return super.paramString();
+    /**
+     * {@inheritDoc}
+     */
+    protected Collection getParameters() {
+        final Collection parameters = super.getParameters();
+        
+        final Long audioPositionObject = new Long(audioPosition);
+        parameters.add(audioPositionObject);
+        parameters.add(grammarException);
+        
+        return parameters;
     }
 }
