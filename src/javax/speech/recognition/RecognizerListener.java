@@ -1,8 +1,8 @@
 /*
  * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 249 $
+ * Version: $LastChangedRevision$
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
+ * Author:  $LastChangedBy$
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *

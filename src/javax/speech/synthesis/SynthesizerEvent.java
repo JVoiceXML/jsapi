@@ -1,8 +1,8 @@
 /*
  * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 249 $
+ * Version: $LastChangedRevision$
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
+ * Author:  $LastChangedBy$
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
@@ -31,15 +31,18 @@ import java.util.Collection;
 import javax.speech.EngineEvent;
 
 public class SynthesizerEvent extends EngineEvent {
-    public static int DEFAULT_MASK = 0;
 
-    public static int QUEUE_EMPTIED = 1;
+    public static int QUEUE_EMPTIED = ENGINE_ERROR << 1;
 
-    public static int QUEUE_UPDATED = 2;
+    public static int QUEUE_UPDATED = QUEUE_EMPTIED << 1;
 
-    public static int SYNTHESIZER_BUFFER_READY = 3;
+    public static int SYNTHESIZER_BUFFER_READY = QUEUE_UPDATED << 1;
 
-    public static int SYNTHESIZER_BUFFER_UNFILLED = 4;
+    public static int SYNTHESIZER_BUFFER_UNFILLED = 
+        SYNTHESIZER_BUFFER_READY << 1;
+
+    public static int DEFAULT_MASK = EngineEvent.DEFAULT_MASK | QUEUE_EMPTIED
+            | SYNTHESIZER_BUFFER_UNFILLED | SYNTHESIZER_BUFFER_READY;
 
     private boolean topOfQueueChanged;
 
@@ -50,18 +53,23 @@ public class SynthesizerEvent extends EngineEvent {
     }
 
     public boolean isTopOfQueueChanged() {
-        return topOfQueueChanged;
+        final int id = getId();
+        if (id == QUEUE_UPDATED) {
+            return topOfQueueChanged;
+        }
+        
+        return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     protected Collection getParameters() {
         final Collection parameters = super.getParameters();
-        
+
         final Boolean topOfQueueChangedObject = new Boolean(topOfQueueChanged);
         parameters.add(topOfQueueChangedObject);
-        
+
         return parameters;
     }
 }
