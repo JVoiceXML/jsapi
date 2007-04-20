@@ -29,11 +29,22 @@ package javax.speech;
 import java.util.Collection;
 
 public class AudioEvent extends SpeechEvent {
+    public static int AUDIO_LEVEL = 0;
+
+    public static int AUDIO_STARTED = 1;
+
+    public static int AUDIO_LEVEL_MIN = 0;
+
+    public static int AUDIO_LEVEL_QUIET = Integer.MAX_VALUE / 3;
+
+    public static int AUDIO_LEVEL_LOUD = Integer.MAX_VALUE / 3 * 2;
+
+    public static int AUDIO_LEVEL_MAX = Integer.MAX_VALUE;
 
     private int audioLevel;
 
     public AudioEvent(Engine source, int id) {
-        super(source, id);
+        this(source, id, AUDIO_LEVEL_MIN);
     }
 
     public AudioEvent(Engine source, int id, int audioLevel) {
@@ -51,10 +62,10 @@ public class AudioEvent extends SpeechEvent {
      */
     protected Collection getParameters() {
         final Collection parameters = super.getParameters();
-        
+
         final Integer level = new Integer(audioLevel);
         parameters.add(level);
-        
+
         return parameters;
     }
 }

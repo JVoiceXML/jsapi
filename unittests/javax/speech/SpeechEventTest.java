@@ -59,7 +59,7 @@ public class SpeechEventTest extends TestCase {
      */
     public void testToString() {
         SpeechEvent event = new SpeechEvent(new Object(), 44);
-        String str = event.paramString();
+        String str = event.toString();
         
         assertTrue(str.indexOf("44") >= 0);
     }
