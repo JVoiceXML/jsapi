@@ -29,26 +29,51 @@ package javax.speech;
 import java.util.Collection;
 
 public class EngineEvent extends SpeechEvent {
-    public static int DEFAULT_MASK = 0;
+    // Flags.
+    private static int ALLOCATED_FLAG = 0;
 
-    public static int ENGINE_ALLOCATED = 1;
+    private static int DEALLOCATED_FLAG = 1;
 
-    public static int ENGINE_ALLOCATING_RESOURCES = 2;
+    private static int ALLOCATING_RESOURCES_FLAG = 1;
 
-    public static int ENGINE_DEALLOCATED = 3;
+    private static int DEALLOCATING_RESOURCES_FLAG = 3;
 
-    public static int ENGINE_DEALLOCATING_RESOURCES = 4;
+    private static int PAUSED_FLAG = 4;
 
-    public static int ENGINE_DEFOCUSED = 5;
+    private static int RESUMED_FLAG = 5;
 
-    public static int ENGINE_ERROR = 6;
+    private static int FOCUSED_FLAG = 6;
 
-    public static int ENGINE_FOCUSED = 7;
+    private static int DEFOCUSED_FLAG = 7;
 
-    public static int ENGINE_PAUSED = 8;
+    public static int ERROR_OCCURED_FLAG = 8;
+    
+    // Events.
+    public static int ENGINE_ALLOCATED = 2 ^ ALLOCATED_FLAG;
 
-    public static int ENGINE_RESUMED = 9;
+    public static int ENGINE_DEALLOCATED = 2 ^ DEALLOCATED_FLAG;
 
+    public static int ENGINE_ALLOCATING_RESOURCES = 
+        2 ^ ALLOCATING_RESOURCES_FLAG;
+
+    public static int ENGINE_DEALLOCATING_RESOURCES = 
+        2 ^ DEALLOCATING_RESOURCES_FLAG;
+
+    public static int ENGINE_DEFOCUSED = 2 ^ DEFOCUSED_FLAG;
+
+    public static int ENGINE_FOCUSED = 2 ^ FOCUSED_FLAG;
+
+    public static int ENGINE_PAUSED = 2 ^ PAUSED_FLAG;
+
+    public static int ENGINE_RESUMED = 2 ^ RESUMED_FLAG;
+
+    public static int ENGINE_ERROR = 2 ^ ERROR_OCCURED_FLAG;
+
+    public static int DEFAULT_MASK = ENGINE_ALLOCATED | ENGINE_DEALLOCATED 
+        | ENGINE_PAUSED | ENGINE_RESUMED | ENGINE_FOCUSED | ENGINE_DEFOCUSED 
+        | ENGINE_ERROR;
+
+    
     private long oldEngineState;
 
     private long newEngineState;
@@ -73,7 +98,12 @@ public class EngineEvent extends SpeechEvent {
     }
 
     public Throwable getEngineError() {
-        return problem;
+        final int id = getId();
+        if (id == ENGINE_ERROR) {
+            return problem;
+        }
+        
+        return null;
     }
 
     /**
@@ -81,13 +111,13 @@ public class EngineEvent extends SpeechEvent {
      */
     protected Collection getParameters() {
         final Collection parameters = super.getParameters();
-        
+
         final Long oldEngineStateObject = new Long(oldEngineState);
         parameters.add(oldEngineStateObject);
         final Long newEngineStateObject = new Long(newEngineState);
         parameters.add(newEngineStateObject);
         parameters.add(problem);
-        
+
         return parameters;
     }
 }
