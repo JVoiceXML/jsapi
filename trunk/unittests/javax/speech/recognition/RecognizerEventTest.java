@@ -1,8 +1,8 @@
 /*
  * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 249 $
+ * Version: $LastChangedRevision$
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
+ * Author:  $LastChangedBy$
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
@@ -25,6 +25,7 @@
  */
 package javax.speech.recognition;
 
+import javax.speech.AudioEvent;
 import javax.speech.test.recognizer.TestRecognizer;
 
 import junit.framework.TestCase;
@@ -91,5 +92,35 @@ public class RecognizerEventTest extends TestCase {
                 grammarException2, audioPosition2);
 
         assertEquals(grammarException2, event2.getGrammarException());
+    }
+
+    /**
+     * Test method for {@link javax.speech.AudioEvent#paramString()}.
+     */
+    public void testParamString() {
+        final Throwable problem = new Exception();
+        final GrammarException grammarException = new GrammarException();
+        long audioPosition = 4834;
+        final RecognizerEvent event = new RecognizerEvent(recognizer, 42,
+                RecognizerEvent.CHANGES_COMMITTED,
+                RecognizerEvent.ENGINE_ALLOCATING_RESOURCES, problem,
+                grammarException, audioPosition);
+        final String str = event.paramString();
+        assertTrue(str.indexOf("42") >= 0);
+    }
+
+    /**
+     * Test method for {@link javax.speech.AudioEvent#toString()}.
+     */
+    public void testToString() {
+        final Throwable problem = new Exception();
+        final GrammarException grammarException = new GrammarException();
+        long audioPosition = 4834;
+        final RecognizerEvent event = new RecognizerEvent(recognizer, 43,
+                RecognizerEvent.CHANGES_COMMITTED,
+                RecognizerEvent.ENGINE_ALLOCATING_RESOURCES, problem,
+                grammarException, audioPosition);
+        final String str = event.toString();
+        assertTrue(str.indexOf("43") >= 0);
     }
 }
