@@ -28,29 +28,30 @@ package javax.speech.recognition;
 
 import java.util.Collection;
 
-import javax.speech.Engine;
 import javax.speech.EngineEvent;
 
 public class RecognizerEvent extends EngineEvent {
-    public static int CHANGES_COMMITTED = 0;
+    public static int CHANGES_COMMITTED = ENGINE_ERROR << 1;
 
-    public static int CHANGES_REJECTED = 1;
+    public static int CHANGES_REJECTED = CHANGES_COMMITTED << 1;
 
-    public static int DEFAULT_MASK = 2;
+    public static int RECOGNIZER_BUFFERING = CHANGES_REJECTED << 1;
 
-    public static int RECOGNIZER_BUFFERING = 3;
+    public static int RECOGNIZER_NOT_BUFFERING = RECOGNIZER_BUFFERING << 1;
 
-    public static int RECOGNIZER_LISTENING = 4;
+    public static int RECOGNIZER_LISTENING = RECOGNIZER_NOT_BUFFERING << 1;
 
-    public static int RECOGNIZER_NOT_BUFFERING = 5;
+    public static int RECOGNIZER_PROCESSING = RECOGNIZER_NOT_BUFFERING << 1;
 
-    public static int RECOGNIZER_PROCESSING = 6;
+    public static int SPEECH_STARTED = RECOGNIZER_PROCESSING << 1;
 
-    public static int SPEECH_STARTED = 7;
+    public static int SPEECH_STOPPED = SPEECH_STARTED << 1;
 
-    public static int SPEECH_STOPPED = 8;
+    public static int UNKNOWN_AUDIO_POSITION = SPEECH_STOPPED << 1;
 
-    static int UNKNOWN_AUDIO_POSITION = 9;
+    public static int DEFAULT_MASK = EngineEvent.DEFAULT_MASK
+            | CHANGES_COMMITTED | CHANGES_REJECTED | RECOGNIZER_LISTENING
+            | RECOGNIZER_PROCESSING | SPEECH_STARTED | SPEECH_STOPPED;
 
     private GrammarException grammarException;
 
@@ -70,7 +71,12 @@ public class RecognizerEvent extends EngineEvent {
     }
 
     public GrammarException getGrammarException() {
-        return grammarException;
+        final int id = getId();
+        if (id == CHANGES_REJECTED) {
+            return grammarException;
+        }
+        
+        return null;
     }
 
     /**
@@ -78,11 +84,11 @@ public class RecognizerEvent extends EngineEvent {
      */
     protected Collection getParameters() {
         final Collection parameters = super.getParameters();
-        
+
         final Long audioPositionObject = new Long(audioPosition);
         parameters.add(audioPositionObject);
         parameters.add(grammarException);
-        
+
         return parameters;
     }
 }
