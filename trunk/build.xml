@@ -14,6 +14,9 @@ This file builds the JSR 113.jar.
 
 	<property name="dist.jsr113.jar" value="${dist}/jsr-113.jar" />
 
+	<property name="debug" value="on"/>
+	<property name="optimize" value="off"/>
+	
 	<target name="-init">
 		<mkdir dir="${build}" />
 		<mkdir dir="${dist}" />
