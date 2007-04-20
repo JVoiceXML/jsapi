@@ -69,7 +69,7 @@ public class EngineEventTest extends TestCase {
                 EngineEvent.ENGINE_DEALLOCATED, 
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES, problem);
         assertEquals(EngineEvent.ENGINE_DEALLOCATED,
-                event.getNewEngineState());
+                event.getOldEngineState());
     }
 
     /**

@@ -29,45 +29,25 @@ package javax.speech;
 import java.util.Collection;
 
 public class EngineEvent extends SpeechEvent {
-    // Flags.
-    private static int ALLOCATED_FLAG = 0;
-
-    private static int DEALLOCATED_FLAG = 1;
-
-    private static int ALLOCATING_RESOURCES_FLAG = 1;
-
-    private static int DEALLOCATING_RESOURCES_FLAG = 3;
-
-    private static int PAUSED_FLAG = 4;
-
-    private static int RESUMED_FLAG = 5;
-
-    private static int FOCUSED_FLAG = 6;
-
-    private static int DEFOCUSED_FLAG = 7;
-
-    public static int ERROR_OCCURED_FLAG = 8;
-    
     // Events.
-    public static int ENGINE_ALLOCATED = 2 ^ ALLOCATED_FLAG;
+    public static int ENGINE_ALLOCATED = 1;
 
-    public static int ENGINE_DEALLOCATED = 2 ^ DEALLOCATED_FLAG;
+    public static int ENGINE_DEALLOCATED = ENGINE_ALLOCATED << 1;
 
-    public static int ENGINE_ALLOCATING_RESOURCES = 
-        2 ^ ALLOCATING_RESOURCES_FLAG;
+    public static int ENGINE_ALLOCATING_RESOURCES = ENGINE_DEALLOCATED << 1;
 
     public static int ENGINE_DEALLOCATING_RESOURCES = 
-        2 ^ DEALLOCATING_RESOURCES_FLAG;
+        ENGINE_ALLOCATING_RESOURCES << 1;
 
-    public static int ENGINE_DEFOCUSED = 2 ^ DEFOCUSED_FLAG;
+    public static int ENGINE_DEFOCUSED = ENGINE_DEALLOCATING_RESOURCES << 1;
 
-    public static int ENGINE_FOCUSED = 2 ^ FOCUSED_FLAG;
+    public static int ENGINE_FOCUSED = ENGINE_DEFOCUSED << 1;
 
-    public static int ENGINE_PAUSED = 2 ^ PAUSED_FLAG;
+    public static int ENGINE_PAUSED = ENGINE_FOCUSED << 1;
 
-    public static int ENGINE_RESUMED = 2 ^ RESUMED_FLAG;
+    public static int ENGINE_RESUMED = ENGINE_PAUSED << 1;
 
-    public static int ENGINE_ERROR = 2 ^ ERROR_OCCURED_FLAG;
+    public static int ENGINE_ERROR = ENGINE_RESUMED << 1;
 
     public static int DEFAULT_MASK = ENGINE_ALLOCATED | ENGINE_DEALLOCATED 
         | ENGINE_PAUSED | ENGINE_RESUMED | ENGINE_FOCUSED | ENGINE_DEFOCUSED 
