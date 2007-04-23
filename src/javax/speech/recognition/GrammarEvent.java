@@ -31,15 +31,18 @@ import java.util.Collection;
 import javax.speech.SpeechEvent;
 
 public class GrammarEvent extends SpeechEvent {
-    public static int DEFAULT_MASK = 0;
 
     public static int GRAMMAR_ACTIVATED = 1;
 
-    public static int GRAMMAR_CHANGES_COMMITTED = 2;
+    public static int GRAMMAR_CHANGES_COMMITTED = GRAMMAR_ACTIVATED << 1;
 
-    public static int GRAMMAR_CHANGES_REJECTED = 3;
+    public static int GRAMMAR_CHANGES_REJECTED = GRAMMAR_CHANGES_COMMITTED << 1;
 
-    public static int GRAMMAR_DEACTIVATED = 4;
+    public static int GRAMMAR_DEACTIVATED = GRAMMAR_CHANGES_REJECTED << 1;
+
+    public static int DEFAULT_MASK = GRAMMAR_ACTIVATED
+	    | GRAMMAR_CHANGES_COMMITTED | GRAMMAR_CHANGES_REJECTED
+	    | GRAMMAR_DEACTIVATED;
 
     private boolean enabledChanged;
 
@@ -48,42 +51,47 @@ public class GrammarEvent extends SpeechEvent {
     private GrammarException grammarException;
 
     public GrammarEvent(Object source, int id) {
-        super(source, id);
+	super(source, id);
     }
 
     public GrammarEvent(Grammar source, int id, boolean enabledChanged,
-            boolean definitionChanged, GrammarException grammarException) {
-        super(source, id);
+	    boolean definitionChanged, GrammarException grammarException) {
+	super(source, id);
 
-        this.enabledChanged = enabledChanged;
-        this.definitionChanged = definitionChanged;
-        this.grammarException = grammarException;
+	this.enabledChanged = enabledChanged;
+	this.definitionChanged = definitionChanged;
+	this.grammarException = grammarException;
     }
 
     public GrammarException getGrammarException() {
-        return grammarException;
+	final int id = getId();
+	if (id == GRAMMAR_CHANGES_COMMITTED) {
+	    return grammarException;
+	}
+
+	return null;
     }
 
     public boolean isDefinitionChanged() {
-        return definitionChanged;
+	return definitionChanged;
     }
 
     public boolean isEnabledChanged() {
-        return enabledChanged;
+	return enabledChanged;
     }
 
     /**
-     * {@inheritDoc}
-     */
+         * {@inheritDoc}
+         */
     protected Collection getParameters() {
-        final Collection parameters = super.getParameters();
-        
-        final Boolean definitionChangedObject = new Boolean(definitionChanged);
-        parameters.add(definitionChangedObject);
-        final Boolean enabledChangedObject = new Boolean(enabledChanged);
-        parameters.add(enabledChangedObject);
-        parameters.add(grammarException);
-        
-        return parameters;
+	final Collection parameters = super.getParameters();
+
+	final Boolean definitionChangedObject = new Boolean(definitionChanged);
+	parameters.add(definitionChangedObject);
+	final Boolean enabledChangedObject = new Boolean(enabledChanged);
+	parameters.add(enabledChangedObject);
+	parameters.add(grammarException);
+
+	return parameters;
     }
 }

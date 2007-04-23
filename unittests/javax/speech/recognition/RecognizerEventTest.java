@@ -25,7 +25,6 @@
  */
 package javax.speech.recognition;
 
-import javax.speech.AudioEvent;
 import javax.speech.test.recognizer.TestRecognizer;
 
 import junit.framework.TestCase;
@@ -106,7 +105,7 @@ public class RecognizerEventTest extends TestCase {
                 RecognizerEvent.ENGINE_ALLOCATING_RESOURCES, problem,
                 grammarException, audioPosition);
         final String str = event.paramString();
-        assertTrue(str.indexOf("42") >= 0);
+        assertTrue("id not found in paramString", str.indexOf("42") >= 0);
     }
 
     /**
@@ -121,6 +120,10 @@ public class RecognizerEventTest extends TestCase {
                 RecognizerEvent.ENGINE_ALLOCATING_RESOURCES, problem,
                 grammarException, audioPosition);
         final String str = event.toString();
-        assertTrue(str.indexOf("43") >= 0);
+        assertTrue("id not found in toString", str.indexOf("43") >= 0);
+        
+        String paramString = event.paramString();
+        assertTrue("toString not longer than paramString", 
+        	str.length() > paramString.length());
     }
 }
