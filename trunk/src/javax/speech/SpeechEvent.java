@@ -33,9 +33,9 @@ import java.util.Iterator;
 public class SpeechEvent extends EventObject {
     private final int id;
     
-    private static final int DISABLE_ALL = 1;
+    private static final int DISABLE_ALL = 0;
     
-    private static final int ENABLE_ALL = 2;
+    private static final int ENABLE_ALL = Integer.MAX_VALUE;
     
     public SpeechEvent(Object source, int id) {
         super(source);
