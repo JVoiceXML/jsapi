@@ -27,7 +27,7 @@
 package javax.speech.synthesis;
 
 public class PhoneInfo {
-    public static int UNKNOWN_DURATION = Integer.MAX_VALUE;
+    public static int UNKNOWN_DURATION = -1;
     
     private String phoneme;
     
