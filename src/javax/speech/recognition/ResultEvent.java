@@ -31,22 +31,22 @@ import java.util.Collection;
 import javax.speech.SpeechEvent;
 
 public class ResultEvent extends SpeechEvent {
-    public static int AUDIO_RELEASED = 0;
+    public static int AUDIO_RELEASED = 1;
 
-    public static int DEFAULT_MASK = 1;
+    public static int RESULT_CREATED = AUDIO_RELEASED << 1;;
 
-    public static int GRAMMAR_FINALIZED = 2;
+    public static int RESULT_UPDATED = RESULT_CREATED << 1;
+    
+    public static int RESULT_ACCEPTED = RESULT_UPDATED << 1;
 
-    public static int RESULT_ACCEPTED = 3;
+    public static int RESULT_REJECTED = RESULT_ACCEPTED << 1;
 
-    public static int RESULT_CREATED = 4;
+    public static int GRAMMAR_FINALIZED = RESULT_REJECTED << 1;
 
-    public static int RESULT_REJECTED = 5;
+    public static int TRAINING_INFO_RELEASED = GRAMMAR_FINALIZED << 1;
 
-    public static int RESULT_UPDATED = 6;
-
-    public static int TRAINING_INFO_RELEASED = 7;
-
+    public static int DEFAULT_MASK = RESULT_CREATED | RESULT_UPDATED;
+    
     private boolean tokensFinalized;
 
     private boolean unfinalizedTokensChanged;
@@ -64,11 +64,23 @@ public class ResultEvent extends SpeechEvent {
     }
 
     public boolean isFinalizedChanged() {
-        return tokensFinalized;
+        final int id = getId();
+        if ((id == RESULT_CREATED) || (id == RESULT_UPDATED) 
+                || (id == RESULT_ACCEPTED) || (id == RESULT_REJECTED)) {
+            return tokensFinalized;
+        }
+        
+        return false;
     }
 
     public boolean isUnfinalizedChanged() {
-        return unfinalizedTokensChanged;
+        final int id = getId();
+        if ((id == RESULT_CREATED) || (id == RESULT_UPDATED) 
+                || (id == RESULT_ACCEPTED) || (id == RESULT_REJECTED)) {
+            return tokensFinalized;
+        }
+        
+        return false;
     }
 
     /**

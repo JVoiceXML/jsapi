@@ -29,30 +29,31 @@ package javax.speech.synthesis;
 import java.util.Locale;
 
 public class Voice {
-    public static int AGE_CHILD = 0;
+    public static int AGE_CHILD = 8;
 
-    public static int AGE_DONT_CARE = 1;
+    public static int AGE_TEENAGER = 14;
 
-    public static int AGE_MIDDLE_ADULT = 2;
+    public static int AGE_YOUNGER_ADULT = 20;
+    
+    public static int AGE_MIDDLE_ADULT = 40;
 
-    public static int AGE_OLDER_ADULT = 3;
+    public static int AGE_OLDER_ADULT = 60;
 
-    public static int AGE_TEENAGER = 4;
+    public static int AGE_DONT_CARE = -1;
+    
+    public static int GENDER_FEMALE = 1;
 
-    public static int AGE_YOUNGER_ADULT = 5;
+    public static int GENDER_MALE = GENDER_FEMALE << 1;
 
-    public static int GENDER_DONT_CARE = 6;
+    public static int GENDER_NEUTRAL = GENDER_MALE << 1;
 
-    public static int GENDER_FEMALE = 7;
+    public static int GENDER_DONT_CARE = GENDER_FEMALE | GENDER_MALE 
+        | GENDER_NEUTRAL;
+       
+    public static int VARIANT_DEFAULT = 0;
 
-    public static int GENDER_MALE = 8;
-
-    public static int GENDER_NEUTRAL = 9;
-
-    public static int VARIANT_DEFAULT = 10;
-
-    public static int VARIANT_DONT_CARE = 11;
-
+    public static int VARIANT_DONT_CARE = -1;
+    
     private Locale locale;
 
     private String name;
@@ -95,21 +96,83 @@ public class Voice {
     }
 
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
         return super.equals(obj);
     }
 
     public int hashCode() {
-        // TODO Auto-generated method stub
         return super.hashCode();
     }
 
     public String toString() {
-        // TODO Auto-generated method stub
         return super.toString();
     }
 
     public boolean match(Voice require) {
-        return false;
+        final boolean namesMatch;
+        final String requiredName = require.getName();
+        if ((requiredName == null) || (name == null)) {
+            namesMatch = true;
+        } else {
+            namesMatch = name.equals(requiredName);
+        }
+        
+        final int requiredGender = require.getGender();
+        final boolean genderMatch = ((gender & requiredGender) > 0); 
+        
+        final boolean localeMatch;
+        final Locale requiredLocale = require.getLocale();
+        if ((requiredLocale == null) || (requiredLocale == null)) {
+            localeMatch = true;
+        } else {
+            localeMatch = locale.equals(requiredLocale);
+        }
+
+        final boolean ageMatch;
+        final int requiredAge = require.getAge();
+        if ((age == AGE_DONT_CARE) || (requiredAge == AGE_DONT_CARE)) {
+            ageMatch = true;
+        } else {
+            final int closestAge = getClosestAge(requiredAge);
+            ageMatch = (age == closestAge);
+        }
+
+        final boolean variantMatch;
+        final int requiredVariant = require.getVariant();
+        if ((variant == VARIANT_DONT_CARE) 
+                || (requiredVariant == VARIANT_DONT_CARE)) {
+            variantMatch = true;
+        } else {
+            variantMatch = (variant == requiredVariant);
+        }
+        
+        return namesMatch || genderMatch || localeMatch || ageMatch 
+            || variantMatch;
+    }
+    
+    /**
+     * Determines the age closest to the given age.
+     * @param age the given age.
+     * @return Age defined as a constant closest to the given age.
+     */
+    private int getClosestAge(int age) {
+        if (age <= AGE_CHILD + (AGE_CHILD + AGE_TEENAGER) / 2) {
+            return AGE_CHILD;
+        }
+        
+        if (age <= AGE_TEENAGER + (AGE_TEENAGER + AGE_YOUNGER_ADULT) / 2) {
+            return AGE_TEENAGER;
+        }
+
+        if (age <= AGE_YOUNGER_ADULT 
+                + (AGE_YOUNGER_ADULT + AGE_MIDDLE_ADULT) / 2) {
+            return AGE_YOUNGER_ADULT;
+        }
+
+        if (age <= AGE_MIDDLE_ADULT 
+                + (AGE_MIDDLE_ADULT + AGE_OLDER_ADULT) / 2) {
+            return AGE_MIDDLE_ADULT;
+        }
+        
+        return AGE_OLDER_ADULT;
     }
 }
