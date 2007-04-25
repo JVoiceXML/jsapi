@@ -65,6 +65,9 @@ public class Voice {
     private int variant;
 
     public Voice() {
+        gender = GENDER_DONT_CARE;
+        age = AGE_DONT_CARE;
+        variant = VARIANT_DONT_CARE;
     }
 
     public Voice(Locale locale, String name, int gender, int age, int variant) {
@@ -96,7 +99,44 @@ public class Voice {
     }
 
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        if (!(obj instanceof Voice)) {
+            return false;
+        }
+        
+        final Voice voice = (Voice) obj;
+        if (locale == null) {
+            if (voice.getLocale() != null) {
+                return false;
+            }
+        } else {
+            if (!locale.equals(voice.getLocale())) {
+                return false;
+            }
+        }
+
+        if (name == null) {
+            if (voice.getName() != null) {
+                return false;
+            }
+        } else {
+            if (!name.equals(voice.getName())) {
+                return false;
+            }
+        }
+        
+        if (gender != voice.getGender()) {
+            return false;
+        }
+        
+        if (age != voice.getAge()) {
+            return false;
+        }
+        
+        if (variant != voice.getVariant()) {
+            return false;
+        }
+        
+        return true;
     }
 
     public int hashCode() {
@@ -104,16 +144,31 @@ public class Voice {
     }
 
     public String toString() {
-        return super.toString();
+        StringBuffer str = new StringBuffer();
+        
+        str.append(getClass().getName());
+        str.append("[");
+        str.append(locale);
+        str.append(",");
+        str.append(name);
+        str.append(",");
+        str.append(age);
+        str.append(",");
+        str.append(gender);
+        str.append(",");
+        str.append(variant);
+        str.append("]");
+        
+        return str.toString();
     }
 
     public boolean match(Voice require) {
         final boolean namesMatch;
         final String requiredName = require.getName();
-        if ((requiredName == null) || (name == null)) {
+        if ((requiredName == null) || (requiredName.length() == 0)) {
             namesMatch = true;
         } else {
-            namesMatch = name.equals(requiredName);
+            namesMatch = requiredName.equals(name);
         }
         
         final int requiredGender = require.getGender();
@@ -121,15 +176,15 @@ public class Voice {
         
         final boolean localeMatch;
         final Locale requiredLocale = require.getLocale();
-        if ((requiredLocale == null) || (requiredLocale == null)) {
+        if (requiredLocale == null) {
             localeMatch = true;
         } else {
-            localeMatch = locale.equals(requiredLocale);
+            localeMatch = requiredLocale.equals(locale);
         }
 
         final boolean ageMatch;
         final int requiredAge = require.getAge();
-        if ((age == AGE_DONT_CARE) || (requiredAge == AGE_DONT_CARE)) {
+        if (requiredAge == AGE_DONT_CARE) {
             ageMatch = true;
         } else {
             final int closestAge = getClosestAge(requiredAge);
@@ -138,15 +193,14 @@ public class Voice {
 
         final boolean variantMatch;
         final int requiredVariant = require.getVariant();
-        if ((variant == VARIANT_DONT_CARE) 
-                || (requiredVariant == VARIANT_DONT_CARE)) {
+        if (requiredVariant == VARIANT_DONT_CARE) {
             variantMatch = true;
         } else {
             variantMatch = (variant == requiredVariant);
         }
         
-        return namesMatch || genderMatch || localeMatch || ageMatch 
-            || variantMatch;
+        return namesMatch && genderMatch && localeMatch && ageMatch 
+            && variantMatch;
     }
     
     /**
@@ -155,21 +209,21 @@ public class Voice {
      * @return Age defined as a constant closest to the given age.
      */
     private int getClosestAge(int age) {
-        if (age <= AGE_CHILD + (AGE_CHILD + AGE_TEENAGER) / 2) {
+        if (age <= AGE_CHILD + (AGE_TEENAGER - AGE_CHILD ) / 2) {
             return AGE_CHILD;
         }
         
-        if (age <= AGE_TEENAGER + (AGE_TEENAGER + AGE_YOUNGER_ADULT) / 2) {
+        if (age <= AGE_TEENAGER + (AGE_YOUNGER_ADULT - AGE_TEENAGER) / 2) {
             return AGE_TEENAGER;
         }
 
         if (age <= AGE_YOUNGER_ADULT 
-                + (AGE_YOUNGER_ADULT + AGE_MIDDLE_ADULT) / 2) {
+                + (AGE_MIDDLE_ADULT - AGE_YOUNGER_ADULT) / 2) {
             return AGE_YOUNGER_ADULT;
         }
 
         if (age <= AGE_MIDDLE_ADULT 
-                + (AGE_MIDDLE_ADULT + AGE_OLDER_ADULT) / 2) {
+                + (AGE_OLDER_ADULT - AGE_MIDDLE_ADULT) / 2) {
             return AGE_MIDDLE_ADULT;
         }
         
