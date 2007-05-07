@@ -25,7 +25,7 @@
  */
 package javax.speech.recognition;
 
-import javax.speech.test.recognizer.TestRecognizer;
+import javax.speech.test.recognition.TestRecognizer;
 
 import junit.framework.TestCase;
 
