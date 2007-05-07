@@ -196,7 +196,6 @@ public class VoiceTest extends TestCase {
         final Voice voice6 = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_DONT_CARE, Voice.VARIANT_DEFAULT);
         assertTrue(voice4.match(voice6));
-
     
         final Voice voice7 = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);

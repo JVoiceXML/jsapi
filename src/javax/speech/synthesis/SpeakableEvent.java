@@ -287,9 +287,11 @@ public class SpeakableEvent extends SpeechEvent {
     }
 
     public int getType() {
+        // TODO Check if there is an error in the specification.
+        // The MARKER_REACHED does not provide a type.
         final int id = getId();
         if ((id == ELEMENT_REACHED) || (id == MARKUP_FAILED)
-                || (id == MARKER_REACHED) || (id == PROSODY_UPDATED)) {
+                || (id == PROSODY_UPDATED)) {
             return type;
         }
 
