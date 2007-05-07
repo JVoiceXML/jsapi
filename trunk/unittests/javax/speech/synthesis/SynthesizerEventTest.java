@@ -24,7 +24,7 @@
  *
  */
 
-package javax.speech.synthesizer;
+package javax.speech.synthesis;
 
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.RecognizerEvent;
