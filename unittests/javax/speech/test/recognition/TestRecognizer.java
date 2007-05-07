@@ -24,7 +24,7 @@
  *
  */
 
-package javax.speech.test.recognizer;
+package javax.speech.test.recognition;
 
 import java.io.Reader;
 import java.util.Vector;

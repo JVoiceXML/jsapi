@@ -26,7 +26,7 @@
 
 package javax.speech.recognition;
 
-import javax.speech.test.recognizer.TestGrammar;
+import javax.speech.test.recognition.TestGrammar;
 
 import junit.framework.TestCase;
 

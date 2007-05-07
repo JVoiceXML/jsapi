@@ -24,7 +24,7 @@
  *
  */
 
-package javax.speech.test.recognizer;
+package javax.speech.test.recognition;
 
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.Result;

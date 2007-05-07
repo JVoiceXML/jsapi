@@ -30,7 +30,7 @@ import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.RecognizerEvent;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerEvent;
-import javax.speech.test.synthesizer.TestSynthesizer;
+import javax.speech.test.synthesis.TestSynthesizer;
 
 import junit.framework.TestCase;
 

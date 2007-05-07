@@ -24,7 +24,7 @@
  *
  */
 
-package javax.speech.test.synthesizer;
+package javax.speech.test.synthesis;
 
 import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
