@@ -200,22 +200,31 @@ public class EngineMode {
         return parameters;
     }
 
-    public String toString() {
-        StringBuffer str = new StringBuffer();
-
-        str.append(getClass().getName());
+    private void appendCollection(StringBuffer str, Collection col) {
         str.append("[");
-        final Collection parameters = getParameters();
-        final Iterator iterator = parameters.iterator();
+        final Iterator iterator = col.iterator();
 
         while (iterator.hasNext()) {
             final Object parameter = iterator.next();
-            str.append(parameter);
+            if (parameter instanceof Collection) {
+                final Collection subcol = (Collection) parameter;
+                appendCollection(str, subcol);
+            } else {
+                str.append(parameter);
+            }
             if (iterator.hasNext()) {
                 str.append(",");
             }
         }
         str.append("]");
+    }
+    
+    public String toString() {
+        StringBuffer str = new StringBuffer();
+
+        str.append(getClass().getName());
+        final Collection parameters = getParameters();
+        appendCollection(str, parameters);
 
         return str.toString();
     }

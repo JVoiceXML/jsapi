@@ -26,6 +26,7 @@
 
 package javax.speech.recognition;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.speech.EngineMode;
@@ -33,13 +34,13 @@ import javax.speech.EngineMode;
 public class RecognizerMode extends EngineMode {
     public static RecognizerMode DEFAULT = new RecognizerMode();
 
-    public static Integer LARGE_SIZE = new Integer(0);
+    public static Integer SMALL_SIZE = new Integer(10);
 
-    public static Integer MEDIUM_SIZE = new Integer(1);
+    public static Integer MEDIUM_SIZE = new Integer(100);
 
-    public static Integer SMALL_SIZE = new Integer(2);
+    public static Integer LARGE_SIZE = new Integer(1000);
 
-    public static Integer VERY_LARGE_SIZE = new Integer(3);
+    public static Integer VERY_LARGE_SIZE = new Integer(10000);
 
     private Integer vocabSupport;
 
@@ -86,15 +87,39 @@ public class RecognizerMode extends EngineMode {
         return vocabSupport;
     }
 
-    public int hashCode() {
-        return super.hashCode();
-    }
-
     public boolean match(EngineMode require) {
         return false;
     }
 
-    public String toString() {
-        return super.toString();
+    /**
+     * Creates a collection of all parameters.
+     * 
+     * @return collection of all parameters.
+     */
+    protected Collection getParameters() {
+        final Collection parameters = super.getParameters();
+
+        parameters.add(vocabSupport);
+        if (locales == null) {
+            parameters.add(null);
+        } else {
+            final Collection col = new java.util.ArrayList();
+            for (int i=0; i<locales.length; i++) {
+                col.add(locales[i]);
+            }
+            parameters.add(col);
+        }
+        
+        if (profiles == null) {
+            parameters.add(null);
+        } else {
+            final Collection col = new java.util.ArrayList();
+            for (int i=0; i<profiles.length; i++) {
+                col.add(profiles[i]);
+            }
+            parameters.add(col);
+        }
+        
+        return parameters;
     }
 }
