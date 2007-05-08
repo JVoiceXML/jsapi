@@ -103,19 +103,21 @@ public class SynthesizerMode extends EngineMode {
         if (require instanceof SynthesizerMode) {
             final SynthesizerMode mode = (SynthesizerMode) require;
             Voice[] otherVoices = mode.getVoices();
-            for (int i=0; i< otherVoices.length; i++) {
-                Voice otherVoice = otherVoices[i];
-                
-                boolean voiceMatch = false;
-                for (int k=0; (k<voices.length) && !voiceMatch; k++) {
-                    final Voice voice = voices[k];
-                    if (otherVoice.match(voice)) {
-                        voiceMatch = true;
+            if (otherVoices != null) {
+                for (int i=0; i< otherVoices.length; i++) {
+                    Voice otherVoice = otherVoices[i];
+
+                    boolean voiceMatch = false;
+                    for (int k=0; (k<voices.length) && !voiceMatch; k++) {
+                        final Voice voice = voices[k];
+                        if (otherVoice.match(voice)) {
+                            voiceMatch = true;
+                        }
                     }
-                }
-                
-                if (!voiceMatch) {
-                    return false;
+
+                    if (!voiceMatch) {
+                        return false;
+                    }
                 }
             }
         } 
@@ -134,9 +136,11 @@ public class SynthesizerMode extends EngineMode {
         if (voices == null) {
             parameters.add(null);
         } else {
+            final Collection col = new java.util.ArrayList();
             for (int i = 0; i < voices.length; i++) {
-                parameters.add(voices[i]);
+                col.add(voices[i]);
             }
+            parameters.add(col);
         }
 
         return parameters;

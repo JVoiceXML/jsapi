@@ -36,7 +36,6 @@ public class SpeakerProfile {
     private String variant;
 
     public SpeakerProfile() {
-
     }
 
     public SpeakerProfile(String id, String name, String variant) {
@@ -62,14 +61,19 @@ public class SpeakerProfile {
         return super.equals(obj);
     }
 
-    public int hashCode() {
-        // TODO Auto-generated method stub
-        return super.hashCode();
-    }
-
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        StringBuffer str = new StringBuffer();
+        
+        str.append(getClass().getName());
+        str.append("[");
+        str.append(id);
+        str.append(",");
+        str.append(name);
+        str.append(",");
+        str.append(variant);
+        str.append("]");
+        
+        return str.toString();
     }
 
     public boolean match(SpeakerProfile require) {
