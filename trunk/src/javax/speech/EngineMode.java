@@ -26,26 +26,31 @@
 
 package javax.speech;
 
+import java.util.Collection;
+import java.util.Iterator;
+
+import javax.speech.synthesis.SynthesizerMode;
+
 public class EngineMode {
-    public static final Integer FULL = new Integer(1);
-    
-    public static final Integer NONE = new Integer(2);
-    
+    public static final Integer FULL = new Integer(Integer.MAX_VALUE);
+
+    public static final Integer NONE = new Integer(0);
+
     private String engineName;
-    
+
     private String modeName;
-    
+
     private Boolean running;
-    
+
     private Boolean supportsLetterToSound;
-    
+
     private Integer markupSupport;
-    
+
     public EngineMode() {
-        
+
     }
-    
-    public EngineMode(String engineName, String modeName, Boolean running, 
+
+    public EngineMode(String engineName, String modeName, Boolean running,
             Boolean supportsLetterToSound, Integer markupSupport) {
         this.engineName = engineName;
         this.modeName = modeName;
@@ -53,44 +58,165 @@ public class EngineMode {
         this.supportsLetterToSound = supportsLetterToSound;
         this.markupSupport = markupSupport;
     }
-    
+
     public String getEngineName() {
         return engineName;
     }
-    
+
     public Integer getMarkupSupport() {
         return markupSupport;
     }
-    
+
     public String getModeName() {
         return modeName;
     }
-    
+
     public Boolean getRunning() {
         return running;
     }
-    
+
     public Boolean getSupportsLetterToSound() {
         return supportsLetterToSound;
     }
-    
+
     public boolean match(EngineMode require) {
-        // TODO: implement EngineMode.match
-        return false;
+        final String otherEngineName = require.getEngineName();
+        final boolean namesMatch;
+        if (otherEngineName == null) {
+            namesMatch = true;
+        } else {
+            namesMatch = otherEngineName.equals(engineName);
+        }
+
+        final String otherModeName = require.getModeName();
+        final boolean modesMatch;
+        if (otherModeName == null) {
+            modesMatch = true;
+        } else {
+            modesMatch = otherModeName.equals(modeName);
+        }
+
+        final Boolean otherModeRunning = require.getRunning();
+        final boolean runningsMatch;
+        if (otherModeRunning == null) {
+            runningsMatch = true;
+        } else {
+            runningsMatch = otherModeRunning.equals(running);
+        }
+
+        final Boolean otherSupportsLetterToSound = require
+                .getSupportsLetterToSound();
+        final boolean supportsLetterToSoundMatch;
+        if (otherSupportsLetterToSound == null) {
+            supportsLetterToSoundMatch = true;
+        } else {
+            supportsLetterToSoundMatch = otherSupportsLetterToSound
+                    .equals(supportsLetterToSound);
+        }
+
+        final Integer otherMarkupSupport = require.getMarkupSupport();
+        final boolean markupSupportMatch;
+        if (otherMarkupSupport == null) {
+            markupSupportMatch = true;
+        } else {
+            markupSupportMatch = otherMarkupSupport.equals(markupSupport);
+        }
+
+        return namesMatch && modesMatch && runningsMatch
+                && supportsLetterToSoundMatch && markupSupportMatch;
     }
-    
-    public boolean equals(Object mode) {
-        // TODO: implement EngineMode.equals.
-        return super.equals(mode);
+
+    public boolean equals(Object object) {
+        if (!(object instanceof EngineMode)) {
+            return false;
+        }
+
+        final EngineMode mode = (EngineMode) object;
+
+        final String otherEngineName = mode.getEngineName();
+        final boolean namesMatch;
+        if (engineName == null) {
+            namesMatch = (otherEngineName == null);
+        } else {
+            namesMatch = engineName.equals(otherEngineName);
+        }
+
+        final String otherModeName = mode.getModeName();
+        final boolean modesMatch;
+        if (modeName == null) {
+            modesMatch = (otherModeName == null);
+        } else {
+            modesMatch = modeName.equals(otherModeName);
+        }
+
+        final Boolean otherModeRunning = mode.getRunning();
+        final boolean runningsMatch;
+        if (running == null) {
+            runningsMatch = (otherModeRunning == null);
+        } else {
+            runningsMatch = running.equals(otherModeRunning);
+        }
+
+        final Boolean otherSupportsLetterToSound = mode
+                .getSupportsLetterToSound();
+        final boolean supportsLetterToSoundMatch;
+        if (supportsLetterToSound == null) {
+            supportsLetterToSoundMatch = (otherSupportsLetterToSound == null);
+        } else {
+            supportsLetterToSoundMatch = supportsLetterToSound
+                    .equals(otherSupportsLetterToSound);
+        }
+
+        final Integer otherMarkupSupport = mode.getMarkupSupport();
+        final boolean markupSupportMatch;
+        if (markupSupport == null) {
+            markupSupportMatch = (otherMarkupSupport == null);
+        } else {
+            markupSupportMatch = markupSupport.equals(otherMarkupSupport);
+        }
+
+        return namesMatch && modesMatch && runningsMatch
+                && supportsLetterToSoundMatch && markupSupportMatch;
     }
-    
+
     public int hashCode() {
-        // TODO: implement EngineMode.hashCode
         return super.hashCode();
     }
-    
+
+    /**
+     * Creates a collection of all parameters.
+     * 
+     * @return collection of all parameters.
+     */
+    protected Collection getParameters() {
+        final Collection parameters = new java.util.ArrayList();
+
+        parameters.add(engineName);
+        parameters.add(modeName);
+        parameters.add(running);
+        parameters.add(supportsLetterToSound);
+        parameters.add(markupSupport);
+
+        return parameters;
+    }
+
     public String toString() {
-        // TODO: implement toString.
-        return super.toString();
+        StringBuffer str = new StringBuffer();
+
+        str.append(getClass().getName());
+        str.append("[");
+        final Collection parameters = getParameters();
+        final Iterator iterator = parameters.iterator();
+
+        while (iterator.hasNext()) {
+            final Object parameter = iterator.next();
+            str.append(parameter);
+            if (iterator.hasNext()) {
+                str.append(",");
+            }
+        }
+        str.append("]");
+
+        return str.toString();
     }
 }

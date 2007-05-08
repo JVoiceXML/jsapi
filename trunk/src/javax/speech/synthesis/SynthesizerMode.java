@@ -26,31 +26,65 @@
 
 package javax.speech.synthesis;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.speech.EngineMode;
 
 public class SynthesizerMode extends EngineMode {
-    public static SynthesizerMode DEFAULT = null;
+    public static final SynthesizerMode DEFAULT = new SynthesizerMode();
 
     private Voice[] voices;
 
     public SynthesizerMode() {
+        super();
     }
 
     public SynthesizerMode(Locale locale) {
+        super();
 
+        voices = new Voice[1];
+        voices[0] = new Voice(locale, null, Voice.GENDER_DONT_CARE,
+                Voice.AGE_DONT_CARE, Voice.VARIANT_DONT_CARE);
     }
 
     public SynthesizerMode(String engineName, String modeName, Boolean running,
             Boolean supportsLetterToSound, Integer markupSupport, Voice[] voices) {
         super(engineName, modeName, running, supportsLetterToSound,
                 markupSupport);
+
         this.voices = voices;
     }
 
-    public boolean equals(Object mode) {
-        return false;
+    public boolean equals(Object object) {
+        if (!(object instanceof SynthesizerMode)) {
+            return false;
+        }
+
+        final SynthesizerMode mode = (SynthesizerMode) object;
+
+        if (!super.equals(mode)) {
+            return false;
+        }
+
+        final Voice[] otherVoices = mode.getVoices();
+        if ((voices == null) && (otherVoices == null)) {
+            return true;
+        }
+
+        if (voices.length != otherVoices.length) {
+            return false;
+        }
+        
+        for (int i=0; i< voices.length; i++) {
+            final Voice voice = voices[i];
+            final Voice otherVoice = otherVoices[i];
+            if (!voice.equals(otherVoice)) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     public Integer getMarkupSupport() {
@@ -61,15 +95,50 @@ public class SynthesizerMode extends EngineMode {
         return voices;
     }
 
-    public int hashCode() {
-        return super.hashCode();
-    }
-
     public boolean match(EngineMode require) {
-        return super.match(require);
+        if (!super.match(require)) {
+            return false;
+        }
+
+        if (require instanceof SynthesizerMode) {
+            final SynthesizerMode mode = (SynthesizerMode) require;
+            Voice[] otherVoices = mode.getVoices();
+            for (int i=0; i< otherVoices.length; i++) {
+                Voice otherVoice = otherVoices[i];
+                
+                boolean voiceMatch = false;
+                for (int k=0; (k<voices.length) && !voiceMatch; k++) {
+                    final Voice voice = voices[k];
+                    if (otherVoice.match(voice)) {
+                        voiceMatch = true;
+                    }
+                }
+                
+                if (!voiceMatch) {
+                    return false;
+                }
+            }
+        } 
+        
+        return true;
     }
 
-    public String toString() {
-        return super.toString();
+    /**
+     * Creates a collection of all parameters.
+     * 
+     * @return collection of all parameters.
+     */
+    protected Collection getParameters() {
+        final Collection parameters = super.getParameters();
+
+        if (voices == null) {
+            parameters.add(null);
+        } else {
+            for (int i = 0; i < voices.length; i++) {
+                parameters.add(voices[i]);
+            }
+        }
+
+        return parameters;
     }
 }
