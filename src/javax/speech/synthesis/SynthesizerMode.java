@@ -104,6 +104,10 @@ public class SynthesizerMode extends EngineMode {
             final SynthesizerMode mode = (SynthesizerMode) require;
             Voice[] otherVoices = mode.getVoices();
             if (otherVoices != null) {
+            	if (voices == null) {
+            		return false;
+            	}
+            	
                 for (int i=0; i< otherVoices.length; i++) {
                     Voice otherVoice = otherVoices[i];
 

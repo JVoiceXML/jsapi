@@ -57,8 +57,36 @@ public class SpeakerProfile {
     }
 
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return super.equals(obj);
+        if (!(obj instanceof SpeakerProfile)) {
+        	return false;
+        }
+        
+        final SpeakerProfile profile = (SpeakerProfile) obj;
+        final String otherId = profile.getIdentifier();
+        final boolean idMatch;
+        if (id == null) {
+        	idMatch = (otherId == null);
+        } else {
+        	idMatch = id.equals(otherId);
+        }
+
+        final String otherName = profile.getName();
+        final boolean nameMatch;
+        if (name == null) {
+        	nameMatch = (otherName == null);
+        } else {
+        	nameMatch = name.equals(otherName);
+        }
+        
+        final String otherVariant = profile.getVariant();
+        final boolean variantMatch;
+        if (variant == null) {
+        	variantMatch = (otherVariant == null);
+        } else {
+        	variantMatch = variant.equals(otherVariant);
+        }
+
+        return idMatch && nameMatch && variantMatch;
     }
 
     public String toString() {
@@ -77,6 +105,34 @@ public class SpeakerProfile {
     }
 
     public boolean match(SpeakerProfile require) {
-        return false;
+    	if (require == null) {
+    		return true;
+    	}
+    	
+        final String otherId = require.getIdentifier();
+        final boolean idMatch;
+        if (otherId == null) {
+        	idMatch = true;
+        } else {
+        	idMatch = otherId.equals(id);
+        }
+
+        final String otherName = require.getName();
+        final boolean nameMatch;
+        if (otherName == null) {
+        	nameMatch = true;
+        } else {
+        	nameMatch = otherName.equals(name);
+        }
+        
+        final String otherVariant = require.getVariant();
+        final boolean variantMatch;
+        if (otherVariant == null) {
+        	variantMatch = true;
+        } else {
+        	variantMatch = otherVariant.equals(variant);
+        }
+
+        return idMatch && nameMatch && variantMatch;
     }
 }
