@@ -176,6 +176,8 @@ public class VoiceTest extends TestCase {
      */
     public void testMatch() {
         Voice voice1 = new Voice();
+        assertTrue(voice1.match((Voice) null));
+        
         Voice voice2 = new Voice();
         assertTrue(voice1.match(voice2));
 
