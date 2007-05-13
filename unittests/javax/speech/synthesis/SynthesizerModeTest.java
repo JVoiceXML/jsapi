@@ -96,6 +96,8 @@ public class SynthesizerModeTest extends TestCase {
      */
     public void testMatch() {
         final SynthesizerMode mode1 = new SynthesizerMode();
+        assertTrue(mode1.match((SynthesizerMode) null));
+        
         final SynthesizerMode mode2 = new SynthesizerMode();
         assertTrue(mode1.match(mode2));
 

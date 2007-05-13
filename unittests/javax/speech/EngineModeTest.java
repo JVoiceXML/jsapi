@@ -210,6 +210,7 @@ public class EngineModeTest extends TestCase {
      */
     public void testMatch() {
         final EngineMode mode1 = new EngineMode();
+        assertTrue(mode1.match((EngineMode) null));
         
         final EngineMode mode2 = new EngineMode();
         assertTrue(mode1.match(mode2));

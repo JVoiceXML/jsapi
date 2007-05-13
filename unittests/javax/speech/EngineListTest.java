@@ -26,6 +26,9 @@
 
 package javax.speech;
 
+import java.util.Enumeration;
+import java.util.Locale;
+
 import javax.speech.recognition.RecognizerMode;
 import javax.speech.synthesis.SynthesizerMode;
 
@@ -37,77 +40,134 @@ import junit.framework.TestCase;
  * @author Dirk Schnelle
  */
 public class EngineListTest extends TestCase {
-    /** The engine list to test. */
-    private EngineList list;
-    
-    /**
-     * {@inheritDoc}
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-        
-        final EngineMode[] modes = new EngineMode[] {
-                new EngineMode(),
-                new SynthesizerMode(),
-                new RecognizerMode()
-        };
-        list = new EngineList(modes);
-    }
+	/** The engine list to test. */
+	private EngineList list;
 
-    /**
-     * Test method for {@link javax.speech.EngineList#anyMatch(javax.speech.EngineMode)}.
-     */
-    public void testAnyMatch() {
-        fail("Not yet implemented");
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
 
-    /**
-     * Test method for {@link javax.speech.EngineList#elementAt(int)}.
-     */
-    public void testElementAt() {
-        fail("Not yet implemented");
-    }
+		final EngineMode[] modes = new EngineMode[] {
+				new SynthesizerMode(Locale.US),
+				new RecognizerMode(Locale.GERMAN),
+				new EngineMode("name1", "mode1", Boolean.TRUE, Boolean.TRUE,
+						EngineMode.FULL) };
+		list = new EngineList(modes);
+	}
 
-    /**
-     * Test method for {@link javax.speech.EngineList#elements()}.
-     */
-    public void testElements() {
-        fail("Not yet implemented");
-    }
+	/**
+	 * Test method for
+	 * {@link javax.speech.EngineList#anyMatch(javax.speech.EngineMode)}.
+	 */
+	public void testAnyMatch() {
+		final EngineMode require1 = new EngineMode("name1", "mode1",
+				Boolean.TRUE, Boolean.TRUE, EngineMode.FULL);
+		assertTrue(list.anyMatch(require1));
 
-    /**
-     * Test method for {@link javax.speech.EngineList#orderByMatch(javax.speech.EngineMode)}.
-     */
-    public void testOrderByMatch() {
-        fail("Not yet implemented");
-    }
+		final EngineMode require2 = new EngineMode("name2", "mode1",
+				Boolean.TRUE, Boolean.TRUE, EngineMode.FULL);
+		assertFalse(list.anyMatch(require2));
+	}
 
-    /**
-     * Test method for {@link javax.speech.EngineList#rejectMatch(javax.speech.EngineMode)}.
-     */
-    public void testRejectMatch() {
-        fail("Not yet implemented");
-    }
+	/**
+	 * Test method for {@link javax.speech.EngineList#elementAt(int)}.
+	 */
+	public void testElementAt() {
+		EngineMode mode1 = list.elementAt(0);
+		assertNotNull(mode1);
+		EngineMode mode2 = list.elementAt(1);
+		assertNotNull(mode2);
+		EngineMode mode3 = list.elementAt(2);
+		assertNotNull(mode3);
+		Exception failure = null;
+		try {
+			list.elementAt(4);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			failure = e;
+		}
+		assertNotNull(failure);
+	}
 
-    /**
-     * Test method for {@link javax.speech.EngineList#removeElementAt(int)}.
-     */
-    public void testRemoveElementAt() {
-        fail("Not yet implemented");
-    }
+	/**
+	 * Test method for {@link javax.speech.EngineList#elements()}.
+	 */
+	public void testElements() {
+		Enumeration enumeration = list.elements();
+		assertNotNull(enumeration);
+		assertTrue(enumeration.hasMoreElements());
+		assertNotNull(enumeration.nextElement());
+		assertTrue(enumeration.hasMoreElements());
+		assertNotNull(enumeration.nextElement());
+		assertTrue(enumeration.hasMoreElements());
+		assertNotNull(enumeration.nextElement());
+		assertFalse(enumeration.hasMoreElements());
+	}
 
-    /**
-     * Test method for {@link javax.speech.EngineList#requireMatch(javax.speech.EngineMode)}.
-     */
-    public void testRequireMatch() {
-        fail("Not yet implemented");
-    }
+	/**
+	 * Test method for
+	 * {@link javax.speech.EngineList#orderByMatch(javax.speech.EngineMode)}.
+	 */
+	public void testOrderByMatch() {
+		final EngineMode require = new EngineMode("name1", "mode1",
+				Boolean.TRUE, Boolean.TRUE, EngineMode.FULL);
+		list.orderByMatch(require);
+		final EngineMode mode = list.elementAt(0);
+		assertEquals(3, list.size());
+		assertEquals(require, mode);
+	}
 
-    /**
-     * Test method for {@link javax.speech.EngineList#size()}.
-     */
-    public void testSize() {
-        fail("Not yet implemented");
-    }
+	/**
+	 * Test method for
+	 * {@link javax.speech.EngineList#rejectMatch(javax.speech.EngineMode)}.
+	 */
+	public void testRejectMatch() {
+		assertEquals(3, list.size());
+		final EngineMode reject = new EngineMode("name1", "mode1",
+				Boolean.TRUE, Boolean.TRUE, EngineMode.FULL);
+		list.rejectMatch(reject);
+		assertEquals(2, list.size());
+		list.rejectMatch(null);
+		assertEquals(0, list.size());
+	}
+
+	/**
+	 * Test method for {@link javax.speech.EngineList#removeElementAt(int)}.
+	 */
+	public void testRemoveElementAt() {
+		assertEquals(3, list.size());
+		list.removeElementAt(2);
+		assertEquals(2, list.size());
+
+		Exception failure = null;
+		try {
+			list.removeElementAt(2);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			failure = e;
+		}
+		assertNotNull(failure);
+	}
+
+	/**
+	 * Test method for
+	 * {@link javax.speech.EngineList#requireMatch(javax.speech.EngineMode)}.
+	 */
+	public void testRequireMatch() {
+		assertEquals(3, list.size());
+		final EngineMode require = new EngineMode("name1", "mode1",
+				Boolean.TRUE, Boolean.TRUE, EngineMode.FULL);
+		list.requireMatch(require);
+		assertEquals(1, list.size());
+		list.requireMatch(null);
+		assertEquals(1, list.size());
+	}
+
+	/**
+	 * Test method for {@link javax.speech.EngineList#size()}.
+	 */
+	public void testSize() {
+		assertEquals(3, list.size());
+	}
 
 }
