@@ -163,6 +163,10 @@ public class Voice {
     }
 
     public boolean match(Voice require) {
+    	if(require == null) {
+    		return true;
+    	}
+    	
         final boolean namesMatch;
         final String requiredName = require.getName();
         if ((requiredName == null) || (requiredName.length() == 0)) {

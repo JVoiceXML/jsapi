@@ -80,6 +80,10 @@ public class EngineMode {
     }
 
     public boolean match(EngineMode require) {
+    	if (require == null) {
+    		return true;
+    	}
+    	
         final String otherEngineName = require.getEngineName();
         final boolean namesMatch;
         if (otherEngineName == null) {

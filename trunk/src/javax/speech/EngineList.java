@@ -26,44 +26,131 @@
 
 package javax.speech;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 public class EngineList {
-    private EngineMode[] features;
+	/** 
+	 * The features in this list.
+	 * 
+	 * TODO The specification is close to a Vector, e.g. Enumeration should not 
+	 * be used. Better solutions would be a {@link java.util.List}.
+	 */ 
+	private Vector features;
 
     public EngineList(EngineMode[] features) {
-        this.features = features;
+    	this.features = new Vector(features.length);
+    	for (int i=0; i<features.length;i++) {
+    		this.features.add(features[i]);
+    	}
     }
 
     public boolean anyMatch(EngineMode require) {
+    	final Iterator iterator = features.iterator();
+    	
+    	while (iterator.hasNext()) {
+    		final EngineMode mode = (EngineMode) iterator.next();
+    		if (mode.match(require)) {
+    			return true;
+    		}
+    	}
+    	
         return false;
     }
 
     public EngineMode elementAt(int index) {
-        return null;
+        return (EngineMode) features.get(index);
     }
 
     public Enumeration elements() {
-        return null;
+        return features.elements();
     }
 
     public void orderByMatch(EngineMode require) {
-        
+    	final Comparator comparator = new EngineListComparator(require);
+    	Collections.sort(features, comparator);
     }
 
     public void rejectMatch(EngineMode reject) {
-
+    	final Iterator iterator = features.iterator();
+    	while(iterator.hasNext()) {
+    		final EngineMode mode = (EngineMode) iterator.next();
+    		if (mode.match(reject)) {
+    			iterator.remove();
+    		}
+    	}
     }
 
     public void removeElementAt(int index) {
-
+    	features.remove(index);
     }
 
     void requireMatch(EngineMode require) {
-
+    	final Iterator iterator = features.iterator();
+    	while(iterator.hasNext()) {
+    		final EngineMode mode = (EngineMode) iterator.next();
+    		if (!mode.match(require)) {
+    			iterator.remove();
+    		}
+    	}
     }
 
     int size() {
-        return features.length;
+        return features.size();
+    }
+    
+    /**
+     * 
+     * @author Dirk Schnelle
+     * Note: this comparator imposes orderings that are inconsistent with equals.
+     */
+    private class EngineListComparator implements Comparator {
+    	final EngineMode require;
+    	
+    	public EngineListComparator(EngineMode require) {
+    		this.require = require;
+    	}
+    	
+		public int compare(Object object1, Object object2) {
+			final EngineMode mode1 = (EngineMode) object1;
+			final EngineMode mode2 = (EngineMode) object2;
+			
+			final boolean object1Matches = mode1.match(require);
+			final boolean object2Matches = mode2.match(require);
+			
+			if (object1Matches == object2Matches) {
+				return 0;
+			}
+			
+			if (object1Matches) {
+				return -1;
+			}
+			
+			return 1;
+		}
+    	
+    }
+    
+    public String toString() {
+    	final StringBuffer str = new StringBuffer();
+    	
+    	str.append(getClass());
+    	str.append("[");
+    	
+    	final Iterator iterator = features.iterator();
+    	while (iterator.hasNext()) {
+    		final EngineMode mode = (EngineMode) iterator.next();
+    		str.append(mode);
+    		if (iterator.hasNext()) {
+    			str.append(",");
+    		}
+    	}
+    	
+    	str.append("]");
+    	
+    	return str.toString();
     }
 }
