@@ -26,11 +26,24 @@
 
 package javax.speech.recognition;
 
-public class RuleToken {
+import java.util.StringTokenizer;
+
+public class RuleToken extends RuleComponent {
     private String text;
     
     public RuleToken(String text) {
-        this.text = text;
+    	checkValidGrammarText(text);
+    	
+    	// TODO This is not very efficient. Replace by a better solution.
+        final StringTokenizer tokenizer = new StringTokenizer(text, " ");
+        String cleaned = "";
+        while(tokenizer.hasMoreTokens()) {
+        	cleaned += tokenizer.nextToken();
+        	if (tokenizer.hasMoreTokens()) {
+        		cleaned += " ";
+        	}
+        }
+        this.text = cleaned;
     }
     
     public String getText() {
@@ -38,6 +51,6 @@ public class RuleToken {
     }
     
     public String toString() {
-        return super.toString();
+        return text;
     }
 }

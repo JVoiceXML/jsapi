@@ -26,79 +26,116 @@
 
 package javax.speech;
 
+import java.util.Iterator;
+
 public class Word {
-    public static final long ABBREVIATION = 0;
-    
-    public static final long ACOUSTIC = 1;
-    
-    public static final long ADJECTIVE = 2;
-    
-    public static final long ADVERB  = 3;
-    
-    public static final long AUXILIARY = 4;
-    
-    public static final long CARDINAL  = 5;
-    
-    public static final long CONJUNCTION = 6;
-    
-    public static final long CONTRACTION  = 7;
-    
-    public static final long DETERMINER = 7;
+	public static final long ABBREVIATION = 1;
 
-    public static final long DONT_CARE = 8;
+	public static final long ACOUSTIC = ABBREVIATION << 1;
 
-    public static final long NOUN = 9;
+	public static final long ADJECTIVE =  ACOUSTIC << 1;
 
-    public static final long OTHER = 10;
-    
-    public static final long PREPOSITION = 11;
-    
-    public static final long PRONOUN = 12;
+	public static final long ADVERB = ADJECTIVE << 1;
 
-    public static final long PROPER_ADJECTIVE = 13;
+	public static final long AUXILIARY = ADVERB << 1;
 
-    public static final long PROPER_NOUN = 14;
+	public static final long CARDINAL = AUXILIARY << 1;
 
-    public static final long UNKNOWN = 15;
+	public static final long CONJUNCTION = CARDINAL << 1;
 
-    public static final long VERB = 16;
-    
-    private String text;
-    
-    private String[] pronunciations;
-    
-    private String spokenForm;
-    
-    private AudioSegment audioSegment;
-    
-    private long categories;
-    
-    public Word(String text, String[] pronunciations, String spokenForm, 
-            AudioSegment audioSegment, long categories) {
-        this.text = text;
-        this.pronunciations = pronunciations;
-        this.spokenForm = spokenForm;
-        this.audioSegment = audioSegment;
-        this.categories = categories;
-    }
+	public static final long CONTRACTION = CONJUNCTION << 1;
 
-    public AudioSegment getAudioSegment() {
-        return audioSegment;
-    }
+	public static final long DETERMINER = CONTRACTION << 1;
 
-    public long getCategories() {
-        return categories;
-    }
+	public static final long DONT_CARE = DETERMINER << 1;
 
-    public String[] getPronunciations() {
-        return pronunciations;
-    }
+	public static final long NOUN = DONT_CARE << 1;
 
-    public String getSpokenForm() {
-        return spokenForm;
-    }
+	public static final long OTHER = NOUN << 1;
 
-    public String getText() {
-        return text;
-    }
+	public static final long PREPOSITION = OTHER << 1;
+
+	public static final long PRONOUN = PREPOSITION << 1;
+
+	public static final long PROPER_ADJECTIVE = PRONOUN << 1;
+
+	public static final long PROPER_NOUN = PROPER_ADJECTIVE << 1;
+
+	public static final long VERB = PROPER_NOUN << 1;
+
+	public static final long UNKNOWN = 0;
+	
+	private String text;
+
+	private String[] pronunciations;
+
+	private String spokenForm;
+
+	private AudioSegment audioSegment;
+
+	private long categories;
+
+	public Word(String text, String[] pronunciations, String spokenForm,
+			AudioSegment audioSegment, long categories) {
+		if (text == null) {
+			throw new IllegalArgumentException(
+					"Written form text must be specified");
+		}
+		this.text = text;
+		this.pronunciations = pronunciations;
+		this.spokenForm = spokenForm;
+		this.audioSegment = audioSegment;
+		this.categories = categories;
+	}
+
+	public AudioSegment getAudioSegment() {
+		return audioSegment;
+	}
+
+	public long getCategories() {
+		return categories;
+	}
+
+	public String[] getPronunciations() {
+		return pronunciations;
+	}
+
+	public String getSpokenForm() {
+		return spokenForm;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public String toString() {
+		final StringBuffer str = new StringBuffer();
+
+		str.append(getClass());
+		str.append("[");
+
+		str.append(text);
+
+		if (pronunciations == null) {
+			str.append(pronunciations);
+		} else {
+			str.append("[");
+			int max = pronunciations.length;
+			for (int i=0; i<max; i++) {
+				str.append(pronunciations[i]);
+				if (i != max -1) {
+					str.append(",");
+				}
+			}
+			str.append("]");
+		}
+		
+		str.append(spokenForm);
+		str.append(audioSegment);
+		str.append(categories);
+		
+		str.append("]");
+
+		return str.toString();
+	}
 }
