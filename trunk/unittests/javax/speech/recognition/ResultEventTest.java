@@ -31,8 +31,9 @@ import javax.speech.test.recognition.TestResult;
 import junit.framework.TestCase;
 
 /**
- * @author DS01191
- *
+ * Test case for {@link javax.speech.recognition.ResultEvent}.
+ * 
+ * @author Dirk Schnelle
  */
 public class ResultEventTest extends TestCase {
     /** The result. */
