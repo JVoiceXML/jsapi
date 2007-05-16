@@ -27,7 +27,31 @@
 package javax.speech.recognition;
 
 public class RuleComponent {
-    public String toString() {
-        return super.toString();
+	// TODO Is this really a full fledged class or should it be defined
+	// abstract.
+
+    /**
+     * Checks if the given text is a valid grammar text.
+     * @param text the text to check.
+     */
+    protected void checkValidGrammarText(String text) {
+    	if (text == null) {
+    		throw new IllegalArgumentException(text 
+    				+ " is not a valid grammar text");
+    	}
+    	
+    	final char[] chars = text.toCharArray();
+    	for (int i=0; i<chars.length; i++) {
+    		final char ch = chars[i];
+    		if (!Character.isLetter(ch) && !Character.isWhitespace(ch)) {
+        		throw new IllegalArgumentException("'" + text 
+        				+ "' is not a valid grammar text");
+    			
+    		}
+    	}
+    }
+    
+	public String toString() {
+        return null;
     }
 }

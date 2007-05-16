@@ -30,7 +30,9 @@ public class RuleTag extends RuleComponent {
     private String tag;
     
     public RuleTag(String tag) {
-        this.tag = tag;
+    	checkValidGrammarText(tag);
+
+    	this.tag = tag;
     }
     
     public String getTag() {
@@ -38,6 +40,12 @@ public class RuleTag extends RuleComponent {
     }
 
     public String toString() {
-        return super.toString();
+    	final StringBuffer str = new StringBuffer();
+    	
+    	str.append("<tag>");
+    	str.append(tag);
+    	str.append("</tag>");
+    	
+        return str.toString();
     }
 }
