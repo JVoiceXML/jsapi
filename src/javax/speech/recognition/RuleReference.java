@@ -27,26 +27,42 @@
 package javax.speech.recognition;
 
 public class RuleReference extends RuleComponent {
-    private String grammarReference;
+	private static final String DEFAULT_MEDIA_TYPE = "application/srgs+xml";
+	
+	private String grammarReference;
 
     private String ruleName;
 
     private String mediaType;
 
     public RuleReference(String ruleName) {
+    	checkValidGrammarText(ruleName);
+
         this.ruleName = ruleName;
     }
 
     public RuleReference(String grammarReference, String ruleName) {
-        this.grammarReference = grammarReference;
+    	checkValidGrammarText(grammarReference);
+    	checkValidGrammarText(ruleName);
+
+    	this.grammarReference = grammarReference;
         this.ruleName = ruleName;
     }
 
     public RuleReference(String grammarReference, String ruleName,
             String mediaType) {
-        this.grammarReference = grammarReference;
+    	checkValidGrammarText(grammarReference);
+    	checkValidGrammarText(ruleName);
+
+    	// TODO According to the specification, we must check the media type
+    	// to be valid grammar text. This forbids strings like 
+    	// 'application/x-jsgf'.
+    	if (mediaType != null) {
+            this.mediaType = mediaType;
+    	}
+
+    	this.grammarReference = grammarReference;
         this.ruleName = ruleName;
-        this.mediaType = mediaType;
     }
 
     
@@ -55,6 +71,10 @@ public class RuleReference extends RuleComponent {
     }
 
     public String getMediaType() {
+    	if (mediaType == null) {
+    		return DEFAULT_MEDIA_TYPE;
+    	}
+    	
         return mediaType;
     }
 
@@ -63,8 +83,24 @@ public class RuleReference extends RuleComponent {
     }
 
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+    	StringBuffer str = new StringBuffer();
+    	str.append("<ruleref uri=\"");
+    	
+    	if (grammarReference != null) {
+    		str.append(grammarReference);
+    	}
+    	str.append("#");
+    	str.append(ruleName);
+    	str.append("\"");
+    	
+    	if (mediaType != null) {
+    		str.append(" type=\"");
+    		str.append(mediaType);
+    		str.append("\"");
+    	}
+    	str.append("/>");
+    	
+    	return str.toString();
     }
     
     
