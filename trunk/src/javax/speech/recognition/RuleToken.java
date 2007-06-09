@@ -53,4 +53,15 @@ public class RuleToken extends RuleComponent {
     public String toString() {
         return text;
     }
+
+	public boolean equals(Object obj) {
+		if (!(obj instanceof RuleToken)) {
+			return false;
+		}
+		
+		final RuleToken token = (RuleToken) obj;
+		final String otherText = token.getText();
+		
+		return text.equals(otherText);
+	}
 }

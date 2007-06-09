@@ -29,10 +29,10 @@ package javax.speech.recognition;
 public class RuleAlternatives extends RuleComponent {
     public static int MAX_WEIGHT = Integer.MAX_VALUE;
 
-    public static int MIN_WEIGHT = 0;
-
     public static int NORM_WEIGHT = MAX_WEIGHT / 2;
 
+    public static int MIN_WEIGHT = 0;
+    
     private RuleComponent[] ruleComponents;
 
     private int[] weights;
@@ -43,13 +43,36 @@ public class RuleAlternatives extends RuleComponent {
 
     public RuleAlternatives(RuleComponent[] ruleComponents, int[] weights) {
         this.ruleComponents = ruleComponents;
-        this.weights = weights;
+        if (weights == null) {
+    		this.weights = new int[ruleComponents.length];
+    		for (int i=0; i<ruleComponents.length; i++) {
+    			this.weights[i] = NORM_WEIGHT;
+    		}
+        } else {
+        	if (ruleComponents.length != weights.length) {
+        		throw new IllegalArgumentException(
+        				"Lengths of rule components and weights do not match!");
+        	}
+        	this.weights = weights;
+        }
     }
 
     public RuleAlternatives(String[] tokens) {
-
+    	if (tokens != null) {
+    		ruleComponents = new RuleComponent[tokens.length];
+    		for (int i=0; i<tokens.length; i++) {
+    			final String token = tokens[i];
+    			ruleComponents[i] = new RuleToken(token);
+    		}
+    	}
     }
 
+    /** 
+     * Initialize the weights to {@link #NORM_WEIGHT}.
+     */
+	private void initWeights() {
+	}
+    
     public RuleComponent[] getRuleComponents() {
         return ruleComponents;
     }
