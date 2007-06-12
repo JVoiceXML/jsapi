@@ -56,7 +56,11 @@ public class RuleSequence extends RuleComponent {
     	final StringBuffer str = new StringBuffer();
     	for (int i=0; i< ruleComponents.length; i++) {
     		final RuleComponent component = ruleComponents[i];
-    		str.append(component.toString());
+    		if (component == null) {
+    			str.append(RuleSpecial.NULL.toString());
+    		} else {
+    			str.append(component.toString());
+    		}
     	}
     	
     	return str.toString();
