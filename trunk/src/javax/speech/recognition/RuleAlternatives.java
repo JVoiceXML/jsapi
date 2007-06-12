@@ -67,12 +67,6 @@ public class RuleAlternatives extends RuleComponent {
     	}
     }
 
-    /** 
-     * Initialize the weights to {@link #NORM_WEIGHT}.
-     */
-	private void initWeights() {
-	}
-    
     public RuleComponent[] getRuleComponents() {
         return ruleComponents;
     }
@@ -82,6 +76,34 @@ public class RuleAlternatives extends RuleComponent {
     }
 
     public String toString() {
-        return super.toString();
+    	if ((ruleComponents == null) || (ruleComponents.length == 0)) {
+    		return RuleSpecial.VOID.toString();
+    	}
+    	
+    	final StringBuffer str = new StringBuffer();
+    	
+    	str.append("<one-of>");
+    	
+    	for (int i=0; i<ruleComponents.length; i++) {
+    		str.append("<item");
+    		if (weights != null) {
+    			str.append(" weight=\"");
+    			final int weight = weights[i];
+    			final float realWeight = weight / NORM_WEIGHT;
+    			str.append(realWeight);
+    			str.append("\"");
+    		}
+    		str.append('>');
+    		final RuleComponent component = ruleComponents[i];
+    		if (component == null) {
+    			str.append(RuleSpecial.NULL.toString());
+    		} else {
+    			str.append(component.toString());
+    		}
+    		str.append("</item>");
+    	}
+    	str.append("</one-of>");
+    	
+        return str.toString();
     }
 }
