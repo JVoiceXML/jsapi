@@ -20,12 +20,12 @@ public class TestSynthesizerEngineListFactory implements EngineListFactory {
 	 */
 	public EngineList createEngineList(EngineMode require)
 			throws SecurityException {
-		if (require instanceof SynthesizerMode) {
+		if ((require == null) || (require instanceof SynthesizerMode)) {
 			final EngineMode[] modes = new EngineMode[] { new TestSynthesizerFactory() };
-			
+
 			return new EngineList(modes);
 		}
-		
+
 		return null;
 	}
 

@@ -20,7 +20,7 @@ public class TestRecognizerEngineListFactory implements EngineListFactory {
 	 */
 	public EngineList createEngineList(EngineMode require)
 			throws SecurityException {
-		if (require instanceof RecognizerMode) {
+		if ((require == null) || (require instanceof RecognizerMode)) {
 			final EngineMode[] modes = new EngineMode[] { new TestRecognizerFactory() };
 			
 			return new EngineList(modes);
