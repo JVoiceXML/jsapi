@@ -45,6 +45,7 @@ public class RuleCount extends RuleComponent {
 					"Repeat minimum must be greater or equal to 0!");
 		}
 		this.ruleComponent = ruleComponent;
+		this.repeatMax = REPEAT_INDEFINITELY;
 		this.repeatMin = repeatMin;
 		this.repeatProbability = -1;
 	}
@@ -88,6 +89,10 @@ public class RuleCount extends RuleComponent {
 	}
 
 	public int getRepeatProbability() {
+		if (repeatProbability < 0) {
+			return REPEAT_INDEFINITELY;
+		}
+		
 		return repeatProbability;
 	}
 
@@ -109,7 +114,7 @@ public class RuleCount extends RuleComponent {
 		}
 		str.append("\"");
 
-		if (repeatProbability < 0) {
+		if (repeatProbability >= 0) {
 			str.append(" repeat-prop=\"");
 			float prop = repeatProbability / MAX_PROBABILITY;
 			str.append(prop);
