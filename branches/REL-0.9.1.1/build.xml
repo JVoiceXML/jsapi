@@ -1,0 +1,52 @@
+<project name="JSR 113" default="jar" basedir=".">
+	<description>
+This file builds the JSR 113.jar.
+    </description>
+
+	<!-- allow the user to override setting in an own propertiesfile. -->
+	<property file="jsr113.properties" />
+
+	<!-- directory structure -->
+	<property name="src" value="src" />
+	<property name="build" value="classes" />
+	<property name="dist" value="dist" />
+	<property name="apidoc" value="doc/api" />
+
+	<property name="dist.jsr113.jar" value="${dist}/jsr-113.jar" />
+
+	<property name="debug" value="on"/>
+	<property name="optimize" value="off"/>
+	
+	<target name="-init">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+	</target>
+
+	<target name="clean" description="Remove all compiled and distribution files">
+		<delete dir="${build}" />
+		<delete file="${dist.jsr113.jar}" />
+	</target>
+
+	<target name="compile" depends="-init" description="Compile the JAVA sources">
+		<echo message="compiling with debug=${debug}, optimize=${optimize}" />
+		<javac source="1.4"  destdir="${build}" optimize="${optimize}" debug="${debug}" deprecation="on" encoding="iso-8859-1">
+			<src path="${src}" />
+			<compilerarg value="-Xlint:unchecked" />
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" description="Pack all compiled files into jar files">
+		<jar jarfile="${dist.jsr113.jar}" compress="false">
+			<fileset dir="${build}">
+				<include name="**/*.class" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<section name="common">
+					<attribute name="Implementation-Vendor" value="JVoiceXML group" />
+					<attribute name="Implementation-Title" value="JVoiceXML main" />
+				</section>
+			</manifest>
+		</jar>
+	</target>
+</project>
