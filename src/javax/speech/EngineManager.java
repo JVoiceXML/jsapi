@@ -39,11 +39,13 @@ import javax.speech.spi.EngineFactory;
 import javax.speech.spi.EngineListFactory;
 
 public class EngineManager {
-	private static List engineListFactories = new java.util.ArrayList();
+	private static final List ENGINE_LIST_FACTORIES;
 
 	private static SpeechEventExecutor executor;
 
 	static {
+		ENGINE_LIST_FACTORIES = new java.util.ArrayList();
+
 		final InputStream input = EngineManager.class
 				.getResourceAsStream("/speech.properties");
 		final Properties props = new Properties();
@@ -56,7 +58,8 @@ public class EngineManager {
 		final Collection keys = props.keySet();
 		final Iterator iterator = keys.iterator();
 		while (iterator.hasNext()) {
-			String className = (String) iterator.next();
+			final String key = (String) iterator.next();
+			final String className = props.getProperty(key);
 			try {
 				registerEngineListFactory(className);
 			} catch (IllegalArgumentException e) {
@@ -72,15 +75,18 @@ public class EngineManager {
 	public static EngineList availableEngines(EngineMode require) {
 		final List modes = new java.util.ArrayList();
 
-		final Iterator iterator = engineListFactories.iterator();
+		final Iterator iterator = ENGINE_LIST_FACTORIES.iterator();
 		while (iterator.hasNext()) {
 			final EngineListFactory factory = (EngineListFactory) iterator
 					.next();
 			EngineList list = factory.createEngineList(require);
-			Enumeration currentModes = list.elements();
-			while (currentModes.hasMoreElements()) {
-				final EngineMode mode = (EngineMode) currentModes.nextElement();
-				modes.add(mode);
+			if (list != null) {
+				final Enumeration currentModes = list.elements();
+				while (currentModes.hasMoreElements()) {
+					final EngineMode mode = (EngineMode) currentModes
+							.nextElement();
+					modes.add(mode);
+				}
 			}
 		}
 
@@ -151,12 +157,6 @@ public class EngineManager {
 					+ "' cannot be loaded!");
 		}
 
-		if (!clazz.isAssignableFrom(EngineListFactory.class)) {
-			throw new IllegalArgumentException("'" + className
-					+ "' does not implement "
-					+ EngineListFactory.class.getCanonicalName());
-		}
-
 		final EngineListFactory engineListFactory;
 		try {
 			engineListFactory = (EngineListFactory) clazz.newInstance();
@@ -168,6 +168,22 @@ public class EngineManager {
 					+ "' cannot be created!");
 		}
 
-		engineListFactories.add(engineListFactory);
+		if (!(engineListFactory instanceof EngineListFactory)) {
+			throw new IllegalArgumentException("'" + className
+					+ "' does not implement "
+					+ EngineListFactory.class.getCanonicalName());
+		}
+
+		final Iterator iterator = ENGINE_LIST_FACTORIES.iterator();
+		while (iterator.hasNext()) {
+			final Object current = iterator.next();
+			final Class currentClass =current.getClass();
+			final String currentName = currentClass.getCanonicalName();
+			if (className.equals(currentName)) {
+				return;
+			}
+		}
+		
+		ENGINE_LIST_FACTORIES.add(engineListFactory);
 	}
 }
