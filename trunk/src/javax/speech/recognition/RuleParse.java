@@ -26,31 +26,89 @@
 
 package javax.speech.recognition;
 
+import java.util.Collection;
+
 public class RuleParse extends RuleComponent {
-    private RuleReference ruleReference;
+	private RuleReference ruleReference;
 
-    private RuleComponent parse;
+	private RuleComponent parse;
 
-    public RuleParse(RuleReference ruleReference, RuleComponent parse) {
-        this.ruleReference = ruleReference;
-        this.parse = parse;
-    }
+	public RuleParse(RuleReference ruleReference, RuleComponent parse) {
+		this.ruleReference = ruleReference;
+		this.parse = parse;
+	}
 
-    public String[] getTags() {
-        return null;
-    }
+	public String[] getTags() {
+		if (parse == null) {
+			return null;
+		}
 
-    public RuleComponent getParse() {
-        return parse;
-    }
+		final Collection parseTags = new java.util.ArrayList();
+		addTags(parseTags, parse);
 
-    public RuleReference getRuleReference() {
-        return ruleReference;
-    }
+		final String[] tags = new String[parseTags.size()];
+		parseTags.toArray(tags);
 
-    public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
-    }
+		return tags;
+	}
+
+	private void addTags(Collection tags, RuleComponent component) {
+		if (component instanceof RuleTag) {
+			final RuleTag tag = (RuleTag) component;
+			final String tagName = tag.getTag();
+			tags.add(tagName);
+		} else if (component instanceof RuleAlternatives) {
+			final RuleAlternatives alternatives = (RuleAlternatives) component;
+			RuleComponent[] components = alternatives.getRuleComponents();
+			for (int i = 0; i < components.length; i++) {
+				final RuleComponent actComponent = components[i];
+				addTags(tags, actComponent);
+			}
+		} else if (component instanceof RuleCount) {
+			final RuleCount count = (RuleCount) component;
+			final RuleComponent actComponent = count.getRuleComponent();
+			addTags(tags, actComponent);
+		} else if (component instanceof RuleParse) {
+			final RuleParse parse = (RuleParse) component;
+			final RuleComponent actComponent = parse.getParse();
+			addTags(tags, actComponent);
+		} else if (component instanceof RuleSequence) {
+			final RuleSequence sequence = (RuleSequence) component;
+			RuleComponent[] components = sequence.getRuleComponents();
+			for (int i = 0; i < components.length; i++) {
+				final RuleComponent actComponent = components[i];
+				addTags(tags, actComponent);
+			}
+		}
+	}
+
+	public RuleComponent getParse() {
+		return parse;
+	}
+
+	public RuleReference getRuleReference() {
+		return ruleReference;
+	}
+
+	public String toString() {
+		if (parse == null) {
+			return "";
+		}
+
+		StringBuffer str = new StringBuffer();
+
+		if (ruleReference != null) {
+			ruleReference.appendStartTag(str);
+			str.append('>');
+		}
+
+		str.append(parse.toString());
+
+		if (ruleReference != null) {
+			str.append("</ruleref>");
+		}
+		
+		return str.toString();
+	}
 
 }

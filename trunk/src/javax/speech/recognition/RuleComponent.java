@@ -30,28 +30,37 @@ public class RuleComponent {
 	// TODO Is this really a full fledged class or should it be defined
 	// abstract.
 
-    /**
-     * Checks if the given text is a valid grammar text.
-     * @param text the text to check.
-     */
-    protected void checkValidGrammarText(String text) {
-    	if (text == null) {
-    		throw new IllegalArgumentException(text 
-    				+ " is not a valid grammar text");
-    	}
-    	
-    	final char[] chars = text.toCharArray();
-    	for (int i=0; i<chars.length; i++) {
-    		final char ch = chars[i];
-    		if (!Character.isLetter(ch) && !Character.isWhitespace(ch)) {
-        		throw new IllegalArgumentException("'" + text 
-        				+ "' is not a valid grammar text");
-    			
-    		}
-    	}
-    }
-    
+	/**
+	 * Checks if the given text is a valid grammar text.
+	 * 
+	 * @param text
+	 *            the text to check.
+	 */
+	protected static void checkValidGrammarText(String text) {
+		if ((text == null) || (text.length() == 0)) {
+			throw new IllegalArgumentException("'" + text + "'"
+					+ " is not a valid grammar text");
+		}
+
+		final char[] chars = text.toCharArray();
+		// The first symbol must be a character.
+		final char first = chars[0];
+		if (!Character.isLetter(first) && (first != '_')) {
+			throw new IllegalArgumentException("'" + text
+					+ "' is not a valid grammar text");
+		}
+		// Following symbols must be a character or a digit.
+		for (int i = 1; i < chars.length; i++) {
+			final char ch = chars[i];
+			if (!Character.isLetter(ch) && !Character.isDigit(ch)
+					&& (ch != '_')) {
+				throw new IllegalArgumentException("'" + text
+						+ "' is not a valid grammar text");
+			}
+		}
+	}
+
 	public String toString() {
-        return null;
-    }
+		return null;
+	}
 }

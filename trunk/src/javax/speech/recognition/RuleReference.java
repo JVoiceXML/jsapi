@@ -82,8 +82,7 @@ public class RuleReference extends RuleComponent {
         return ruleName;
     }
 
-    public String toString() {
-    	StringBuffer str = new StringBuffer();
+    void appendStartTag(StringBuffer str) {
     	str.append("<ruleref uri=\"");
     	
     	if (grammarReference != null) {
@@ -98,6 +97,11 @@ public class RuleReference extends RuleComponent {
     		str.append(mediaType);
     		str.append("\"");
     	}
+    }
+    
+    public String toString() {
+    	StringBuffer str = new StringBuffer();
+    	appendStartTag(str);
     	str.append("/>");
     	
     	return str.toString();

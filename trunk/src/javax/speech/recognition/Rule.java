@@ -27,41 +27,61 @@
 package javax.speech.recognition;
 
 public class Rule {
-    public static int PRIVATE_SCOPE = 0;
+	public static int PRIVATE_SCOPE = 0;
 
-    public static int PUBLIC_SCOPE = 1;
+	public static int PUBLIC_SCOPE = 1;
 
-    private String ruleName;
+	private String ruleName;
 
-    private RuleComponent ruleComponent;
+	private RuleComponent ruleComponent;
 
-    private int scope;
-    
-    public Rule(String ruleName, RuleComponent ruleComponent) {
-        this.ruleName = ruleName;
-        this.ruleComponent = ruleComponent;
-    }
-    
-    public Rule(String ruleName, RuleComponent ruleComponent, int scope) {
-        this.ruleName = ruleName;
-        this.ruleComponent = ruleComponent;
-        this.scope = scope;
-    }
+	private int scope;
 
-    public RuleComponent getRuleComponent() {
-        return ruleComponent;
-    }
+	public Rule(String ruleName, RuleComponent ruleComponent) {
+		this(ruleName, ruleComponent, PRIVATE_SCOPE);
+	}
 
-    public String getRuleName() {
-        return ruleName;
-    }
+	public Rule(String ruleName, RuleComponent ruleComponent, int scope) {
+		RuleComponent.checkValidGrammarText(ruleName);
 
-    public int getScope() {
-        return scope;
-    }
+		if ((scope != PRIVATE_SCOPE) && (scope != PUBLIC_SCOPE)) {
+			throw new IllegalArgumentException(
+					"Scope must be either PRIVATE_SCOPE or PUBLIC_SCOPE!");
+		}
+		
+		this.ruleName = ruleName;
+		this.ruleComponent = ruleComponent;
+		this.scope = scope;
+	}
 
-    public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
-    }
+	public RuleComponent getRuleComponent() {
+		return ruleComponent;
+	}
+
+	public String getRuleName() {
+		return ruleName;
+	}
+
+	public int getScope() {
+		return scope;
+	}
+
+	public String toString() {
+        StringBuffer str = new StringBuffer();
+        
+        str.append(getClass().getName());
+        str.append("[");
+        str.append(ruleName);
+        str.append(",");
+        str.append(ruleComponent);
+        str.append(",");
+        if (scope == PRIVATE_SCOPE) {
+        	str.append("PRIVATE_SCOPE");
+        } else {
+        	str.append("PUBLIC_SCOPE");
+        }
+        str.append("]");
+        
+        return str.toString();
+	}
 }

@@ -26,8 +26,6 @@
 
 package javax.speech;
 
-import java.util.Iterator;
-
 public class Word {
 	public static final long ABBREVIATION = 1;
 
