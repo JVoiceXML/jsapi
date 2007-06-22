@@ -48,7 +48,7 @@ public class AudioSegment {
 		this.markupText = markupText;
 	}
 
-	public String getLocator() {
+	public String getMediaLocator() {
 		return locator;
 	}
 

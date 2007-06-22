@@ -26,23 +26,36 @@
 
 package javax.speech;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public interface AudioManager {
+	int getAudioMask();
+	
+	void setAudioMask(int mask);
+	
     void addAudioListener(AudioListener listener);
     
     void removeAudioListener(AudioListener listener);
     
-    void audioStart();
+    void audioStart() throws AudioException;
     
-    void audioStop();
+    void audioStop() throws AudioException;;
     
-    void setMediaLocator(String locator);
+    void setMediaLocator(String locator) throws AudioException, 
+    	EngineStateException;
+
+    void setMediaLocator(String locator, InputStream stream) 
+    	throws AudioException, EngineStateException;
+
+    void setMediaLocator(String locator, OutputStream stream) 
+    	throws AudioException, EngineStateException;
     
     String getMediaLocator();
     
     String[] getSupportedMediaLocators(String mediaLocator);
     
-    boolean isSameChannel(AudioManager audioManager);
-    
     boolean isSupportedMediaLocator(String mediaLocator);
-    
+
+    boolean isSameChannel(AudioManager audioManager);
 }

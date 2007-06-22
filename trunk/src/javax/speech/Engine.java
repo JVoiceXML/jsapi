@@ -29,51 +29,55 @@ package javax.speech;
 public interface Engine {
     long ALLOCATED = 1;
 
-    long ALLOCATING_RESOURCES = 2;
+    long ALLOCATING_RESOURCES = ALLOCATED << 1;
 
-    int ASYNCHRONOUS_MODE = 3;
+    long DEALLOCATED = ALLOCATING_RESOURCES << 1;
 
-    long DEALLOCATED = 4;
+    long DEALLOCATING_RESOURCES = DEALLOCATED << 1;
 
-    long DEALLOCATING_RESOURCES = 5;
+    long DEFOCUSED = DEALLOCATING_RESOURCES << 1;
 
-    long DEFOCUSED = 6;
+    long ERROR_OCCURRED = DEFOCUSED << 1;
 
-    long ERROR_OCCURRED = 7;
+    long FOCUSED = ERROR_OCCURRED << 1;
 
-    long FOCUSED = 8;
+    long PAUSED = FOCUSED << 1;
 
-    int IMMEDIATE_MODE = 9;
+    long RESUMED = PAUSED << 1;
 
-    long PAUSED = 10;
+    int ASYNCHRONOUS_MODE = 1;
 
-    long RESUMED = 11;
+    int IMMEDIATE_MODE = 2;
 
-    void allocate();
+    void allocate() throws AudioException, EngineException, 
+    	EngineStateException;
 
-    void allocate(int mode);
+    void allocate(int mode) throws AudioException, EngineException, 
+		EngineStateException;
 
-    void deallocate();
+    void deallocate() throws AudioException, EngineException, 
+		EngineStateException;
 
-    void deallocate(int mode);
+    void deallocate(int mode) throws AudioException, EngineException, 
+		EngineStateException;
 
+	void pause() throws EngineStateException;
+
+	boolean resume() throws EngineStateException;
+
+    boolean testEngineState(long state);
+
+    void waitEngineState(long state);
+	
     AudioManager getAudioManager();
-
-    int getEngineMask();
 
     EngineMode getEngineMode();
 
     long getEngineState();
 
-    VocabularyManager getVocabularyManager();
-
-    void pause();
-
-    boolean resume();
+    VocabularyManager getVocabularyManager() throws EngineStateException;
 
     void setEngineMask(int mask);
 
-    boolean testEngineState(long state);
-
-    void waitEngineState(long state);
+    int getEngineMask();
 }
