@@ -38,7 +38,7 @@ import junit.framework.TestCase;
 public class AudioSegmentTest extends TestCase {
    
     /**
-     * Test method for {@link javax.speech.AudioSegment#getLocator()}.
+     * Test method for {@link javax.speech.AudioSegment#getMediaLocator()}.
      */
     public void testGetLocator() {
         final String locator1 = "file:///user/smith/hello.wav";
@@ -46,7 +46,7 @@ public class AudioSegmentTest extends TestCase {
             "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
         final AudioSegment segment1 = 
             new AudioSegment(locator1, markup1);
-        assertEquals(locator1, segment1.getLocator());
+        assertEquals(locator1, segment1.getMediaLocator());
         
         byte[] bytes = new byte[256];
         final ByteArrayInputStream stream2 = new ByteArrayInputStream(bytes);
@@ -55,7 +55,7 @@ public class AudioSegmentTest extends TestCase {
             "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
         final AudioSegment segment2 = 
             new AudioSegment(stream2, locator2, markup2);
-        assertEquals(locator2, segment2.getLocator());
+        assertEquals(locator2, segment2.getMediaLocator());
     }
 
     /**
