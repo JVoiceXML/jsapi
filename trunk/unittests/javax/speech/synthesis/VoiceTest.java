@@ -144,16 +144,16 @@ public class VoiceTest extends TestCase {
         Voice voice3 = new Voice(null, null, Voice.GENDER_DONT_CARE,
                 Voice.AGE_DONT_CARE, Voice.VARIANT_DONT_CARE);
         assertTrue(voice1.equals(voice3));
-        
+
         final Voice voice4 = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_DONT_CARE, Voice.VARIANT_DEFAULT);
         assertFalse(voice1.equals(voice4));
-        
+
         final Voice voice5 = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
                 41, Voice.VARIANT_DEFAULT);
         assertFalse(voice1.equals(voice5));
         assertFalse(voice4.equals(voice5));
-        
+
         final Voice voice6 = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_DONT_CARE, Voice.VARIANT_DEFAULT);
         assertTrue(voice4.equals(voice6));
@@ -177,28 +177,28 @@ public class VoiceTest extends TestCase {
     public void testMatch() {
         Voice voice1 = new Voice();
         assertTrue(voice1.match((Voice) null));
-        
+
         Voice voice2 = new Voice();
         assertTrue(voice1.match(voice2));
 
         Voice voice3 = new Voice(null, null, Voice.GENDER_DONT_CARE,
                 Voice.AGE_DONT_CARE, Voice.VARIANT_DONT_CARE);
         assertTrue(voice1.match(voice3));
-        
+
         final Voice voice4 = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_DONT_CARE, Voice.VARIANT_DEFAULT);
         assertTrue(voice4.match(voice1));
         assertFalse(voice1.match(voice4));
-        
+
         final Voice voice5 = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
                 41, Voice.VARIANT_DEFAULT);
         assertTrue(voice5.match(voice1));
         assertFalse(voice4.match(voice5));
-        
+
         final Voice voice6 = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_DONT_CARE, Voice.VARIANT_DEFAULT);
         assertTrue(voice4.match(voice6));
-    
+
         final Voice voice7 = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final Voice voice8 = new Voice(Locale.US, "john", Voice.GENDER_MALE,

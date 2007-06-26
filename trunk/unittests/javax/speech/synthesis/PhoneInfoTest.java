@@ -42,7 +42,7 @@ public class PhoneInfoTest extends TestCase {
         final PhoneInfo info = new PhoneInfo("phoneme", 45);
         assertEquals(45, info.getDuration());
 
-        final PhoneInfo info2 = new PhoneInfo("phoneme2", 
+        final PhoneInfo info2 = new PhoneInfo("phoneme2",
                 PhoneInfo.UNKNOWN_DURATION);
         assertEquals(PhoneInfo.UNKNOWN_DURATION, info2.getDuration());
     }
@@ -54,7 +54,7 @@ public class PhoneInfoTest extends TestCase {
         final PhoneInfo info = new PhoneInfo("phoneme", 45);
         assertEquals("phoneme", info.getPhoneme());
 
-        final PhoneInfo info2 = new PhoneInfo("phoneme2", 
+        final PhoneInfo info2 = new PhoneInfo("phoneme2",
                 PhoneInfo.UNKNOWN_DURATION);
         assertEquals("phoneme2", info2.getPhoneme());
     }

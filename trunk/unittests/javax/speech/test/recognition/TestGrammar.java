@@ -53,35 +53,35 @@ public class TestGrammar implements Grammar {
      * {@inheritDoc}
      */
     public int getActivationMode() {
-	return 0;
+        return 0;
     }
 
     /**
      * {@inheritDoc}
      */
     public Recognizer getRecognizer() {
-	return null;
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     public String getReference() {
-	return null;
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean isActive() {
-	return false;
+        return false;
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean isEnabled() {
-	return false;
+        return false;
     }
 
     /**
