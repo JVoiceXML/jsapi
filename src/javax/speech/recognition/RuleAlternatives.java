@@ -32,7 +32,7 @@ public class RuleAlternatives extends RuleComponent {
     public static int NORM_WEIGHT = MAX_WEIGHT / 2;
 
     public static int MIN_WEIGHT = 0;
-
+    
     private RuleComponent[] ruleComponents;
 
     private int[] weights;
@@ -44,27 +44,27 @@ public class RuleAlternatives extends RuleComponent {
     public RuleAlternatives(RuleComponent[] ruleComponents, int[] weights) {
         this.ruleComponents = ruleComponents;
         if (weights == null) {
-            this.weights = new int[ruleComponents.length];
-            for (int i = 0; i < ruleComponents.length; i++) {
-                this.weights[i] = NORM_WEIGHT;
-            }
+    		this.weights = new int[ruleComponents.length];
+    		for (int i=0; i<ruleComponents.length; i++) {
+    			this.weights[i] = NORM_WEIGHT;
+    		}
         } else {
-            if (ruleComponents.length != weights.length) {
-                throw new IllegalArgumentException(
-                        "Lengths of rule components and weights do not match!");
-            }
-            this.weights = weights;
+        	if (ruleComponents.length != weights.length) {
+        		throw new IllegalArgumentException(
+        				"Lengths of rule components and weights do not match!");
+        	}
+        	this.weights = weights;
         }
     }
 
     public RuleAlternatives(String[] tokens) {
-        if (tokens != null) {
-            ruleComponents = new RuleComponent[tokens.length];
-            for (int i = 0; i < tokens.length; i++) {
-                final String token = tokens[i];
-                ruleComponents[i] = new RuleToken(token);
-            }
-        }
+    	if (tokens != null) {
+    		ruleComponents = new RuleComponent[tokens.length];
+    		for (int i=0; i<tokens.length; i++) {
+    			final String token = tokens[i];
+    			ruleComponents[i] = new RuleToken(token);
+    		}
+    	}
     }
 
     public RuleComponent[] getRuleComponents() {
@@ -76,34 +76,34 @@ public class RuleAlternatives extends RuleComponent {
     }
 
     public String toString() {
-        if ((ruleComponents == null) || (ruleComponents.length == 0)) {
-            return RuleSpecial.VOID.toString();
-        }
-
-        final StringBuffer str = new StringBuffer();
-
-        str.append("<one-of>");
-
-        for (int i = 0; i < ruleComponents.length; i++) {
-            str.append("<item");
-            if (weights != null) {
-                str.append(" weight=\"");
-                final int weight = weights[i];
-                final float realWeight = weight / NORM_WEIGHT;
-                str.append(realWeight);
-                str.append("\"");
-            }
-            str.append('>');
-            final RuleComponent component = ruleComponents[i];
-            if (component == null) {
-                str.append(RuleSpecial.NULL.toString());
-            } else {
-                str.append(component.toString());
-            }
-            str.append("</item>");
-        }
-        str.append("</one-of>");
-
+    	if ((ruleComponents == null) || (ruleComponents.length == 0)) {
+    		return RuleSpecial.VOID.toString();
+    	}
+    	
+    	final StringBuffer str = new StringBuffer();
+    	
+    	str.append("<one-of>");
+    	
+    	for (int i=0; i<ruleComponents.length; i++) {
+    		str.append("<item");
+    		if (weights != null) {
+    			str.append(" weight=\"");
+    			final int weight = weights[i];
+    			final float realWeight = weight / NORM_WEIGHT;
+    			str.append(realWeight);
+    			str.append("\"");
+    		}
+    		str.append('>');
+    		final RuleComponent component = ruleComponents[i];
+    		if (component == null) {
+    			str.append(RuleSpecial.NULL.toString());
+    		} else {
+    			str.append(component.toString());
+    		}
+    		str.append("</item>");
+    	}
+    	str.append("</one-of>");
+    	
         return str.toString();
     }
 }

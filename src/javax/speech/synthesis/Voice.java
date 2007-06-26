@@ -34,26 +34,26 @@ public class Voice {
     public static int AGE_TEENAGER = 14;
 
     public static int AGE_YOUNGER_ADULT = 20;
-
+    
     public static int AGE_MIDDLE_ADULT = 40;
 
     public static int AGE_OLDER_ADULT = 60;
 
     public static int AGE_DONT_CARE = -1;
-
+    
     public static int GENDER_FEMALE = 1;
 
     public static int GENDER_MALE = GENDER_FEMALE << 1;
 
     public static int GENDER_NEUTRAL = GENDER_MALE << 1;
 
-    public static int GENDER_DONT_CARE = GENDER_FEMALE | GENDER_MALE
-            | GENDER_NEUTRAL;
-
+    public static int GENDER_DONT_CARE = GENDER_FEMALE | GENDER_MALE 
+        | GENDER_NEUTRAL;
+       
     public static int VARIANT_DEFAULT = 0;
 
     public static int VARIANT_DONT_CARE = -1;
-
+    
     private Locale locale;
 
     private String name;
@@ -102,7 +102,7 @@ public class Voice {
         if (!(obj instanceof Voice)) {
             return false;
         }
-
+        
         final Voice voice = (Voice) obj;
         if (locale == null) {
             if (voice.getLocale() != null) {
@@ -123,19 +123,19 @@ public class Voice {
                 return false;
             }
         }
-
+        
         if (gender != voice.getGender()) {
             return false;
         }
-
+        
         if (age != voice.getAge()) {
             return false;
         }
-
+        
         if (variant != voice.getVariant()) {
             return false;
         }
-
+        
         return true;
     }
 
@@ -145,7 +145,7 @@ public class Voice {
 
     public String toString() {
         StringBuffer str = new StringBuffer();
-
+        
         str.append(getClass().getName());
         str.append("[");
         str.append(locale);
@@ -158,15 +158,15 @@ public class Voice {
         str.append(",");
         str.append(variant);
         str.append("]");
-
+        
         return str.toString();
     }
 
     public boolean match(Voice require) {
-        if (require == null) {
-            return true;
-        }
-
+    	if(require == null) {
+    		return true;
+    	}
+    	
         final boolean namesMatch;
         final String requiredName = require.getName();
         if ((requiredName == null) || (requiredName.length() == 0)) {
@@ -174,10 +174,10 @@ public class Voice {
         } else {
             namesMatch = requiredName.equals(name);
         }
-
+        
         final int requiredGender = require.getGender();
-        final boolean genderMatch = ((gender & requiredGender) > 0);
-
+        final boolean genderMatch = ((gender & requiredGender) > 0); 
+        
         final boolean localeMatch;
         final Locale requiredLocale = require.getLocale();
         if (requiredLocale == null) {
@@ -202,36 +202,35 @@ public class Voice {
         } else {
             variantMatch = (variant == requiredVariant);
         }
-
-        return namesMatch && genderMatch && localeMatch && ageMatch
-                && variantMatch;
+        
+        return namesMatch && genderMatch && localeMatch && ageMatch 
+            && variantMatch;
     }
-
+    
     /**
      * Determines the age closest to the given age.
-     * 
-     * @param age
-     *            the given age.
+     * @param age the given age.
      * @return Age defined as a constant closest to the given age.
      */
     private int getClosestAge(int age) {
-        if (age <= AGE_CHILD + (AGE_TEENAGER - AGE_CHILD) / 2) {
+        if (age <= AGE_CHILD + (AGE_TEENAGER - AGE_CHILD ) / 2) {
             return AGE_CHILD;
         }
-
+        
         if (age <= AGE_TEENAGER + (AGE_YOUNGER_ADULT - AGE_TEENAGER) / 2) {
             return AGE_TEENAGER;
         }
 
-        if (age <= AGE_YOUNGER_ADULT + (AGE_MIDDLE_ADULT - AGE_YOUNGER_ADULT)
-                / 2) {
+        if (age <= AGE_YOUNGER_ADULT 
+                + (AGE_MIDDLE_ADULT - AGE_YOUNGER_ADULT) / 2) {
             return AGE_YOUNGER_ADULT;
         }
 
-        if (age <= AGE_MIDDLE_ADULT + (AGE_OLDER_ADULT - AGE_MIDDLE_ADULT) / 2) {
+        if (age <= AGE_MIDDLE_ADULT 
+                + (AGE_OLDER_ADULT - AGE_MIDDLE_ADULT) / 2) {
             return AGE_MIDDLE_ADULT;
         }
-
+        
         return AGE_OLDER_ADULT;
     }
 }

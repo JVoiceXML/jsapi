@@ -75,7 +75,7 @@ public class RecognizerEvent extends EngineEvent {
         if (id == CHANGES_REJECTED) {
             return grammarException;
         }
-
+        
         return null;
     }
 

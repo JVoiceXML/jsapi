@@ -36,7 +36,7 @@ public class ResultEvent extends SpeechEvent {
     public static int RESULT_CREATED = AUDIO_RELEASED << 1;;
 
     public static int RESULT_UPDATED = RESULT_CREATED << 1;
-
+    
     public static int RESULT_ACCEPTED = RESULT_UPDATED << 1;
 
     public static int RESULT_REJECTED = RESULT_ACCEPTED << 1;
@@ -46,7 +46,7 @@ public class ResultEvent extends SpeechEvent {
     public static int TRAINING_INFO_RELEASED = GRAMMAR_FINALIZED << 1;
 
     public static int DEFAULT_MASK = RESULT_CREATED | RESULT_UPDATED;
-
+    
     private boolean tokensFinalized;
 
     private boolean unfinalizedTokensChanged;
@@ -65,21 +65,21 @@ public class ResultEvent extends SpeechEvent {
 
     public boolean isFinalizedChanged() {
         final int id = getId();
-        if ((id == RESULT_CREATED) || (id == RESULT_UPDATED)
+        if ((id == RESULT_CREATED) || (id == RESULT_UPDATED) 
                 || (id == RESULT_ACCEPTED) || (id == RESULT_REJECTED)) {
             return tokensFinalized;
         }
-
+        
         return false;
     }
 
     public boolean isUnfinalizedChanged() {
         final int id = getId();
-        if ((id == RESULT_CREATED) || (id == RESULT_UPDATED)
+        if ((id == RESULT_CREATED) || (id == RESULT_UPDATED) 
                 || (id == RESULT_ACCEPTED) || (id == RESULT_REJECTED)) {
             return tokensFinalized;
         }
-
+        
         return false;
     }
 
@@ -88,13 +88,13 @@ public class ResultEvent extends SpeechEvent {
      */
     protected Collection getParameters() {
         final Collection parameters = super.getParameters();
-
+        
         final Boolean tokensFinalizedObject = new Boolean(tokensFinalized);
         parameters.add(tokensFinalizedObject);
-        final Boolean unfinalizedTokensChangedObject = new Boolean(
-                unfinalizedTokensChanged);
+        final Boolean unfinalizedTokensChangedObject = 
+            new Boolean(unfinalizedTokensChanged);
         parameters.add(unfinalizedTokensChangedObject);
-
+        
         return parameters;
     }
 }

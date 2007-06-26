@@ -53,14 +53,16 @@ public class RecognizerModeTest extends TestCase {
         final String modeName1 = "mode1";
         final Boolean running1 = Boolean.TRUE;
         final Boolean supportsLetterToSound1 = Boolean.TRUE;
-        final Boolean markupSupport1 = Boolean.TRUE;
+        final Integer markupSupport1 = EngineMode.FULL;
         final Integer vocabSupport1 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales1 = new Locale[] { Locale.US, Locale.GERMAN };
-        final SpeakerProfile[] profiles1 = new SpeakerProfile[] { new SpeakerProfile() };
+        final SpeakerProfile[] profiles1 = new SpeakerProfile[] {
+                new SpeakerProfile()
+        };
         final RecognizerMode mode3 = new RecognizerMode(engineName1, modeName1,
-                running1, supportsLetterToSound1, markupSupport1,
-                vocabSupport1, locales1, profiles1);
-        assertEquals(Boolean.TRUE, mode3.getMarkupSupport());
+                running1, supportsLetterToSound1, markupSupport1, vocabSupport1,
+                locales1, profiles1);
+        assertEquals(EngineMode.FULL, mode3.getMarkupSupport());
     }
 
     /**
@@ -85,13 +87,15 @@ public class RecognizerModeTest extends TestCase {
         final String modeName1 = "mode1";
         final Boolean running1 = Boolean.TRUE;
         final Boolean supportsLetterToSound1 = Boolean.TRUE;
-        final Boolean markupSupport1 = Boolean.TRUE;
+        final Integer markupSupport1 = EngineMode.FULL;
         final Integer vocabSupport1 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales1 = new Locale[] { Locale.US, Locale.GERMAN };
-        final SpeakerProfile[] profiles1 = new SpeakerProfile[] { new SpeakerProfile() };
+        final SpeakerProfile[] profiles1 = new SpeakerProfile[] {
+                new SpeakerProfile()
+        };
         final RecognizerMode mode6 = new RecognizerMode(engineName1, modeName1,
-                running1, supportsLetterToSound1, markupSupport1,
-                vocabSupport1, locales1, profiles1);
+                running1, supportsLetterToSound1, markupSupport1, vocabSupport1,
+                locales1, profiles1);
         assertFalse(mode3.match(mode6));
         assertTrue(mode6.match(mode1));
         assertTrue(mode6.match(mode3));
@@ -100,13 +104,15 @@ public class RecognizerModeTest extends TestCase {
         final String modeName2 = "mode1";
         final Boolean running2 = Boolean.TRUE;
         final Boolean supportsLetterToSound2 = Boolean.TRUE;
-        final Boolean markupSupport2 = Boolean.TRUE;
+        final Integer markupSupport2 = EngineMode.FULL;
         final Integer vocabSupport2 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales2 = new Locale[] { Locale.US, Locale.GERMAN };
-        final SpeakerProfile[] profiles2 = new SpeakerProfile[] { new SpeakerProfile() };
+        final SpeakerProfile[] profiles2 = new SpeakerProfile[] {
+                new SpeakerProfile()
+        };
         final RecognizerMode mode7 = new RecognizerMode(engineName2, modeName2,
-                running2, supportsLetterToSound2, markupSupport2,
-                vocabSupport2, locales2, profiles2);
+                running2, supportsLetterToSound2, markupSupport2, vocabSupport2,
+                locales2, profiles2);
         assertTrue(mode6.match(mode7));
         assertTrue(mode7.match(mode6));
 
@@ -114,14 +120,15 @@ public class RecognizerModeTest extends TestCase {
         final String modeName3 = "mode1";
         final Boolean running3 = Boolean.TRUE;
         final Boolean supportsLetterToSound3 = Boolean.TRUE;
-        final Boolean markupSupport3 = Boolean.TRUE;
+        final Integer markupSupport3 = EngineMode.FULL;
         final Integer vocabSupport3 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales3 = new Locale[] { Locale.US };
         final SpeakerProfile[] profiles3 = new SpeakerProfile[] {
-                new SpeakerProfile(), new SpeakerProfile() };
+                new SpeakerProfile(), new SpeakerProfile()
+        };
         final RecognizerMode mode8 = new RecognizerMode(engineName3, modeName3,
-                running3, supportsLetterToSound3, markupSupport3,
-                vocabSupport3, locales3, profiles3);
+                running3, supportsLetterToSound3, markupSupport3, vocabSupport3,
+                locales3, profiles3);
         assertTrue(mode6.match(mode8));
         assertTrue(mode8.match(mode6));
     }
@@ -134,10 +141,10 @@ public class RecognizerModeTest extends TestCase {
         final RecognizerMode mode1 = new RecognizerMode();
         assertFalse(mode1.equals("test"));
         assertTrue(mode1.equals(mode1));
-
+        
         final EngineMode engineMode = new EngineMode();
         assertTrue(mode1.match(engineMode));
-
+        
         final RecognizerMode mode2 = new RecognizerMode();
         assertTrue(mode1.equals(mode2));
 
@@ -154,26 +161,30 @@ public class RecognizerModeTest extends TestCase {
         final String modeName1 = "mode1";
         final Boolean running1 = Boolean.TRUE;
         final Boolean supportsLetterToSound1 = Boolean.TRUE;
-        final Boolean markupSupport1 = Boolean.TRUE;
+        final Integer markupSupport1 = EngineMode.FULL;
         final Integer vocabSupport1 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales1 = new Locale[] { Locale.US, Locale.GERMAN };
-        final SpeakerProfile[] profiles1 = new SpeakerProfile[] { new SpeakerProfile() };
+        final SpeakerProfile[] profiles1 = new SpeakerProfile[] {
+                new SpeakerProfile()
+        };
         final RecognizerMode mode6 = new RecognizerMode(engineName1, modeName1,
-                running1, supportsLetterToSound1, markupSupport1,
-                vocabSupport1, locales1, profiles1);
+                running1, supportsLetterToSound1, markupSupport1, vocabSupport1,
+                locales1, profiles1);
         assertFalse(mode3.equals(mode6));
 
         final String engineName2 = "name1";
         final String modeName2 = "mode1";
         final Boolean running2 = Boolean.TRUE;
         final Boolean supportsLetterToSound2 = Boolean.TRUE;
-        final Boolean markupSupport2 = Boolean.TRUE;
+        final Integer markupSupport2 = EngineMode.FULL;
         final Integer vocabSupport2 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales2 = new Locale[] { Locale.US, Locale.GERMAN };
-        final SpeakerProfile[] profiles2 = new SpeakerProfile[] { new SpeakerProfile() };
+        final SpeakerProfile[] profiles2 = new SpeakerProfile[] {
+                new SpeakerProfile()
+        };
         final RecognizerMode mode7 = new RecognizerMode(engineName2, modeName2,
-                running2, supportsLetterToSound2, markupSupport2,
-                vocabSupport2, locales2, profiles2);
+                running2, supportsLetterToSound2, markupSupport2, vocabSupport2,
+                locales2, profiles2);
         assertTrue(mode6.equals(mode7));
         assertTrue(mode7.equals(mode6));
 
@@ -181,14 +192,15 @@ public class RecognizerModeTest extends TestCase {
         final String modeName3 = "mode1";
         final Boolean running3 = Boolean.TRUE;
         final Boolean supportsLetterToSound3 = Boolean.TRUE;
-        final Boolean markupSupport3 = Boolean.TRUE;
+        final Integer markupSupport3 = EngineMode.FULL;
         final Integer vocabSupport3 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales3 = new Locale[] { Locale.US };
         final SpeakerProfile[] profiles3 = new SpeakerProfile[] {
-                new SpeakerProfile(), new SpeakerProfile() };
+                new SpeakerProfile(), new SpeakerProfile()
+        };
         final RecognizerMode mode8 = new RecognizerMode(engineName3, modeName3,
-                running3, supportsLetterToSound3, markupSupport3,
-                vocabSupport3, locales3, profiles3);
+                running3, supportsLetterToSound3, markupSupport3, vocabSupport3,
+                locales3, profiles3);
         assertFalse(mode6.equals(mode8));
         assertFalse(mode8.equals(mode6));
     }
@@ -205,18 +217,20 @@ public class RecognizerModeTest extends TestCase {
         final Locale[] loc2 = mode2.getLocales();
         assertEquals(1, loc2.length);
         assertEquals(Locale.US, loc2[0]);
-
+        
         final String engineName1 = "name1";
         final String modeName1 = "mode1";
         final Boolean running1 = Boolean.TRUE;
         final Boolean supportsLetterToSound1 = Boolean.TRUE;
-        final Boolean markupSupport1 = Boolean.TRUE;
+        final Integer markupSupport1 = EngineMode.FULL;
         final Integer vocabSupport1 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales1 = new Locale[] { Locale.US, Locale.GERMAN };
-        final SpeakerProfile[] profiles1 = new SpeakerProfile[] { new SpeakerProfile() };
+        final SpeakerProfile[] profiles1 = new SpeakerProfile[] {
+                new SpeakerProfile()
+        };
         final RecognizerMode mode3 = new RecognizerMode(engineName1, modeName1,
-                running1, supportsLetterToSound1, markupSupport1,
-                vocabSupport1, locales1, profiles1);
+                running1, supportsLetterToSound1, markupSupport1, vocabSupport1,
+                locales1, profiles1);
         final Locale[] loc3 = mode3.getLocales();
         assertEquals(2, loc3.length);
         assertEquals(Locale.US, loc3[0]);
@@ -233,18 +247,20 @@ public class RecognizerModeTest extends TestCase {
 
         final RecognizerMode mode2 = new RecognizerMode(Locale.US);
         assertNull(mode2.getSpeakerProfiles());
-
+        
         final String engineName1 = "name1";
         final String modeName1 = "mode1";
         final Boolean running1 = Boolean.TRUE;
         final Boolean supportsLetterToSound1 = Boolean.TRUE;
-        final Boolean markupSupport1 = Boolean.TRUE;
+        final Integer markupSupport1 = EngineMode.FULL;
         final Integer vocabSupport1 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales1 = new Locale[] { Locale.US, Locale.GERMAN };
-        final SpeakerProfile[] profiles1 = new SpeakerProfile[] { new SpeakerProfile() };
+        final SpeakerProfile[] profiles1 = new SpeakerProfile[] {
+                new SpeakerProfile()
+        };
         final RecognizerMode mode3 = new RecognizerMode(engineName1, modeName1,
-                running1, supportsLetterToSound1, markupSupport1,
-                vocabSupport1, locales1, profiles1);
+                running1, supportsLetterToSound1, markupSupport1, vocabSupport1,
+                locales1, profiles1);
         final SpeakerProfile[] prof3 = mode3.getSpeakerProfiles();
         assertEquals(1, prof3.length);
     }
@@ -259,18 +275,20 @@ public class RecognizerModeTest extends TestCase {
 
         final RecognizerMode mode2 = new RecognizerMode(Locale.US);
         assertNull(mode2.getVocabSupport());
-
+        
         final String engineName1 = "name1";
         final String modeName1 = "mode1";
         final Boolean running1 = Boolean.TRUE;
         final Boolean supportsLetterToSound1 = Boolean.TRUE;
-        final Boolean markupSupport1 = Boolean.TRUE;
+        final Integer markupSupport1 = EngineMode.FULL;
         final Integer vocabSupport1 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales1 = new Locale[] { Locale.US, Locale.GERMAN };
-        final SpeakerProfile[] profiles1 = new SpeakerProfile[] { new SpeakerProfile() };
+        final SpeakerProfile[] profiles1 = new SpeakerProfile[] {
+                new SpeakerProfile()
+        };
         final RecognizerMode mode3 = new RecognizerMode(engineName1, modeName1,
-                running1, supportsLetterToSound1, markupSupport1,
-                vocabSupport1, locales1, profiles1);
+                running1, supportsLetterToSound1, markupSupport1, vocabSupport1,
+                locales1, profiles1);
         assertEquals(RecognizerMode.SMALL_SIZE, mode3.getVocabSupport());
     }
 
@@ -295,18 +313,20 @@ public class RecognizerModeTest extends TestCase {
         final String str2 = mode2.toString();
         assertNotNull(str2);
         assertTrue(str2.indexOf(Locale.US.toString()) > 0);
-
+        
         final String engineName1 = "name1";
         final String modeName1 = "mode1";
         final Boolean running1 = Boolean.TRUE;
         final Boolean supportsLetterToSound1 = Boolean.TRUE;
-        final Boolean markupSupport1 = Boolean.TRUE;
+        final Integer markupSupport1 = EngineMode.FULL;
         final Integer vocabSupport1 = RecognizerMode.SMALL_SIZE;
         final Locale[] locales1 = new Locale[] { Locale.US, Locale.GERMAN };
-        final SpeakerProfile[] profiles1 = new SpeakerProfile[] { new SpeakerProfile() };
+        final SpeakerProfile[] profiles1 = new SpeakerProfile[] {
+                new SpeakerProfile()
+        };
         final RecognizerMode mode3 = new RecognizerMode(engineName1, modeName1,
-                running1, supportsLetterToSound1, markupSupport1,
-                vocabSupport1, locales1, profiles1);
+                running1, supportsLetterToSound1, markupSupport1, vocabSupport1,
+                locales1, profiles1);
         final String str3 = mode3.toString();
         assertNotNull(str3);
         assertTrue(str3.indexOf(engineName1) > 0);

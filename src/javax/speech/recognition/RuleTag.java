@@ -28,24 +28,24 @@ package javax.speech.recognition;
 
 public class RuleTag extends RuleComponent {
     private String tag;
-
+    
     public RuleTag(String tag) {
-        checkValidGrammarText(tag);
+    	checkValidGrammarText(tag);
 
-        this.tag = tag;
+    	this.tag = tag;
     }
-
+    
     public String getTag() {
         return tag;
     }
 
     public String toString() {
-        final StringBuffer str = new StringBuffer();
-
-        str.append("<tag>");
-        str.append(tag);
-        str.append("</tag>");
-
+    	final StringBuffer str = new StringBuffer();
+    	
+    	str.append("<tag>");
+    	str.append(tag);
+    	str.append("</tag>");
+    	
         return str.toString();
     }
 }

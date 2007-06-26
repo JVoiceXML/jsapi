@@ -29,6 +29,8 @@ package javax.speech;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.speech.synthesis.SynthesizerMode;
+
 public class EngineMode {
     public static final Integer FULL = new Integer(Integer.MAX_VALUE);
 
@@ -42,14 +44,14 @@ public class EngineMode {
 
     private Boolean supportsLetterToSound;
 
-    private Boolean markupSupport;
+    private Integer markupSupport;
 
     public EngineMode() {
 
     }
 
     public EngineMode(String engineName, String modeName, Boolean running,
-            Boolean supportsLetterToSound, Boolean markupSupport) {
+            Boolean supportsLetterToSound, Integer markupSupport) {
         this.engineName = engineName;
         this.modeName = modeName;
         this.running = running;
@@ -61,7 +63,7 @@ public class EngineMode {
         return engineName;
     }
 
-    public Boolean getMarkupSupport() {
+    public Integer getMarkupSupport() {
         return markupSupport;
     }
 
@@ -78,10 +80,10 @@ public class EngineMode {
     }
 
     public boolean match(EngineMode require) {
-        if (require == null) {
-            return true;
-        }
-
+    	if (require == null) {
+    		return true;
+    	}
+    	
         final String otherEngineName = require.getEngineName();
         final boolean namesMatch;
         if (otherEngineName == null) {
@@ -116,7 +118,7 @@ public class EngineMode {
                     .equals(supportsLetterToSound);
         }
 
-        final Boolean otherMarkupSupport = require.getMarkupSupport();
+        final Integer otherMarkupSupport = require.getMarkupSupport();
         final boolean markupSupportMatch;
         if (otherMarkupSupport == null) {
             markupSupportMatch = true;
@@ -169,7 +171,7 @@ public class EngineMode {
                     .equals(otherSupportsLetterToSound);
         }
 
-        final Boolean otherMarkupSupport = mode.getMarkupSupport();
+        final Integer otherMarkupSupport = mode.getMarkupSupport();
         final boolean markupSupportMatch;
         if (markupSupport == null) {
             markupSupportMatch = (otherMarkupSupport == null);
@@ -220,7 +222,7 @@ public class EngineMode {
         }
         str.append("]");
     }
-
+    
     public String toString() {
         StringBuffer str = new StringBuffer();
 

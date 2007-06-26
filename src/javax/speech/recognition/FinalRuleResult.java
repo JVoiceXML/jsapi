@@ -27,9 +27,9 @@
 package javax.speech.recognition;
 
 public interface FinalRuleResult extends FinalResult {
-    RuleGrammar getRuleGrammar(int nBest) throws ResultException;
+    RuleGrammar getRuleGrammar(int nBest);
 
-    Object[] getTags(int nBest) throws ResultException;
+    String[] getTags(int nBest);
 
-    RuleParse parse(int nBest) throws ResultException;
+    RuleParse parse(int nBest);
 }

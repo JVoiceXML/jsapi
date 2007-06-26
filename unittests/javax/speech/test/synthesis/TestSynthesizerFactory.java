@@ -14,13 +14,13 @@ import javax.speech.synthesis.SynthesizerMode;
  * @author Dirk Schnelle
  */
 public class TestSynthesizerFactory extends SynthesizerMode implements
-        EngineFactory {
-    /**
-     * {@inheritDoc}
-     */
-    public Engine createEngine() throws IllegalArgumentException,
-            EngineException, SecurityException {
-        return new TestSynthesizer();
-    }
+		EngineFactory {
+	/**
+	 * {@inheritDoc}
+	 */
+	public Engine createEngine() throws IllegalArgumentException,
+			EngineException, SecurityException {
+		return new TestSynthesizer();
+	}
 
 }

@@ -33,8 +33,8 @@ public class SynthesisException extends SpeechException {
     public SynthesisException() {
     }
 
-    public SynthesisException(String message) {
-        super(message);
+    public SynthesisException(String s) {
+        super(s);
     }
 
 }

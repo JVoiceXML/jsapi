@@ -35,8 +35,8 @@ public class GrammarException extends SpeechException {
     public GrammarException() {
     }
 
-    public GrammarException(String message) {
-        super(message);
+    public GrammarException(String s) {
+        super(s);
     }
 
     public GrammarException(String message, GrammarExceptionDetail[] details) {

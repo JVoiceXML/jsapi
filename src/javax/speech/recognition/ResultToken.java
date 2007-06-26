@@ -27,13 +27,13 @@
 package javax.speech.recognition;
 
 public interface ResultToken {
-    long getStartTime();
+    int getConfidenceLevel();
 
     long getEndTime();
 
     Result getResult();
 
-    int getConfidenceLevel();
+    long getStartTime();
 
     String getText();
 }

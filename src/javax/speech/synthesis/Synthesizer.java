@@ -28,48 +28,43 @@ package javax.speech.synthesis;
 
 import javax.speech.AudioSegment;
 import javax.speech.Engine;
-import javax.speech.EngineStateException;
 
 public interface Synthesizer extends Engine {
-    long QUEUE_EMPTY = RESUMED << 1;
+    long QUEUE_EMPTY = 0;
 
-    long QUEUE_NOT_EMPTY = QUEUE_EMPTY << 1;
+    long QUEUE_NOT_EMPTY = 1;
 
     void addSpeakableListener(SpeakableListener listener);
 
-    void removeSpeakableListener(SpeakableListener listener);
-
     void addSynthesizerListener(SynthesizerListener listener);
 
-    void removeSynthesizerListener(SynthesizerListener listener);
+    void cancel();
 
-    void cancel() throws EngineStateException;
+    void cancel(int id);
 
-    void cancel(int id) throws EngineStateException;
+    void cancelAll();
 
-    void cancelAll() throws EngineStateException;
-
-    String getPhonemes(String text) throws EngineStateException;
-
-    SynthesizerProperties getSynthesizerProperties();
-
-    void pause() throws EngineStateException;
-
-    boolean resume() throws EngineStateException;
-
-    void setSpeakableMask(int mask);
+    String getPhonemes(String text);
 
     int getSpeakableMask();
 
-    int speak(AudioSegment audio, SpeakableListener listener)
-            throws EngineStateException;
+    SynthesizerProperties getSynthesizerProperties();
 
-    int speak(Speakable speakable, SpeakableListener listener)
-            throws SynthesisException, EngineStateException;
+    void pause();
 
-    int speak(String text, SpeakableListener listener)
-            throws EngineStateException;
+    void removeSpeakableListener(SpeakableListener listener);
 
-    int speakMarkup(String synthesisMarkup, SpeakableListener listener)
-            throws SynthesisException, EngineStateException;
+    void removeSynthesizerListener(SynthesizerListener listener);
+
+    boolean resume();
+
+    void setSpeakableMask(int mask);
+
+    int speak(AudioSegment audio, SpeakableListener listener);
+
+    int speak(Speakable speakable, SpeakableListener listener);
+
+    int speak(String text, SpeakableListener listener);
+
+    int speakMarkup(String synthesisMarkup, SpeakableListener listener);
 }

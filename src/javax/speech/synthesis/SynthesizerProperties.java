@@ -29,45 +29,43 @@ package javax.speech.synthesis;
 import javax.speech.EngineProperties;
 
 public interface SynthesizerProperties extends EngineProperties {
-    int MAX_VOLUME = Integer.MAX_VALUE;
+    int DEFAULT_VOLUME = 0;
 
-    int MEDIUM_VOLUME = MAX_VOLUME / 2;
+    int MAX_VOLUME = 1;
 
-    int MIN_VOLUME = 0;
+    int MEDIUM_VOLUME = 2;
 
-    int DEFAULT_VOLUME = MAX_VOLUME;
+    int MIN_VOLUME = 3;
 
-    int WORD_LEVEL = 1;
+    int OBJECT_LEVEL = 4;
 
-    int QUEUE_LEVEL = 2;
+    int QUEUE_LEVEL = 5;
 
-    int OBJECT_LEVEL = 3;
-
-    void setInterruptibility(int level);
+    int WORD_LEVEL = 6;
 
     int getInterruptibility();
 
-    void setPitch(int hertz);
-
     int getPitch();
-
-    void setPitchRange(int hertz);
 
     int getPitchRange();
 
-    void setSpeakingRate(int wpm);
-
     int getSpeakingRate();
-
-    void setVoice(Voice voice);
 
     Voice getVoice();
 
-    void setVolume(int volume);
-
     int getVolume();
 
-    int getPriority();
+    void setInterruptibility(int level);
+
+    void setPitch(int hertz);
+
+    void setPitchRange(int hertz);
 
     void setPriority(int priority);
+
+    void setSpeakingRate(int wpm);
+
+    void setVoice(Voice voice);
+
+    void setVolume(int volume);
 }

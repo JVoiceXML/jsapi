@@ -30,51 +30,51 @@ import java.util.StringTokenizer;
 
 public class RuleToken extends RuleComponent {
     private String text;
-
+    
     public RuleToken(String text) {
-        if ((text == null) || (text.length() == 0)) {
-            throw new IllegalArgumentException("'" + text + "'"
-                    + " is not a valid grammar text");
-        }
-
-        final char[] chars = text.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            final char ch = chars[i];
-            if (!Character.isLetter(ch) && !Character.isDigit(ch)
-                    && !Character.isWhitespace(ch)) {
-                throw new IllegalArgumentException("'" + text
-                        + "' is not a valid grammar text");
-            }
-        }
-
-        // TODO This is not very efficient. Replace by a better solution.
+		if ((text == null) || (text.length() == 0)) {
+			throw new IllegalArgumentException("'" + text + "'"
+					+ " is not a valid grammar text");
+		}
+    	
+		final char[] chars = text.toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			final char ch = chars[i];
+			if (!Character.isLetter(ch) && !Character.isDigit(ch)
+					&& !Character.isWhitespace(ch)) {
+				throw new IllegalArgumentException("'" + text
+						+ "' is not a valid grammar text");
+			}
+		}
+    	
+    	// TODO This is not very efficient. Replace by a better solution.
         final StringTokenizer tokenizer = new StringTokenizer(text, " ");
         String cleaned = "";
-        while (tokenizer.hasMoreTokens()) {
-            cleaned += tokenizer.nextToken();
-            if (tokenizer.hasMoreTokens()) {
-                cleaned += " ";
-            }
+        while(tokenizer.hasMoreTokens()) {
+        	cleaned += tokenizer.nextToken();
+        	if (tokenizer.hasMoreTokens()) {
+        		cleaned += " ";
+        	}
         }
         this.text = cleaned;
     }
-
+    
     public String getText() {
         return text;
     }
-
+    
     public String toString() {
         return text;
     }
 
-    public boolean equals(Object obj) {
-        if (!(obj instanceof RuleToken)) {
-            return false;
-        }
-
-        final RuleToken token = (RuleToken) obj;
-        final String otherText = token.getText();
-
-        return text.equals(otherText);
-    }
+	public boolean equals(Object obj) {
+		if (!(obj instanceof RuleToken)) {
+			return false;
+		}
+		
+		final RuleToken token = (RuleToken) obj;
+		final String otherText = token.getText();
+		
+		return text.equals(otherText);
+	}
 }

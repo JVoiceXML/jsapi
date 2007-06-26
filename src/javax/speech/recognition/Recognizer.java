@@ -26,82 +26,61 @@
 
 package javax.speech.recognition;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.Vector;
 
 import javax.speech.Engine;
-import javax.speech.EngineException;
-import javax.speech.EngineStateException;
 
 public interface Recognizer extends Engine {
-    int BUFFER_MODE = IMMEDIATE_MODE << 1;
+    int BUFFER_MODE = 0;
 
-    long BUFFERING = RESUMED << 1;
+    long BUFFERING = 1;
 
-    long NOT_BUFFERING = BUFFERING << 1;
+    long LISTENING = 2;
 
-    long LISTENING = NOT_BUFFERING << 1;
+    long NOT_BUFFERING = 3;
 
-    long PROCESSING = LISTENING << 1;
+    long PROCESSING = 4;
 
     void addRecognizerListener(RecognizerListener listener);
 
-    void removeRecognizerListener(RecognizerListener listener);
-
     void addResultListener(ResultListener listener);
 
-    void removeResultListener(ResultListener listener);
+    RuleGrammar createRuleGrammar(String grammarReference, String rootName);
 
-    SpeakerManager getSpeakerManager();
-
-    RuleGrammar createRuleGrammar(String grammarReference, String rootName)
-            throws EngineStateException, EngineException;
-
-    void deleteGrammar(Grammar grammar) throws EngineStateException;
+    void deleteGrammar(Grammar grammar);
 
     RecognizerProperties getRecognizerProperties();
 
-    RuleGrammar getRuleGrammar(String grammarReference)
-            throws EngineStateException;
+    RuleGrammar getRuleGrammar(String grammarReference);
 
-    Grammar[] listGrammars() throws EngineStateException;
+    SpeakerManager getSpeakerManager();
 
-    RuleGrammar loadRuleGrammar(String grammarReference)
-            throws GrammarException, IOException, EngineStateException,
-            EngineException;
+    Grammar[] listGrammars();
+
+    RuleGrammar loadRuleGrammar(String grammarReference);
 
     RuleGrammar loadRuleGrammar(String grammarReference,
             boolean loadReferences, boolean reloadGrammars,
             Vector loadedGrammars);
 
-    RuleGrammar loadRuleGrammar(String grammarReference, Reader reader)
-            throws GrammarException, IOException, EngineStateException,
-            EngineException;
+    RuleGrammar loadRuleGrammar(String grammarReference, Reader reader);
 
-    RuleGrammar loadRuleGrammar(String grammarReference, String grammarText)
-            throws GrammarException, IOException, EngineStateException,
-            EngineException;
+    RuleGrammar loadRuleGrammar(String grammarReference, String grammarText);
 
-    // TODO: Why use a vector and not a collection?
-    RuleGrammar loadRuleGrammar(String grammarReference,
-            boolean loadReferences, Vector loadedGrammars)
-            throws GrammarException, IOException, EngineStateException,
-            EngineException;
+    void pause();
 
-    void processGrammars() throws EngineStateException;
+    void pause(int flags);
 
-    void pause() throws EngineStateException;
+    void processGrammars();
 
-    void pause(int flags) throws EngineStateException;
+    void releaseFocus();
 
-    void releaseFocus() throws EngineStateException;
+    void removeRecognizerListener(RecognizerListener listener);
 
-    void requestFocus() throws EngineStateException;
+    void removeResultListener(ResultListener listener);
 
-    boolean resume() throws EngineStateException;
+    void requestFocus();
 
-    void setResultMask(int mask);
-
-    int getResultMask();
+    boolean resume();
 }

@@ -14,12 +14,13 @@ import javax.speech.spi.EngineFactory;
  * @author Dirk Schnelle
  */
 public class TestRecognizerFactory extends RecognizerMode implements
-        EngineFactory {
-    /**
-     * {@inheritDoc}
-     */
-    public Engine createEngine() throws EngineException {
-        return new TestRecognizer();
-    }
+		EngineFactory {
+	/**
+	 * {@inheritDoc}
+	 */
+	public Engine createEngine() throws IllegalArgumentException,
+			EngineException, SecurityException {
+		return new TestRecognizer();
+	}
 
 }

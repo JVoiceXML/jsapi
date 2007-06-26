@@ -32,7 +32,7 @@ import junit.framework.TestCase;
  * Test case for {@link javax.speech.SpeechEvent}.
  * 
  * @author Dirk Schnelle
- * 
+ *
  */
 public class SpeechEventTest extends TestCase {
 
@@ -50,7 +50,7 @@ public class SpeechEventTest extends TestCase {
     public void testParamString() {
         SpeechEvent event = new SpeechEvent(new Object(), 43);
         String str = event.paramString();
-
+        
         assertTrue(str.indexOf("43") >= 0);
     }
 
@@ -60,7 +60,7 @@ public class SpeechEventTest extends TestCase {
     public void testToString() {
         SpeechEvent event = new SpeechEvent(new Object(), 44);
         String str = event.toString();
-
+        
         assertTrue(str.indexOf("44") >= 0);
     }
 }

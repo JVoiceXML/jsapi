@@ -38,7 +38,8 @@ public class SynthesizerEvent extends EngineEvent {
 
     public static int SYNTHESIZER_BUFFER_READY = QUEUE_UPDATED << 1;
 
-    public static int SYNTHESIZER_BUFFER_UNFILLED = SYNTHESIZER_BUFFER_READY << 1;
+    public static int SYNTHESIZER_BUFFER_UNFILLED = 
+        SYNTHESIZER_BUFFER_READY << 1;
 
     public static int DEFAULT_MASK = EngineEvent.DEFAULT_MASK | QUEUE_EMPTIED
             | SYNTHESIZER_BUFFER_UNFILLED | SYNTHESIZER_BUFFER_READY;
@@ -56,7 +57,7 @@ public class SynthesizerEvent extends EngineEvent {
         if (id == QUEUE_UPDATED) {
             return topOfQueueChanged;
         }
-
+        
         return false;
     }
 

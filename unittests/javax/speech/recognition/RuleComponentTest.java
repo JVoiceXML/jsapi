@@ -12,12 +12,12 @@ import junit.framework.TestCase;
  */
 public class RuleComponentTest extends TestCase {
 
-    /**
-     * Test method for {@link javax.speech.recognition.RuleComponent#toString()}.
-     */
-    public void testToString() {
-        final RuleComponent component = new RuleComponent();
-        assertNull(component.toString());
-    }
+	/**
+	 * Test method for {@link javax.speech.recognition.RuleComponent#toString()}.
+	 */
+	public void testToString() {
+		final RuleComponent component = new RuleComponent();
+		assertNull(component.toString());
+	}
 
 }

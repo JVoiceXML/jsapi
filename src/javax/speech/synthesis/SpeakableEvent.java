@@ -135,7 +135,7 @@ public class SpeakableEvent extends SpeechEvent {
     public SpeakableEvent(Object source, int id, int requestId,
             String textInfo, int audioPosition) {
         this(source, id, requestId);
-
+        
         this.textInfo = textInfo;
         this.audioPosition = audioPosition;
     }
@@ -143,7 +143,7 @@ public class SpeakableEvent extends SpeechEvent {
     public SpeakableEvent(Object source, int id, int requestId,
             String textInfo, int wordStart, int wordEnd) {
         this(source, id, requestId);
-
+        
         this.textInfo = textInfo;
         this.wordStart = wordStart;
         this.wordEnd = wordEnd;
@@ -152,7 +152,7 @@ public class SpeakableEvent extends SpeechEvent {
     public SpeakableEvent(Object source, int id, int requestId,
             String textInfo, int type, int requested, int realized) {
         this(source, id, requestId);
-
+        
         this.textInfo = textInfo;
         this.type = type;
         this.requested = requested;
@@ -162,7 +162,7 @@ public class SpeakableEvent extends SpeechEvent {
     public SpeakableEvent(Object source, int id, int requestId,
             String textInfo, int type, String description) {
         this(source, id, requestId);
-
+        
         this.textInfo = textInfo;
         this.type = type;
         this.description = description;
@@ -179,7 +179,7 @@ public class SpeakableEvent extends SpeechEvent {
     public SpeakableEvent(Object source, int id, int requestId,
             String textInfo, PhoneInfo[] phones, int index) {
         this(source, id, requestId);
-
+        
         this.textInfo = textInfo;
         this.phones = phones;
         this.index = index;
@@ -188,7 +188,7 @@ public class SpeakableEvent extends SpeechEvent {
     public SpeakableEvent(Object source, int id, int requestId,
             String textInfo, Voice oldVoice, Voice newVoice) {
         this(source, id, requestId);
-
+        
         this.textInfo = textInfo;
         this.newVoice = newVoice;
         this.oldVoice = oldVoice;
@@ -330,7 +330,7 @@ public class SpeakableEvent extends SpeechEvent {
         parameters.add(requestIdObject);
         if (id == PROSODY_UPDATED) {
             final Integer requestedObject = new Integer(requested);
-            parameters.add(requestedObject);
+            parameters.add(requestedObject);        
         }
         parameters.add(textInfo);
         if (id == MARKER_REACHED) {

@@ -26,17 +26,13 @@
 
 package javax.speech.test.recognition;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.Vector;
 
 import javax.speech.AudioManager;
-import javax.speech.EngineException;
 import javax.speech.EngineMode;
-import javax.speech.EngineStateException;
 import javax.speech.VocabularyManager;
 import javax.speech.recognition.Grammar;
-import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerListener;
 import javax.speech.recognition.RecognizerProperties;
@@ -261,28 +257,5 @@ public class TestRecognizer implements Recognizer {
      * {@inheritDoc}
      */
     public void waitEngineState(long state) {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getResultMask() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public RuleGrammar loadRuleGrammar(String grammarReference,
-            boolean loadReferences, Vector loadedGrammars)
-            throws GrammarException, IOException, EngineStateException,
-            EngineException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setResultMask(int mask) {
     }
 }

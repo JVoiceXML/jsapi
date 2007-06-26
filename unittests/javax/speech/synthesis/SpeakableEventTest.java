@@ -132,13 +132,13 @@ public class SpeakableEventTest extends TestCase {
         }
         assertNotNull(error);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         try {
             attributes = event7.getAttributes();
@@ -233,13 +233,13 @@ public class SpeakableEventTest extends TestCase {
         }
         assertNotNull(error);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         try {
             pos = event8.getAudioPosition();
@@ -333,13 +333,13 @@ public class SpeakableEventTest extends TestCase {
         description = event7.getDescription();
         assertEquals("unknown voice", description);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         try {
             description = event8.getDescription();
@@ -434,13 +434,13 @@ public class SpeakableEventTest extends TestCase {
         }
         assertNotNull(error);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         try {
             index = event8.getIndex();
@@ -540,13 +540,13 @@ public class SpeakableEventTest extends TestCase {
         }
         assertNotNull(error);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         voice = event8.getNewVoice();
         assertEquals(newVoice, voice);
@@ -642,13 +642,13 @@ public class SpeakableEventTest extends TestCase {
         }
         assertNotNull(error);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         voice = event8.getOldVoice();
         assertEquals(oldVoice, voice);
@@ -727,7 +727,7 @@ public class SpeakableEventTest extends TestCase {
         error = null;
         phoneInfos = event6.getPhones();
         assertEquals(phones, phoneInfos);
-
+        
         final SpeakableEvent event7 = new SpeakableEvent(source,
                 SpeakableEvent.MARKUP_FAILED, 60, "textInfo6",
                 SpeakableEvent.UNSUPPORTED_VOICE, "unknown voice");
@@ -739,13 +739,13 @@ public class SpeakableEventTest extends TestCase {
         }
         assertNotNull(error);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         try {
             phoneInfos = event8.getPhones();
@@ -804,7 +804,7 @@ public class SpeakableEventTest extends TestCase {
         error = null;
         realizedValue = event4.getRealizedValue();
         assertEquals(realized, realizedValue);
-
+        
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
@@ -829,7 +829,7 @@ public class SpeakableEventTest extends TestCase {
             error = e;
         }
         assertNotNull(error);
-
+        
         final SpeakableEvent event7 = new SpeakableEvent(source,
                 SpeakableEvent.MARKUP_FAILED, 60, "textInfo6",
                 SpeakableEvent.UNSUPPORTED_VOICE, "unknown voice");
@@ -841,13 +841,13 @@ public class SpeakableEventTest extends TestCase {
         }
         assertNotNull(error);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         try {
             realizedValue = event8.getRealizedValue();
@@ -906,7 +906,7 @@ public class SpeakableEventTest extends TestCase {
         error = null;
         requestedValue = event4.getRequestedValue();
         assertEquals(requested, requestedValue);
-
+        
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
@@ -931,7 +931,7 @@ public class SpeakableEventTest extends TestCase {
             error = e;
         }
         assertNotNull(error);
-
+        
         final SpeakableEvent event7 = new SpeakableEvent(source,
                 SpeakableEvent.MARKUP_FAILED, 60, "textInfo6",
                 SpeakableEvent.UNSUPPORTED_VOICE, "unknown voice");
@@ -943,13 +943,13 @@ public class SpeakableEventTest extends TestCase {
         }
         assertNotNull(error);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         try {
             requestedValue = event8.getRequestedValue();
@@ -967,7 +967,7 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event1 = new SpeakableEvent(source,
                 SpeakableEvent.TOP_OF_QUEUE, 42);
         assertEquals(42, event1.getRequestId());
-
+        
         final String[] attrs = new String[] { "attribute1", "attribute2" };
         final SpeakableEvent event2 = new SpeakableEvent(source,
                 SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
@@ -985,7 +985,7 @@ public class SpeakableEventTest extends TestCase {
                 SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
                 SpeakableEvent.PROSODY_RATE, requested, realized);
         assertEquals(51, event4.getRequestId());
-
+        
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
@@ -998,19 +998,19 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event6 = new SpeakableEvent(source,
                 SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
         assertEquals(59, event6.getRequestId());
-
+        
         final SpeakableEvent event7 = new SpeakableEvent(source,
                 SpeakableEvent.MARKUP_FAILED, 60, "textInfo6",
                 SpeakableEvent.UNSUPPORTED_VOICE, "unknown voice");
         assertEquals(60, event7.getRequestId());
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 61, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 61, "textInfo7",
+                oldVoice, newVoice);
         assertEquals(61, event8.getRequestId());
     }
 
@@ -1069,13 +1069,13 @@ public class SpeakableEventTest extends TestCase {
         textinfo = event7.getTextInfo();
         assertEquals("textInfo6", textinfo);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         textinfo = event8.getTextInfo();
         assertEquals("textInfo7", textinfo);
     }
@@ -1124,7 +1124,7 @@ public class SpeakableEventTest extends TestCase {
         error = null;
         type = event4.getType();
         assertEquals(SpeakableEvent.PROSODY_RATE, type);
-
+        
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
@@ -1149,20 +1149,20 @@ public class SpeakableEventTest extends TestCase {
             error = e;
         }
         assertNotNull(error);
-
+        
         final SpeakableEvent event7 = new SpeakableEvent(source,
                 SpeakableEvent.MARKUP_FAILED, 60, "textInfo6",
                 SpeakableEvent.UNSUPPORTED_VOICE, "unknown voice");
         type = event7.getType();
         assertEquals(SpeakableEvent.UNSUPPORTED_VOICE, type);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         try {
             type = event8.getType();
@@ -1225,7 +1225,7 @@ public class SpeakableEventTest extends TestCase {
             error = e;
         }
         assertNotNull(error);
-
+        
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
@@ -1246,7 +1246,7 @@ public class SpeakableEventTest extends TestCase {
             error = e;
         }
         assertNotNull(error);
-
+        
         final SpeakableEvent event7 = new SpeakableEvent(source,
                 SpeakableEvent.MARKUP_FAILED, 60, "textInfo6",
                 SpeakableEvent.UNSUPPORTED_VOICE, "unknown voice");
@@ -1258,13 +1258,13 @@ public class SpeakableEventTest extends TestCase {
         }
         assertNotNull(error);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         try {
             start = event8.getWordStart();
@@ -1327,7 +1327,7 @@ public class SpeakableEventTest extends TestCase {
             error = e;
         }
         assertNotNull(error);
-
+        
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
@@ -1348,7 +1348,7 @@ public class SpeakableEventTest extends TestCase {
             error = e;
         }
         assertNotNull(error);
-
+        
         final SpeakableEvent event7 = new SpeakableEvent(source,
                 SpeakableEvent.MARKUP_FAILED, 60, "textInfo6",
                 SpeakableEvent.UNSUPPORTED_VOICE, "unknown voice");
@@ -1360,13 +1360,13 @@ public class SpeakableEventTest extends TestCase {
         }
         assertNotNull(error);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         error = null;
         try {
             end = event8.getWordEnd();
@@ -1419,13 +1419,13 @@ public class SpeakableEventTest extends TestCase {
         final String str7 = event7.paramString();
         assertTrue("id not found in toString", str7.indexOf("60") >= 0);
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         final String str8 = event8.paramString();
         assertTrue("id not found in toString", str8.indexOf(Integer
                 .toString(SpeakableEvent.VOICE_CHANGED)) >= 0);
@@ -1496,13 +1496,13 @@ public class SpeakableEventTest extends TestCase {
         assertTrue("toString not longer than paramString",
                 str7.length() > paramString7.length());
 
-        final Voice oldVoice = new Voice(Locale.US, "mary",
-                Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
+        final Voice oldVoice = new Voice(Locale.US, "mary", Voice.GENDER_FEMALE,
+                41, Voice.VARIANT_DEFAULT);
         final Voice newVoice = new Voice(Locale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final SpeakableEvent event8 = new SpeakableEvent(source,
-                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
-                newVoice);
+                SpeakableEvent.VOICE_CHANGED, 60, "textInfo7",
+                oldVoice, newVoice);
         final String str8 = event8.toString();
         assertTrue("id not found in toString", str8.indexOf(Integer
                 .toString(SpeakableEvent.VOICE_CHANGED)) >= 0);

@@ -27,53 +27,54 @@
 package javax.speech.recognition;
 
 public class RuleReference extends RuleComponent {
-    private static final String DEFAULT_MEDIA_TYPE = "application/srgs+xml";
-
-    private String grammarReference;
+	private static final String DEFAULT_MEDIA_TYPE = "application/srgs+xml";
+	
+	private String grammarReference;
 
     private String ruleName;
 
     private String mediaType;
 
     public RuleReference(String ruleName) {
-        checkValidGrammarText(ruleName);
+    	checkValidGrammarText(ruleName);
 
         this.ruleName = ruleName;
     }
 
     public RuleReference(String grammarReference, String ruleName) {
-        checkValidGrammarText(grammarReference);
-        checkValidGrammarText(ruleName);
+    	checkValidGrammarText(grammarReference);
+    	checkValidGrammarText(ruleName);
 
-        this.grammarReference = grammarReference;
+    	this.grammarReference = grammarReference;
         this.ruleName = ruleName;
     }
 
     public RuleReference(String grammarReference, String ruleName,
             String mediaType) {
-        checkValidGrammarText(grammarReference);
-        checkValidGrammarText(ruleName);
+    	checkValidGrammarText(grammarReference);
+    	checkValidGrammarText(ruleName);
 
-        // TODO According to the specification, we must check the media type
-        // to be valid grammar text. This forbids strings like
-        // 'application/x-jsgf'.
-        if (mediaType != null) {
+    	// TODO According to the specification, we must check the media type
+    	// to be valid grammar text. This forbids strings like 
+    	// 'application/x-jsgf'.
+    	if (mediaType != null) {
             this.mediaType = mediaType;
-        }
+    	}
 
-        this.grammarReference = grammarReference;
+    	this.grammarReference = grammarReference;
         this.ruleName = ruleName;
     }
 
+    
     public String getGrammarReference() {
         return grammarReference;
     }
 
     public String getMediaType() {
-        if (mediaType == null) {
-            return DEFAULT_MEDIA_TYPE;
-        }
-
+    	if (mediaType == null) {
+    		return DEFAULT_MEDIA_TYPE;
+    	}
+    	
         return mediaType;
     }
 
@@ -82,28 +83,29 @@ public class RuleReference extends RuleComponent {
     }
 
     void appendStartTag(StringBuffer str) {
-        str.append("<ruleref uri=\"");
-
-        if (grammarReference != null) {
-            str.append(grammarReference);
-        }
-        str.append("#");
-        str.append(ruleName);
-        str.append("\"");
-
-        if (mediaType != null) {
-            str.append(" type=\"");
-            str.append(mediaType);
-            str.append("\"");
-        }
+    	str.append("<ruleref uri=\"");
+    	
+    	if (grammarReference != null) {
+    		str.append(grammarReference);
+    	}
+    	str.append("#");
+    	str.append(ruleName);
+    	str.append("\"");
+    	
+    	if (mediaType != null) {
+    		str.append(" type=\"");
+    		str.append(mediaType);
+    		str.append("\"");
+    	}
     }
-
+    
     public String toString() {
-        StringBuffer str = new StringBuffer();
-        appendStartTag(str);
-        str.append("/>");
-
-        return str.toString();
+    	StringBuffer str = new StringBuffer();
+    	appendStartTag(str);
+    	str.append("/>");
+    	
+    	return str.toString();
     }
-
+    
+    
 }

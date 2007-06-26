@@ -15,18 +15,18 @@ import javax.speech.test.synthesis.TestSynthesizerFactory;
  * @author Dirk Schnelle
  */
 public class TestSynthesizerEngineListFactory implements EngineListFactory {
-    /**
-     * {@inheritDoc}
-     */
-    public EngineList createEngineList(EngineMode require)
-            throws SecurityException {
-        if ((require == null) || (require instanceof SynthesizerMode)) {
-            final EngineMode[] modes = new EngineMode[] { new TestSynthesizerFactory() };
+	/**
+	 * {@inheritDoc}
+	 */
+	public EngineList createEngineList(EngineMode require)
+			throws SecurityException {
+		if ((require == null) || (require instanceof SynthesizerMode)) {
+			final EngineMode[] modes = new EngineMode[] { new TestSynthesizerFactory() };
 
-            return new EngineList(modes);
-        }
+			return new EngineList(modes);
+		}
 
-        return null;
-    }
+		return null;
+	}
 
 }

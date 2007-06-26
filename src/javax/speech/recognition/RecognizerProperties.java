@@ -43,67 +43,67 @@ public interface RecognizerProperties extends EngineProperties {
 
     int ENDPOINT_SPEECH_DETECTION = 6;
 
-    int MIN_ACCURACY = 7;
+    int MAX_ACCURACY = 7;
 
-    int NORM_ACCURACY = 8;
+    int MAX_CONFIDENCE = 8;
 
-    int MAX_ACCURACY = 8;
+    int MAX_SENSITIVITY = 9;
 
-    int MIN_CONFIDENCE = 10;
+    int MIN_ACCURACY = 10;
 
-    int NORM_CONFIDENCE = 11;
+    int MIN_CONFIDENCE = 11;
 
-    int MAX_CONFIDENCE = 12;
+    int MIN_SENSITIVITY = 12;
 
-    int UNKNOWN_CONFIDENCE = 13;
+    int NORM_ACCURACY = 13;
 
-    int MIN_SENSITIVITY = 14;
+    int NORM_CONFIDENCE = 14;
 
     int NORM_SENSITIVITY = 15;
 
-    int MAX_SENSITIVITY = 16;
-
-    void setAdaptation(int adapt);
+    int UNKNOWN_CONFIDENCE = 16;
 
     int getAdaptation();
 
-    void setCompleteTimeout(int timeout);
-
     int getCompleteTimeout();
-
-    void setConfidenceThreshold(int confidenceThreshold);
 
     int getConfidenceThreshold();
 
-    void setEndpointStyle(int endpointStyle);
-
     int getEndpointStyle();
-
-    void setIncompleteTimeout(int timeout);
 
     int getIncompleteTimeout();
 
-    void setNumResultAlternatives(int num);
-
     int getNumResultAlternatives();
-
-    void setPriority(int priority);
 
     int getPriority();
 
     int getSensitivity();
 
-    void setSpeedVsAccuracy(int speedVsAccuracy);
-
     int getSpeedVsAccuracy();
-
-    void setResultAudioProvided(boolean audioProvided);
 
     boolean isResultAudioProvided();
 
-    void setTrainingProvided(boolean trainingProvided);
-
     boolean isTrainingProvided();
 
+    void setAdaptation(int adapt);
+
+    void setCompleteTimeout(int timeout);
+
+    void setConfidenceThreshold(int confidenceThreshold);
+
+    void setEndpointStyle(int endpointStyle);
+
+    void setIncompleteTimeout(int timeout);
+
+    void setNumResultAlternatives(int num);
+
+    void setPriority(int priority);
+
+    void setResultAudioProvided(boolean audioProvided);
+
     void setSensitivity(int sensitivity);
+
+    void setSpeedVsAccuracy(int speedVsAccuracy);
+
+    void setTrainingProvided(boolean trainingProvided);
 }

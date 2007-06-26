@@ -36,7 +36,8 @@ public class EngineEvent extends SpeechEvent {
 
     public static int ENGINE_ALLOCATING_RESOURCES = ENGINE_DEALLOCATED << 1;
 
-    public static int ENGINE_DEALLOCATING_RESOURCES = ENGINE_ALLOCATING_RESOURCES << 1;
+    public static int ENGINE_DEALLOCATING_RESOURCES = 
+        ENGINE_ALLOCATING_RESOURCES << 1;
 
     public static int ENGINE_DEFOCUSED = ENGINE_DEALLOCATING_RESOURCES << 1;
 
@@ -48,10 +49,11 @@ public class EngineEvent extends SpeechEvent {
 
     public static int ENGINE_ERROR = ENGINE_RESUMED << 1;
 
-    public static int DEFAULT_MASK = ENGINE_ALLOCATED | ENGINE_DEALLOCATED
-            | ENGINE_PAUSED | ENGINE_RESUMED | ENGINE_FOCUSED
-            | ENGINE_DEFOCUSED | ENGINE_ERROR;
+    public static int DEFAULT_MASK = ENGINE_ALLOCATED | ENGINE_DEALLOCATED 
+        | ENGINE_PAUSED | ENGINE_RESUMED | ENGINE_FOCUSED | ENGINE_DEFOCUSED 
+        | ENGINE_ERROR;
 
+    
     private long oldEngineState;
 
     private long newEngineState;
@@ -80,7 +82,7 @@ public class EngineEvent extends SpeechEvent {
         if (id == ENGINE_ERROR) {
             return problem;
         }
-
+        
         return null;
     }
 

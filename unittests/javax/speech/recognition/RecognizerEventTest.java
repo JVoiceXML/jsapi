@@ -121,9 +121,9 @@ public class RecognizerEventTest extends TestCase {
                 grammarException, audioPosition);
         final String str = event.toString();
         assertTrue("id not found in toString", str.indexOf("43") >= 0);
-
+        
         String paramString = event.paramString();
-        assertTrue("toString not longer than paramString",
-                str.length() > paramString.length());
+        assertTrue("toString not longer than paramString", 
+        	str.length() > paramString.length());
     }
 }

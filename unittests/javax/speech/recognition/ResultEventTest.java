@@ -38,112 +38,110 @@ import junit.framework.TestCase;
 public class ResultEventTest extends TestCase {
     /** The result. */
     private Result result;
-
+    
     /**
      * {@inheritDoc}
      */
     protected void setUp() throws Exception {
         super.setUp();
-
+        
         result = new TestResult();
     }
 
     /**
-     * Test method for
-     * {@link javax.speech.recognition.ResultEvent#isFinalizedChanged()}.
+     * Test method for {@link javax.speech.recognition.ResultEvent#isFinalizedChanged()}.
      */
     public void testIsFinalizedChanged() {
-        final ResultEvent event = new ResultEvent(result,
+        final ResultEvent event = new ResultEvent(result, 
                 ResultEvent.GRAMMAR_FINALIZED);
         assertFalse(event.isFinalizedChanged());
-
-        final ResultEvent event2 = new ResultEvent(result,
+        
+        final ResultEvent event2 = new ResultEvent(result, 
                 ResultEvent.GRAMMAR_FINALIZED, false, true);
         assertFalse(event2.isFinalizedChanged());
 
-        final ResultEvent event3 = new ResultEvent(result,
+        final ResultEvent event3 = new ResultEvent(result, 
                 ResultEvent.GRAMMAR_FINALIZED, true, true);
         assertFalse(event3.isFinalizedChanged());
 
-        final ResultEvent event4 = new ResultEvent(result,
+        final ResultEvent event4 = new ResultEvent(result, 
                 ResultEvent.RESULT_CREATED, true, true);
         assertTrue(event4.isFinalizedChanged());
 
-        final ResultEvent event5 = new ResultEvent(result,
+        final ResultEvent event5 = new ResultEvent(result, 
                 ResultEvent.RESULT_CREATED, false, true);
         assertFalse(event5.isFinalizedChanged());
 
-        final ResultEvent event6 = new ResultEvent(result,
+        final ResultEvent event6 = new ResultEvent(result, 
                 ResultEvent.RESULT_UPDATED, true, true);
         assertTrue(event6.isFinalizedChanged());
 
-        final ResultEvent event7 = new ResultEvent(result,
+        final ResultEvent event7 = new ResultEvent(result, 
                 ResultEvent.RESULT_UPDATED, false, true);
         assertFalse(event7.isFinalizedChanged());
 
-        final ResultEvent event8 = new ResultEvent(result,
+        final ResultEvent event8 = new ResultEvent(result, 
                 ResultEvent.RESULT_ACCEPTED, true, true);
         assertTrue(event8.isFinalizedChanged());
 
-        final ResultEvent event9 = new ResultEvent(result,
+        final ResultEvent event9 = new ResultEvent(result, 
                 ResultEvent.RESULT_ACCEPTED, false, true);
         assertFalse(event9.isFinalizedChanged());
 
-        final ResultEvent event10 = new ResultEvent(result,
+        final ResultEvent event10 = new ResultEvent(result, 
                 ResultEvent.RESULT_REJECTED, true, true);
         assertTrue(event10.isFinalizedChanged());
 
-        final ResultEvent event11 = new ResultEvent(result,
+        final ResultEvent event11 = new ResultEvent(result, 
                 ResultEvent.RESULT_REJECTED, false, true);
         assertFalse(event11.isFinalizedChanged());
     }
 
     /**
-     * Test method for
-     * {@link javax.speech.recognition.ResultEvent#isUnfinalizedChanged()}.
+     * Test method for {@link javax.speech.recognition.ResultEvent#isUnfinalizedChanged()}.
      */
     public void testIsUnfinalizedChanged() {
-        final ResultEvent event = new ResultEvent(result,
+        final ResultEvent event = new ResultEvent(result, 
                 ResultEvent.GRAMMAR_FINALIZED);
         assertFalse(event.isUnfinalizedChanged());
-
-        final ResultEvent event2 = new ResultEvent(result,
+        
+        final ResultEvent event2 = new ResultEvent(result, 
                 ResultEvent.GRAMMAR_FINALIZED, false, true);
         assertFalse(event2.isUnfinalizedChanged());
 
-        final ResultEvent event3 = new ResultEvent(result,
+        final ResultEvent event3 = new ResultEvent(result, 
                 ResultEvent.GRAMMAR_FINALIZED, true, true);
         assertFalse(event3.isUnfinalizedChanged());
 
-        final ResultEvent event4 = new ResultEvent(result,
+        final ResultEvent event4 = new ResultEvent(result, 
                 ResultEvent.RESULT_CREATED, true, true);
         assertTrue(event4.isUnfinalizedChanged());
 
-        final ResultEvent event5 = new ResultEvent(result,
+        final ResultEvent event5 = new ResultEvent(result, 
                 ResultEvent.RESULT_CREATED, false, true);
         assertFalse(event5.isUnfinalizedChanged());
 
-        final ResultEvent event6 = new ResultEvent(result,
+        final ResultEvent event6 = new ResultEvent(result, 
                 ResultEvent.RESULT_UPDATED, true, true);
         assertTrue(event6.isUnfinalizedChanged());
 
-        final ResultEvent event7 = new ResultEvent(result,
+        final ResultEvent event7 = new ResultEvent(result, 
                 ResultEvent.RESULT_UPDATED, false, true);
         assertFalse(event7.isUnfinalizedChanged());
 
-        final ResultEvent event8 = new ResultEvent(result,
+        final ResultEvent event8 = new ResultEvent(result, 
                 ResultEvent.RESULT_ACCEPTED, true, true);
         assertTrue(event8.isUnfinalizedChanged());
 
-        final ResultEvent event9 = new ResultEvent(result,
+        final ResultEvent event9 = new ResultEvent(result, 
                 ResultEvent.RESULT_ACCEPTED, false, true);
         assertFalse(event9.isUnfinalizedChanged());
 
-        final ResultEvent event10 = new ResultEvent(result,
+        final ResultEvent event10 = new ResultEvent(result, 
                 ResultEvent.RESULT_REJECTED, true, true);
         assertTrue(event10.isUnfinalizedChanged());
 
-        final ResultEvent event11 = new ResultEvent(result,
+        final ResultEvent event11 = new ResultEvent(result, 
                 ResultEvent.RESULT_REJECTED, false, true);
         assertFalse(event11.isUnfinalizedChanged());
     }
