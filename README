@@ -1,0 +1,15 @@
+http://jsapi.sourceforge.net
+
+This is JSAPI 0.9.1.14, a free JSAPI 2.0 implementation.
+
+Follow the description in INSTALL to install JSAPI.
+
+JVoiceXML comes without any warrenty. Read COPYING for more details.
+Licenses of used libraries can be optained from the realated web site.
+Read INSTALL for more details.
+
+If you have any questions have a look at our web site.
+
+This implementation is independent from the JSR process. JSR 113 was
+delayed for years. With this project we try to help you to get access
+to this JSR.
