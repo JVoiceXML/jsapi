@@ -26,7 +26,7 @@
 
 package javax.speech;
 
-import java.util.Collection;
+import java.util.Vector;
 
 public class AudioEvent extends SpeechEvent {
     public static int AUDIO_LEVEL = 1;
@@ -69,11 +69,11 @@ public class AudioEvent extends SpeechEvent {
     /**
      * {@inheritDoc}
      */
-    protected Collection getParameters() {
-        final Collection parameters = super.getParameters();
+    protected Vector getParameters() {
+        final Vector parameters = super.getParameters();
 
         final Integer level = new Integer(audioLevel);
-        parameters.add(level);
+        parameters.addElement(level);
 
         return parameters;
     }

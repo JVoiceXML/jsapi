@@ -29,10 +29,13 @@ package java.util;
 public final class Locale {
     public static final Locale ENGLISH;
 
+    public static final Locale US;
+    
     public static final Locale FRENCH;
 
     public static final Locale GERMAN;
 
+    
     /**
      * The default locale. Except for during bootstrapping, this should never be
      * null. Note the logic in the main constructor, to detect when
@@ -42,6 +45,7 @@ public final class Locale {
 
     static {
         ENGLISH = new Locale("en");
+        US = new Locale("en", "US");
         FRENCH = new Locale("fr");
         GERMAN = new Locale("de");
 

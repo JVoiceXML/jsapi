@@ -26,8 +26,8 @@
 
 package javax.speech.recognition;
 
-import java.util.Collection;
 import java.util.Locale;
+import java.util.Vector;
 
 import javax.speech.EngineMode;
 
@@ -194,28 +194,28 @@ public class RecognizerMode extends EngineMode {
      * 
      * @return collection of all parameters.
      */
-    protected Collection getParameters() {
-        final Collection parameters = super.getParameters();
+    protected Vector getParameters() {
+        final Vector parameters = super.getParameters();
 
-        parameters.add(vocabSupport);
+        parameters.addElement(vocabSupport);
         if (locales == null) {
-            parameters.add(null);
+            parameters.addElement(null);
         } else {
-            final Collection col = new java.util.ArrayList();
+            final Vector vec = new Vector();
             for (int i = 0; i < locales.length; i++) {
-                col.add(locales[i]);
+                vec.addElement(locales[i]);
             }
-            parameters.add(col);
+            parameters.addElement(vec);
         }
 
         if (profiles == null) {
-            parameters.add(null);
+            parameters.addElement(null);
         } else {
-            final Collection col = new java.util.ArrayList();
+            final Vector vec = new Vector();
             for (int i = 0; i < profiles.length; i++) {
-                col.add(profiles[i]);
+                vec.addElement(profiles[i]);
             }
-            parameters.add(col);
+            parameters.addElement(vec);
         }
 
         return parameters;

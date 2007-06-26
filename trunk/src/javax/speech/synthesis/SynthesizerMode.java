@@ -26,8 +26,8 @@
 
 package javax.speech.synthesis;
 
-import java.util.Collection;
 import java.util.Locale;
+import java.util.Vector;
 
 import javax.speech.EngineMode;
 
@@ -134,17 +134,17 @@ public class SynthesizerMode extends EngineMode {
      * 
      * @return collection of all parameters.
      */
-    protected Collection getParameters() {
-        final Collection parameters = super.getParameters();
+    protected Vector getParameters() {
+        final Vector parameters = super.getParameters();
 
         if (voices == null) {
-            parameters.add(null);
+            parameters.addElement(null);
         } else {
-            final Collection col = new java.util.ArrayList();
+            final Vector col = new Vector();
             for (int i = 0; i < voices.length; i++) {
-                col.add(voices[i]);
+                col.addElement(voices[i]);
             }
-            parameters.add(col);
+            parameters.addElement(col);
         }
 
         return parameters;

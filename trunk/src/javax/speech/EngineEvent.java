@@ -26,7 +26,7 @@
 
 package javax.speech;
 
-import java.util.Collection;
+import java.util.Vector;
 
 public class EngineEvent extends SpeechEvent {
     // Events.
@@ -87,14 +87,14 @@ public class EngineEvent extends SpeechEvent {
     /**
      * {@inheritDoc}
      */
-    protected Collection getParameters() {
-        final Collection parameters = super.getParameters();
+    protected Vector getParameters() {
+        final Vector parameters = super.getParameters();
 
         final Long oldEngineStateObject = new Long(oldEngineState);
-        parameters.add(oldEngineStateObject);
+        parameters.addElement(oldEngineStateObject);
         final Long newEngineStateObject = new Long(newEngineState);
-        parameters.add(newEngineStateObject);
-        parameters.add(problem);
+        parameters.addElement(newEngineStateObject);
+        parameters.addElement(problem);
 
         return parameters;
     }

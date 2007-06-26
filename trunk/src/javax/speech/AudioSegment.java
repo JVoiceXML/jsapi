@@ -66,6 +66,12 @@ public class AudioSegment {
     }
 
     public boolean isGettable() {
-        return Boolean.getBoolean("javax.speech.supports.audio.capture");
+        String gettable = 
+            System.getProperty("javax.speech.supports.audio.capture");
+        if (gettable == null) {
+            return false;
+        }
+        
+        return "true".equalsIgnoreCase(gettable);
     }
 }

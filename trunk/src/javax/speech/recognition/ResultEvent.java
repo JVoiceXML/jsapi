@@ -26,7 +26,7 @@
 
 package javax.speech.recognition;
 
-import java.util.Collection;
+import java.util.Vector;
 
 import javax.speech.SpeechEvent;
 
@@ -86,14 +86,14 @@ public class ResultEvent extends SpeechEvent {
     /**
      * {@inheritDoc}
      */
-    protected Collection getParameters() {
-        final Collection parameters = super.getParameters();
+    protected Vector getParameters() {
+        final Vector parameters = super.getParameters();
 
         final Boolean tokensFinalizedObject = new Boolean(tokensFinalized);
-        parameters.add(tokensFinalizedObject);
+        parameters.addElement(tokensFinalizedObject);
         final Boolean unfinalizedTokensChangedObject = new Boolean(
                 unfinalizedTokensChanged);
-        parameters.add(unfinalizedTokensChangedObject);
+        parameters.addElement(unfinalizedTokensChangedObject);
 
         return parameters;
     }
