@@ -67,17 +67,17 @@ public class SynthesizerModeTest extends TestCase {
         Voice[] voices1 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode3 = new SynthesizerMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1, voices1);
-        assertEquals(EngineMode.FULL, mode3.getMarkupSupport());
+        assertEquals(Boolean.TRUE, mode3.getMarkupSupport());
 
         String engineName2 = "name2";
         String modeName2 = "mode2";
         Boolean running2 = Boolean.TRUE;
         Boolean supportsLetterToSound2 = Boolean.FALSE;
-        Boolean markupSupport2 = Boolean.TRUE;
+        Boolean markupSupport2 = Boolean.FALSE;
         Voice[] voices2 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode4 = new SynthesizerMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2, voices2);
-        assertEquals(EngineMode.NONE, mode4.getMarkupSupport());
+        assertEquals(Boolean.FALSE, mode4.getMarkupSupport());
 
         String engineName3 = "name3";
         String modeName3 = "mode3";

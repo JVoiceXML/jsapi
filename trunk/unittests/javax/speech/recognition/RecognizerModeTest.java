@@ -60,7 +60,7 @@ public class RecognizerModeTest extends TestCase {
         final RecognizerMode mode3 = new RecognizerMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1,
                 vocabSupport1, locales1, profiles1);
-        assertEquals(EngineMode.FULL, mode3.getMarkupSupport());
+        assertEquals(Boolean.TRUE, mode3.getMarkupSupport());
     }
 
     /**
