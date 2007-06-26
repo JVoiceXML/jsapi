@@ -28,43 +28,42 @@ package javax.speech.recognition;
 
 public class RuleSequence extends RuleComponent {
     private RuleComponent[] ruleComponents;
-    
+
     public RuleSequence(RuleComponent[] ruleComponents) {
         this.ruleComponents = ruleComponents;
     }
-    
+
     public RuleSequence(String[] tokens) {
-    	if (tokens != null) {
-    		ruleComponents = new RuleComponent[tokens.length];
-    		
-    		for (int i=0; i<tokens.length; i++) {
-    			final String token = tokens[i];
-    			ruleComponents[i] = new RuleToken(token);
-    		}
-    	}
+        if (tokens != null) {
+            ruleComponents = new RuleComponent[tokens.length];
+
+            for (int i = 0; i < tokens.length; i++) {
+                final String token = tokens[i];
+                ruleComponents[i] = new RuleToken(token);
+            }
+        }
     }
-    
+
     public RuleComponent[] getRuleComponents() {
         return ruleComponents;
     }
 
     public String toString() {
-    	if (ruleComponents == null) {
-    		return "";
-    	}
-    	
-    	final StringBuffer str = new StringBuffer();
-    	for (int i=0; i< ruleComponents.length; i++) {
-    		final RuleComponent component = ruleComponents[i];
-    		if (component == null) {
-    			str.append(RuleSpecial.NULL.toString());
-    		} else {
-    			str.append(component.toString());
-    		}
-    	}
-    	
-    	return str.toString();
+        if (ruleComponents == null) {
+            return "";
+        }
+
+        final StringBuffer str = new StringBuffer();
+        for (int i = 0; i < ruleComponents.length; i++) {
+            final RuleComponent component = ruleComponents[i];
+            if (component == null) {
+                str.append(RuleSpecial.NULL.toString());
+            } else {
+                str.append(component.toString());
+            }
+        }
+
+        return str.toString();
     }
-    
-    
+
 }

@@ -49,26 +49,26 @@ public interface Engine {
 
     int IMMEDIATE_MODE = ASYNCHRONOUS_MODE << 1;
 
-    void allocate() throws AudioException, EngineException, 
-    	EngineStateException;
+    void allocate() throws AudioException, EngineException,
+            EngineStateException;
 
-    void allocate(int mode) throws AudioException, EngineException, 
-		EngineStateException;
+    void allocate(int mode) throws AudioException, EngineException,
+            EngineStateException;
 
-    void deallocate() throws AudioException, EngineException, 
-		EngineStateException;
+    void deallocate() throws AudioException, EngineException,
+            EngineStateException;
 
-    void deallocate(int mode) throws AudioException, EngineException, 
-		EngineStateException;
+    void deallocate(int mode) throws AudioException, EngineException,
+            EngineStateException;
 
-	void pause() throws EngineStateException;
+    void pause() throws EngineStateException;
 
-	boolean resume() throws EngineStateException;
+    boolean resume() throws EngineStateException;
 
     boolean testEngineState(long state);
 
     void waitEngineState(long state);
-	
+
     AudioManager getAudioManager();
 
     EngineMode getEngineMode();

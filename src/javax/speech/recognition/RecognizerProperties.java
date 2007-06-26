@@ -94,7 +94,7 @@ public interface RecognizerProperties extends EngineProperties {
     int getSensitivity();
 
     void setSpeedVsAccuracy(int speedVsAccuracy);
-    
+
     int getSpeedVsAccuracy();
 
     void setResultAudioProvided(boolean audioProvided);

@@ -28,11 +28,11 @@ package javax.speech.synthesis;
 
 public class PhoneInfo {
     public static int UNKNOWN_DURATION = -1;
-    
+
     private String phoneme;
-    
+
     private int duration;
-    
+
     public PhoneInfo(String phoneme, int duration) {
         this.phoneme = phoneme;
         this.duration = duration;
@@ -45,6 +45,5 @@ public class PhoneInfo {
     public String getPhoneme() {
         return phoneme;
     }
-    
-    
+
 }

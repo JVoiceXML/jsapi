@@ -58,32 +58,32 @@ public class SpeakerProfile {
 
     public boolean equals(Object obj) {
         if (!(obj instanceof SpeakerProfile)) {
-        	return false;
+            return false;
         }
-        
+
         final SpeakerProfile profile = (SpeakerProfile) obj;
         final String otherId = profile.getIdentifier();
         final boolean idMatch;
         if (id == null) {
-        	idMatch = (otherId == null);
+            idMatch = (otherId == null);
         } else {
-        	idMatch = id.equals(otherId);
+            idMatch = id.equals(otherId);
         }
 
         final String otherName = profile.getName();
         final boolean nameMatch;
         if (name == null) {
-        	nameMatch = (otherName == null);
+            nameMatch = (otherName == null);
         } else {
-        	nameMatch = name.equals(otherName);
+            nameMatch = name.equals(otherName);
         }
-        
+
         final String otherVariant = profile.getVariant();
         final boolean variantMatch;
         if (variant == null) {
-        	variantMatch = (otherVariant == null);
+            variantMatch = (otherVariant == null);
         } else {
-        	variantMatch = variant.equals(otherVariant);
+            variantMatch = variant.equals(otherVariant);
         }
 
         return idMatch && nameMatch && variantMatch;
@@ -91,7 +91,7 @@ public class SpeakerProfile {
 
     public String toString() {
         StringBuffer str = new StringBuffer();
-        
+
         str.append(getClass().getName());
         str.append("[");
         str.append(id);
@@ -100,37 +100,37 @@ public class SpeakerProfile {
         str.append(",");
         str.append(variant);
         str.append("]");
-        
+
         return str.toString();
     }
 
     public boolean match(SpeakerProfile require) {
-    	if (require == null) {
-    		return true;
-    	}
-    	
+        if (require == null) {
+            return true;
+        }
+
         final String otherId = require.getIdentifier();
         final boolean idMatch;
         if (otherId == null) {
-        	idMatch = true;
+            idMatch = true;
         } else {
-        	idMatch = otherId.equals(id);
+            idMatch = otherId.equals(id);
         }
 
         final String otherName = require.getName();
         final boolean nameMatch;
         if (otherName == null) {
-        	nameMatch = true;
+            nameMatch = true;
         } else {
-        	nameMatch = otherName.equals(name);
+            nameMatch = otherName.equals(name);
         }
-        
+
         final String otherVariant = require.getVariant();
         final boolean variantMatch;
         if (otherVariant == null) {
-        	variantMatch = true;
+            variantMatch = true;
         } else {
-        	variantMatch = otherVariant.equals(variant);
+            variantMatch = otherVariant.equals(variant);
         }
 
         return idMatch && nameMatch && variantMatch;

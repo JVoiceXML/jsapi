@@ -62,14 +62,14 @@ public interface Synthesizer extends Engine {
     int getSpeakableMask();
 
     int speak(AudioSegment audio, SpeakableListener listener)
-    	throws EngineStateException;
+            throws EngineStateException;
 
     int speak(Speakable speakable, SpeakableListener listener)
-    	throws SynthesisException, EngineStateException;
+            throws SynthesisException, EngineStateException;
 
     int speak(String text, SpeakableListener listener)
-    	throws EngineStateException;
+            throws EngineStateException;
 
-    int speakMarkup(String synthesisMarkup, SpeakableListener listener) 
-    	throws SynthesisException, EngineStateException;
+    int speakMarkup(String synthesisMarkup, SpeakableListener listener)
+            throws SynthesisException, EngineStateException;
 }

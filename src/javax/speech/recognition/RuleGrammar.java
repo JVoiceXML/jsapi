@@ -30,7 +30,7 @@ public interface RuleGrammar extends Grammar {
     void addElement(String element);
 
     void removeElement(String element);
-    
+
     Rule getRule(String ruleName);
 
     void addRule(Rule rule);
@@ -68,9 +68,9 @@ public interface RuleGrammar extends Grammar {
     RuleParse parse(String text, String ruleName) throws GrammarException;
 
     RuleReference resolve(RuleReference ruleReference) throws GrammarException;
-    
+
     String getReference();
-    
+
     void setRoot(String rootName);
 
     String getRoot();

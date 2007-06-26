@@ -29,43 +29,43 @@ package javax.speech;
 import java.io.ByteArrayInputStream;
 
 public class AudioSegment {
-	private ByteArrayInputStream stream;
+    private ByteArrayInputStream stream;
 
-	private String locator;
+    private String locator;
 
-	private String markupText;
+    private String markupText;
 
-	public AudioSegment(ByteArrayInputStream stream, String locator,
-			String markupText) {
-		this.stream = stream;
-		this.locator = locator;
-		this.markupText = markupText;
-		// TODO: How can we check if the locator is supported?
-	}
+    public AudioSegment(ByteArrayInputStream stream, String locator,
+            String markupText) {
+        this.stream = stream;
+        this.locator = locator;
+        this.markupText = markupText;
+        // TODO: How can we check if the locator is supported?
+    }
 
-	public AudioSegment(String locator, String markupText) {
-		this.locator = locator;
-		this.markupText = markupText;
-	}
+    public AudioSegment(String locator, String markupText) {
+        this.locator = locator;
+        this.markupText = markupText;
+    }
 
-	public String getMediaLocator() {
-		return locator;
-	}
+    public String getMediaLocator() {
+        return locator;
+    }
 
-	public String getMarkupText() {
-		return markupText;
-	}
+    public String getMarkupText() {
+        return markupText;
+    }
 
-	public ByteArrayInputStream getInputStream() {
-		if (!isGettable()) {
-			throw new SecurityException(
-					"The platform does not allow to access the input stream!");
-		}
-		
-		return stream;
-	}
+    public ByteArrayInputStream getInputStream() {
+        if (!isGettable()) {
+            throw new SecurityException(
+                    "The platform does not allow to access the input stream!");
+        }
 
-	public boolean isGettable() {
-		return Boolean.getBoolean("javax.speech.supports.audio.capture");
-	}
+        return stream;
+    }
+
+    public boolean isGettable() {
+        return Boolean.getBoolean("javax.speech.supports.audio.capture");
+    }
 }
