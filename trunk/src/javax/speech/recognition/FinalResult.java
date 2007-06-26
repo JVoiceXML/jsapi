@@ -39,8 +39,8 @@ public interface FinalResult extends Result {
 
     AudioSegment getAudio() throws ResultException;
 
-    AudioSegment getAudio(ResultToken fromToken, ResultToken toToken) 
-    	throws ResultException;
+    AudioSegment getAudio(ResultToken fromToken, ResultToken toToken)
+            throws ResultException;
 
     int getConfidenceLevel() throws ResultException;
 

@@ -78,10 +78,10 @@ public class EngineMode {
     }
 
     public boolean match(EngineMode require) {
-    	if (require == null) {
-    		return true;
-    	}
-    	
+        if (require == null) {
+            return true;
+        }
+
         final String otherEngineName = require.getEngineName();
         final boolean namesMatch;
         if (otherEngineName == null) {
@@ -220,7 +220,7 @@ public class EngineMode {
         }
         str.append("]");
     }
-    
+
     public String toString() {
         StringBuffer str = new StringBuffer();
 

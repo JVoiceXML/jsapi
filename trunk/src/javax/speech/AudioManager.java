@@ -30,31 +30,31 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface AudioManager {
-	int getAudioMask();
-	
-	void setAudioMask(int mask);
-	
+    int getAudioMask();
+
+    void setAudioMask(int mask);
+
     void addAudioListener(AudioListener listener);
-    
+
     void removeAudioListener(AudioListener listener);
-    
+
     void audioStart() throws AudioException;
-    
+
     void audioStop() throws AudioException;;
-    
-    void setMediaLocator(String locator) throws AudioException, 
-    	EngineStateException;
 
-    void setMediaLocator(String locator, InputStream stream) 
-    	throws AudioException, EngineStateException;
+    void setMediaLocator(String locator) throws AudioException,
+            EngineStateException;
 
-    void setMediaLocator(String locator, OutputStream stream) 
-    	throws AudioException, EngineStateException;
-    
+    void setMediaLocator(String locator, InputStream stream)
+            throws AudioException, EngineStateException;
+
+    void setMediaLocator(String locator, OutputStream stream)
+            throws AudioException, EngineStateException;
+
     String getMediaLocator();
-    
+
     String[] getSupportedMediaLocators(String mediaLocator);
-    
+
     boolean isSupportedMediaLocator(String mediaLocator);
 
     boolean isSameChannel(AudioManager audioManager);

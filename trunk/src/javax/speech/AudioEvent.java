@@ -32,7 +32,7 @@ public class AudioEvent extends SpeechEvent {
     public static int AUDIO_LEVEL = 1;
 
     public static int AUDIO_STARTED = AUDIO_LEVEL << 1;
-    
+
     public static int AUDIO_STOPPED = AUDIO_STARTED << 1;
 
     public static int AUDIO_LEVEL_MIN = 0;
@@ -44,6 +44,7 @@ public class AudioEvent extends SpeechEvent {
     public static int AUDIO_LEVEL_MAX = Integer.MAX_VALUE;
 
     public static int DEFAULT_MASK = AUDIO_STARTED | AUDIO_STOPPED;
+
     private int audioLevel;
 
     public AudioEvent(Engine source, int id) {
@@ -54,10 +55,10 @@ public class AudioEvent extends SpeechEvent {
         super(source, id);
 
         if ((audioLevel < AUDIO_LEVEL_MIN) || (audioLevel > AUDIO_LEVEL_MAX)) {
-        	throw new IllegalArgumentException("Audiolevel must be between "
-        			+ "AUDIO_LEVEL_MIN and AUDIO_LEVEL_MAX");
+            throw new IllegalArgumentException("Audiolevel must be between "
+                    + "AUDIO_LEVEL_MIN and AUDIO_LEVEL_MAX");
         }
-        
+
         this.audioLevel = audioLevel;
     }
 

@@ -27,113 +27,113 @@
 package javax.speech;
 
 public class Word {
-	public static final long ABBREVIATION = 1;
+    public static final long ABBREVIATION = 1;
 
-	public static final long ACOUSTIC = ABBREVIATION << 1;
+    public static final long ACOUSTIC = ABBREVIATION << 1;
 
-	public static final long ADJECTIVE =  ACOUSTIC << 1;
+    public static final long ADJECTIVE = ACOUSTIC << 1;
 
-	public static final long ADVERB = ADJECTIVE << 1;
+    public static final long ADVERB = ADJECTIVE << 1;
 
-	public static final long AUXILIARY = ADVERB << 1;
+    public static final long AUXILIARY = ADVERB << 1;
 
-	public static final long CARDINAL = AUXILIARY << 1;
+    public static final long CARDINAL = AUXILIARY << 1;
 
-	public static final long CONJUNCTION = CARDINAL << 1;
+    public static final long CONJUNCTION = CARDINAL << 1;
 
-	public static final long CONTRACTION = CONJUNCTION << 1;
+    public static final long CONTRACTION = CONJUNCTION << 1;
 
-	public static final long DETERMINER = CONTRACTION << 1;
+    public static final long DETERMINER = CONTRACTION << 1;
 
-	public static final long DONT_CARE = DETERMINER << 1;
+    public static final long DONT_CARE = DETERMINER << 1;
 
-	public static final long NOUN = DONT_CARE << 1;
+    public static final long NOUN = DONT_CARE << 1;
 
-	public static final long OTHER = NOUN << 1;
+    public static final long OTHER = NOUN << 1;
 
-	public static final long PREPOSITION = OTHER << 1;
+    public static final long PREPOSITION = OTHER << 1;
 
-	public static final long PRONOUN = PREPOSITION << 1;
+    public static final long PRONOUN = PREPOSITION << 1;
 
-	public static final long PROPER_ADJECTIVE = PRONOUN << 1;
+    public static final long PROPER_ADJECTIVE = PRONOUN << 1;
 
-	public static final long PROPER_NOUN = PROPER_ADJECTIVE << 1;
+    public static final long PROPER_NOUN = PROPER_ADJECTIVE << 1;
 
-	public static final long VERB = PROPER_NOUN << 1;
+    public static final long VERB = PROPER_NOUN << 1;
 
-	public static final long UNKNOWN = 0;
-	
-	private String text;
+    public static final long UNKNOWN = 0;
 
-	private String[] pronunciations;
+    private String text;
 
-	private String spokenForm;
+    private String[] pronunciations;
 
-	private AudioSegment audioSegment;
+    private String spokenForm;
 
-	private long categories;
+    private AudioSegment audioSegment;
 
-	public Word(String text, String[] pronunciations, String spokenForm,
-			AudioSegment audioSegment, long categories) {
-		if (text == null) {
-			throw new IllegalArgumentException(
-					"Written form text must be specified");
-		}
-		this.text = text;
-		this.pronunciations = pronunciations;
-		this.spokenForm = spokenForm;
-		this.audioSegment = audioSegment;
-		this.categories = categories;
-	}
+    private long categories;
 
-	public AudioSegment getAudioSegment() {
-		return audioSegment;
-	}
+    public Word(String text, String[] pronunciations, String spokenForm,
+            AudioSegment audioSegment, long categories) {
+        if (text == null) {
+            throw new IllegalArgumentException(
+                    "Written form text must be specified");
+        }
+        this.text = text;
+        this.pronunciations = pronunciations;
+        this.spokenForm = spokenForm;
+        this.audioSegment = audioSegment;
+        this.categories = categories;
+    }
 
-	public long getCategories() {
-		return categories;
-	}
+    public AudioSegment getAudioSegment() {
+        return audioSegment;
+    }
 
-	public String[] getPronunciations() {
-		return pronunciations;
-	}
+    public long getCategories() {
+        return categories;
+    }
 
-	public String getSpokenForm() {
-		return spokenForm;
-	}
+    public String[] getPronunciations() {
+        return pronunciations;
+    }
 
-	public String getText() {
-		return text;
-	}
+    public String getSpokenForm() {
+        return spokenForm;
+    }
 
-	public String toString() {
-		final StringBuffer str = new StringBuffer();
+    public String getText() {
+        return text;
+    }
 
-		str.append(getClass());
-		str.append("[");
+    public String toString() {
+        final StringBuffer str = new StringBuffer();
 
-		str.append(text);
+        str.append(getClass());
+        str.append("[");
 
-		if (pronunciations == null) {
-			str.append(pronunciations);
-		} else {
-			str.append("[");
-			int max = pronunciations.length;
-			for (int i=0; i<max; i++) {
-				str.append(pronunciations[i]);
-				if (i != max -1) {
-					str.append(",");
-				}
-			}
-			str.append("]");
-		}
-		
-		str.append(spokenForm);
-		str.append(audioSegment);
-		str.append(categories);
-		
-		str.append("]");
+        str.append(text);
 
-		return str.toString();
-	}
+        if (pronunciations == null) {
+            str.append(pronunciations);
+        } else {
+            str.append("[");
+            int max = pronunciations.length;
+            for (int i = 0; i < max; i++) {
+                str.append(pronunciations[i]);
+                if (i != max - 1) {
+                    str.append(",");
+                }
+            }
+            str.append("]");
+        }
+
+        str.append(spokenForm);
+        str.append(audioSegment);
+        str.append(categories);
+
+        str.append("]");
+
+        return str.toString();
+    }
 }

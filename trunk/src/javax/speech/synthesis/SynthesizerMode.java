@@ -75,15 +75,15 @@ public class SynthesizerMode extends EngineMode {
         if (voices.length != otherVoices.length) {
             return false;
         }
-        
-        for (int i=0; i< voices.length; i++) {
+
+        for (int i = 0; i < voices.length; i++) {
             final Voice voice = voices[i];
             final Voice otherVoice = otherVoices[i];
             if (!voice.equals(otherVoice)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -104,15 +104,15 @@ public class SynthesizerMode extends EngineMode {
             final SynthesizerMode mode = (SynthesizerMode) require;
             Voice[] otherVoices = mode.getVoices();
             if (otherVoices != null) {
-            	if (voices == null) {
-            		return false;
-            	}
-            	
-                for (int i=0; i< otherVoices.length; i++) {
+                if (voices == null) {
+                    return false;
+                }
+
+                for (int i = 0; i < otherVoices.length; i++) {
                     Voice otherVoice = otherVoices[i];
 
                     boolean voiceMatch = false;
-                    for (int k=0; (k<voices.length) && !voiceMatch; k++) {
+                    for (int k = 0; (k < voices.length) && !voiceMatch; k++) {
                         final Voice voice = voices[k];
                         if (otherVoice.match(voice)) {
                             voiceMatch = true;
@@ -124,8 +124,8 @@ public class SynthesizerMode extends EngineMode {
                     }
                 }
             }
-        } 
-        
+        }
+
         return true;
     }
 

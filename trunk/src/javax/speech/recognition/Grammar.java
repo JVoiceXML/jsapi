@@ -52,6 +52,6 @@ public interface Grammar {
     boolean isActive();
 
     void setEnabled(boolean flag);
-    
+
     boolean isEnabled();
 }

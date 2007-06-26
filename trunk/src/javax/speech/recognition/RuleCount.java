@@ -27,109 +27,109 @@
 package javax.speech.recognition;
 
 public class RuleCount extends RuleComponent {
-	public static int MAX_PROBABILITY = Integer.MAX_VALUE;
+    public static int MAX_PROBABILITY = Integer.MAX_VALUE;
 
-	public static int REPEAT_INDEFINITELY = -1;
+    public static int REPEAT_INDEFINITELY = -1;
 
-	private RuleComponent ruleComponent;
+    private RuleComponent ruleComponent;
 
-	private int repeatMin;
+    private int repeatMin;
 
-	private int repeatMax;
+    private int repeatMax;
 
-	private int repeatProbability;
+    private int repeatProbability;
 
-	public RuleCount(RuleComponent ruleComponent, int repeatMin) {
-		if (repeatMin < 0) {
-			throw new IllegalArgumentException(
-					"Repeat minimum must be greater or equal to 0!");
-		}
-		this.ruleComponent = ruleComponent;
-		this.repeatMax = REPEAT_INDEFINITELY;
-		this.repeatMin = repeatMin;
-		this.repeatProbability = -1;
-	}
+    public RuleCount(RuleComponent ruleComponent, int repeatMin) {
+        if (repeatMin < 0) {
+            throw new IllegalArgumentException(
+                    "Repeat minimum must be greater or equal to 0!");
+        }
+        this.ruleComponent = ruleComponent;
+        this.repeatMax = REPEAT_INDEFINITELY;
+        this.repeatMin = repeatMin;
+        this.repeatProbability = -1;
+    }
 
-	public RuleCount(RuleComponent ruleComponent, int repeatMin, int repeatMax) {
-		if (repeatMin < 0 || repeatMin > repeatMax) {
-			throw new IllegalArgumentException(
-					"Repeat minimum must be greater or equal to 0 and smaller "
-							+ "than or equal to repeat maximum!");
-		}
-		this.ruleComponent = ruleComponent;
-		this.repeatMin = repeatMin;
-		this.repeatMax = repeatMax;
-		this.repeatProbability = -1;
-	}
+    public RuleCount(RuleComponent ruleComponent, int repeatMin, int repeatMax) {
+        if (repeatMin < 0 || repeatMin > repeatMax) {
+            throw new IllegalArgumentException(
+                    "Repeat minimum must be greater or equal to 0 and smaller "
+                            + "than or equal to repeat maximum!");
+        }
+        this.ruleComponent = ruleComponent;
+        this.repeatMin = repeatMin;
+        this.repeatMax = repeatMax;
+        this.repeatProbability = -1;
+    }
 
-	public RuleCount(RuleComponent ruleComponent, int repeatMin, int repeatMax,
-			int repeatProbability) {
-		if (repeatMin < 0 || repeatMin > repeatMax) {
-			throw new IllegalArgumentException(
-					"Repeat minimum must be greater or equal to 0 and smaller "
-							+ "than or equal to repeat maximum!");
-		}
+    public RuleCount(RuleComponent ruleComponent, int repeatMin, int repeatMax,
+            int repeatProbability) {
+        if (repeatMin < 0 || repeatMin > repeatMax) {
+            throw new IllegalArgumentException(
+                    "Repeat minimum must be greater or equal to 0 and smaller "
+                            + "than or equal to repeat maximum!");
+        }
 
-		if (repeatProbability < 0) {
-			throw new IllegalArgumentException(
-					"Repeat propability must be greater or equal to 0!");
-		}
-		this.ruleComponent = ruleComponent;
-		this.repeatMin = repeatMin;
-		this.repeatMax = repeatMax;
-		this.repeatProbability = repeatProbability;
-	}
+        if (repeatProbability < 0) {
+            throw new IllegalArgumentException(
+                    "Repeat propability must be greater or equal to 0!");
+        }
+        this.ruleComponent = ruleComponent;
+        this.repeatMin = repeatMin;
+        this.repeatMax = repeatMax;
+        this.repeatProbability = repeatProbability;
+    }
 
-	public int getRepeatMax() {
-		return repeatMax;
-	}
+    public int getRepeatMax() {
+        return repeatMax;
+    }
 
-	public int getRepeatMin() {
-		return repeatMin;
-	}
+    public int getRepeatMin() {
+        return repeatMin;
+    }
 
-	public int getRepeatProbability() {
-		if (repeatProbability < 0) {
-			return REPEAT_INDEFINITELY;
-		}
-		
-		return repeatProbability;
-	}
+    public int getRepeatProbability() {
+        if (repeatProbability < 0) {
+            return REPEAT_INDEFINITELY;
+        }
 
-	public RuleComponent getRuleComponent() {
-		return ruleComponent;
-	}
+        return repeatProbability;
+    }
 
-	public String toString() {
-		StringBuffer str = new StringBuffer();
+    public RuleComponent getRuleComponent() {
+        return ruleComponent;
+    }
 
-		str.append("<item repeat=\"");
-		str.append(repeatMin);
-		if (repeatMin != repeatMax) {
-			str.append("-");
+    public String toString() {
+        StringBuffer str = new StringBuffer();
 
-			if (repeatMax != REPEAT_INDEFINITELY) {
-				str.append(repeatMax);
-			}
-		}
-		str.append("\"");
+        str.append("<item repeat=\"");
+        str.append(repeatMin);
+        if (repeatMin != repeatMax) {
+            str.append("-");
 
-		if (repeatProbability >= 0) {
-			str.append(" repeat-prop=\"");
-			float prop = repeatProbability / MAX_PROBABILITY;
-			str.append(prop);
-			str.append("\"");
-		}
+            if (repeatMax != REPEAT_INDEFINITELY) {
+                str.append(repeatMax);
+            }
+        }
+        str.append("\"");
 
-		str.append(">");
+        if (repeatProbability >= 0) {
+            str.append(" repeat-prop=\"");
+            float prop = repeatProbability / MAX_PROBABILITY;
+            str.append(prop);
+            str.append("\"");
+        }
 
-		// TODO: What to do with null rule components?
-		if (ruleComponent != null) {
-			str.append(ruleComponent);
-		}
+        str.append(">");
 
-		str.append("</item>");
+        // TODO: What to do with null rule components?
+        if (ruleComponent != null) {
+            str.append(ruleComponent);
+        }
 
-		return str.toString();
-	}
+        str.append("</item>");
+
+        return str.toString();
+    }
 }
