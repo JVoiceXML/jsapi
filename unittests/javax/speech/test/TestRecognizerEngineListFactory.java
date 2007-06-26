@@ -15,17 +15,17 @@ import javax.speech.test.recognition.TestRecognizerFactory;
  * @author Dirk Schnelle
  */
 public class TestRecognizerEngineListFactory implements EngineListFactory {
-	/**
-	 * {@inheritDoc}
-	 */
-	public EngineList createEngineList(EngineMode require)
-			throws SecurityException {
-		if ((require == null) || (require instanceof RecognizerMode)) {
-			final EngineMode[] modes = new EngineMode[] { new TestRecognizerFactory() };
-			
-			return new EngineList(modes);
-		}
-		
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public EngineList createEngineList(EngineMode require)
+            throws SecurityException {
+        if ((require == null) || (require instanceof RecognizerMode)) {
+            final EngineMode[] modes = new EngineMode[] { new TestRecognizerFactory() };
+
+            return new EngineList(modes);
+        }
+
+        return null;
+    }
 }

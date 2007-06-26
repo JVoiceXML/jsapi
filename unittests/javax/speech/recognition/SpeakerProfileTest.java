@@ -36,27 +36,28 @@ import junit.framework.TestCase;
 public class SpeakerProfileTest extends TestCase {
 
     /**
-     * Test method for {@link javax.speech.recognition.SpeakerProfile#hashCode()}.
+     * Test method for
+     * {@link javax.speech.recognition.SpeakerProfile#hashCode()}.
      */
     public void testHashCode() {
         final SpeakerProfile profile1 = new SpeakerProfile();
         final SpeakerProfile profile2 = new SpeakerProfile();
-        
+
         assertTrue(profile1.hashCode() != profile2.hashCode());
     }
 
     /**
-     * Test method for {@link javax.speech.recognition.SpeakerProfile#getIdentifier()}.
+     * Test method for
+     * {@link javax.speech.recognition.SpeakerProfile#getIdentifier()}.
      */
     public void testGetIdentifier() {
         final SpeakerProfile profile1 = new SpeakerProfile();
         assertNull(profile1.getIdentifier());
-        
+
         final String id2 = "id2";
         final String name2 = "name2";
         final String variant2 = "variant2";
-        final SpeakerProfile profile2 = 
-        	new SpeakerProfile(id2, name2, variant2);
+        final SpeakerProfile profile2 = new SpeakerProfile(id2, name2, variant2);
         assertEquals(id2, profile2.getIdentifier());
     }
 
@@ -66,68 +67,66 @@ public class SpeakerProfileTest extends TestCase {
     public void testGetName() {
         final SpeakerProfile profile1 = new SpeakerProfile();
         assertNull(profile1.getName());
-        
+
         final String id2 = "id2";
         final String name2 = "name2";
         final String variant2 = "variant2";
-        final SpeakerProfile profile2 = 
-        	new SpeakerProfile(id2, name2, variant2);
+        final SpeakerProfile profile2 = new SpeakerProfile(id2, name2, variant2);
         assertEquals(name2, profile2.getName());
     }
 
     /**
-     * Test method for {@link javax.speech.recognition.SpeakerProfile#getVariant()}.
+     * Test method for
+     * {@link javax.speech.recognition.SpeakerProfile#getVariant()}.
      */
     public void testGetVariant() {
         final SpeakerProfile profile1 = new SpeakerProfile();
         assertNull(profile1.getVariant());
-        
+
         final String id2 = "id2";
         final String name2 = "name2";
         final String variant2 = "variant2";
-        final SpeakerProfile profile2 = 
-        	new SpeakerProfile(id2, name2, variant2);
+        final SpeakerProfile profile2 = new SpeakerProfile(id2, name2, variant2);
         assertEquals(variant2, profile2.getVariant());
     }
 
     /**
-     * Test method for {@link javax.speech.recognition.SpeakerProfile#equals(Object)}.
+     * Test method for
+     * {@link javax.speech.recognition.SpeakerProfile#equals(Object)}.
      */
     public void testEqualsObject() {
         final SpeakerProfile profile1 = new SpeakerProfile();
         assertFalse(profile1.equals("test"));
         assertFalse(profile1.equals((SpeakerProfile) null));
-        
+
         final SpeakerProfile profile2 = new SpeakerProfile();
         assertTrue(profile1.equals(profile2));
-        
+
         final String id3 = "id3";
         final String name3 = "name3";
         final String variant3 = "variant3";
-        final SpeakerProfile profile3 = 
-        	new SpeakerProfile(id3, name3, variant3);
+        final SpeakerProfile profile3 = new SpeakerProfile(id3, name3, variant3);
         assertFalse(profile1.equals(profile3));
         assertTrue(profile3.equals(profile3));
-        
+
         final String id4 = "id3";
         final String name4 = "name3";
         final String variant4 = "variant3";
-        final SpeakerProfile profile4 = 
-        	new SpeakerProfile(id4, name4, variant4);
+        final SpeakerProfile profile4 = new SpeakerProfile(id4, name4, variant4);
         assertTrue(profile3.equals(profile4));
         assertTrue(profile4.equals(profile3));
 
         final String id5 = "id5";
         final String name5 = "name5";
         final String variant5 = "variant5";
-        final SpeakerProfile profile5 = 
-        	new SpeakerProfile(id5, name5, variant5);
+        final SpeakerProfile profile5 = new SpeakerProfile(id5, name5, variant5);
         assertFalse(profile3.equals(profile5));
         assertFalse(profile5.equals(profile3));
     }
 
     /**
-     * Test method for {@link javax.speech.recognition.SpeakerProfile#toString()}.
+     * Test method for
+     * {@link javax.speech.recognition.SpeakerProfile#toString()}.
      */
     public void testToString() {
         final SpeakerProfile profile1 = new SpeakerProfile();
@@ -137,8 +136,7 @@ public class SpeakerProfileTest extends TestCase {
         final String id2 = "id2";
         final String name2 = "name2";
         final String variant2 = "variant2";
-        final SpeakerProfile profile2 = 
-        	new SpeakerProfile(id2, name2, variant2);
+        final SpeakerProfile profile2 = new SpeakerProfile(id2, name2, variant2);
         final String str2 = profile2.toString();
         assertNotNull(str2);
         assertTrue(str2.indexOf(id2) > 0);
@@ -147,37 +145,35 @@ public class SpeakerProfileTest extends TestCase {
     }
 
     /**
-     * Test method for {@link javax.speech.recognition.SpeakerProfile#match(SpeakerProfile)}.
+     * Test method for
+     * {@link javax.speech.recognition.SpeakerProfile#match(SpeakerProfile)}.
      */
     public void testMatch() {
         final SpeakerProfile profile1 = new SpeakerProfile();
         assertTrue(profile1.match(null));
-        
+
         final SpeakerProfile profile2 = new SpeakerProfile();
         assertTrue(profile1.match(profile2));
-        
+
         final String id3 = "id3";
         final String name3 = "name3";
         final String variant3 = "variant3";
-        final SpeakerProfile profile3 = 
-        	new SpeakerProfile(id3, name3, variant3);
+        final SpeakerProfile profile3 = new SpeakerProfile(id3, name3, variant3);
         assertFalse(profile1.match(profile3));
         assertTrue(profile3.match(profile3));
         assertTrue(profile3.match(profile1));
-        
+
         final String id4 = "id3";
         final String name4 = "name3";
         final String variant4 = "variant3";
-        final SpeakerProfile profile4 = 
-        	new SpeakerProfile(id4, name4, variant4);
+        final SpeakerProfile profile4 = new SpeakerProfile(id4, name4, variant4);
         assertTrue(profile3.match(profile4));
         assertTrue(profile4.match(profile3));
 
         final String id5 = "id5";
         final String name5 = "name5";
         final String variant5 = "variant5";
-        final SpeakerProfile profile5 = 
-        	new SpeakerProfile(id5, name5, variant5);
+        final SpeakerProfile profile5 = new SpeakerProfile(id5, name5, variant5);
         assertFalse(profile3.match(profile5));
         assertFalse(profile5.match(profile3));
     }

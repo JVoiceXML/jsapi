@@ -63,7 +63,7 @@ public class SynthesizerModeTest extends TestCase {
         String modeName1 = "mode1";
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.FALSE;
-        Integer markupSupport1 = EngineMode.FULL;
+        Boolean markupSupport1 = Boolean.TRUE;
         Voice[] voices1 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode3 = new SynthesizerMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1, voices1);
@@ -73,7 +73,7 @@ public class SynthesizerModeTest extends TestCase {
         String modeName2 = "mode2";
         Boolean running2 = Boolean.TRUE;
         Boolean supportsLetterToSound2 = Boolean.FALSE;
-        Integer markupSupport2 = EngineMode.NONE;
+        Boolean markupSupport2 = Boolean.TRUE;
         Voice[] voices2 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode4 = new SynthesizerMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2, voices2);
@@ -83,7 +83,7 @@ public class SynthesizerModeTest extends TestCase {
         String modeName3 = "mode3";
         Boolean running3 = Boolean.TRUE;
         Boolean supportsLetterToSound3 = Boolean.FALSE;
-        Integer markupSupport3 = null;
+        Boolean markupSupport3 = null;
         Voice[] voices3 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode5 = new SynthesizerMode(engineName3, modeName3,
                 running3, supportsLetterToSound3, markupSupport3, voices3);
@@ -97,18 +97,18 @@ public class SynthesizerModeTest extends TestCase {
     public void testMatch() {
         final SynthesizerMode mode1 = new SynthesizerMode();
         assertTrue(mode1.match((SynthesizerMode) null));
-        
+
         final SynthesizerMode mode2 = new SynthesizerMode();
         assertTrue(mode1.match(mode2));
 
         final EngineMode engineMode = new EngineMode();
         assertTrue(mode1.match(engineMode));
-        
+
         String engineName1 = "name1";
         String modeName1 = "mode1";
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.FALSE;
-        Integer markupSupport1 = EngineMode.FULL;
+        Boolean markupSupport1 = Boolean.TRUE;
         Voice[] voices1 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode3 = new SynthesizerMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1, voices1);
@@ -119,7 +119,7 @@ public class SynthesizerModeTest extends TestCase {
         String modeName2 = "mode1";
         Boolean running2 = Boolean.TRUE;
         Boolean supportsLetterToSound2 = Boolean.FALSE;
-        Integer markupSupport2 = EngineMode.FULL;
+        Boolean markupSupport2 = Boolean.TRUE;
         Voice[] voices2 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode4 = new SynthesizerMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2, voices2);
@@ -142,7 +142,7 @@ public class SynthesizerModeTest extends TestCase {
         String modeName1 = "mode1";
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.FALSE;
-        Integer markupSupport1 = EngineMode.FULL;
+        Boolean markupSupport1 = Boolean.TRUE;
         Voice[] voices1 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode3 = new SynthesizerMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1, voices1);
@@ -152,7 +152,7 @@ public class SynthesizerModeTest extends TestCase {
         String modeName2 = "mode1";
         Boolean running2 = Boolean.TRUE;
         Boolean supportsLetterToSound2 = Boolean.FALSE;
-        Integer markupSupport2 = EngineMode.FULL;
+        Boolean markupSupport2 = Boolean.TRUE;
         Voice[] voices2 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode4 = new SynthesizerMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2, voices2);
@@ -163,7 +163,7 @@ public class SynthesizerModeTest extends TestCase {
         String modeName3 = "mode1";
         Boolean running3 = Boolean.TRUE;
         Boolean supportsLetterToSound3 = Boolean.FALSE;
-        Integer markupSupport3 = EngineMode.FULL;
+        Boolean markupSupport3 = Boolean.TRUE;
         Voice[] voices3 = new Voice[] { new Voice() };
         SynthesizerMode mode5 = new SynthesizerMode(engineName3, modeName3,
                 running3, supportsLetterToSound3, markupSupport3, voices3);
@@ -186,7 +186,7 @@ public class SynthesizerModeTest extends TestCase {
         String modeName1 = "mode1";
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.FALSE;
-        Integer markupSupport1 = EngineMode.FULL;
+        Boolean markupSupport1 = Boolean.TRUE;
         Voice[] voices1 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode3 = new SynthesizerMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1, voices1);
@@ -213,7 +213,7 @@ public class SynthesizerModeTest extends TestCase {
         String modeName1 = "mode1";
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.FALSE;
-        Integer markupSupport1 = EngineMode.FULL;
+        Boolean markupSupport1 = Boolean.TRUE;
         Voice[] voices1 = new Voice[] { new Voice(), new Voice() };
         SynthesizerMode mode3 = new SynthesizerMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1, voices1);

@@ -33,7 +33,7 @@ import junit.framework.TestCase;
  * Test case for {@link javax.speech.EngineEvent}.
  * 
  * @author Dirk Schnelle
- *
+ * 
  */
 public class EngineEventTest extends TestCase {
     /** The test engine. */
@@ -44,7 +44,7 @@ public class EngineEventTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        
+
         engine = new TestEngine();
     }
 
@@ -53,11 +53,11 @@ public class EngineEventTest extends TestCase {
      */
     public void testGetNewEngineState() {
         final Throwable problem = new Exception();
-        final EngineEvent event = new EngineEvent(engine, 43, 
-                EngineEvent.ENGINE_DEALLOCATED, 
+        final EngineEvent event = new EngineEvent(engine, 43,
+                EngineEvent.ENGINE_DEALLOCATED,
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES, problem);
-        assertEquals(EngineEvent.ENGINE_ALLOCATING_RESOURCES,
-                event.getNewEngineState());
+        assertEquals(EngineEvent.ENGINE_ALLOCATING_RESOURCES, event
+                .getNewEngineState());
     }
 
     /**
@@ -65,11 +65,10 @@ public class EngineEventTest extends TestCase {
      */
     public void testGetOldEngineState() {
         final Throwable problem = new Exception();
-        final EngineEvent event = new EngineEvent(engine, 43, 
-                EngineEvent.ENGINE_DEALLOCATED, 
+        final EngineEvent event = new EngineEvent(engine, 43,
+                EngineEvent.ENGINE_DEALLOCATED,
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES, problem);
-        assertEquals(EngineEvent.ENGINE_DEALLOCATED,
-                event.getOldEngineState());
+        assertEquals(EngineEvent.ENGINE_DEALLOCATED, event.getOldEngineState());
     }
 
     /**
@@ -77,14 +76,13 @@ public class EngineEventTest extends TestCase {
      */
     public void testGetEngineError() {
         final Throwable problem = new Exception();
-        final EngineEvent event = new EngineEvent(engine, 43, 
-                EngineEvent.ENGINE_DEALLOCATED, 
+        final EngineEvent event = new EngineEvent(engine, 43,
+                EngineEvent.ENGINE_DEALLOCATED,
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES, problem);
         assertNull(event.getEngineError());
 
-        final EngineEvent event2 = new EngineEvent(engine, 
-                EngineEvent.ENGINE_ERROR, 
-                EngineEvent.ENGINE_DEALLOCATED, 
+        final EngineEvent event2 = new EngineEvent(engine,
+                EngineEvent.ENGINE_ERROR, EngineEvent.ENGINE_DEALLOCATED,
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES, problem);
         assertEquals(problem, event2.getEngineError());
     }
@@ -93,8 +91,8 @@ public class EngineEventTest extends TestCase {
      * Test method for {@link javax.speech.SpeechEvent#paramString()}.
      */
     public void testParamString() {
-        final EngineEvent event = new EngineEvent(engine, 43, 
-                EngineEvent.ENGINE_DEALLOCATED, 
+        final EngineEvent event = new EngineEvent(engine, 43,
+                EngineEvent.ENGINE_DEALLOCATED,
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES, null);
         final String str = event.paramString();
         assertTrue(str.indexOf("43") >= 0);
@@ -104,8 +102,8 @@ public class EngineEventTest extends TestCase {
      * Test method for {@link javax.speech.SpeechEvent#toString()}.
      */
     public void testToString() {
-        final EngineEvent event = new EngineEvent(engine, 44, 
-                EngineEvent.ENGINE_DEALLOCATED, 
+        final EngineEvent event = new EngineEvent(engine, 44,
+                EngineEvent.ENGINE_DEALLOCATED,
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES, null);
         final String str = event.toString();
         assertTrue(str.indexOf("44") >= 0);

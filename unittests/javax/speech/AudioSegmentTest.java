@@ -36,25 +36,22 @@ import junit.framework.TestCase;
  * @author Dirk Schnelle
  */
 public class AudioSegmentTest extends TestCase {
-   
+
     /**
      * Test method for {@link javax.speech.AudioSegment#getMediaLocator()}.
      */
     public void testGetLocator() {
         final String locator1 = "file:///user/smith/hello.wav";
-        final String markup1 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
-        final AudioSegment segment1 = 
-            new AudioSegment(locator1, markup1);
+        final String markup1 = "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
+        final AudioSegment segment1 = new AudioSegment(locator1, markup1);
         assertEquals(locator1, segment1.getMediaLocator());
-        
+
         byte[] bytes = new byte[256];
         final ByteArrayInputStream stream2 = new ByteArrayInputStream(bytes);
         final String locator2 = "file:///user/smith/hello2.wav";
-        final String markup2 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
-        final AudioSegment segment2 = 
-            new AudioSegment(stream2, locator2, markup2);
+        final String markup2 = "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
+        final AudioSegment segment2 = new AudioSegment(stream2, locator2,
+                markup2);
         assertEquals(locator2, segment2.getMediaLocator());
     }
 
@@ -63,69 +60,60 @@ public class AudioSegmentTest extends TestCase {
      */
     public void testGetMarkupText() {
         final String locator1 = "file:///user/smith/hello.wav";
-        final String markup1 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
-        final AudioSegment segment1 = 
-            new AudioSegment(locator1, markup1);
+        final String markup1 = "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
+        final AudioSegment segment1 = new AudioSegment(locator1, markup1);
         assertEquals(markup1, segment1.getMarkupText());
-        
+
         byte[] bytes = new byte[256];
         final ByteArrayInputStream stream2 = new ByteArrayInputStream(bytes);
         final String locator2 = "file:///user/smith/hello2.wav";
-        final String markup2 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
-        final AudioSegment segment2 = 
-            new AudioSegment(stream2, locator2, markup2);
+        final String markup2 = "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
+        final AudioSegment segment2 = new AudioSegment(stream2, locator2,
+                markup2);
         assertEquals(markup2, segment2.getMarkupText());
     }
 
     /**
      * Test method for {@link javax.speech.AudioSegment#getInputStream()}.
      */
-    public void testGetInputStream() {    	
+    public void testGetInputStream() {
         System.setProperty("javax.speech.supports.audio.capture", "true");
-    	final String locator1 = "file:///user/smith/hello.wav";
-        final String markup1 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
-        final AudioSegment segment1 = 
-            new AudioSegment(locator1, markup1);
+        final String locator1 = "file:///user/smith/hello.wav";
+        final String markup1 = "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
+        final AudioSegment segment1 = new AudioSegment(locator1, markup1);
         assertNull(segment1.getInputStream());
-        
+
         byte[] bytes = new byte[256];
         final ByteArrayInputStream stream2 = new ByteArrayInputStream(bytes);
         final String locator2 = "file:///user/smith/hello2.wav";
-        final String markup2 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
-        final AudioSegment segment2 = 
-            new AudioSegment(stream2, locator2, markup2);
+        final String markup2 = "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
+        final AudioSegment segment2 = new AudioSegment(stream2, locator2,
+                markup2);
         assertEquals(stream2, segment2.getInputStream());
 
         System.setProperty("javax.speech.supports.audio.capture", "false");
-    	final String locator3 = "file:///user/smith/hello.wav";
-        final String markup3 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
-        final AudioSegment segment3 = 
-            new AudioSegment(locator3, markup3);
+        final String locator3 = "file:///user/smith/hello.wav";
+        final String markup3 = "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
+        final AudioSegment segment3 = new AudioSegment(locator3, markup3);
         Exception failure = null;
         try {
-        	segment3.getInputStream();
+            segment3.getInputStream();
         } catch (SecurityException e) {
-        	failure = e;
+            failure = e;
         }
         assertNotNull(failure);
-        
+
         byte[] bytes4 = new byte[256];
         final ByteArrayInputStream stream4 = new ByteArrayInputStream(bytes);
         final String locator4 = "file:///user/smith/hello2.wav";
-        final String markup4 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
-        final AudioSegment segment4 = 
-            new AudioSegment(stream4, locator4, markup4);
+        final String markup4 = "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
+        final AudioSegment segment4 = new AudioSegment(stream4, locator4,
+                markup4);
         failure = null;
         try {
-        	segment4.getInputStream();
+            segment4.getInputStream();
         } catch (SecurityException e) {
-        	failure = e;
+            failure = e;
         }
         assertNotNull(failure);
     }
@@ -135,37 +123,31 @@ public class AudioSegmentTest extends TestCase {
      */
     public void testIsGettable() {
         System.setProperty("javax.speech.supports.audio.capture", "true");
-    	final String locator1 = "file:///user/smith/hello.wav";
-        final String markup1 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
-        final AudioSegment segment1 = 
-            new AudioSegment(locator1, markup1);
+        final String locator1 = "file:///user/smith/hello.wav";
+        final String markup1 = "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
+        final AudioSegment segment1 = new AudioSegment(locator1, markup1);
         assertTrue(segment1.isGettable());
-        
+
         byte[] bytes = new byte[256];
         final ByteArrayInputStream stream2 = new ByteArrayInputStream(bytes);
         final String locator2 = "file:///user/smith/hello2.wav";
-        final String markup2 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
-        final AudioSegment segment2 = 
-            new AudioSegment(stream2, locator2, markup2);
+        final String markup2 = "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
+        final AudioSegment segment2 = new AudioSegment(stream2, locator2,
+                markup2);
         assertTrue(segment2.isGettable());
 
         System.setProperty("javax.speech.supports.audio.capture", "false");
-    	final String locator3 = "file:///user/smith/hello.wav";
-        final String markup3 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
-        final AudioSegment segment3 = 
-            new AudioSegment(locator3, markup3);
+        final String locator3 = "file:///user/smith/hello.wav";
+        final String markup3 = "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
+        final AudioSegment segment3 = new AudioSegment(locator3, markup3);
         assertFalse(segment1.isGettable());
-        
+
         byte[] bytes4 = new byte[256];
         final ByteArrayInputStream stream4 = new ByteArrayInputStream(bytes);
         final String locator4 = "file:///user/smith/hello2.wav";
-        final String markup4 = 
-            "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
-        final AudioSegment segment4 = 
-            new AudioSegment(stream4, locator4, markup4);
+        final String markup4 = "<speak xml:lang='en-US' version='1.0'>Hello 2</speak>";
+        final AudioSegment segment4 = new AudioSegment(stream4, locator4,
+                markup4);
         assertFalse(segment4.isGettable());
     }
 
