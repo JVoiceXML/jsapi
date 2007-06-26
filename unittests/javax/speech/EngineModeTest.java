@@ -57,7 +57,7 @@ public class EngineModeTest extends TestCase {
         String modeName1 = "mode1";
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.TRUE;
-        Integer markupSupport1 = EngineMode.FULL;
+        Boolean markupSupport1 = Boolean.TRUE;
         final EngineMode mode2 = new EngineMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1);
         assertEquals(engineName1, mode2.getEngineName());

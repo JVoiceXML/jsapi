@@ -53,7 +53,7 @@ public class EngineListTest extends TestCase {
 				new SynthesizerMode(Locale.US),
 				new RecognizerMode(Locale.GERMAN),
 				new EngineMode("name1", "mode1", Boolean.TRUE, Boolean.TRUE,
-						EngineMode.FULL) };
+						Boolean.TRUE) };
 		list = new EngineList(modes);
 	}
 
@@ -63,11 +63,11 @@ public class EngineListTest extends TestCase {
 	 */
 	public void testAnyMatch() {
 		final EngineMode require1 = new EngineMode("name1", "mode1",
-				Boolean.TRUE, Boolean.TRUE, EngineMode.FULL);
+				Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
 		assertTrue(list.anyMatch(require1));
 
 		final EngineMode require2 = new EngineMode("name2", "mode1",
-				Boolean.TRUE, Boolean.TRUE, EngineMode.FULL);
+				Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
 		assertFalse(list.anyMatch(require2));
 	}
 
@@ -111,7 +111,7 @@ public class EngineListTest extends TestCase {
 	 */
 	public void testOrderByMatch() {
 		final EngineMode require = new EngineMode("name1", "mode1",
-				Boolean.TRUE, Boolean.TRUE, EngineMode.FULL);
+				Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
 		list.orderByMatch(require);
 		final EngineMode mode = list.elementAt(0);
 		assertEquals(3, list.size());
@@ -125,7 +125,7 @@ public class EngineListTest extends TestCase {
 	public void testRejectMatch() {
 		assertEquals(3, list.size());
 		final EngineMode reject = new EngineMode("name1", "mode1",
-				Boolean.TRUE, Boolean.TRUE, EngineMode.FULL);
+				Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
 		list.rejectMatch(reject);
 		assertEquals(2, list.size());
 		list.rejectMatch(null);
@@ -156,7 +156,7 @@ public class EngineListTest extends TestCase {
 	public void testRequireMatch() {
 		assertEquals(3, list.size());
 		final EngineMode require = new EngineMode("name1", "mode1",
-				Boolean.TRUE, Boolean.TRUE, EngineMode.FULL);
+				Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
 		list.requireMatch(require);
 		assertEquals(1, list.size());
 		list.requireMatch(null);
