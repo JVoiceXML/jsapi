@@ -26,8 +26,8 @@
 
 package javax.speech;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public class EngineMode {
     public static final Integer FULL = new Integer(Integer.MAX_VALUE);
@@ -190,31 +190,31 @@ public class EngineMode {
      * 
      * @return collection of all parameters.
      */
-    protected Collection getParameters() {
-        final Collection parameters = new java.util.ArrayList();
+    protected Vector getParameters() {
+        final Vector parameters = new Vector();
 
-        parameters.add(engineName);
-        parameters.add(modeName);
-        parameters.add(running);
-        parameters.add(supportsLetterToSound);
-        parameters.add(markupSupport);
+        parameters.addElement(engineName);
+        parameters.addElement(modeName);
+        parameters.addElement(running);
+        parameters.addElement(supportsLetterToSound);
+        parameters.addElement(markupSupport);
 
         return parameters;
     }
 
-    private void appendCollection(StringBuffer str, Collection col) {
+    private void appendVector(StringBuffer str, Vector col) {
         str.append("[");
-        final Iterator iterator = col.iterator();
+        final Enumeration enumeration = col.elements();
 
-        while (iterator.hasNext()) {
-            final Object parameter = iterator.next();
-            if (parameter instanceof Collection) {
-                final Collection subcol = (Collection) parameter;
-                appendCollection(str, subcol);
+        while (enumeration.hasMoreElements()) {
+            final Object parameter = enumeration.nextElement();
+            if (parameter instanceof Vector) {
+                final Vector subVector = (Vector) parameter;
+                appendVector(str, subVector);
             } else {
                 str.append(parameter);
             }
-            if (iterator.hasNext()) {
+            if (enumeration.hasMoreElements()) {
                 str.append(",");
             }
         }
@@ -225,8 +225,8 @@ public class EngineMode {
         StringBuffer str = new StringBuffer();
 
         str.append(getClass().getName());
-        final Collection parameters = getParameters();
-        appendCollection(str, parameters);
+        final Vector parameters = getParameters();
+        appendVector(str, parameters);
 
         return str.toString();
     }

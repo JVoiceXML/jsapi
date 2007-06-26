@@ -26,7 +26,7 @@
 
 package javax.speech.recognition;
 
-import java.util.Collection;
+import java.util.Vector;
 
 public class RuleParse extends RuleComponent {
     private RuleReference ruleReference;
@@ -43,20 +43,20 @@ public class RuleParse extends RuleComponent {
             return null;
         }
 
-        final Collection parseTags = new java.util.ArrayList();
+        final Vector parseTags = new Vector();
         addTags(parseTags, parse);
 
         final String[] tags = new String[parseTags.size()];
-        parseTags.toArray(tags);
+        parseTags.copyInto(tags);
 
         return tags;
     }
 
-    private void addTags(Collection tags, RuleComponent component) {
+    private void addTags(Vector tags, RuleComponent component) {
         if (component instanceof RuleTag) {
             final RuleTag tag = (RuleTag) component;
             final String tagName = tag.getTag();
-            tags.add(tagName);
+            tags.addElement(tagName);
         } else if (component instanceof RuleAlternatives) {
             final RuleAlternatives alternatives = (RuleAlternatives) component;
             RuleComponent[] components = alternatives.getRuleComponents();

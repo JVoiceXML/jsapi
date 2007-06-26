@@ -26,7 +26,7 @@
 
 package javax.speech.synthesis;
 
-import java.util.Collection;
+import java.util.Vector;
 
 import javax.speech.SpeechEvent;
 
@@ -319,42 +319,42 @@ public class SpeakableEvent extends SpeechEvent {
     /**
      * {@inheritDoc}
      */
-    protected Collection getParameters() {
-        final Collection parameters = super.getParameters();
+    protected Vector getParameters() {
+        final Vector parameters = super.getParameters();
 
         final int id = getId();
 
         final Integer typeObject = new Integer(type);
-        parameters.add(typeObject);
+        parameters.addElement(typeObject);
         final Integer requestIdObject = new Integer(requestId);
-        parameters.add(requestIdObject);
+        parameters.addElement(requestIdObject);
         if (id == PROSODY_UPDATED) {
             final Integer requestedObject = new Integer(requested);
-            parameters.add(requestedObject);
+            parameters.addElement(requestedObject);
         }
-        parameters.add(textInfo);
+        parameters.addElement(textInfo);
         if (id == MARKER_REACHED) {
             final Integer audioPositionObject = new Integer(audioPosition);
-            parameters.add(audioPositionObject);
+            parameters.addElement(audioPositionObject);
         }
         if (id == WORD_STARTED) {
             final Integer wordStartObject = new Integer(wordStart);
-            parameters.add(wordStartObject);
+            parameters.addElement(wordStartObject);
             final Integer wordEndObject = new Integer(wordEnd);
-            parameters.add(wordEndObject);
-            parameters.add(newVoice);
-            parameters.add(oldVoice);
+            parameters.addElement(wordEndObject);
+            parameters.addElement(newVoice);
+            parameters.addElement(oldVoice);
         }
         if (id == MARKUP_FAILED) {
-            parameters.add(description);
+            parameters.addElement(description);
         }
         if (id == ELEMENT_REACHED) {
-            parameters.add(attributes);
+            parameters.addElement(attributes);
         }
         if (id == PHONEME_STARTED) {
-            parameters.add(phones);
+            parameters.addElement(phones);
             final Integer indexObject = new Integer(index);
-            parameters.add(indexObject);
+            parameters.addElement(indexObject);
         }
 
         return parameters;

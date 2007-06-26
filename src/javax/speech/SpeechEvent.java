@@ -26,9 +26,9 @@
 
 package javax.speech;
 
-import java.util.Collection;
+import java.util.Enumeration;
 import java.util.EventObject;
-import java.util.Iterator;
+import java.util.Vector;
 
 public class SpeechEvent extends EventObject {
     private final int id;
@@ -52,13 +52,13 @@ public class SpeechEvent extends EventObject {
      * 
      * @return collection of all parameters.
      */
-    protected Collection getParameters() {
-        final Collection parameters = new java.util.ArrayList();
+    protected Vector getParameters() {
+        final Vector parameters = new Vector();
 
         final Object source = getSource();
-        parameters.add(source);
+        parameters.addElement(source);
         final Integer identifier = new Integer(id);
-        parameters.add(identifier);
+        parameters.addElement(identifier);
 
         return parameters;
     }
@@ -66,13 +66,12 @@ public class SpeechEvent extends EventObject {
     public String paramString() {
         final StringBuffer str = new StringBuffer();
 
-        final Collection parameters = getParameters();
-        final Iterator iterator = parameters.iterator();
-
-        while (iterator.hasNext()) {
-            final Object parameter = iterator.next();
+        final Vector parameters = getParameters();
+        Enumeration enumeration = parameters.elements();
+        while (enumeration.hasMoreElements()) {
+            final Object parameter = enumeration.nextElement();
             str.append(parameter);
-            if (iterator.hasNext()) {
+            if (enumeration.hasMoreElements()) {
                 str.append(",");
             }
         }
