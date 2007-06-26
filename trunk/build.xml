@@ -16,7 +16,15 @@ This file builds the JSR 113.jar.
 
 	<property name="debug" value="on"/>
 	<property name="optimize" value="off"/>
-	
+
+    <fileset dir="." id="dist.files.additional">
+        <include name="AUTHORS"/>
+        <include name="COPYING"/>
+        <include name="INSTALL"/>
+        <include name="README"/>
+        <include name="ChangeLog"/>
+    </fileset>
+  
 	<target name="-init">
 		<mkdir dir="${build}" />
 		<mkdir dir="${dist}" />
