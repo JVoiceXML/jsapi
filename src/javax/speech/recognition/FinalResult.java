@@ -35,26 +35,27 @@ public interface FinalResult extends Result {
 
     int USER_CHANGE = 2;
 
-    ResultToken[] getAlternativeTokens(int nBest);
+    ResultToken[] getAlternativeTokens(int nBest) throws ResultException;
 
-    AudioSegment getAudio();
+    AudioSegment getAudio() throws ResultException;
 
-    AudioSegment getAudio(ResultToken fromToken, ResultToken toToken);
+    AudioSegment getAudio(ResultToken fromToken, ResultToken toToken) 
+    	throws ResultException;
 
-    int getConfidenceLevel();
+    int getConfidenceLevel() throws ResultException;
 
-    int getConfidenceLevel(int nBest);
+    int getConfidenceLevel(int nBest) throws ResultException;
 
-    int getNumberAlternatives();
+    int getNumberAlternatives() throws ResultException;
 
-    boolean isAudioAvailable();
+    boolean isAudioAvailable() throws ResultException;
 
-    boolean isTrainingInfoAvailable();
+    boolean isTrainingInfoAvailable() throws ResultException;
 
-    void releaseAudio();
+    void releaseAudio() throws ResultException;
 
-    void releaseTrainingInfo();
+    void releaseTrainingInfo() throws ResultException;
 
     void tokenCorrection(String[] correctTokens, ResultToken fromToken,
-            ResultToken toToken, int correctionType);
+            ResultToken toToken, int correctionType) throws ResultException;
 }

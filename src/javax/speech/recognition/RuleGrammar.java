@@ -29,49 +29,51 @@ package javax.speech.recognition;
 public interface RuleGrammar extends Grammar {
     void addElement(String element);
 
+    void removeElement(String element);
+    
+    Rule getRule(String ruleName);
+
     void addRule(Rule rule);
 
-    void addRule(String ruleText);
+    void addRule(String ruleText) throws GrammarException;
 
     void addRules(Rule[] rules);
+
+    void removeRule(String ruleName);
+
+    String[] listRuleNames();
+
+    void setAttribute(String attribute, String value);
 
     String getAttribute(String attribute);
 
     String getDoctype();
 
-    String[] getElements();
-
-    String getRoot();
-
-    Rule getRule(String ruleName);
-
-    boolean isEnabled();
-
-    boolean isEnabled(String ruleName);
-
-    String[] listRuleNames();
-
-    RuleParse parse(String[] tokens, String ruleName);
-
-    RuleParse parse(String text, String ruleName);
-
-    void removeElement(String element);
-
-    void removeRule(String ruleName);
-
-    RuleReference resolve(RuleReference ruleReference);
-
-    void setAttribute(String attribute, String value);
-
     void setDoctype(String doctype);
 
+    String[] getElements();
+
     void setEnabled(boolean enabled);
+
+    boolean isEnabled();
 
     void setEnabled(String[] ruleNames, boolean enabled);
 
     void setEnabled(String ruleName, boolean enabled);
 
+    boolean isEnabled(String ruleName);
+
+    RuleParse parse(String[] tokens, String ruleName) throws GrammarException;
+
+    RuleParse parse(String text, String ruleName) throws GrammarException;
+
+    RuleReference resolve(RuleReference ruleReference) throws GrammarException;
+    
+    String getReference();
+    
     void setRoot(String rootName);
+
+    String getRoot();
 
     String toString();
 }

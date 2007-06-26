@@ -35,7 +35,11 @@ public interface Grammar {
 
     void addGrammarListener(GrammarListener listener);
 
+    void removeGrammarListener(GrammarListener listener);
+
     void addResultListener(ResultListener listener);
+
+    void removeResultListener(ResultListener listener);
 
     int getActivationMode();
 
@@ -43,15 +47,11 @@ public interface Grammar {
 
     String getReference();
 
-    boolean isActive();
-
-    boolean isEnabled();
-
-    void removeGrammarListener(GrammarListener listener);
-
-    void removeResultListener(ResultListener listener);
-
     void setActivationMode(int mode);
 
+    boolean isActive();
+
     void setEnabled(boolean flag);
+    
+    boolean isEnabled();
 }

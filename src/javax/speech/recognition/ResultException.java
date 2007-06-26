@@ -33,8 +33,8 @@ public class ResultException extends SpeechException {
     public ResultException() {
     }
 
-    public ResultException(String s) {
-        super(s);
+    public ResultException(String message) {
+        super(message);
     }
 
 }

@@ -27,15 +27,15 @@
 package javax.speech;
 
 public interface VocabularyManager {
-    void addWord(Word word) throws SecurityException;
+    void addWord(Word word);
 
-    void addWords(Word[] words) throws SecurityException;
+    void addWords(Word[] words);
 
     Word[] getWords(String text);
 
     Word[] listProblemWords();
 
-    void removeWord(Word word) throws SecurityException;
+    void removeWord(Word word);
 
-    void removeWords(Word[] words) throws SecurityException;
+    void removeWords(Word[] words);
 }
