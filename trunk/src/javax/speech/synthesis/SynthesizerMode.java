@@ -49,7 +49,7 @@ public class SynthesizerMode extends EngineMode {
     }
 
     public SynthesizerMode(String engineName, String modeName, Boolean running,
-            Boolean supportsLetterToSound, Integer markupSupport, Voice[] voices) {
+            Boolean supportsLetterToSound, Boolean markupSupport, Voice[] voices) {
         super(engineName, modeName, running, supportsLetterToSound,
                 markupSupport);
 
@@ -87,7 +87,7 @@ public class SynthesizerMode extends EngineMode {
         return true;
     }
 
-    public Integer getMarkupSupport() {
+    public Boolean getMarkupSupport() {
         return super.getMarkupSupport();
     }
 

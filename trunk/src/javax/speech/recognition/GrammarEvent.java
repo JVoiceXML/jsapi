@@ -51,47 +51,47 @@ public class GrammarEvent extends SpeechEvent {
     private GrammarException grammarException;
 
     public GrammarEvent(Object source, int id) {
-	super(source, id);
+    	super(source, id);
     }
 
     public GrammarEvent(Grammar source, int id, boolean enabledChanged,
 	    boolean definitionChanged, GrammarException grammarException) {
-	super(source, id);
+    	super(source, id);
 
-	this.enabledChanged = enabledChanged;
-	this.definitionChanged = definitionChanged;
-	this.grammarException = grammarException;
+    	this.enabledChanged = enabledChanged;
+    	this.definitionChanged = definitionChanged;
+    	this.grammarException = grammarException;
     }
 
     public GrammarException getGrammarException() {
-	final int id = getId();
-	if (id == GRAMMAR_CHANGES_COMMITTED) {
-	    return grammarException;
-	}
+    	final int id = getId();
+		if (id == GRAMMAR_CHANGES_COMMITTED) {
+			return grammarException;
+		}
 
-	return null;
+		return null;
     }
 
     public boolean isDefinitionChanged() {
-	return definitionChanged;
+    	return definitionChanged;
     }
 
     public boolean isEnabledChanged() {
-	return enabledChanged;
+    	return enabledChanged;
     }
 
     /**
-         * {@inheritDoc}
-         */
+     * {@inheritDoc}
+     */
     protected Collection getParameters() {
-	final Collection parameters = super.getParameters();
+    	final Collection parameters = super.getParameters();
 
-	final Boolean definitionChangedObject = new Boolean(definitionChanged);
-	parameters.add(definitionChangedObject);
-	final Boolean enabledChangedObject = new Boolean(enabledChanged);
-	parameters.add(enabledChangedObject);
-	parameters.add(grammarException);
+    	final Boolean definitionChangedObject = new Boolean(definitionChanged);
+    	parameters.add(definitionChangedObject);
+    	final Boolean enabledChangedObject = new Boolean(enabledChanged);
+    	parameters.add(enabledChangedObject);
+    	parameters.add(grammarException);
 
-	return parameters;
+    	return parameters;
     }
 }

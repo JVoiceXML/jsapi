@@ -26,6 +26,8 @@
 
 package javax.speech.recognition;
 
+import javax.speech.EngineStateException;
+
 public interface SpeakerManager {
     void createSpeaker(SpeakerProfile speaker);
 
@@ -39,9 +41,9 @@ public interface SpeakerManager {
 
     void renameSpeaker(SpeakerProfile oldSpeaker, SpeakerProfile newSpeaker);
 
-    void restoreCurrentSpeaker();
+    void restoreCurrentSpeaker() throws EngineStateException;
 
-    void saveCurrentSpeaker();
+    void saveCurrentSpeaker() throws EngineStateException;
 
     void setCurrentSpeaker(SpeakerProfile speaker);
 }

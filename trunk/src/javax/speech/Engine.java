@@ -47,7 +47,7 @@ public interface Engine {
 
     int ASYNCHRONOUS_MODE = 1;
 
-    int IMMEDIATE_MODE = 2;
+    int IMMEDIATE_MODE = ASYNCHRONOUS_MODE << 1;
 
     void allocate() throws AudioException, EngineException, 
     	EngineStateException;

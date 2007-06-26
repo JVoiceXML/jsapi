@@ -29,8 +29,6 @@ package javax.speech;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.speech.synthesis.SynthesizerMode;
-
 public class EngineMode {
     public static final Integer FULL = new Integer(Integer.MAX_VALUE);
 
@@ -44,14 +42,14 @@ public class EngineMode {
 
     private Boolean supportsLetterToSound;
 
-    private Integer markupSupport;
+    private Boolean markupSupport;
 
     public EngineMode() {
 
     }
 
     public EngineMode(String engineName, String modeName, Boolean running,
-            Boolean supportsLetterToSound, Integer markupSupport) {
+            Boolean supportsLetterToSound, Boolean markupSupport) {
         this.engineName = engineName;
         this.modeName = modeName;
         this.running = running;
@@ -63,7 +61,7 @@ public class EngineMode {
         return engineName;
     }
 
-    public Integer getMarkupSupport() {
+    public Boolean getMarkupSupport() {
         return markupSupport;
     }
 
@@ -118,7 +116,7 @@ public class EngineMode {
                     .equals(supportsLetterToSound);
         }
 
-        final Integer otherMarkupSupport = require.getMarkupSupport();
+        final Boolean otherMarkupSupport = require.getMarkupSupport();
         final boolean markupSupportMatch;
         if (otherMarkupSupport == null) {
             markupSupportMatch = true;
@@ -171,7 +169,7 @@ public class EngineMode {
                     .equals(otherSupportsLetterToSound);
         }
 
-        final Integer otherMarkupSupport = mode.getMarkupSupport();
+        final Boolean otherMarkupSupport = mode.getMarkupSupport();
         final boolean markupSupportMatch;
         if (markupSupport == null) {
             markupSupportMatch = (otherMarkupSupport == null);
