@@ -81,7 +81,7 @@ public class EngineManagerTest extends TestCase {
      * Test method for {@link javax.speech.EngineManager#getVersion()}.
      */
     public void testGetVersion() {
-        assertEquals("2.0.0.0", EngineManager.getVersion());
+        assertEquals("2.0.0.1", EngineManager.getVersion());
     }
 
     /**
