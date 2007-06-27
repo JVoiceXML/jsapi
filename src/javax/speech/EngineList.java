@@ -26,33 +26,27 @@
 
 package javax.speech;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Vector;
 
 public class EngineList {
     /**
      * The features in this list.
-     * 
-     * TODO The specification is close to a Vector, e.g. Enumeration should not
-     * be used. Better solutions would be a {@link java.util.List}.
      */
     private Vector features;
 
     public EngineList(EngineMode[] features) {
         this.features = new Vector(features.length);
         for (int i = 0; i < features.length; i++) {
-            this.features.add(features[i]);
+            this.features.addElement(features[i]);
         }
     }
 
     public boolean anyMatch(EngineMode require) {
-        final Iterator iterator = features.iterator();
+        final Enumeration enumeration = features.elements();
 
-        while (iterator.hasNext()) {
-            final EngineMode mode = (EngineMode) iterator.next();
+        while (enumeration.hasMoreElements()) {
+            final EngineMode mode = (EngineMode) enumeration.nextElement();
             if (mode.match(require)) {
                 return true;
             }
@@ -62,7 +56,7 @@ public class EngineList {
     }
 
     public EngineMode elementAt(int index) {
-        return (EngineMode) features.get(index);
+        return (EngineMode) features.elementAt(index);
     }
 
     public Enumeration elements() {
@@ -71,31 +65,39 @@ public class EngineList {
 
     public void orderByMatch(EngineMode require) {
         final Comparator comparator = new EngineListComparator(require);
-        Collections.sort(features, comparator);
+        Sorter.sort(features, comparator);
     }
 
     public void rejectMatch(EngineMode reject) {
-        final Iterator iterator = features.iterator();
-        while (iterator.hasNext()) {
-            final EngineMode mode = (EngineMode) iterator.next();
-            if (mode.match(reject)) {
-                iterator.remove();
+        Vector cleaned = new Vector();
+        
+        final Enumeration enumeration = features.elements();
+        while (enumeration.hasMoreElements()) {
+            final EngineMode mode = (EngineMode) enumeration.nextElement();
+            if (!mode.match(reject)) {
+                cleaned.addElement(mode);
             }
         }
+        
+        features = cleaned;
     }
 
     public void removeElementAt(int index) {
-        features.remove(index);
+        features.removeElementAt(index);
     }
 
     void requireMatch(EngineMode require) {
-        final Iterator iterator = features.iterator();
-        while (iterator.hasNext()) {
-            final EngineMode mode = (EngineMode) iterator.next();
-            if (!mode.match(require)) {
-                iterator.remove();
+        Vector cleaned = new Vector();
+        
+        final Enumeration enumeration = features.elements();
+        while (enumeration.hasMoreElements()) {
+            final EngineMode mode = (EngineMode) enumeration.nextElement();
+            if (mode.match(require)) {
+                cleaned.addElement(mode);
             }
         }
+        
+        features = cleaned;
     }
 
     int size() {
@@ -140,11 +142,11 @@ public class EngineList {
         str.append(getClass());
         str.append("[");
 
-        final Iterator iterator = features.iterator();
-        while (iterator.hasNext()) {
-            final EngineMode mode = (EngineMode) iterator.next();
+        final Enumeration enumeration = features.elements();
+        while (enumeration.hasMoreElements()) {
+            final EngineMode mode = (EngineMode) enumeration.nextElement();
             str.append(mode);
-            if (iterator.hasNext()) {
+            if (enumeration.hasMoreElements()) {
                 str.append(",");
             }
         }
@@ -153,4 +155,5 @@ public class EngineList {
 
         return str.toString();
     }
+
 }
