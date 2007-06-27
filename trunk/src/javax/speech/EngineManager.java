@@ -26,40 +26,53 @@
 
 package javax.speech;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Hashtable;
 import java.util.Locale;
-import java.util.Properties;
+import java.util.Vector;
 
 import javax.speech.spi.EngineFactory;
 import javax.speech.spi.EngineListFactory;
 
 public class EngineManager {
-    private static final List ENGINE_LIST_FACTORIES;
+    private static final Vector ENGINE_LIST_FACTORIES;
 
     private static SpeechEventExecutor executor;
 
     static {
-        ENGINE_LIST_FACTORIES = new java.util.ArrayList();
+        ENGINE_LIST_FACTORIES = new Vector();
 
         final InputStream input = EngineManager.class
                 .getResourceAsStream("/speech.properties");
-        final Properties props = new Properties();
+        final Hashtable props = new Hashtable();
+        byte[] bytes = new byte[512];
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            props.load(input);
+            int read = 1;
+            while (read > 0) {
+                read = input.read(bytes);
+                if (read > 0) {
+                    os.write(bytes, 0, read);
+                }
+            }
+            
+            String contents = os.toString();
+            boolean foundEngine = true;
+            while (foundEngine) {
+                
+            }
+            // TODO evaluate the contents
         } catch (IOException e) {
             // Ignore.
         }
 
-        final Collection keys = props.keySet();
-        final Iterator iterator = keys.iterator();
-        while (iterator.hasNext()) {
-            final String key = (String) iterator.next();
-            final String className = props.getProperty(key);
+        final Enumeration keys = props.keys();
+        while (keys.hasMoreElements()) {
+            final String key = (String) keys.nextElement();
+            final String className = (String) props.get(key);
             try {
                 registerEngineListFactory(className);
             } catch (IllegalArgumentException e) {
@@ -73,25 +86,25 @@ public class EngineManager {
     }
 
     public static EngineList availableEngines(EngineMode require) {
-        final List modes = new java.util.ArrayList();
+        final Vector modes = new Vector();
 
-        final Iterator iterator = ENGINE_LIST_FACTORIES.iterator();
-        while (iterator.hasNext()) {
-            final EngineListFactory factory = (EngineListFactory) iterator
-                    .next();
+        final Enumeration enumeration = ENGINE_LIST_FACTORIES.elements();
+        while (enumeration.hasMoreElements()) {
+            final EngineListFactory factory = (EngineListFactory) enumeration
+                    .nextElement();
             EngineList list = factory.createEngineList(require);
             if (list != null) {
                 final Enumeration currentModes = list.elements();
                 while (currentModes.hasMoreElements()) {
                     final EngineMode mode = (EngineMode) currentModes
                             .nextElement();
-                    modes.add(mode);
+                    modes.addElement(mode);
                 }
             }
         }
 
         EngineMode[] foundModes = new EngineMode[modes.size()];
-        modes.toArray(foundModes);
+        modes.copyInto(foundModes);
 
         return new EngineList(foundModes);
     }
@@ -171,19 +184,19 @@ public class EngineManager {
         if (!(engineListFactory instanceof EngineListFactory)) {
             throw new IllegalArgumentException("'" + className
                     + "' does not implement "
-                    + EngineListFactory.class.getCanonicalName());
+                    + EngineListFactory.class.getName());
         }
 
-        final Iterator iterator = ENGINE_LIST_FACTORIES.iterator();
-        while (iterator.hasNext()) {
-            final Object current = iterator.next();
+        final Enumeration enumeration = ENGINE_LIST_FACTORIES.elements();
+        while (enumeration.hasMoreElements()) {
+            final Object current = enumeration.nextElement();
             final Class currentClass = current.getClass();
-            final String currentName = currentClass.getCanonicalName();
+            final String currentName = currentClass.getName();
             if (className.equals(currentName)) {
                 return;
             }
         }
 
-        ENGINE_LIST_FACTORIES.add(engineListFactory);
+        ENGINE_LIST_FACTORIES.addElement(engineListFactory);
     }
 }
