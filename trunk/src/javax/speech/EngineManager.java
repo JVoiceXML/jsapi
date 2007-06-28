@@ -26,11 +26,9 @@
 
 package javax.speech;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -47,28 +45,13 @@ public class EngineManager {
 
         final InputStream input = EngineManager.class
                 .getResourceAsStream("/speech.properties");
-        final Hashtable props = new Hashtable();
-        byte[] bytes = new byte[512];
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        final Properties props = new Properties();
         try {
-            int read = 1;
-            while (read > 0) {
-                read = input.read(bytes);
-                if (read > 0) {
-                    os.write(bytes, 0, read);
-                }
-            }
-            
-            String contents = os.toString();
-            boolean foundEngine = true;
-            while (foundEngine) {
-                
-            }
-            // TODO evaluate the contents
+            props.load(input);
         } catch (IOException e) {
             // Ignore.
         }
-
+        
         final Enumeration keys = props.keys();
         while (keys.hasMoreElements()) {
             final String key = (String) keys.nextElement();

@@ -4,7 +4,6 @@
 package javax.speech;
 
 import javax.speech.recognition.RecognizerMode;
-import javax.speech.spi.EngineListFactory;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.test.TestRecognizerEngineListFactory;
 import javax.speech.test.TestSpeechEventExecutor;
@@ -94,14 +93,14 @@ public class EngineManagerTest extends TestCase {
 
         EngineManager
                 .registerEngineListFactory(TestRecognizerEngineListFactory.class
-                        .getCanonicalName());
+                        .getName());
 
         final EngineList engines2 = EngineManager.availableEngines(null);
         assertEquals(2, engines2.size());
 
         EngineManager
                 .registerEngineListFactory(TestRecognizerEngineListFactory.class
-                        .getCanonicalName());
+                        .getName());
 
         final EngineList engines3 = EngineManager.availableEngines(null);
         assertEquals(2, engines3.size());
