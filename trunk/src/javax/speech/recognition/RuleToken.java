@@ -26,7 +26,6 @@
 
 package javax.speech.recognition;
 
-import java.util.StringTokenizer;
 
 public class RuleToken extends RuleComponent {
     private String text;
@@ -40,23 +39,32 @@ public class RuleToken extends RuleComponent {
         final char[] chars = text.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             final char ch = chars[i];
-            if (!Character.isLetter(ch) && !Character.isDigit(ch)
-                    && !Character.isWhitespace(ch)) {
+            if (!RuleComponent.isLetter(ch) && !Character.isDigit(ch)
+                    && !RuleComponent.isWhitespace(ch)) {
                 throw new IllegalArgumentException("'" + text
                         + "' is not a valid grammar text");
             }
         }
 
-        // TODO This is not very efficient. Replace by a better solution.
-        final StringTokenizer tokenizer = new StringTokenizer(text, " ");
-        String cleaned = "";
-        while (tokenizer.hasMoreTokens()) {
-            cleaned += tokenizer.nextToken();
-            if (tokenizer.hasMoreTokens()) {
-                cleaned += " ";
+        StringBuffer str = new StringBuffer();
+        int pos = 0;
+        do {
+            while ((pos < chars.length) && isWhitespace(chars[pos])) {
+                ++pos;
             }
-        }
-        this.text = cleaned;
+
+            if ((pos < chars.length) && (str.length() > 0)) {
+                str.append(' ');
+            }
+
+            while ((pos < chars.length)
+                    && !isWhitespace(chars[pos])) {
+                str.append(chars[pos]);
+                ++pos;
+            }
+        } while (pos < text.length());
+
+        this.text = str.toString();
     }
 
     public String getText() {
