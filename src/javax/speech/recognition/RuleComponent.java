@@ -45,14 +45,14 @@ public class RuleComponent {
         final char[] chars = text.toCharArray();
         // The first symbol must be a character.
         final char first = chars[0];
-        if (!Character.isLetter(first) && (first != '_')) {
+        if (!isLetter(first) && (first != '_')) {
             throw new IllegalArgumentException("'" + text
                     + "' is not a valid grammar text");
         }
         // Following symbols must be a character or a digit.
         for (int i = 1; i < chars.length; i++) {
             final char ch = chars[i];
-            if (!Character.isLetter(ch) && !Character.isDigit(ch)
+            if (!isLetter(ch) && !Character.isDigit(ch)
                     && (ch != '_')) {
                 throw new IllegalArgumentException("'" + text
                         + "' is not a valid grammar text");
@@ -60,6 +60,28 @@ public class RuleComponent {
         }
     }
 
+    static boolean isLetter(char ch) {
+        return isUpperCase(ch) || isLowerCase(ch);
+    }
+    
+    static boolean isUpperCase(char ch) {
+        return (ch >= 'A') && (ch <= 'Z');
+    }
+
+    static boolean isLowerCase(char ch) {
+        return (ch >= 'a') && (ch <= 'z');
+    }
+
+    static boolean isWhitespace(char ch) {
+        switch (ch) {
+        case ' ':
+        case '\t':
+            return true;
+        default:
+            return false;
+        }
+    }
+    
     public String toString() {
         return null;
     }

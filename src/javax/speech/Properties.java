@@ -140,7 +140,7 @@ public class Properties extends Hashtable {
         return (String) get(key);
     }
 
-    private boolean isWhitespace(char ch) {
+    static boolean isWhitespace(char ch) {
         switch (ch) {
         case ' ':
         case '\t':

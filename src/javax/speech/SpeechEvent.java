@@ -33,9 +33,9 @@ import java.util.Vector;
 public class SpeechEvent extends EventObject {
     private final int id;
 
-    private static final int DISABLE_ALL = 0;
+    public static final int DISABLE_ALL = 0;
 
-    private static final int ENABLE_ALL = Integer.MAX_VALUE;
+    public static final int ENABLE_ALL = Integer.MAX_VALUE;
 
     public SpeechEvent(Object source, int id) {
         super(source);
