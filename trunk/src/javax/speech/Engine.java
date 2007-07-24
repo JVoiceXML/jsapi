@@ -65,9 +65,9 @@ public interface Engine {
 
     boolean resume() throws EngineStateException;
 
-    boolean testEngineState(long state);
+    boolean testEngineState(long state) throws IllegalArgumentException;
 
-    void waitEngineState(long state);
+    void waitEngineState(long state) throws InterruptedException, IllegalArgumentException;
 
     AudioManager getAudioManager();
 
@@ -80,4 +80,8 @@ public interface Engine {
     void setEngineMask(int mask);
 
     int getEngineMask();
+
+    SpeechEventExecutor getSpeechEventExecutor();
+
+    void setSpeechEventExecutor(SpeechEventExecutor speechEventExecutor);
 }
