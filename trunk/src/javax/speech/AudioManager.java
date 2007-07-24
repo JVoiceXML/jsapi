@@ -38,24 +38,29 @@ public interface AudioManager {
 
     void removeAudioListener(AudioListener listener);
 
-    void audioStart() throws AudioException;
+    void audioStart() throws SecurityException, AudioException;
 
-    void audioStop() throws AudioException;;
+    void audioStop() throws SecurityException, AudioException;
 
     void setMediaLocator(String locator) throws AudioException,
-            EngineStateException;
+            AudioException, EngineStateException, IllegalArgumentException,
+            SecurityException;
 
-    void setMediaLocator(String locator, InputStream stream)
-            throws AudioException, EngineStateException;
+    void setMediaLocator(String locator, InputStream stream) throws
+            AudioException, EngineStateException, IllegalArgumentException,
+            SecurityException;
 
-    void setMediaLocator(String locator, OutputStream stream)
-            throws AudioException, EngineStateException;
+    void setMediaLocator(String locator, OutputStream stream) throws
+            AudioException, EngineStateException, IllegalArgumentException,
+            AbstractMethodError, SecurityException;
 
     String getMediaLocator();
 
-    String[] getSupportedMediaLocators(String mediaLocator);
+    String[] getSupportedMediaLocators(String mediaLocator) throws
+            IllegalArgumentException;
 
-    boolean isSupportedMediaLocator(String mediaLocator);
+    boolean isSupportedMediaLocator(String mediaLocator) throws
+            IllegalArgumentException;
 
     boolean isSameChannel(AudioManager audioManager);
 }
