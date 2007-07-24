@@ -28,4 +28,6 @@ package javax.speech;
 
 public interface AudioListener extends SpeechEventListener {
 
+    void audioUpdate(AudioEvent e);
+
 }
