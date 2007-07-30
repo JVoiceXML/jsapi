@@ -30,10 +30,11 @@ import javax.speech.AudioManager;
 import javax.speech.Engine;
 import javax.speech.EngineMode;
 import javax.speech.VocabularyManager;
+import javax.speech.SpeechEventExecutor;
 
 /**
  * Engine for test purposes.
- * 
+ *
  * @author Dirk Schnelle
  */
 public class TestEngine implements Engine {
@@ -127,5 +128,12 @@ public class TestEngine implements Engine {
      * {@inheritDoc}
      */
     public void waitEngineState(long state) {
+    }
+
+    public SpeechEventExecutor getSpeechEventExecutor() {
+        return null;
+    }
+
+    public void setSpeechEventExecutor(SpeechEventExecutor speechEventExecutor) {
     }
 }
