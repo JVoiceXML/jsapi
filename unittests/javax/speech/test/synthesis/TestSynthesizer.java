@@ -35,10 +35,11 @@ import javax.speech.synthesis.SpeakableListener;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerListener;
 import javax.speech.synthesis.SynthesizerProperties;
+import javax.speech.SpeechEventExecutor;
 
 /**
  * Synthesizer for test purposes.
- * 
+ *
  * @author Dirk Schnelle
  */
 public class TestSynthesizer implements Synthesizer {
@@ -229,5 +230,12 @@ public class TestSynthesizer implements Synthesizer {
      * {@inheritDoc}
      */
     public void waitEngineState(long state) {
+    }
+
+    public SpeechEventExecutor getSpeechEventExecutor() {
+        return null;
+    }
+
+    public void setSpeechEventExecutor(SpeechEventExecutor speechEventExecutor) {
     }
 }
