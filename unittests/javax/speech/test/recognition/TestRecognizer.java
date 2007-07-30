@@ -43,10 +43,11 @@ import javax.speech.recognition.RecognizerProperties;
 import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.SpeakerManager;
+import javax.speech.SpeechEventExecutor;
 
 /**
  * Recognizer for test purposes.
- * 
+ *
  * @author Dirk Schnelle
  */
 public class TestRecognizer implements Recognizer {
@@ -284,5 +285,12 @@ public class TestRecognizer implements Recognizer {
      * {@inheritDoc}
      */
     public void setResultMask(int mask) {
+    }
+
+    public SpeechEventExecutor getSpeechEventExecutor() {
+        return null;
+    }
+
+    public void setSpeechEventExecutor(SpeechEventExecutor speechEventExecutor) {
     }
 }
