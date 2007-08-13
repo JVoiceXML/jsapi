@@ -52,7 +52,7 @@ public interface AudioManager {
 
     void setMediaLocator(String locator, OutputStream stream) throws
             AudioException, EngineStateException, IllegalArgumentException,
-            AbstractMethodError, SecurityException;
+            SecurityException;
 
     String getMediaLocator();
 
