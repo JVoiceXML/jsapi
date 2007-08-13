@@ -6,7 +6,7 @@ This file builds the JSR 113.jar.
 	<!-- allow the user to override setting in an own propertiesfile. -->
 	<property file="jsr113.properties" />
 
-    <property name="version" value="0.9.1.14" />
+    <property name="version" value="0.9.1.14-2" />
 
 	<!-- directory structure -->
 	<property name="src" value="src" />
