@@ -27,5 +27,5 @@
 package javax.speech;
 
 public interface SpeechEventExecutor {
-    void execute(Runnable command) throws InterruptedException, NullPointerException;
+    void execute(Runnable command) throws InterruptedException;
 }
