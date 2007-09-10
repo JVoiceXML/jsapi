@@ -47,7 +47,7 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
     public void execute(Runnable command) throws InterruptedException {
         if (command == null)
             throw new NullPointerException("Command is null");
-        commands.add(command);
+        commands.addElement(command);
         synchronized (commands) {
             commands.notify();
         }
@@ -65,8 +65,9 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
             }
 
             //Use this thread to run the command
-            Runnable r = (Runnable)commands.remove(0);
-            r.run();
+            Runnable command = (Runnable) commands.firstElement();
+            commands.removeElementAt(0);
+            command.run();
         }
     }
 }
