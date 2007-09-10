@@ -12,6 +12,7 @@
 package org.jvoicexml.jsapi2;
 
 import javax.speech.SpeechEventExecutor;
+import java.util.Vector;
 
 /**
  * <p>Title: JSAPI 2.0</p>
@@ -25,9 +26,16 @@ import javax.speech.SpeechEventExecutor;
  * @author Renato Cassaca
  * @version 1.0
  */
-public class BaseSpeechEventExecutor implements SpeechEventExecutor {
+public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
+
+    private Thread thread;
+
+    private Vector commands;
 
     public BaseSpeechEventExecutor() {
+        commands = new Vector();
+        thread = new Thread(this, "BaseSpeechEventExecutor");
+        thread.start();
     }
 
     /**
@@ -36,8 +44,29 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor {
      * @param command Runnable
      * @throws InterruptedException
      */
-    public void execute(Runnable command) throws InterruptedException, NullPointerException {
-        if (command == null) throw new NullPointerException("Command is null");
-        new Thread(command).start();
+    public void execute(Runnable command) throws InterruptedException {
+        if (command == null)
+            throw new NullPointerException("Command is null");
+        commands.add(command);
+        synchronized (commands) {
+            commands.notify();
+        }
+    }
+
+    public void run() {
+        while (true) {
+            while (commands.size() < 1) {
+                synchronized (commands) {
+                    try {
+                        commands.wait();
+                    } catch (InterruptedException ex) {
+                    }
+                }
+            }
+
+            //Use this thread to run the command
+            Runnable r = (Runnable)commands.remove(0);
+            r.run();
+        }
     }
 }
