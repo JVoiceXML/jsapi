@@ -60,7 +60,8 @@ public class RecognizerEventTest extends TestCase {
         long audioPosition = 4834;
         final RecognizerEvent event = new RecognizerEvent(recognizer, 42,
                 RecognizerEvent.CHANGES_COMMITTED,
-                RecognizerEvent.ENGINE_ALLOCATING_RESOURCES);
+                RecognizerEvent.ENGINE_ALLOCATING_RESOURCES, problem,
+                grammarException, audioPosition);
 
         assertEquals(audioPosition, event.getAudioPosition());
     }
