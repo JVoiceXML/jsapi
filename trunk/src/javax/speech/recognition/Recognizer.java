@@ -68,26 +68,22 @@ public interface Recognizer extends Engine {
     Grammar[] listGrammars() throws EngineStateException;
 
     RuleGrammar loadRuleGrammar(String grammarReference)
-            throws GrammarException, IOException, EngineStateException,
-            EngineException;
+            throws GrammarException,  IllegalArgumentException, IOException,
+            EngineStateException, EngineException;
 
     RuleGrammar loadRuleGrammar(String grammarReference,
             boolean loadReferences, boolean reloadGrammars,
-            Vector loadedGrammars);
+            Vector loadedGrammars)
+            throws GrammarException,  IllegalArgumentException,
+            IOException, EngineStateException,  EngineException;
 
     RuleGrammar loadRuleGrammar(String grammarReference, Reader reader)
-            throws GrammarException, IOException, EngineStateException,
-            EngineException;
+            throws GrammarException, IllegalArgumentException, IOException,
+            EngineStateException, EngineException;
 
     RuleGrammar loadRuleGrammar(String grammarReference, String grammarText)
-            throws GrammarException, IOException, EngineStateException,
-            EngineException;
-
-    // TODO: Why use a vector and not a collection?
-    RuleGrammar loadRuleGrammar(String grammarReference,
-            boolean loadReferences, Vector loadedGrammars)
-            throws GrammarException, IOException, EngineStateException,
-            EngineException;
+            throws GrammarException, IllegalArgumentException, IOException,
+            EngineStateException, EngineException;
 
     void processGrammars() throws EngineStateException;
 
