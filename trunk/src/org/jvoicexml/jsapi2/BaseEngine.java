@@ -2,7 +2,7 @@
  * File:    $HeadURL: $
  * Version: $LastChangedRevision: $
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: $
+ * Author:  $LastChangedBy: lyncher $
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
@@ -503,7 +503,9 @@ abstract public class BaseEngine implements Engine {
         if (speechEventExecutor == null) {
             this.speechEventExecutor = new BaseSpeechEventExecutor();
         }
-        this.speechEventExecutor = speechEventExecutor;
+        else {
+            this.speechEventExecutor = speechEventExecutor;
+        }
     }
 
     /**
