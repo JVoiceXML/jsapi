@@ -107,6 +107,9 @@ abstract public class BaseEngine implements Engine {
      */
     protected final static long CLEAR_ALL_STATE = ~(0L);
 
+
+    protected int engineMask = EngineEvent.DEFAULT_MASK;
+
     /**
      * Creates a new <code>Engine</code> in the
      * <code>DEALLOCATED</code> state.
@@ -525,6 +528,13 @@ abstract public class BaseEngine implements Engine {
         engineListeners.removeElement(listener);
     }
 
+    public void setEngineMask(int mask) {
+        engineMask = mask;
+    }
+
+    public int getEngineMask() {
+        return engineMask;
+    }
 
     /**
      * Adds an event to SpeechEventExecutor
@@ -532,14 +542,16 @@ abstract public class BaseEngine implements Engine {
      * @param event EngineEvent
      */
     protected void postEngineEvent(final EngineEvent event) {
-        try {
-            speechEventExecutor.execute(new Runnable() {
-                public void run() {
-                    fireEvent(event);
-                }
-            });
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
+        if ((getEngineMask() & event.getId()) == event.getId()) {
+            try {
+                speechEventExecutor.execute(new Runnable() {
+                    public void run() {
+                        fireEvent(event);
+                    }
+                });
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
