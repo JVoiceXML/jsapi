@@ -1,6 +1,6 @@
 package org.jvoicexml.jsapi2.recognition;
 
-import java.util.ArrayList;
+import java.util.Vector;
 import javax.speech.recognition.SpeakerManager;
 import javax.speech.recognition.SpeakerProfile;
 import javax.speech.recognition.SpeakerManagerUI;
@@ -20,10 +20,13 @@ import javax.speech.EngineStateException;
  */
 public class BaseSpeakerManager implements SpeakerManager {
 
-    private ArrayList speakerProviles;
+    private Vector speakerProfiles;
+
+    private SpeakerProfile currentSpeaker;
 
     public BaseSpeakerManager() {
-        speakerProviles = new ArrayList();
+        speakerProfiles = new Vector();
+        currentSpeaker = null;
     }
 
     /**
@@ -33,6 +36,7 @@ public class BaseSpeakerManager implements SpeakerManager {
      * @todo Implement this javax.speech.recognition.SpeakerManager method
      */
     public void createSpeaker(SpeakerProfile speaker) {
+        speakerProfiles.addElement(speaker);
     }
 
     /**
@@ -42,6 +46,7 @@ public class BaseSpeakerManager implements SpeakerManager {
      * @todo Implement this javax.speech.recognition.SpeakerManager method
      */
     public void deleteSpeaker(SpeakerProfile speaker) {
+        speakerProfiles.removeElement(speaker);
     }
 
     /**
@@ -51,14 +56,13 @@ public class BaseSpeakerManager implements SpeakerManager {
      * @todo Implement this javax.speech.recognition.SpeakerManager method
      */
     public SpeakerProfile getCurrentSpeaker() {
-        return null;
+        return currentSpeaker;
     }
 
     /**
      * getSpeakerManagerUI
      *
      * @return SpeakerManagerUI
-     * @todo Implement this javax.speech.recognition.SpeakerManager method
      */
     public SpeakerManagerUI getSpeakerManagerUI() {
         return null;
@@ -68,10 +72,15 @@ public class BaseSpeakerManager implements SpeakerManager {
      * listKnownSpeakers
      *
      * @return SpeakerProfile[]
-     * @todo Implement this javax.speech.recognition.SpeakerManager method
      */
     public SpeakerProfile[] listKnownSpeakers() {
-        return (SpeakerProfile[])speakerProviles.toArray(new SpeakerProfile[]{});
+        if (speakerProfiles.size() < 1) return new SpeakerProfile[]{};
+
+        SpeakerProfile[] profiles = new SpeakerProfile[speakerProfiles.size()];
+        for (int i = 0; i < speakerProfiles.size(); i++) {
+            profiles[i] = (SpeakerProfile)speakerProfiles.elementAt(i);
+        }
+        return profiles;
 
     }
 
@@ -111,5 +120,9 @@ public class BaseSpeakerManager implements SpeakerManager {
      * @todo Implement this javax.speech.recognition.SpeakerManager method
      */
     public void setCurrentSpeaker(SpeakerProfile speaker) {
+        if (speakerProfiles.contains(speaker) == false) {
+            createSpeaker(speaker);
+        }
+        currentSpeaker = speaker;
     }
 }
