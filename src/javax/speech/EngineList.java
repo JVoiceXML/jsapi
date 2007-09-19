@@ -70,7 +70,7 @@ public class EngineList {
 
     public void rejectMatch(EngineMode reject) {
         Vector cleaned = new Vector();
-        
+
         final Enumeration enumeration = features.elements();
         while (enumeration.hasMoreElements()) {
             final EngineMode mode = (EngineMode) enumeration.nextElement();
@@ -78,7 +78,7 @@ public class EngineList {
                 cleaned.addElement(mode);
             }
         }
-        
+
         features = cleaned;
     }
 
@@ -86,9 +86,9 @@ public class EngineList {
         features.removeElementAt(index);
     }
 
-    void requireMatch(EngineMode require) {
+    public void requireMatch(EngineMode require) {
         Vector cleaned = new Vector();
-        
+
         final Enumeration enumeration = features.elements();
         while (enumeration.hasMoreElements()) {
             final EngineMode mode = (EngineMode) enumeration.nextElement();
@@ -96,16 +96,16 @@ public class EngineList {
                 cleaned.addElement(mode);
             }
         }
-        
+
         features = cleaned;
     }
 
-    int size() {
+    public int size() {
         return features.size();
     }
 
     /**
-     * 
+     *
      * @author Dirk Schnelle Note: this comparator imposes orderings that are
      *         inconsistent with equals.
      */
