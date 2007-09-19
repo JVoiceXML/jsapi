@@ -66,11 +66,11 @@ public class RecognizerEvent extends EngineEvent {
         this.audioPosition = audioPosition;
     }
 
-    public long getAudioPosition() {
+    public long getAudioPosition() throws IllegalStateException {
         return audioPosition;
     }
 
-    public GrammarException getGrammarException() {
+    public GrammarException getGrammarException() throws IllegalArgumentException {
         final int id = getId();
         if (id == CHANGES_REJECTED) {
             return grammarException;
