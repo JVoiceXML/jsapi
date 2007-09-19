@@ -56,9 +56,11 @@ public interface Recognizer extends Engine {
     SpeakerManager getSpeakerManager();
 
     RuleGrammar createRuleGrammar(String grammarReference, String rootName)
-            throws EngineStateException, EngineException;
+            throws IllegalArgumentException, EngineStateException,
+            EngineException;
 
-    void deleteGrammar(Grammar grammar) throws EngineStateException;
+    void deleteGrammar(Grammar grammar)
+            throws IllegalArgumentException, EngineStateException;
 
     RecognizerProperties getRecognizerProperties();
 
