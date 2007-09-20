@@ -49,6 +49,7 @@ public class EngineEvent extends SpeechEvent {
     public static int ENGINE_ERROR = ENGINE_RESUMED << 1;
 
     public static int DEFAULT_MASK = ENGINE_ALLOCATED | ENGINE_DEALLOCATED
+            | ENGINE_ALLOCATING_RESOURCES | ENGINE_DEALLOCATING_RESOURCES
             | ENGINE_PAUSED | ENGINE_RESUMED | ENGINE_FOCUSED
             | ENGINE_DEFOCUSED | ENGINE_ERROR;
 
