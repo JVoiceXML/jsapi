@@ -68,6 +68,7 @@ import javax.speech.recognition.GrammarException;
 import java.io.Reader;
 import javax.speech.EngineListener;
 import javax.speech.recognition.RecognizerProperties;
+import javax.speech.recognition.ResultEvent;
 
 
 /**
@@ -82,7 +83,7 @@ import javax.speech.recognition.RecognizerProperties;
  * modify this implementation.
  *
  */
-public class BaseRecognizer extends BaseEngine implements Recognizer {
+public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected Vector resultListeners;
     protected Hashtable grammarList;
     protected boolean caseSensitiveGrammarNames = true;
@@ -99,7 +100,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer {
     protected boolean reloadAll = false;
 
     private SpeakerManager speakerManager;
-    private BaseRecognizerProperties recognizerProperties;
+    protected BaseRecognizerProperties recognizerProperties;
     private int resultMask;
 
 
@@ -129,7 +130,8 @@ public class BaseRecognizer extends BaseEngine implements Recognizer {
         grammarList = new Hashtable();
         speakerManager = new BaseSpeakerManager();
         recognizerProperties = new BaseRecognizerProperties(this);
-        resultMask = 0;
+        resultMask = ResultEvent.DEFAULT_MASK;
+        setEngineMask(getEngineMask() | RecognizerEvent.DEFAULT_MASK);
     }
 
 
@@ -151,15 +153,25 @@ public class BaseRecognizer extends BaseEngine implements Recognizer {
         postEngineEvent(states[0], states[1],
                         EngineEvent.ENGINE_ALLOCATING_RESOURCES);
 
-        // Go in to the ALLOCATED, RESUMED, LISTENING, and FOCUS_ON states.
+        //Proccess allocation
+        boolean result = handleAllocate();
+        if (result == false) {
+            states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
+            postEngineEvent(states[0], states[1],
+                            EngineEvent.ENGINE_DEALLOCATED);
+
+            return;
+        }
+
+        // Go in to the ALLOCATED, RESUMED, LISTENING, and FOCUSED states.
         // Subclasses with shared engines should check all states before
         // changing them here.
         synchronized (engineStateLock) {
-            long newState = ALLOCATED | RESUMED | LISTENING | FOCUSED;
+            long newState = ALLOCATED | PAUSED | DEFOCUSED;
             states = setEngineState(CLEAR_ALL_STATE, newState);
         }
         postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
-        handleAllocate();
+
     }
 
 
@@ -297,36 +309,6 @@ public class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
     /**
-     * Called from the <code>pause</code> method.  Override this in subclasses.
-     */
-    protected boolean handlePause() {
-        return false;
-    }
-
-    /**
-     * Called from the <code>allocate</code> method.  Override this in
-     * subclasses.
-     *
-     * @see #allocate
-     *
-     * @throws EngineException if problems are encountered
-     */
-    protected boolean handleAllocate() throws EngineException {
-        return false;
-    }
-
-    /**
-     * Called from the <code>deallocate</code> method.  Override this in
-     * subclasses.
-     *
-     * @throws EngineException if this <code>Engine</code> cannot be
-     *   deallocated.
-     */
-    protected boolean handleDeallocate() throws EngineException {
-        return false;
-    }
-
-    /**
      * @todo Implement
      *
      * @param flags int
@@ -341,9 +323,9 @@ public class BaseRecognizer extends BaseEngine implements Recognizer {
             return;
         }
 
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
+        Enumeration listeners = engineListeners.elements();
+        while (listeners.hasMoreElements()) {
+            EngineListener el = (EngineListener) listeners.nextElement();
             ((RecognizerListener) el).recognizerUpdate((RecognizerEvent) event);
         }
     }
