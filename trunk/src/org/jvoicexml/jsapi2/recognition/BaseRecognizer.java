@@ -300,14 +300,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         }
     }
 
-
-    /**
-     * Called from the <code>resume</code> method.  Override in subclasses.
-     */
-    protected boolean handleResume() {
-        return false;
-    }
-
     /**
      * @todo Implement
      *
