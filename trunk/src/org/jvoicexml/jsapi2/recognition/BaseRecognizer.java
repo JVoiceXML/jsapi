@@ -84,6 +84,7 @@ import javax.speech.recognition.ResultEvent;
  *
  */
 public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
+
     protected Vector resultListeners;
     protected Hashtable grammarList;
     protected boolean caseSensitiveGrammarNames = true;
@@ -108,24 +109,14 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * Create a new Recognizer in the DEALLOCATED state.
      */
     public BaseRecognizer() {
-        this(false, null);
+        this(null);
     }
 
     /**
      * Create a new Recognizer in the DEALLOCATED state.
      */
     public BaseRecognizer(RecognizerMode mode) {
-        this(false, mode);
-    }
-
-    /**
-     * Create a new Recognizer in the DEALLOCATED state.
-     * @param reloadAll set to true if recognizer cannot handle
-     * partial grammar loading.  Default = false.
-     */
-    public BaseRecognizer(boolean reloadAll, RecognizerMode mode) {
         super(mode);
-        this.reloadAll = reloadAll;
         resultListeners = new Vector();
         grammarList = new Hashtable();
         speakerManager = new BaseSpeakerManager();
@@ -311,10 +302,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
 
     public void fireEvent(EngineEvent event) {
-        if (super.engineListeners == null) {
-            return;
-        }
-
         Enumeration listeners = engineListeners.elements();
         while (listeners.hasMoreElements()) {
             EngineListener el = (EngineListener) listeners.nextElement();
