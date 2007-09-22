@@ -45,7 +45,7 @@ public interface Synthesizer extends Engine {
 
     void cancel() throws EngineStateException;
 
-    void cancel(int id) throws EngineStateException;
+    void cancel(int id) throws IllegalArgumentException, EngineStateException;
 
     void cancelAll() throws EngineStateException;
 
@@ -62,14 +62,14 @@ public interface Synthesizer extends Engine {
     int getSpeakableMask();
 
     int speak(AudioSegment audio, SpeakableListener listener)
-            throws EngineStateException;
+            throws EngineStateException, IllegalArgumentException;
 
     int speak(Speakable speakable, SpeakableListener listener)
-            throws SynthesisException, EngineStateException;
+            throws SynthesisException, EngineStateException, IllegalArgumentException;
 
     int speak(String text, SpeakableListener listener)
             throws EngineStateException;
 
     int speakMarkup(String synthesisMarkup, SpeakableListener listener)
-            throws SynthesisException, EngineStateException;
+            throws SynthesisException, EngineStateException, IllegalArgumentException;
 }

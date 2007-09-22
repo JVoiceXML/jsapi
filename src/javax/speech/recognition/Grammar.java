@@ -47,7 +47,7 @@ public interface Grammar {
 
     String getReference();
 
-    void setActivationMode(int mode);
+    void setActivationMode(int mode) throws IllegalArgumentException;
 
     boolean isActive();
 
