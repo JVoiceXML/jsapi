@@ -30,5 +30,6 @@ import javax.speech.Engine;
 import javax.speech.EngineException;
 
 public interface EngineFactory {
-    Engine createEngine() throws EngineException;
+    Engine createEngine() throws EngineException, IllegalArgumentException,
+            SecurityException;
 }
