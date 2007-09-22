@@ -35,7 +35,7 @@ public class SpeechEvent extends EventObject {
 
     public static final int DISABLE_ALL = 0;
 
-    public static final int ENABLE_ALL = Integer.MAX_VALUE;
+    public static final int ENABLE_ALL = -1;
 
     public SpeechEvent(Object source, int id) {
         super(source);
@@ -49,7 +49,7 @@ public class SpeechEvent extends EventObject {
 
     /**
      * Creates a collection of all parameters.
-     * 
+     *
      * @return collection of all parameters.
      */
     protected Vector getParameters() {

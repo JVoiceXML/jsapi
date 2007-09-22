@@ -29,15 +29,15 @@ package javax.speech;
 import java.beans.PropertyChangeListener;
 
 public interface EngineProperties {
-    int MAX_PRIORITY = Thread.MAX_PRIORITY;
+    public static int MAX_PRIORITY = Thread.MAX_PRIORITY;
 
-    int NORM_TRUSTED_PRIORITY = Thread.NORM_PRIORITY;
+    public static int NORM_TRUSTED_PRIORITY = Thread.NORM_PRIORITY;
 
-    int MAX_UNTRUSTED_PRIORITY = NORM_TRUSTED_PRIORITY / 2;
+    public static int MAX_UNTRUSTED_PRIORITY = NORM_TRUSTED_PRIORITY / 2;
 
-    int NORM_UNTRUSTED_PRIORITY = MAX_UNTRUSTED_PRIORITY / 2;
+    public static int NORM_UNTRUSTED_PRIORITY = MAX_UNTRUSTED_PRIORITY / 2;
 
-    int MIN_PRIORITY = Thread.MIN_PRIORITY;
+    public static int MIN_PRIORITY = Thread.MIN_PRIORITY;
 
     void addPropertyChangeListener(PropertyChangeListener listener);
 

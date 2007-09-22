@@ -29,71 +29,71 @@ package javax.speech.recognition;
 import javax.speech.EngineProperties;
 
 public interface RecognizerProperties extends EngineProperties {
-    int ADAPT_PAUSED = 0;
+    public static int ADAPT_PAUSED = 1;
 
-    int ADAPT_RESUMED = 1;
+    public static int ADAPT_RESUMED = 2;
 
-    int ENDPOINT_AUTOMATIC = 2;
+    public static int ENDPOINT_AUTOMATIC = 1;
 
-    int ENDPOINT_MANUAL = 3;
+    public static int ENDPOINT_MANUAL = ENDPOINT_AUTOMATIC << 1;
 
-    int ENDPOINT_PUSH_TO_START = 4;
+    public static int ENDPOINT_SPEECH_DETECTION = ENDPOINT_MANUAL << 1;
 
-    int ENDPOINT_PUSH_TO_TALK = 5;
+    public static int ENDPOINT_PUSH_TO_TALK = ENDPOINT_SPEECH_DETECTION << 1;
 
-    int ENDPOINT_SPEECH_DETECTION = 6;
+    public static int ENDPOINT_PUSH_TO_START = ENDPOINT_PUSH_TO_TALK << 1;
 
-    int MIN_ACCURACY = 7;
+    public static int MIN_ACCURACY = 0;
 
-    int NORM_ACCURACY = 8;
+    public static int NORM_ACCURACY = 5;
 
-    int MAX_ACCURACY = 8;
+    public static int MAX_ACCURACY = 10;
 
-    int MIN_CONFIDENCE = 10;
+    public static int MIN_CONFIDENCE = 0;
 
-    int NORM_CONFIDENCE = 11;
+    public static int NORM_CONFIDENCE = 5;
 
-    int MAX_CONFIDENCE = 12;
+    public static int MAX_CONFIDENCE = 10;
 
-    int UNKNOWN_CONFIDENCE = 13;
+    public static int UNKNOWN_CONFIDENCE = -1;
 
-    int MIN_SENSITIVITY = 14;
+    public static int MIN_SENSITIVITY = 0;
 
-    int NORM_SENSITIVITY = 15;
+    public static int NORM_SENSITIVITY = 5;
 
-    int MAX_SENSITIVITY = 16;
+    public static int MAX_SENSITIVITY = 10;
 
-    void setAdaptation(int adapt);
+    void setAdaptation(int adapt) throws IllegalArgumentException;
 
     int getAdaptation();
 
-    void setCompleteTimeout(int timeout);
+    void setCompleteTimeout(int timeout) throws IllegalArgumentException;
 
     int getCompleteTimeout();
 
-    void setConfidenceThreshold(int confidenceThreshold);
+    void setConfidenceThreshold(int confidenceThreshold) throws IllegalArgumentException;
 
     int getConfidenceThreshold();
 
-    void setEndpointStyle(int endpointStyle);
+    void setEndpointStyle(int endpointStyle) throws IllegalArgumentException;
 
     int getEndpointStyle();
 
-    void setIncompleteTimeout(int timeout);
+    void setIncompleteTimeout(int timeout) throws IllegalArgumentException;
 
     int getIncompleteTimeout();
 
-    void setNumResultAlternatives(int num);
+    void setNumResultAlternatives(int num) throws IllegalArgumentException;
 
     int getNumResultAlternatives();
 
-    void setPriority(int priority);
+    void setPriority(int priority) throws IllegalArgumentException;
 
     int getPriority();
 
     int getSensitivity();
 
-    void setSpeedVsAccuracy(int speedVsAccuracy);
+    void setSpeedVsAccuracy(int speedVsAccuracy) throws IllegalArgumentException;
 
     int getSpeedVsAccuracy();
 
@@ -105,5 +105,5 @@ public interface RecognizerProperties extends EngineProperties {
 
     boolean isTrainingProvided();
 
-    void setSensitivity(int sensitivity);
+    void setSensitivity(int sensitivity) throws IllegalArgumentException;
 }
