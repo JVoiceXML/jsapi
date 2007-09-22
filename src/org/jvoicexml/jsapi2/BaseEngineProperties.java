@@ -2,7 +2,7 @@
  * File:    $HeadURL: $
  * Version: $LastChangedRevision:  $
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: $
+ * Author:  $LastChangedBy: lyncher $
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
@@ -66,9 +66,10 @@ public abstract class BaseEngineProperties implements EngineProperties {
      */
     protected Vector propertyChangeListeners;
 
-    private Engine engine;
+    protected Engine engine;
 
     protected String baseUri;
+    protected int priority;
 
     /**
      * Class constructor.
@@ -76,7 +77,6 @@ public abstract class BaseEngineProperties implements EngineProperties {
     protected BaseEngineProperties(Engine engine) {
         propertyChangeListeners = new Vector();
         this.engine = engine;
-        baseUri = "";
     }
 
     /**
@@ -85,13 +85,22 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * <code>PropertyChangeEvent</code> is issued
      * for each property that changes as the reset takes effect.
      */
-    public abstract void reset();
+    public void reset() {
+        setPriority(EngineProperties.NORM_TRUSTED_PRIORITY);
+        setBase("");
+    }
 
-    public abstract int getPriority();
+    public int getPriority() {
+        return priority;
+    }
 
-    public abstract void setPriority(int priority);
+    public void setPriority(int priority) {
+        postPropertyChangeEvent("priority", new Integer(this.priority), new Integer(priority));
+        this.priority = priority;
+    }
 
     public void setBase(String uri) {
+        postPropertyChangeEvent("base", new Integer(this.priority), new Integer(priority));
         baseUri = uri;
     }
 
@@ -135,6 +144,9 @@ public abstract class BaseEngineProperties implements EngineProperties {
     protected void postPropertyChangeEvent(String propName,
                                            Object oldValue,
                                            Object newValue) {
+
+        if (propertyChangeListeners.size() < 1) return;
+
         final PropertyChangeEvent event = new PropertyChangeEvent(this,
                 propName,
                 oldValue,
@@ -167,9 +179,6 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * @see #dispatchSpeechEvent
      */
     public void firePropertyChangeEvent(PropertyChangeEvent event) {
-        if (propertyChangeListeners == null) {
-            return;
-        }
         Enumeration e = propertyChangeListeners.elements();
         while (e.hasMoreElements()) {
             PropertyChangeListener pcl = (PropertyChangeListener) e.nextElement();
