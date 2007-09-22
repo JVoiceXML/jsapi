@@ -6,9 +6,7 @@ import javax.speech.synthesis.SynthesizerListener;
 import javax.speech.synthesis.SynthesizerProperties;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SynthesisException;
-import javax.speech.EngineMode;
 import javax.speech.EngineEvent;
-import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.AudioSegment;
 import org.jvoicexml.jsapi2.BaseEngine;
@@ -31,7 +29,7 @@ import javax.speech.EngineListener;
  * @author Renato Cassaca
  * @version 1.0
  */
-public class BaseSynthesizer extends BaseEngine implements Synthesizer {
+abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer {
 
     protected Vector speakableListeners;
     protected BaseSynthesizerProperties synthesizerProperties;
@@ -60,50 +58,6 @@ public class BaseSynthesizer extends BaseEngine implements Synthesizer {
             EngineListener el = (EngineListener) listeners.nextElement();
             ((SynthesizerListener) el).synthesizerUpdate((SynthesizerEvent) event);
         }
-    }
-
-
-    /**
-     * Called from the <code>allocate</code> method.
-     *
-     * @throws EngineException if problems are encountered
-     * @return boolean
-     * @todo Implement this org.jvoicexml.jsapi2.BaseEngine method
-     */
-    protected boolean handleAllocate() throws EngineException {
-        return false;
-    }
-
-    /**
-     * Called from the <code>deallocate</code> method.
-     *
-     * @throws EngineException if this <code>Engine</code> cannot be
-     *   deallocated.
-     * @return boolean
-     * @todo Implement this org.jvoicexml.jsapi2.BaseEngine method
-     */
-    protected boolean handleDeallocate() throws EngineException {
-        return false;
-    }
-
-    /**
-     * Called from the <code>pause</code> method.
-     *
-     * @return boolean
-     * @todo Implement this org.jvoicexml.jsapi2.BaseEngine method
-     */
-    protected boolean handlePause() {
-        return false;
-    }
-
-    /**
-     * Called from the <code>resume</code> method.
-     *
-     * @return boolean
-     * @todo Implement this org.jvoicexml.jsapi2.BaseEngine method
-     */
-    protected boolean handleResume() {
-        return false;
     }
 
     /**
