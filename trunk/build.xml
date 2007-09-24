@@ -4,20 +4,18 @@ This file builds the JSR 113.jar.
     </description>
 
 	<!-- allow the user to override setting in an own propertiesfile. -->
-	<property file="jsr113.properties" />
-
-    <property name="version" value="0.9.1.14-2" />
+	<property file="personal-props/ant.properties" />
+	<property file="config-props/ant.properties" />
 
 	<!-- directory structure -->
 	<property name="src" value="src" />
 	<property name="build" value="classes" />
 	<property name="dist" value="dist" />
 	<property name="apidoc" value="doc/api" />
-
-	<property name="midp.home" value="MUST BE SPECIFIED DIRECTORY"/>
 	
     <!-- distribution files -->
 	<property name="dist.jsr113.jar" value="${dist}/jsr-113.jar" />
+	<property name="dist.jsr113-base.jar" value="${dist}/jsr-113-base.jar" />
     <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
 	
 	<path id="midp.lib">
@@ -43,28 +41,49 @@ This file builds the JSR 113.jar.
 	<target name="clean" description="Remove all compiled and distribution files">
 		<delete dir="${build}" />
 		<delete file="${dist.jsr113.jar}" />
+		<delete file="${dist.jsr113-base.jar}" />
 	</target>
 
 	<target name="compile" depends="-init" description="Compile the JAVA sources">
 		<echo message="compiling with debug=${debug}, optimize=${optimize}" />
 		<javac bootclasspathref="midp.lib" destdir="${build}" 
 			source="1.2" target="1.1"
-			optimize="${optimize}" debug="${debug}" deprecation="on" encoding="iso-8859-1">
+			optimize="${optimize}" debug="${debug}" deprecation="on"
+		  	encoding="iso-8859-1">
 			<src path="${src}" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
 	</target>
 
-	<target name="jar" depends="compile" description="Pack all compiled files into jar files">
+	<target name="jar" depends="compile" 
+	  description="Pack all compiled files into jar files">
 		<jar jarfile="${dist.jsr113.jar}" compress="false">
 			<fileset dir="${build}">
 				<include name="**/*.class" />
+			    <exclude name="org/jvoicexml/**" />
 			</fileset>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 				<section name="common">
-					<attribute name="Implementation-Vendor" value="JVoiceXML group" />
-					<attribute name="Implementation-Title" value="JVoiceXML main" />
+					<attribute name="Implementation-Vendor"
+					  value="JVoiceXML group" />
+					<attribute name="Implementation-Title"
+					  value="JSR 113" />
+				</section>
+			</manifest>
+		</jar>
+
+		<jar jarfile="${dist.jsr113-base.jar}" compress="false">
+			<fileset dir="${build}">
+				<include name="org/jvoicexml/**/*.class" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<section name="common">
+					<attribute name="Implementation-Vendor"
+					  value="JVoiceXML group" />
+					<attribute name="Implementation-Title"
+					  value="Base implementation for JSR 113 vendors" />
 				</section>
 			</manifest>
 		</jar>
@@ -73,7 +92,8 @@ This file builds the JSR 113.jar.
     <target name="distribution" description="Build the distribution files"
         depends="jar">
         <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
-        	<include name="*.jar"/>
+        	<include name="${dist.jsr113.jar}"/>
+	      	<include name="${dist.jsr113-base.jar}"/>
             <fileset refid="dist.files.additional"/>
         </zip>
     </target>
