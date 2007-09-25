@@ -185,13 +185,17 @@ public class RecognizerMode extends EngineMode {
                 }
             }
         }
+        else {
+            // require instanceof SynthesizerMode
+            return false;
+        }
 
         return true;
     }
 
     /**
      * Creates a collection of all parameters.
-     * 
+     *
      * @return collection of all parameters.
      */
     protected Vector getParameters() {
