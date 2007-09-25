@@ -34,7 +34,9 @@ import javax.speech.EngineMode;
 public class SynthesizerMode extends EngineMode {
     public static final SynthesizerMode DEFAULT = new SynthesizerMode();
 
-    private Voice[] voices;
+    private Voice[] voices = null;
+
+    private Locale locale = null;
 
     public SynthesizerMode() {
         super();
@@ -42,10 +44,6 @@ public class SynthesizerMode extends EngineMode {
 
     public SynthesizerMode(Locale locale) {
         super();
-
-        voices = new Voice[1];
-        voices[0] = new Voice(locale, null, Voice.GENDER_DONT_CARE,
-                Voice.AGE_DONT_CARE, Voice.VARIANT_DONT_CARE);
     }
 
     public SynthesizerMode(String engineName, String modeName, Boolean running,
@@ -54,6 +52,8 @@ public class SynthesizerMode extends EngineMode {
                 markupSupport);
 
         this.voices = voices;
+        if ((voices != null) && (voices.length > 0))
+            locale = voices[0].getLocale();
     }
 
     public boolean equals(Object object) {
@@ -125,13 +125,17 @@ public class SynthesizerMode extends EngineMode {
                 }
             }
         }
+        else {
+            //require instanceof RecognizerMode
+            return false;
+        }
 
         return true;
     }
 
     /**
      * Creates a collection of all parameters.
-     * 
+     *
      * @return collection of all parameters.
      */
     protected Vector getParameters() {
