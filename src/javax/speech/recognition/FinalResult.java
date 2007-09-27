@@ -46,6 +46,8 @@ public interface FinalResult extends Result {
 
     int getConfidenceLevel(int nBest) throws ResultException;
 
+    Grammar getGrammar(int nBest) throws ResultException, IllegalArgumentException;
+
     int getNumberAlternatives() throws ResultException;
 
     boolean isAudioAvailable() throws ResultException;
