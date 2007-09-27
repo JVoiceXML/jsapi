@@ -53,8 +53,6 @@ public interface Recognizer extends Engine {
 
     void removeResultListener(ResultListener listener);
 
-    SpeakerManager getSpeakerManager();
-
     RuleGrammar createRuleGrammar(String grammarReference, String rootName)
             throws IllegalArgumentException, EngineStateException,
             EngineException;
@@ -62,10 +60,16 @@ public interface Recognizer extends Engine {
     void deleteGrammar(Grammar grammar)
             throws IllegalArgumentException, EngineStateException;
 
+    int getGrammarMask();
+
     RecognizerProperties getRecognizerProperties();
+
+    int getResultMask();
 
     RuleGrammar getRuleGrammar(String grammarReference)
             throws EngineStateException;
+
+    SpeakerManager getSpeakerManager();
 
     Grammar[] listGrammars() throws EngineStateException;
 
@@ -101,5 +105,6 @@ public interface Recognizer extends Engine {
 
     void setResultMask(int mask);
 
-    int getResultMask();
+    void setGrammarMask(int mask);
+
 }
