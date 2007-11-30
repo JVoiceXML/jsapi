@@ -2,7 +2,7 @@
  * File:    $HeadURL: $
  * Version: $LastChangedRevision: $
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: $
+ * Author:  $LastChangedBy: lyncher $
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
@@ -53,6 +53,13 @@ import javax.speech.EngineStateException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.speech.AudioEvent;
+import java.util.Enumeration;
+import javax.speech.recognition.Recognizer;
+import javax.speech.synthesis.Synthesizer;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.MalformedURLException;
+import java.io.IOException;
 
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code>
@@ -64,18 +71,28 @@ public class BaseAudioManager implements AudioManager {
      * List of <code>AudioListeners</code> registered for
      * <code>AudioEvents</code> on this object.
      */
-    protected Vector listeners;
+    protected Vector audioListeners;
 
     protected int audioMask;
 
-    private String mediaLocator = "";
+    protected String mediaLocator = "";
+
+    protected BaseEngine engine;
+
+    protected OutputStream outputStream;
+
+    protected InputStream inputStream;
 
     /**
      * Class constructor.
      */
-    public BaseAudioManager() {
-        listeners = new Vector();
+    public BaseAudioManager(BaseEngine engine) {
+        this.engine = engine;
+        audioListeners = new Vector();
         audioMask = AudioEvent.DEFAULT_MASK;
+        inputStream = null;
+        outputStream = null;
+        mediaLocator = "";
     }
 
     /**
@@ -85,8 +102,8 @@ public class BaseAudioManager implements AudioManager {
      * @param listener the listener to add
      */
     public void addAudioListener(AudioListener listener) {
-        if (!listeners.contains(listener)) {
-            listeners.addElement(listener);
+        if (!audioListeners.contains(listener)) {
+            audioListeners.addElement(listener);
         }
     }
 
@@ -97,7 +114,7 @@ public class BaseAudioManager implements AudioManager {
      * @param listener the listener to remove
      */
     public void removeAudioListener(AudioListener listener) {
-        listeners.removeElement(listener);
+        audioListeners.removeElement(listener);
     }
 
     public int getAudioMask() {
@@ -108,48 +125,213 @@ public class BaseAudioManager implements AudioManager {
         audioMask = mask;
     }
 
-    public void audioStart() throws SecurityException, AudioException {
+    public void audioStart() throws SecurityException,
+            AudioException, EngineStateException {
+
+        if (System.getProperty("javax.speech.supports.audio.management") == null) {
+            throw new SecurityException(
+                    "AudioManager has no permission to access audio resources");
+        }
+
+        //Open URL described in locator
+        URL url = null;
+        try {
+            url = new URL(mediaLocator);
+        } catch (MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+
+        //Open a connection to URL
+        URLConnection urlConnection = null;
+        try {
+            urlConnection = url.openConnection();
+            urlConnection.connect();
+        } catch (IOException ex) {
+            throw new AudioException("Cannot open connection to locator URL: " +
+                                     ex.getMessage());
+        }
+
+        //Gets IO from that connection
+        if (engine instanceof Synthesizer) {
+            OutputStream os = null;
+            try {
+                os = urlConnection.getOutputStream();
+            } catch (IOException ex) {
+                throw new AudioException("Cannot get OutputStream from URL: " +
+                                         ex.getMessage());
+            }
+            outputStream = os;
+        } else {
+            InputStream is = null;
+            try {
+                is = urlConnection.getInputStream();
+            } catch (IOException ex) {
+                throw new AudioException("Cannot get InputStream from URL: " +
+                                         ex.getMessage());
+            }
+            inputStream = is;
+        }
+
+        postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
+
     }
 
-    public void audioStop() throws SecurityException, AudioException {
+    public void audioStop() throws SecurityException,
+            AudioException, EngineStateException {
+
+        if (System.getProperty("javax.speech.supports.audio.management") == null) {
+            throw new SecurityException(
+                    "AudioManager has no permission to access audio resources");
+        }
+
+        postAudioEvent(AudioEvent.AUDIO_STOPPED, AudioEvent.AUDIO_LEVEL_MIN);
+
     }
 
     public void setMediaLocator(String locator) throws AudioException,
             AudioException, EngineStateException, IllegalArgumentException,
             SecurityException {
+
+        //Insure that engine is DEALLOCATED
+        if (engine.testEngineState(engine.DEALLOCATED) == false) {
+            throw new EngineStateException(
+                    "Engine is not DEALLOCATED. Cannot setMediaLocator");
+        }
+
+        if (System.getProperty("javax.speech.supports.audio.management") == null) {
+            throw new SecurityException(
+                    "AudioManager has no permission to access audio resources");
+        }
+
+        //Insure that media locator is supported
+        if (isSupportedMediaLocator(locator) == false) {
+            throw new AudioException("Unsupported locator: " + locator);
+        }
+
         mediaLocator = locator;
     }
 
     public void setMediaLocator(String locator, InputStream stream) throws
-            AudioException,
             AudioException, EngineStateException, IllegalArgumentException,
             SecurityException {
+
+        if (System.getProperty("javax.speech.supports.audio.management") == null) {
+            throw new SecurityException(
+                    "AudioManager has no permission to access audio resources");
+        }
+
+        if (engine instanceof Synthesizer) {
+            throw new IllegalArgumentException(
+                    "Engine doesn't support OutputStreams");
+        }
+
+        //Insure that engine is DEALLOCATED
+        if (engine.testEngineState(engine.DEALLOCATED) == false) {
+            throw new EngineStateException(
+                    "Engine is not DEALLOCATED. Cannot setMediaLocator");
+        }
+
         mediaLocator = locator;
+        this.inputStream = inputStream;
     }
 
     public void setMediaLocator(String locator, OutputStream stream) throws
-            AudioException,
             AudioException, EngineStateException, IllegalArgumentException,
             SecurityException {
+
+        //Check that audio IO can be made
+        if (System.getProperty("javax.speech.supports.audio.management") == null) {
+            throw new SecurityException(
+                    "AudioManager has no permission to access audio resources");
+        }
+
+        if (engine instanceof Recognizer) {
+            throw new IllegalArgumentException(
+                    "Engine doesn't support OutputStreams");
+        }
+
+        //Insure that engine is DEALLOCATED
+        if (engine.testEngineState(engine.DEALLOCATED) == false) {
+            throw new EngineStateException(
+                    "Engine is not DEALLOCATED. Cannot setMediaLocator");
+        }
+
+        //     Connection c = javax.microedition.io.Connector.open("");
+
         mediaLocator = locator;
+        this.outputStream = outputStream;
     }
 
     public String getMediaLocator() {
         return mediaLocator;
     }
 
+    /**
+     * @todo THis is just a dummy implementation
+     *
+     * @param mediaLocator String
+     * @return String[]
+     * @throws IllegalArgumentException
+     */
     public String[] getSupportedMediaLocators(String mediaLocator) throws
             IllegalArgumentException {
-        return null;
+        return new String[] {mediaLocator};
     }
 
     public boolean isSupportedMediaLocator(String mediaLocator) throws
             IllegalArgumentException {
-        return false;
+
+        String[] supportedMediaLocators = getSupportedMediaLocators(
+                mediaLocator);
+
+        return (supportedMediaLocators == null ? false : true);
     }
 
+    /**
+     * @todo Initial implementation
+     *
+     * @param audioManager AudioManager
+     * @return boolean
+     */
     public boolean isSameChannel(AudioManager audioManager) {
-        return false;
+        return (audioManager.getMediaLocator() == mediaLocator);
     }
+
+    protected void postAudioEvent(int eventId, int audioLevel) {
+        if ((getAudioMask() & eventId) == eventId) {
+            final AudioEvent event = new AudioEvent(engine, eventId, audioLevel);
+
+            Runnable r = new Runnable() {
+                public void run() {
+                    fireAudioEvent(event);
+                }
+            };
+
+            try {
+                engine.getSpeechEventExecutor().execute(r);
+            } catch (RuntimeException ex) {
+                //Ignore exception
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public void fireAudioEvent(AudioEvent event) {
+        Enumeration listeners = audioListeners.elements();
+        while (listeners.hasMoreElements()) {
+            AudioListener al = (AudioListener) listeners.nextElement();
+            ((AudioListener) al).audioUpdate(event);
+        }
+    }
+
+    public OutputStream getOutputStream() {
+        return outputStream;
+    }
+
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+
 }
 
