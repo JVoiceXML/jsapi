@@ -13,7 +13,7 @@ import javax.speech.recognition.Recognizer;
  *
  * <p>Company: JVoiceXML group - http://jvoicexml.sourceforge.net</p>
  *
- * @author Renato Cassaca
+ * @author lyncher
  * @version 1.0
  */
 public class BaseRecognizerProperties extends BaseEngineProperties implements
