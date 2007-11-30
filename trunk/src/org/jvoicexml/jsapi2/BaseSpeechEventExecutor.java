@@ -2,7 +2,7 @@
  * File:    $HeadURL: $
  * Version: $LastChangedRevision: $
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: $
+ * Author:  $LastChangedBy: lyncher $
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
@@ -44,7 +44,8 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
      * @param command Runnable
      * @throws InterruptedException
      */
-    public void execute(Runnable command) throws InterruptedException {
+    public void execute(Runnable command) throws
+            IllegalStateException, NullPointerException {
         if (command == null)
             throw new NullPointerException("Command is null");
         commands.addElement(command);
