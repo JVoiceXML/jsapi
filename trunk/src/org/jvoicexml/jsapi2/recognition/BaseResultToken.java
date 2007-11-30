@@ -1,6 +1,8 @@
 package org.jvoicexml.jsapi2.recognition;
 
-import javax.speech.recognition.*;
+import javax.speech.recognition.Result;
+import javax.speech.recognition.ResultToken;
+import javax.speech.recognition.RecognizerProperties;
 
 /**
  * <p>Title: JSAPI 2.0</p>
@@ -17,13 +19,17 @@ import javax.speech.recognition.*;
 public class BaseResultToken implements ResultToken {
 
     private int confidenceLevel;
+    private long startTime;
     private long endTime;
     private final Result result;
+    private final String token;
 
-
-    public BaseResultToken(Result result) {
+    public BaseResultToken(Result result, String token) {
         this.result = result;
         confidenceLevel = RecognizerProperties.NORM_CONFIDENCE;
+        startTime = -1;
+        endTime = -1;
+        this.token = token;
     }
 
     /**
@@ -39,14 +45,21 @@ public class BaseResultToken implements ResultToken {
         confidenceLevel = level;
     }
 
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+
     /**
      * getEndTime
      *
      * @return long
-     * @todo Implement this javax.speech.recognition.ResultToken method
      */
     public long getEndTime() {
-        return 0L;
+        return endTime;
     }
 
     /**
@@ -62,19 +75,17 @@ public class BaseResultToken implements ResultToken {
      * getStartTime
      *
      * @return long
-     * @todo Implement this javax.speech.recognition.ResultToken method
      */
     public long getStartTime() {
-        return 0L;
+        return startTime;
     }
 
     /**
      * getText
      *
      * @return String
-     * @todo Implement this javax.speech.recognition.ResultToken method
      */
     public String getText() {
-        return "";
+        return token;
     }
 }

@@ -1,212 +1,455 @@
+/**
+ * Copyright 1998-2003 Sun Microsystems, Inc.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ */
 package org.jvoicexml.jsapi2.recognition;
 
+import java.io.Serializable;
 import javax.speech.recognition.Grammar;
-import javax.speech.recognition.Recognizer;
 import java.util.Vector;
+import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.GrammarListener;
 import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.GrammarEvent;
 import java.util.Enumeration;
+import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 
+
 /**
- * <p>Title: JSAPI 2.0</p>
+ * Implementation of javax.speech.recognition.Grammar.
  *
- * <p>Description: An independent reference implementation of JSR 113</p>
- *
- * <p>Copyright: Copyright (c) 2007</p>
- *
- * <p>Company: JVoiceXML group - http://jvoicexml.sourceforge.net</p>
- *
- * @author Renato Cassaca
- * @version 1.0
+ * @version 1.9 01/27/99 13:43:51
  */
 public class BaseGrammar implements Grammar {
+    public    transient BaseRecognizer myRec;
+    protected transient Vector grammarListeners;
+    protected transient Vector resultListeners;
+    protected String    myName;
 
-    private final Recognizer recognizer;
+    protected boolean grammarActive;  // only changed by commit and rec focus
+    protected boolean grammarEnabled;
+    protected boolean grammarChanged; // changed since last commit?
+    protected int     activationMode;
 
-    private final Vector grammarListeners;
-    private final Vector resultListeners;
-    private boolean active;
-    private boolean enabled;
-    private final String reference;
-    private int activationMode;
-
-
-    public BaseGrammar(final Recognizer recognizer, String reference) {
-        this.recognizer = recognizer;
-        this.reference = reference;
-        active = false;
-        enabled = false;
-        activationMode = Grammar.ACTIVATION_FOCUS;
+    /**
+     * Create a new BaseGrammar
+     * @param R the BaseRecognizer for this Grammar.
+     * @param name the name of this Grammar.
+     */
+    public BaseGrammar(BaseRecognizer R, String name) {
         grammarListeners = new Vector();
         resultListeners = new Vector();
+        myRec = R;
+        myName = name;
+        grammarActive=false;
+        grammarEnabled=true;
+        grammarChanged=true;
+        activationMode=ACTIVATION_FOCUS;
     }
 
+//////////////////////
+// Begin Grammar Methods
+//////////////////////
     /**
-     * addGrammarListener
-     *
-     * @param listener GrammarListener
+     * Return a reference to the recognizer that owns this Grammar.
+     * From javax.speech.recognition.Grammar.
      */
-    public void addGrammarListener(GrammarListener listener) {
-        if (!grammarListeners.contains(listener))
-            grammarListeners.addElement(listener);
+    public Recognizer getRecognizer() {
+        return myRec;
     }
 
     /**
-     * addResultListener
-     *
-     * @param listener ResultListener
+     * Get the reference of the Grammar.
+     * From javax.speech.recognition.Grammar.
      */
-    public void addResultListener(ResultListener listener) {
-        if (resultListeners.contains(listener))
-            resultListeners.addElement(listener);
+    public String getReference() {
+        return myName;
     }
 
     /**
-     * getActivationMode
+     * Set the enabled property of the Grammar.
+     * From javax.speech.recognition.Grammar.
+     * @param enabled the new desired state of the enabled property.
+     */
+    public void setEnabled(boolean enabled) {
+        if (enabled != grammarEnabled) {
+            grammarEnabled = enabled;
+        }
+    }
+
+    /**
+     * Determine if this Grammar is enabled or not.
+     * From javax.speech.recognition.Grammar.
+     */
+    public boolean isEnabled() {
+        return grammarEnabled;
+    }
+
+    /**
+     * Set the activation mode of this Grammar.
+     * From javax.speech.recognition.Grammar
      *
-     * @return int
+     * @param mode the new activation mode.
+     */
+    public void setActivationMode(int mode) throws IllegalArgumentException {
+        if ((mode != ACTIVATION_GLOBAL)
+            && (mode != ACTIVATION_MODAL)
+            && (mode != ACTIVATION_FOCUS)
+            && (mode != ACTIVATION_INDIRECT)) {
+            throw new IllegalArgumentException("Invalid ActivationMode");
+        } else if (mode != activationMode) {
+	  //sjagrammarChanged=true;
+            activationMode = mode;
+        }
+    }
+
+    /**
+     * Get the activation mode of this Grammar.
+     * From javax.speech.recognition.Grammar
      */
     public int getActivationMode() {
         return activationMode;
     }
 
     /**
-     * getRecognizer
-     *
-     * @return Recognizer
-     */
-    public Recognizer getRecognizer() {
-        return recognizer;
-    }
-
-    /**
-     * getReference
-     *
-     * @return String
-     */
-    public String getReference() {
-        return reference;
-    }
-
-    /**
-     * isActive
-     *
-     * @return boolean
+     * Determine if the Grammar is active or not.  This is a combination
+     * of the enabled state and activation conditions of the Grammar.
+     * From javax.speech.recognition.Grammar.
      */
     public boolean isActive() {
-        return active;
+        return myRec.isActive(this);
     }
 
     /**
-     * isEnabled
-     *
-     * @return boolean
+     * Add a new GrammarListener to the listener list if it is not
+     * already in the list.
+     * From javax.speech.recognition.Grammar.
+     * @param listener the listener to add.
      */
-    public boolean isEnabled() {
-        return enabled;
+    public void addGrammarListener(GrammarListener listener) {
+        if (!grammarListeners.contains(listener)) {
+            grammarListeners.addElement(listener);
+        }
     }
 
     /**
-     * removeGrammarListener
-     *
-     * @param listener GrammarListener
+     * Remove a GrammarListener from the listener list.
+     * From javax.speech.recognition.Grammar.
+     * @param listener the listener to remove.
      */
     public void removeGrammarListener(GrammarListener listener) {
         grammarListeners.removeElement(listener);
     }
 
     /**
-     * removeResultListener
-     *
-     * @param listener ResultListener
+     * Add a new ResultListener to the listener list if it is not
+     * already in the list.
+     * From javax.speech.recognition.Grammar.
+     * @param listener the listener to add.
+     */
+    public void addResultListener(ResultListener listener) {
+        if (!resultListeners.contains(listener)) {
+            resultListeners.addElement(listener);
+        }
+    }
+
+    /**
+     * Remove a ResultListener from the listener list.
+     * From javax.speech.recognition.Grammar.
+     * @param listener the listener to remove.
      */
     public void removeResultListener(ResultListener listener) {
         resultListeners.removeElement(listener);
     }
+//////////////////////
+// End Grammar Methods
+//////////////////////
+
+//////////////////////
+// Begin utility methods for sending GrammarEvents
+//////////////////////
+    /**
+     * Utility function to generate GRAMMAR_ACTIVATED event and post it
+     * to the event queue.  Eventually fireGrammarActivated will be called
+     * by dispatchSpeechEvent as a result of this action.
+     */
+    public void postGrammarActivated() {
+       /* SpeechEventUtilities.postSpeechEvent(
+            this,
+            new GrammarEvent(this, GrammarEvent.GRAMMAR_ACTIVATED));*/
+    }
 
     /**
-     * setActivationMode
-     *
-     * @param mode int
+     * Utility function to send a GRAMMAR_ACTIVATED event to all result
+     * listeners.
      */
-    public void setActivationMode(int mode) throws IllegalArgumentException {
-        if ((mode != Grammar.ACTIVATION_FOCUS) &&
-            (mode != Grammar.ACTIVATION_GLOBAL) &&
-            (mode != Grammar.ACTIVATION_MODAL)) {
-            throw new IllegalArgumentException("Unkown activation mode");
-        } else {
-            activationMode = mode;
+    protected void fireGrammarActivated(GrammarEvent event) {
+	/*if (grammarListeners == null) {
+	    return;
         }
+        Enumeration E = grammarListeners.elements();
+        while (E.hasMoreElements()) {
+            GrammarListener gl = (GrammarListener) E.nextElement();
+            gl.grammarActivated(event);
+        }*/
     }
 
     /**
-     * setEnabled
-     *
-     * @param flag boolean
+     * Utility function to generate GRAMMAR_CHANGES_COMMITTED event and post it
+     * to the event queue.  Eventually fireGrammarChangesCommitted will be
+     * called by dispatchSpeechEvent as a result of this action.
      */
-    public void setEnabled(boolean flag) {
-        enabled = false;
+    public void postGrammarChangesCommitted() {
+     /*   SpeechEventUtilities.postSpeechEvent(
+            this,
+            new GrammarEvent(this, GrammarEvent.GRAMMAR_CHANGES_COMMITTED));*/
     }
 
-    protected void setActive(boolean flag) {
-        if (flag == active) {
-            return;
+    /**
+     * Utility function to send a GRAMMAR_CHANGES_COMMITTED event to all result
+     * listeners.
+     */
+    protected void fireGrammarChangesCommitted(GrammarEvent event) {
+	/*if (grammarListeners == null) {
+	    return;
         }
-        active = flag;
-        postGrammarEvent(active ?
-                         GrammarEvent.GRAMMAR_ACTIVATED :
-                         GrammarEvent.GRAMMAR_DEACTIVATED);
+        Enumeration E = grammarListeners.elements();
+        while (E.hasMoreElements()) {
+            GrammarListener gl = (GrammarListener) E.nextElement();
+            gl.grammarChangesCommitted(event);
+        }*/
     }
 
-
-    protected void postGrammarEvent(int eventId) {
-        final GrammarEvent event = new GrammarEvent(this, eventId);
-        postGrammarEvent(event);
+    /**
+     * Utility function to generate GRAMMAR_DEACTIVATED event and post it
+     * to the event queue.  Eventually fireGrammarDeactivated will be called
+     * by dispatchSpeechEvent as a result of this action.
+     */
+    public void postGrammarDeactivated() {
+     /*  SpeechEventUtilities.postSpeechEvent(
+            this,
+            new GrammarEvent(this, GrammarEvent.GRAMMAR_DEACTIVATED));*/
     }
 
-    protected void postGrammarEvent(final GrammarEvent event) {
-        final Runnable r = new Runnable() {
-            public void run() {
-                fireEvent(event);
+    /**
+     * Utility function to send a GRAMMAR_DEACTIVATED event to all result
+     * listeners.
+     */
+    protected void fireGrammarDeactivated(GrammarEvent event) {
+	/*if (grammarListeners == null) {
+	    return;
+        }
+        Enumeration E = grammarListeners.elements();
+        while (E.hasMoreElements()) {
+            GrammarListener gl = (GrammarListener) E.nextElement();
+            gl.grammarDeactivated(event);
+        }*/
+    }
+//////////////////////
+// End utility methods for sending GrammarEvents
+//////////////////////
+
+//////////////////////
+// Begin utility methods for sending ResultEvents
+//////////////////////
+    /**
+     * Utility function to generate AUDIO_RELEASED event and post it
+     * to the event queue.  Eventually fireAudioReleased will be called
+     * by dispatchSpeechEvent as a result of this action.
+     */
+    public void postAudioReleased(Result result) {
+       /* SpeechEventUtilities.postSpeechEvent(
+            this,
+            new ResultEvent(result, ResultEvent.AUDIO_RELEASED));*/
+    }
+
+    /**
+     * Utility function to send a AUDIO_RELEASED event to all result
+     * listeners.
+     */
+    public void fireAudioReleased(ResultEvent event) {
+     /*   Enumeration E;
+	if (resultListeners != null) {
+            E = resultListeners.elements();
+            while (E.hasMoreElements()) {
+                ResultListener rl = (ResultListener) E.nextElement();
+                rl.audioReleased(event);
             }
-        };
-        postSpeechEvent(r);
+        }*/
     }
 
-    protected void postResultEvent(final ResultEvent event) {
-        final Runnable r = new Runnable() {
-            public void run() {
-                fireEvent(event);
+    /**
+     * Utility function to generate GRAMMAR_FINALIZED event and post it
+     * to the event queue.  Eventually fireGrammarFinalized will be called
+     * by dispatchSpeechEvent as a result of this action.
+     */
+    public void postGrammarFinalized(Result result) {
+      /*  SpeechEventUtilities.postSpeechEvent(
+            this,
+            new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED));*/
+    }
+
+    /**
+     * Utility function to send a GRAMMAR_FINALIZED event to all result
+     * listeners.
+     */
+    public void fireGrammarFinalized(ResultEvent event) {
+     /*   Enumeration E;
+	if (resultListeners != null) {
+            E = resultListeners.elements();
+            while (E.hasMoreElements()) {
+                ResultListener rl = (ResultListener) E.nextElement();
+                rl.grammarFinalized(event);
             }
-        };
-        postSpeechEvent(r);
+        }*/
     }
 
-    private void postSpeechEvent(final Runnable task) {
-        try {
-            getRecognizer().getSpeechEventExecutor().execute(task);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
+    /**
+     * Utility function to generate RESULT_ACCEPTED event and post it
+     * to the event queue.  Eventually fireResultAccepted will be called
+     * by dispatchSpeechEvent as a result of this action.
+     */
+    public void postResultAccepted(Result result) {
+       /* SpeechEventUtilities.postSpeechEvent(
+            this,
+            new ResultEvent(result, ResultEvent.RESULT_ACCEPTED));*/
     }
 
-    public void fireEvent(GrammarEvent event) {
-        Enumeration listeners = grammarListeners.elements();
-        while (listeners.hasMoreElements()) {
-            GrammarListener gl = (GrammarListener) listeners.nextElement();
-            gl.grammarUpdate(event);
-        }
+    /**
+     * Utility function to send a RESULT_ACCEPTED event to all result
+     * listeners.
+     */
+    public void fireResultAccepted(ResultEvent event) {
+      /*  Enumeration E;
+	if (resultListeners != null) {
+            E = resultListeners.elements();
+            while (E.hasMoreElements()) {
+                ResultListener rl = (ResultListener) E.nextElement();
+                rl.resultAccepted(event);
+            }
+        }*/
     }
 
-    public void fireEvent(ResultEvent event) {
-        Enumeration listeners = resultListeners.elements();
-        while (listeners.hasMoreElements()) {
-            ResultListener rl = (ResultListener) listeners.nextElement();
-            rl.resultUpdate(event);
-        }
+    /**
+     * Utility function to generate RESULT_CREATED event and post it
+     * to the event queue.  Eventually fireResultCreated will be called
+     * by dispatchSpeechEvent as a result of this action.
+     */
+    public void postResultCreated(Result result) {
+    /*    SpeechEventUtilities.postSpeechEvent(
+            this,
+            new ResultEvent(result, ResultEvent.RESULT_CREATED));*/
     }
 
+    /**
+     * Utility function to send a RESULT_CREATED event to all result
+     * listeners.
+     */
+    public void fireResultCreated(ResultEvent event) {
+    /*    Enumeration E;
+	if (resultListeners != null) {
+            E = resultListeners.elements();
+            while (E.hasMoreElements()) {
+                ResultListener rl = (ResultListener) E.nextElement();
+                rl.resultCreated(event);
+            }
+        }*/
+    }
+
+    /**
+     * Utility function to generate RESULT_REJECTED event and post it
+     * to the event queue.  Eventually fireResultRejected will be called
+     * by dispatchSpeechEvent as a result of this action.
+     */
+    public void postResultRejected(Result result) {
+     /*   SpeechEventUtilities.postSpeechEvent(
+            this,
+            new ResultEvent(result, ResultEvent.RESULT_REJECTED));*/
+    }
+
+    /**
+     * Utility function to send a RESULT_REJECTED event to all result
+     * listeners.
+     */
+    public void fireResultRejected(ResultEvent event) {
+     /*   Enumeration E;
+	if (resultListeners != null) {
+            E = resultListeners.elements();
+            while (E.hasMoreElements()) {
+                ResultListener rl = (ResultListener) E.nextElement();
+                rl.resultRejected(event);
+            }
+        }*/
+    }
+
+    /**
+     * Utility function to generate RESULT_UPDATED event and post it
+     * to the event queue.  Eventually fireResultUpdated will be called
+     * by dispatchSpeechEvent as a result of this action.
+     */
+    public void postResultUpdated(Result result) {
+     /*   SpeechEventUtilities.postSpeechEvent(
+            this,
+            new ResultEvent(result, ResultEvent.RESULT_UPDATED));*/
+    }
+
+    /**
+     * Utility function to send a RESULT_UPDATED event to all result
+     * listeners.
+     */
+    public void fireResultUpdated(ResultEvent event) {
+      /*  Enumeration E;
+	if (resultListeners != null) {
+            E = resultListeners.elements();
+            while (E.hasMoreElements()) {
+                ResultListener rl = (ResultListener) E.nextElement();
+                rl.resultUpdated(event);
+            }
+        }*/
+    }
+
+    /**
+     * Utility function to generate TRAINING_INFO_RELEASED event and post it
+     * to the event queue.  Eventually fireTrainingInfoReleased will be called
+     * by dispatchSpeechEvent as a result of this action.
+     */
+    public void postTrainingInfoReleased(Result result) {
+       /* SpeechEventUtilities.postSpeechEvent(
+            this,
+            new ResultEvent(result, ResultEvent.TRAINING_INFO_RELEASED));*/
+    }
+
+    /**
+     * Utility function to send a TRAINING_INFO_RELEASED event to all result
+     * listeners.
+     */
+    public void fireTrainingInfoReleased(ResultEvent event) {
+     /*   Enumeration E;
+	if (resultListeners != null) {
+            E = resultListeners.elements();
+            while (E.hasMoreElements()) {
+                ResultListener rl = (ResultListener) E.nextElement();
+                rl.trainingInfoReleased(event);
+            }
+        }*/
+    }
+//////////////////////
+// End utility methods for sending ResultEvents
+//////////////////////
+
+//////////////////////
+// NON-JSAPI METHODS
+//////////////////////
+    /**
+     * Set the name of this Grammar.
+     */
+    public void setName(String name) {
+        myName = name;
+    }
 
 }
+
