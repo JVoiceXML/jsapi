@@ -163,7 +163,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
             engine.getSpeechEventExecutor().execute(r);
         } catch (NullPointerException ex) {
             ex.printStackTrace();
-        } catch (InterruptedException ex) {
+        } catch (RuntimeException ex) {
             ex.printStackTrace();
         }
     }

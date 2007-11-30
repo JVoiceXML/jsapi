@@ -5,6 +5,9 @@ import javax.speech.synthesis.SynthesizerProperties;
 import java.beans.PropertyChangeListener;
 import javax.speech.synthesis.Voice;
 import javax.speech.synthesis.Synthesizer;
+import java.util.Vector;
+import javax.speech.synthesis.SynthesizerMode;
+import javax.speech.EngineMode;
 
 /**
  * <p>Title: JSAPI 2.0</p>
@@ -15,14 +18,23 @@ import javax.speech.synthesis.Synthesizer;
  *
  * <p>Company: JVoiceXML group - http://jvoicexml.sourceforge.net</p>
  *
- * @author Renato Cassaca
+ * @author lyncher
  * @version 1.0
  */
 public class BaseSynthesizerProperties extends BaseEngineProperties implements SynthesizerProperties {
 
+    private Vector propertyChangeListeners;
+    private int interruptibility;
+    private int pitch;
+    private int pitchRange;
+    private int speakingRate;
+    private Voice voice;
+    private int volume;
+
 
     public BaseSynthesizerProperties(Synthesizer synthesizer) {
         super(synthesizer);
+        propertyChangeListeners = new Vector();
         reset();
     }
 
@@ -30,191 +42,163 @@ public class BaseSynthesizerProperties extends BaseEngineProperties implements S
      * addPropertyChangeListener
      *
      * @param listener PropertyChangeListener
-     * @todo Implement this javax.speech.EngineProperties method
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-    }
-
-    /**
-     * getBase
-     *
-     * @return String
-     * @todo Implement this javax.speech.EngineProperties method
-     */
-    public String getBase() {
-        return "";
+        if (!propertyChangeListeners.contains(listener)) {
+            propertyChangeListeners.addElement(listener);
+        }
     }
 
     /**
      * getInterruptibility
      *
      * @return int
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public int getInterruptibility() {
-        return 0;
+        return interruptibility;
     }
 
     /**
      * getPitch
      *
      * @return int
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public int getPitch() {
-        return 0;
+        return pitch;
     }
 
     /**
      * getPitchRange
      *
      * @return int
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public int getPitchRange() {
-        return 0;
-    }
-
-    /**
-     * getPriority
-     *
-     * @return int
-     * @todo Implement this javax.speech.EngineProperties method
-     */
-    public int getPriority() {
-        return 0;
+        return pitchRange;
     }
 
     /**
      * getSpeakingRate
      *
      * @return int
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public int getSpeakingRate() {
-        return 0;
+        return speakingRate;
     }
 
     /**
      * getVoice
      *
      * @return Voice
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public Voice getVoice() {
-        return null;
+        return voice;
     }
 
     /**
      * getVolume
      *
      * @return int
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public int getVolume() {
-        return 0;
+        return volume;
     }
 
     /**
      * removePropertyChangeListener
      *
      * @param listener PropertyChangeListener
-     * @todo Implement this javax.speech.EngineProperties method
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeListeners.removeElement(listener);
     }
 
     /**
      * reset
      *
-     * @todo Implement this javax.speech.EngineProperties method
      */
     public void reset() {
+        setInterruptibility(OBJECT_LEVEL);
+        setPitch(160);
+        setPitchRange((int)(160 * 0.60));
+        setSpeakingRate(DEFAULT_RATE);
+        setVolume(MEDIUM_VOLUME);
+
+        //Set default voice
+        Voice[] voices = ((SynthesizerMode)((Synthesizer)engine).getEngineMode()).getVoices();
+        if ((voices != null) && (voices.length > 0)) {
+            setVoice(voices[0]);
+        }
+        else {
+            setVoice(null);
+        }
 
         super.reset();
-    }
-
-    /**
-     * setBase
-     *
-     * @param uri String
-     * @todo Implement this javax.speech.EngineProperties method
-     */
-    public void setBase(String uri) {
     }
 
     /**
      * setInterruptibility
      *
      * @param level int
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
+     *
+     * @todo Default values are in System.getProperty:
+     *   Synthesizer.defaultTrustedInterruptibility
+     *   Synthesizer.defaultUntrustedInterruptibility
+     *   Synthesizer.maximumUntrustedInterruptibility
+     *
      */
     public void setInterruptibility(int level) {
+        postPropertyChangeEvent("interruptibility", new Integer(interruptibility),
+                                new Integer(level));
+        interruptibility = level;
     }
 
     /**
      * setPitch
      *
      * @param hertz int
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public void setPitch(int hertz) {
+        postPropertyChangeEvent("pitch", new Integer(pitch), new Integer(hertz));
+        pitch = hertz;
     }
 
     /**
      * setPitchRange
      *
      * @param hertz int
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public void setPitchRange(int hertz) {
-    }
-
-    /**
-     * setPriority
-     *
-     * @param priority int
-     * @todo Implement this javax.speech.EngineProperties method
-     */
-    public void setPriority(int priority) {
+        postPropertyChangeEvent("pitchRange", new Integer(pitchRange), new Integer(hertz));
+        pitchRange = hertz;
     }
 
     /**
      * setSpeakingRate
      *
      * @param wpm int
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public void setSpeakingRate(int wpm) {
+        postPropertyChangeEvent("speakingRate", new Integer(speakingRate), new Integer(wpm));
+        speakingRate = wpm;
     }
 
     /**
      * setVoice
      *
      * @param voice Voice
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public void setVoice(Voice voice) {
+        postPropertyChangeEvent("voice", this.voice, voice);
+        this.voice = voice;
     }
 
     /**
      * setVolume
      *
      * @param volume int
-     * @todo Implement this javax.speech.synthesis.SynthesizerProperties
-     *   method
      */
     public void setVolume(int volume) {
+        postPropertyChangeEvent("volume", new Integer(this.volume), new Integer(volume));
+        this.volume = volume;
     }
 }
