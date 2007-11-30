@@ -64,6 +64,7 @@ import javax.speech.SpeechEventExecutor;
  * implementation.
  */
 abstract public class BaseEngine implements Engine {
+
     /**
      * A bitmask holding the current state of this <code>Engine</code>.
      */
@@ -131,6 +132,7 @@ abstract public class BaseEngine implements Engine {
         engineStateLock = new Object();
         //engineProperties = createEngineProperties();
         setSpeechEventExecutor(null);
+        audioManager = new BaseAudioManager(this);
     }
 
     /**
@@ -175,14 +177,22 @@ abstract public class BaseEngine implements Engine {
      * @throws IllegalArgumentException
      *   if the specified state is unreachable
      */
-    public void waitEngineState(long state) {
+    public void waitEngineState(long state) throws InterruptedException,
+            IllegalArgumentException, IllegalStateException {
         synchronized (engineStateLock) {
-            while (!testEngineState(state)) {
-                try {
-                    engineStateLock.wait();
-                } catch (InterruptedException ex) {
-                }
-            }
+            if (isValid(state) == false)
+                throw new IllegalArgumentException("Cannot wait for impossible state: " + stateToString(state));
+
+            do {
+                if (testEngineState(state)) return;
+
+                if (isReachable(state) == false)
+                    throw new IllegalStateException("State is not reachable: " + stateToString(state));
+
+                //Wait for a state change
+                engineStateLock.wait();
+
+            } while (true);
         }
     }
 
@@ -252,24 +262,40 @@ abstract public class BaseEngine implements Engine {
      * @see #deallocate
      *
      * @throws EngineException if this <code>Engine</code> cannot be allocated
-     * @throws EngineStateError if this <code>Engine</code> is in the
+     * @throws EngineStateException if this <code>Engine</code> is in the
      *   <code>DEALLOCATING_RESOURCES</code> state
      */
     public void allocate() throws AudioException, EngineException,
             EngineStateException {
-        if (testEngineState(ALLOCATED)) {
-            return;
-        }
 
+        //Validate current state
+        if (testEngineState(ALLOCATED | ALLOCATING_RESOURCES)) return;
+
+        checkEngineState(DEALLOCATING_RESOURCES);
+
+        //Update current state
         long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATING_RESOURCES);
         postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATING_RESOURCES);
 
-        handleAllocate();
+        //Handle engine allocation
+        boolean success = false;
+        try {
+            //Handle allocate
+            success = baseAllocate();
+        } catch (AudioException ex) {
+            throw ex;
+        } catch (EngineException ex) {
+            throw ex;
+        } finally {
+            if (success == false) {
+                states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
+                postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEALLOCATED);
+            }
+        }
     }
 
     /**
      *
-     * @todo Implement mode
      *
      * @param mode int
      * @throws AudioException
@@ -278,26 +304,25 @@ abstract public class BaseEngine implements Engine {
      */
     public void allocate(int mode) throws AudioException, EngineException,
             EngineStateException {
-        if (testEngineState(ALLOCATED)) {
-            return;
+
+        if (mode == ASYNCHRONOUS_MODE) {
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        allocate();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }, "Asynchronous allocate").start();
         }
-
-        long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATING_RESOURCES);
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATING_RESOURCES);
-
-        handleAllocate();
+        else {
+            allocate();
+        }
     }
 
 
-    /**
-     * Called from the <code>allocate</code> method.  Override this in
-     * subclasses.
-     *
-     * @see #allocate
-     *
-     * @throws EngineException if problems are encountered
-     */
-    abstract protected boolean handleAllocate() throws EngineException;
+
 
     /**
      * Frees the resources of this <code>Engine</code> that were
@@ -319,25 +344,28 @@ abstract public class BaseEngine implements Engine {
      *
      * @throws EngineException if this <code>Engine</code> cannot be
      *   deallocated
-     * @throws EngineStateError if this <code>Engine</code> is in the
+     * @throws EngineStateException if this <code>Engine</code> is in the
      *   <code>ALLOCATING_RESOURCES</code> state
      */
-    public void deallocate() throws EngineException, EngineStateException {
-        if (testEngineState(DEALLOCATED)) {
-            return;
-        }
+    public void deallocate() throws AudioException, EngineException, EngineStateException {
 
+        //Validate current state
+        if (testEngineState(DEALLOCATED | DEALLOCATING_RESOURCES))  return;
+
+        checkEngineState(ALLOCATING_RESOURCES);
+
+
+        //Update current state
         long[] states = setEngineState(CLEAR_ALL_STATE,
                                        DEALLOCATING_RESOURCES);
         postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEALLOCATING_RESOURCES);
 
-        handleDeallocate();
+        baseDeallocate();
     }
 
 
     /**
      *
-     * @todo Implement mode
      *
      * @param mode int
      * @throws AudioException
@@ -348,87 +376,89 @@ abstract public class BaseEngine implements Engine {
     public void deallocate(int mode) throws AudioException, EngineException,
             EngineStateException {
 
-        if (testEngineState(DEALLOCATED)) {
-            return;
+        if (mode == ASYNCHRONOUS_MODE) {
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        deallocate();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }, "Asynchronous deallocate").start();
         }
-
-        long[] states = setEngineState(CLEAR_ALL_STATE,
-                                       DEALLOCATING_RESOURCES);
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEALLOCATING_RESOURCES);
-
-        handleDeallocate();
+        else {
+            deallocate();
+        }
     }
 
-
-    /**
-     * Called from the <code>deallocate</code> method.  Override this in
-     * subclasses.
-     *
-     * @throws EngineException if this <code>Engine</code> cannot be
-     *   deallocated.
-     */
-    abstract protected boolean handleDeallocate() throws EngineException;
 
     /**
      * Pauses the audio stream for this <code>Engine</code> and put
      * this <code>Engine</code> into the <code>PAUSED</code> state.
      *
-     * @throws EngineStateError if this <code>Engine</code> is in the
+     * @throws EngineStateException if this <code>Engine</code> is in the
      *   <code>DEALLOCATING_RESOURCES</code> or
      *   <code>DEALLOCATED</code> state.
      */
     public void pause() throws EngineStateException {
-        synchronized (engineStateLock) {
-            checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
-            if (testEngineState(PAUSED)) {
-                return;
+        //Validate current state
+        if (testEngineState(PAUSED)) return;
+
+        checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
+
+        while (testEngineState(ALLOCATING_RESOURCES)) {
+            try {
+                waitEngineState(ALLOCATED);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
             }
+        }
 
-            handlePause();
-
+        //Handle pause
+        boolean status = basePause();
+        if (status == true) {
             long[] states = setEngineState(RESUMED, PAUSED);
             postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
         }
     }
 
-    /**
-     * Called from the <code>pause</code> method.  Override this in subclasses.
-     */
-    abstract protected boolean handlePause();
 
     /**
      * Resumes the audio stream for this <code>Engine</code> and put
      * this <code>Engine</code> into the <code>RESUMED</code> state.
      *
-     * @throws AudioException if unable to gain access to the audio channel
-     * @throws EngineStateError if this <code>Engine</code> is in the
+     * @throws EngineStateException if this <code>Engine</code> is in the
      *   <code>DEALLOCATING_RESOURCES</code> or
      *   <code>DEALLOCATED</code> state
      */
     public boolean resume() throws EngineStateException {
-        synchronized (engineStateLock) {
-            checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
-            if (testEngineState(RESUMED))
-                return true;
+        //Validate current state
+        if (testEngineState(RESUMED)) return true;
 
-            if (handleResume()) {
-                long[] states = setEngineState(PAUSED, RESUMED);
-                postEngineEvent(states[0], states[1], EngineEvent.ENGINE_RESUMED);
+        checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
-                return true;
+        while (testEngineState(ALLOCATING_RESOURCES)) {
+            try {
+                waitEngineState(ALLOCATED);
+            } catch (InterruptedException ex) {
             }
-            else {
-                return false;
-            }
+        }
+
+        //Handle resume
+        if (baseResume()) {
+            long[] states = setEngineState(PAUSED, RESUMED);
+            postEngineEvent(states[0], states[1], EngineEvent.ENGINE_RESUMED);
+
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
-    /**
-     * Called from the <code>resume</code> method.  Override in subclasses.
-     */
-    abstract protected boolean handleResume();
 
     /**
      * Returns an object that provides management of the audio input
@@ -437,9 +467,6 @@ abstract public class BaseEngine implements Engine {
      * @return the audio manader for this <code>Engine</code>
      */
     public AudioManager getAudioManager() {
-        if (audioManager == null) {
-            audioManager = new BaseAudioManager();
-        }
         return audioManager;
     }
 
@@ -450,7 +477,7 @@ abstract public class BaseEngine implements Engine {
      *
      * @return the vocabulary manager of this <code>Engine</code>
      *
-     * @throws EngineStateError if this <code>Engine</code> in the
+     * @throws EngineStateException if this <code>Engine</code> in the
      *   <code>DEALLOCATING_RESOURCES</code> or
      *   <code>DEALLOCATED</code> state
      */
@@ -474,7 +501,6 @@ abstract public class BaseEngine implements Engine {
      *
      * @return the operating mode of this <code>Engine</code>
      *
-     * @throws SecurityException
      */
     public EngineMode getEngineMode() {
         return engineMode;
@@ -551,19 +577,11 @@ abstract public class BaseEngine implements Engine {
                         fireEvent(event);
                     }
                 });
-            } catch (InterruptedException ex) {
+            } catch (RuntimeException ex) {
                 ex.printStackTrace();
             }
         }
     }
-
-    abstract public void fireEvent(EngineEvent event);
-
-    abstract protected void postEngineEvent(long oldState, long newState, int eventType);
-
-
-
-
 
     /**
      * Factory constructor for EngineProperties object.
@@ -574,13 +592,13 @@ abstract public class BaseEngine implements Engine {
    // abstract protected BaseEngineProperties createEngineProperties();
 
     /**
-     * Convenience method that throws an <code>EngineStateError</code>
+     * Convenience method that throws an <code>EngineStateException</code>
      * if any of the bits in the passed state are set in the
      * <code>state</code>.
      *
      * @param state the <code>Engine</code> state to check
      *
-     * @throws EngineStateError if any of the bits in the passed state
+     * @throws EngineStateException if any of the bits in the passed state
      *   are set in the <code>state</code>
      */
     protected void checkEngineState(long state) throws EngineStateException {
@@ -620,8 +638,6 @@ abstract public class BaseEngine implements Engine {
         return buf.toString();
     }
 
-
-
     /**
      * Returns the engine name and mode for debug purposes.
      *
@@ -631,4 +647,74 @@ abstract public class BaseEngine implements Engine {
         return getEngineMode().getEngineName() +
                 ":" + getEngineMode().getModeName();
     }
+
+    /**
+     * @todo Finish validation
+     *
+     * @param state long
+     * @return boolean
+     */
+    protected boolean isValid(long state) {
+        if (testEngineState(PAUSED | RESUMED)) return false;
+
+        if (testEngineState(FOCUSED | DEFOCUSED)) return false;
+
+        return true;
+    }
+
+
+    /**
+     * @todo Finish conditions
+     *
+     * @param state long
+     * @return boolean
+     */
+    protected boolean isReachable(long state) {
+        if ((state & ERROR_OCCURRED) == ERROR_OCCURRED)
+            return false;
+
+        if (testEngineState(ALLOCATED) == false) {
+            if (((state & RESUMED) == RESUMED) ||
+                ((state & PAUSED) == PAUSED)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Called from the <code>allocate</code> method.  Override this in
+     * subclasses.
+     *
+     * @see #allocate
+     *
+     * @throws EngineException if problems are encountered
+     */
+    abstract protected boolean baseAllocate() throws EngineStateException, EngineException, AudioException;
+
+    /**
+     * Called from the <code>deallocate</code> method.  Override this in
+     * subclasses.
+     *
+     * @throws EngineException if this <code>Engine</code> cannot be
+     *   deallocated.
+     */
+    abstract protected boolean baseDeallocate() throws EngineStateException, EngineException, AudioException;
+
+    /**
+     * Called from the <code>pause</code> method.  Override this in subclasses.
+     */
+    abstract protected boolean basePause();
+
+    /**
+     * Called from the <code>resume</code> method.  Override in subclasses.
+     */
+    abstract protected boolean baseResume();
+
+    abstract protected void fireEvent(EngineEvent event);
+
+    abstract protected void postEngineEvent(long oldState, long newState, int eventType);
+
 }
