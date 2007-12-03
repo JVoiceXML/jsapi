@@ -206,7 +206,7 @@ public class BaseRecognizerProperties extends BaseEngineProperties implements
             throw new IllegalArgumentException("Invalid endpointStyle: " +
                                                style);
         }
-        postPropertyChangeEvent("confidenceThreshold",
+        postPropertyChangeEvent("endpointStyle",
                                 new Integer(this.endpointStyle),
                                 new Integer(style));
         this.endpointStyle = style;
