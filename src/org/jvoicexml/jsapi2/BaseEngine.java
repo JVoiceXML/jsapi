@@ -269,7 +269,7 @@ abstract public class BaseEngine implements Engine {
             EngineStateException {
 
         //Validate current state
-        if (testEngineState(ALLOCATED | ALLOCATING_RESOURCES)) return;
+        if (testEngineState(ALLOCATED) || testEngineState(ALLOCATING_RESOURCES)) return;
 
         checkEngineState(DEALLOCATING_RESOURCES);
 
@@ -350,16 +350,14 @@ abstract public class BaseEngine implements Engine {
     public void deallocate() throws AudioException, EngineException, EngineStateException {
 
         //Validate current state
-        if (testEngineState(DEALLOCATED | DEALLOCATING_RESOURCES))  return;
+        if (testEngineState(DEALLOCATED) || testEngineState(DEALLOCATING_RESOURCES))  return;
 
         checkEngineState(ALLOCATING_RESOURCES);
-
 
         //Update current state
         long[] states = setEngineState(CLEAR_ALL_STATE,
                                        DEALLOCATING_RESOURCES);
         postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEALLOCATING_RESOURCES);
-
         baseDeallocate();
     }
 

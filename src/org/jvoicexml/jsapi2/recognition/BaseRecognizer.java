@@ -249,7 +249,8 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      * @throws EngineStateException
      */
     public void pause(int flags) throws EngineStateException {
-        basePause();
+        //basePause();
+        pause();
     }
 
 
@@ -326,7 +327,6 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
                 null,
                 null,
                 0);
-
         postEngineEvent(event);
     }
 
@@ -648,16 +648,14 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
         //Stops AudioManager
         audioManager.audioStop();
-
         return status;
     }
 
     protected boolean basePause() {
 
-
         boolean status = handlePause();
         if (status == true) {
-            setEngineState(LISTENING | PROCESSING, getEngineState());
+            setEngineState(LISTENING | PROCESSING, getEngineState() & ~LISTENING & ~PROCESSING);
         }
 
         return status;
@@ -671,7 +669,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     protected boolean baseResume() {
         boolean status = handleResume();
         if (status == true) {
-            setEngineState(0, LISTENING);
+            setEngineState(PROCESSING, LISTENING);
         }
 
         return status;
