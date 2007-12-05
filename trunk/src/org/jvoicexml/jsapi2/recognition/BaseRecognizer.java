@@ -243,14 +243,35 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
     /**
-     * @todo Correctly implement this
+     * Pauses the audio stream for this <code>Engine</code> and put
+     * this <code>Engine</code> into the <code>PAUSED</code> state.
      *
-     * @param flags int
-     * @throws EngineStateException
+     * @param flags int (Recognizer.BUFFER_MODE, Recognizer.IMMEDIATE_MODE)
+     * @throws EngineStateException if this <code>Engine</code> is in the
+     *   <code>DEALLOCATING_RESOURCES</code> or
+     *   <code>DEALLOCATED</code> state.
      */
     public void pause(int flags) throws EngineStateException {
-        //basePause();
-        pause();
+        //Validate current state
+       if (testEngineState(PAUSED)) return;
+
+       checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
+
+       while (testEngineState(ALLOCATING_RESOURCES)) {
+           try {
+               waitEngineState(ALLOCATED);
+           } catch (InterruptedException ex) {
+               ex.printStackTrace();
+           }
+       }
+
+       //Handle pause
+       boolean status = basePause(flags);
+       if (status == true) {
+           long[] states = setEngineState(RESUMED, PAUSED);
+           postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
+       }
+
     }
 
 
@@ -320,13 +341,17 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
 
     public void postEngineEvent(long oldState, long newState, int eventType) {
+        postEngineEvent(oldState, newState, eventType, 0);
+    }
+
+    public void postEngineEvent(long oldState, long newState, int eventType, long audioPosition){
         final RecognizerEvent event = new RecognizerEvent(this,
                 eventType,
                 oldState,
                 newState,
                 null,
                 null,
-                0);
+                audioPosition);
         postEngineEvent(event);
     }
 
@@ -620,7 +645,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         //Procceed to real engine allocation
         boolean status = handleAllocate();
         if (status == true) {
-            long states[] = setEngineState(CLEAR_ALL_STATE, ALLOCATED | PAUSED | DEFOCUSED);
+            long states[] = setEngineState(CLEAR_ALL_STATE, ALLOCATED | PAUSED | DEFOCUSED | NOT_BUFFERING);
             postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
         }
 
@@ -635,9 +660,6 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      *   deallocated.
      */
     protected boolean baseDeallocate() throws EngineStateException, EngineException, AudioException {
-
-        // Clean up the focus state
-        releaseFocus();
 
         //Procceed to real engine deallocation
         boolean status = handleDeallocate();
@@ -656,10 +678,22 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         boolean status = handlePause();
         if (status == true) {
             setEngineState(LISTENING | PROCESSING, getEngineState() & ~LISTENING & ~PROCESSING);
+            setEngineState(BUFFERING, NOT_BUFFERING);
         }
 
         return status;
     }
+
+    protected boolean basePause(int flags) {
+
+        boolean status = handlePause(flags);
+        if (status == true) {
+            setEngineState(LISTENING | PROCESSING, getEngineState() & ~LISTENING & ~PROCESSING);
+        }
+
+        return status;
+    }
+
 
     /**
      * Called from the <code>resume</code> method.  Override in subclasses.
@@ -669,7 +703,10 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     protected boolean baseResume() {
         boolean status = handleResume();
         if (status == true) {
-            setEngineState(PROCESSING, LISTENING);
+            setEngineState(0, LISTENING);
+            postEngineEvent(0, LISTENING, RecognizerEvent.RECOGNIZER_LISTENING);
+            setEngineState(NOT_BUFFERING, BUFFERING);
+
         }
 
         return status;
@@ -682,6 +719,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     abstract protected boolean handleDeallocate();
 
     abstract protected boolean handlePause();
+    abstract protected boolean handlePause(int flags);
 
     abstract protected boolean handleResume();
 
