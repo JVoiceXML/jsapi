@@ -22,9 +22,9 @@ import javax.speech.recognition.ResultEvent;
 /**
  * Implementation of javax.speech.recognition.Grammar.
  *
- * @version 1.9 01/27/99 13:43:51
  */
 public class BaseGrammar implements Grammar {
+
     public    transient BaseRecognizer myRec;
     protected transient Vector grammarListeners;
     protected transient Vector resultListeners;
@@ -40,15 +40,15 @@ public class BaseGrammar implements Grammar {
      * @param R the BaseRecognizer for this Grammar.
      * @param name the name of this Grammar.
      */
-    public BaseGrammar(BaseRecognizer R, String name) {
+    public BaseGrammar(BaseRecognizer recognizer, String name) {
         grammarListeners = new Vector();
         resultListeners = new Vector();
-        myRec = R;
+        myRec = recognizer;
         myName = name;
-        grammarActive=false;
-        grammarEnabled=true;
-        grammarChanged=true;
-        activationMode=ACTIVATION_FOCUS;
+        grammarActive = false;
+        grammarEnabled = true;
+        grammarChanged = true;
+        activationMode = ACTIVATION_FOCUS;
     }
 
 //////////////////////
