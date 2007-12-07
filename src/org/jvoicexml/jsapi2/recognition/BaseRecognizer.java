@@ -49,7 +49,7 @@ package org.jvoicexml.jsapi2.recognition;
 import org.jvoicexml.jsapi2.BaseEngine;
 import javax.speech.recognition.Recognizer;
 import java.util.Vector;
-import java.util.Hashtable;
+import java.util.HashMap;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.SpeakerManager;
 import javax.speech.recognition.RecognizerMode;
@@ -70,6 +70,18 @@ import javax.speech.recognition.RecognizerProperties;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.GrammarEvent;
 import javax.speech.AudioException;
+import java.util.List;
+import java.util.Arrays;
+import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathConstants;
+import org.xml.sax.InputSource;
+import java.net.URL;
+import java.io.InputStream;
+import javax.xml.xpath.*;
+import java.io.StringReader;
+import javax.speech.recognition.Rule;
 
 
 /**
@@ -87,8 +99,7 @@ import javax.speech.AudioException;
 abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
     protected Vector resultListeners;
-    protected Hashtable grammars;
-    protected boolean caseSensitiveGrammarNames = true;
+    protected HashMap<String, Grammar> grammars;
     protected boolean hasModalGrammars = false;
 
     protected boolean supportsNULL = true;
@@ -120,7 +131,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     public BaseRecognizer(RecognizerMode mode) {
         super(mode);
         resultListeners = new Vector();
-        grammars = new Hashtable();
+        grammars = new HashMap<String, Grammar>();
         speakerManager = new BaseSpeakerManager();
         recognizerProperties = new BaseRecognizerProperties(this);
         resultMask = ResultEvent.DEFAULT_MASK;
@@ -132,70 +143,70 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * Allocate the resources for the Engine
      */
-  /*  public void allocate() throws AudioException, EngineException,
-            EngineStateException {
+    /*  public void allocate() throws AudioException, EngineException,
+              EngineStateException {
 
-        // We don't need the following steps to be atomic
-        // so there's no need to synchronize on engineStateLock
-        if (testEngineState(ALLOCATED)) {
-            return;
-        }
+          // We don't need the following steps to be atomic
+          // so there's no need to synchronize on engineStateLock
+          if (testEngineState(ALLOCATED)) {
+              return;
+          }
 
-        // Temporarily go in to the ALLOCATING_RESOURCES state.
-        long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATING_RESOURCES);
-        postEngineEvent(states[0], states[1],
-                        EngineEvent.ENGINE_ALLOCATING_RESOURCES);
+          // Temporarily go in to the ALLOCATING_RESOURCES state.
+     long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATING_RESOURCES);
+          postEngineEvent(states[0], states[1],
+                          EngineEvent.ENGINE_ALLOCATING_RESOURCES);
 
-        //Proccess allocation
-        boolean result = handleAllocate();
-        if (result == false) {
-            states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
-            postEngineEvent(states[0], states[1],
-                            EngineEvent.ENGINE_DEALLOCATED);
+          //Proccess allocation
+          boolean result = handleAllocate();
+          if (result == false) {
+              states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
+              postEngineEvent(states[0], states[1],
+                              EngineEvent.ENGINE_DEALLOCATED);
 
-            return;
-        }
+              return;
+          }
 
-        // Subclasses with shared engines should check all states before
-        // changing them here.
-        synchronized (engineStateLock) {
-            long newState = ALLOCATED | PAUSED | DEFOCUSED;
-            states = setEngineState(CLEAR_ALL_STATE, newState);
-        }
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
+          // Subclasses with shared engines should check all states before
+          // changing them here.
+          synchronized (engineStateLock) {
+              long newState = ALLOCATED | PAUSED | DEFOCUSED;
+              states = setEngineState(CLEAR_ALL_STATE, newState);
+          }
+          postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
 
-    }*/
+      }*/
 
 
     /**
      * Deallocate the resources for the Engine and put it in the
      * DEALLOCATED state.
      */
-/*
-    public void deallocate() throws EngineException, EngineStateException {
-        // We don't need the following steps to be atomic
-        // so there's no need to synchronize on engineStateLock
+    /*
+        public void deallocate() throws EngineException, EngineStateException {
+            // We don't need the following steps to be atomic
+            // so there's no need to synchronize on engineStateLock
 
-        if (testEngineState(DEALLOCATED))
-            return;
+            if (testEngineState(DEALLOCATED))
+                return;
 
-        // Clean up the focus state
-        releaseFocus();
+            // Clean up the focus state
+            releaseFocus();
 
-        // Temporarily go in to the DEALLOCATING_RESOURCES state.
-        // Make sure we kill the PAUSE/RESUME, LISTENING, FOCUS states etc.
-        long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATING_RESOURCES);
-        postEngineEvent(states[0], states[1],
-                        EngineEvent.ENGINE_DEALLOCATING_RESOURCES);
+            // Temporarily go in to the DEALLOCATING_RESOURCES state.
+            // Make sure we kill the PAUSE/RESUME, LISTENING, FOCUS states etc.
+     long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATING_RESOURCES);
+            postEngineEvent(states[0], states[1],
+                            EngineEvent.ENGINE_DEALLOCATING_RESOURCES);
 
-        // Go in to the DEALLOCATED state.
-        states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEALLOCATED);
-        handleDeallocate();
-    }*/
+            // Go in to the DEALLOCATED state.
+            states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
+     postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEALLOCATED);
+            handleDeallocate();
+        }*/
 
 
-   /**
+    /**
      * Request speech focus for this Recognizer from the underlying speech
      * recognition system.
      */
@@ -253,39 +264,27 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     public void pause(int flags) throws EngineStateException {
         //Validate current state
-       if (testEngineState(PAUSED)) return;
+        if (testEngineState(PAUSED))
+            return;
 
-       checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
+        checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
-       while (testEngineState(ALLOCATING_RESOURCES)) {
-           try {
-               waitEngineState(ALLOCATED);
-           } catch (InterruptedException ex) {
-               ex.printStackTrace();
-           }
-       }
-
-       //Handle pause
-       boolean status = basePause(flags);
-       if (status == true) {
-           long[] states = setEngineState(RESUMED, PAUSED);
-           postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
-       }
-
-    }
-
-
-    /**
-     * Retrieve a grammar from the grammar list.
-     */
-    protected RuleGrammar retrieveGrammar(String name) {
-        if (caseSensitiveGrammarNames) {
-            return (RuleGrammar) grammars.get(name);
-        } else {
-            return (RuleGrammar) grammars.get(name.toLowerCase());
+        while (testEngineState(ALLOCATING_RESOURCES)) {
+            try {
+                waitEngineState(ALLOCATED);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
         }
-    }
 
+        //Handle pause
+        boolean status = basePause(flags);
+        if (status == true) {
+            long[] states = setEngineState(RESUMED, PAUSED);
+            postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
+        }
+
+    }
 
     /**
      * Determine if the given Grammar is active.  This is a combination
@@ -315,19 +314,19 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         if (grammars == null) {
             return;
         }
-        Enumeration e = grammars.elements();
-        while (e.hasMoreElements()) {
-            RuleGrammar rg = (RuleGrammar) e.nextElement();
-            boolean active = isActive(rg);
-            /*     if (active != rg.isActive()) {
-                     rg.grammarActive = active;
-                     if (active) {
-                         rg.postGrammarActivated();
-                     } else {
-                         rg.postGrammarDeactivated();
-                     }
-                 }*/
-        }
+        /*  Enumeration e = grammars.elements();
+          while (e.hasMoreElements()) {
+              RuleGrammar rg = (RuleGrammar) e.nextElement();
+              boolean active = isActive(rg);*/
+        /*     if (active != rg.isActive()) {
+                 rg.grammarActive = active;
+                 if (active) {
+                     rg.postGrammarActivated();
+                 } else {
+                     rg.postGrammarDeactivated();
+                 }
+             }*/
+        // }
     }
 
 
@@ -344,7 +343,8 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         postEngineEvent(oldState, newState, eventType, 0);
     }
 
-    public void postEngineEvent(long oldState, long newState, int eventType, long audioPosition){
+    public void postEngineEvent(long oldState, long newState, int eventType,
+                                long audioPosition) {
         final RecognizerEvent event = new RecognizerEvent(this,
                 eventType,
                 oldState,
@@ -420,8 +420,8 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
                                          String rootName) throws
             IllegalArgumentException, EngineStateException, EngineException {
 
+        //Validate current state
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-
         while (testEngineState(ALLOCATING_RESOURCES)) {
             try {
                 waitEngineState(ALLOCATED);
@@ -429,20 +429,40 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             }
         }
 
-        if (grammars.contains(grammarReference)) {
-            throw new IllegalArgumentException("Duplicate grammar name: " + grammarReference);
+        if (grammars.containsValue(grammarReference)) {
+            throw new IllegalArgumentException("Duplicate grammar name: " +
+                                               grammarReference);
         }
 
-      /*  BaseRuleGrammar brg = new BaseRuleGrammar(this);
-        brg.setRoot(rootName);*/
+        //Create grammar
+        BaseRuleGrammar brg = new BaseRuleGrammar(this, grammarReference);
+        brg.setRoot(rootName);
 
+        //Register it
+        grammars.put(grammarReference, brg);
 
-        return null;
+        return brg;
     }
 
+    /**
+     * Deletes a Grammar from this Recognizer.
+     *
+     * @param grammar Grammar
+     * @throws IllegalArgumentException
+     * @throws EngineStateException
+     */
     public void deleteGrammar(Grammar grammar) throws IllegalArgumentException,
             EngineStateException {
+
+        //Validate current state
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
+        while (testEngineState(ALLOCATING_RESOURCES)) {
+            try {
+                waitEngineState(ALLOCATED);
+            } catch (InterruptedException ex) {
+            }
+        }
+
         String name = grammar.getReference();
         grammars.remove(name);
     }
@@ -455,7 +475,8 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         return recognizerProperties;
     }
 
-    public void setRecognizerProperties(RecognizerProperties recognizerProperties) {
+    public void setRecognizerProperties(RecognizerProperties
+                                        recognizerProperties) {
         this.recognizerProperties = recognizerProperties;
     }
 
@@ -486,27 +507,36 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
     /**
-     * @todo Implement
+     * Lists the Grammars known to this Recognizer
      *
      * @return Grammar[]
      * @throws EngineStateException
      */
     public Grammar[] listGrammars() throws EngineStateException {
+
+        //Validate current state
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-        if (grammars == null) {
-            return new RuleGrammar[0];
+        while (testEngineState(ALLOCATING_RESOURCES)) {
+            try {
+                waitEngineState(ALLOCATED);
+            } catch (InterruptedException ex) {
+            }
         }
-        RuleGrammar rl[] = new RuleGrammar[grammars.size()];
-        int i = 0;
-        Enumeration e = grammars.elements();
-        while (e.hasMoreElements()) {
-            rl[i++] = (RuleGrammar) e.nextElement();
+
+        //Get engine built-in grammrs
+        List<Grammar> builInGrammars = getBuilInGrammars();
+
+        if (grammars.size() < 0) {
+            return new Grammar[0];
         }
-        return rl;
+
+        //Return an array of currently known grammars
+        List grammarList = Arrays.asList(grammars.values());
+        return (Grammar[]) grammarList.toArray(new Grammar[] {});
     }
 
     /**
-     * @todo Implement
+     * Gets the RuleGrammar with the specified grammarReference.
      *
      * @param grammarReference String
      * @return RuleGrammar
@@ -514,12 +544,21 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     public RuleGrammar getRuleGrammar(String grammarReference) throws
             EngineStateException {
+
+        //Validate current state
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-        return retrieveGrammar(grammarReference);
+        while (testEngineState(ALLOCATING_RESOURCES)) {
+            try {
+                waitEngineState(ALLOCATED);
+            } catch (InterruptedException ex) {
+            }
+        }
+
+        return (RuleGrammar) grammars.get(grammarReference);
     }
 
     /**
-     * @todo Implement
+     * Loads a RuleGrammar from a URI or named resource.
      *
      * @param grammarReference String
      * @return RuleGrammar
@@ -532,11 +571,12 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     public RuleGrammar loadRuleGrammar(String grammarReference) throws
             GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
-        return null;
+        return loadRuleGrammar(grammarReference, true, false, null);
     }
 
     /**
-     * @todo Implement
+     * Loads a RuleGrammar from a URI or named resource
+     * and optionally loads any referenced Grammars.
      *
      * @param grammarReference String
      * @param loadReferences boolean
@@ -555,11 +595,42 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
                                        Vector loadedGrammars) throws
             GrammarException, IllegalArgumentException,
             IOException, EngineStateException, EngineException {
+
+        //Validate current state
+        checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
+        while (testEngineState(ALLOCATING_RESOURCES)) {
+            try {
+                waitEngineState(ALLOCATED);
+            } catch (InterruptedException ex) {
+            }
+        }
+
+        //Make sure that recognizer supports markup
+        if (getEngineMode().getMarkupSupport() == false) {
+            throw new EngineException("Engine doesn't support markup");
+        }
+
+        //Proccess grammar
+        URL url = new URL(grammarReference);
+        InputStream grammarStream = url.openStream();
+        SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser();
+        Rule[] rules = srgsParser.load(grammarStream);
+        if (rules != null) {
+            //Initialize rule grammar
+            BaseRuleGrammar brg = new BaseRuleGrammar(this, grammarReference);
+            brg.addRules(rules);
+
+            //Register grammar
+            grammars.put(grammarReference, brg);
+
+            return brg;
+        }
+
         return null;
     }
 
     /**
-     * @todo Implement
+     * Creates a RuleGrammar from grammar text provided by a Reader.
      *
      * @param grammarReference String
      * @param reader Reader
@@ -573,11 +644,40 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     public RuleGrammar loadRuleGrammar(String grammarReference, Reader reader) throws
             GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
+
+        //Validate current state
+        checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
+        while (testEngineState(ALLOCATING_RESOURCES)) {
+            try {
+                waitEngineState(ALLOCATED);
+            } catch (InterruptedException ex) {
+            }
+        }
+
+        //Make sure that recognizer supports markup
+        if (getEngineMode().getMarkupSupport() == false) {
+            throw new EngineException("Engine doesn't support markup");
+        }
+
+        //Proccess grammar
+        SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser();
+        Rule[] rules = srgsParser.load(reader);
+        if (rules != null) {
+            //Initialize rule grammar
+            BaseRuleGrammar brg = new BaseRuleGrammar(this, grammarReference);
+            brg.addRules(rules);
+
+            //Register grammar
+            grammars.put(grammarReference, brg);
+
+            return brg;
+        }
+
         return null;
     }
 
     /**
-     * @todo Implement
+     * Creates a RuleGrammar from grammar text provided as a String.
      *
      * @param grammarReference String
      * @param grammarText String
@@ -592,7 +692,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
                                        String grammarText) throws
             GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
-        return null;
+        return loadRuleGrammar(grammarReference, new StringReader(grammarText));
     }
 
     public void setGrammarMask(int mask) {
@@ -604,7 +704,8 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
     protected boolean isValid(long state) {
-        if (testEngineState(LISTENING | PROCESSING)) return false;
+        if (testEngineState(LISTENING | PROCESSING))
+            return false;
 
         return super.isValid(state);
     }
@@ -638,14 +739,17 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      *
      * @throws EngineException if problems are encountered
      */
-    protected boolean baseAllocate() throws EngineStateException, EngineException, AudioException {
+    protected boolean baseAllocate() throws EngineStateException,
+            EngineException, AudioException {
 
         audioManager.audioStart();
 
         //Procceed to real engine allocation
         boolean status = handleAllocate();
         if (status == true) {
-            long states[] = setEngineState(CLEAR_ALL_STATE, ALLOCATED | PAUSED | DEFOCUSED | NOT_BUFFERING);
+            long states[] = setEngineState(CLEAR_ALL_STATE,
+                                           ALLOCATED | PAUSED | DEFOCUSED |
+                                           NOT_BUFFERING);
             postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
         }
 
@@ -659,13 +763,15 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      * @throws EngineException if this <code>Engine</code> cannot be
      *   deallocated.
      */
-    protected boolean baseDeallocate() throws EngineStateException, EngineException, AudioException {
+    protected boolean baseDeallocate() throws EngineStateException,
+            EngineException, AudioException {
 
         //Procceed to real engine deallocation
         boolean status = handleDeallocate();
         if (status == true) {
             long states[] = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
-            postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEALLOCATED);
+            postEngineEvent(states[0], states[1],
+                            EngineEvent.ENGINE_DEALLOCATED);
         }
 
         //Stops AudioManager
@@ -677,7 +783,8 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
         boolean status = handlePause();
         if (status == true) {
-            setEngineState(LISTENING | PROCESSING, getEngineState() & ~LISTENING & ~PROCESSING);
+            setEngineState(LISTENING | PROCESSING,
+                           getEngineState() & ~LISTENING & ~PROCESSING);
             setEngineState(BUFFERING, NOT_BUFFERING);
         }
 
@@ -688,7 +795,8 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
         boolean status = handlePause(flags);
         if (status == true) {
-            setEngineState(LISTENING | PROCESSING, getEngineState() & ~LISTENING & ~PROCESSING);
+            setEngineState(LISTENING | PROCESSING,
+                           getEngineState() & ~LISTENING & ~PROCESSING);
         }
 
         return status;
@@ -713,14 +821,25 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
 
-
     abstract protected boolean handleAllocate();
 
     abstract protected boolean handleDeallocate();
 
     abstract protected boolean handlePause();
+
     abstract protected boolean handlePause(int flags);
 
     abstract protected boolean handleResume();
+
+    /**
+     * @todo This is only not abstract not to break compatibilty.... for now
+     *
+     * Returns a list of engine built-in grammars
+     * @return List
+     */
+    protected List<Grammar> getBuilInGrammars() {
+        return new Vector<Grammar>();
+    }
+
 
 }

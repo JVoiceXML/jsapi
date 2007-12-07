@@ -7,9 +7,7 @@
  */
 package org.jvoicexml.jsapi2.recognition;
 
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Vector;
 
 import javax.speech.recognition.GrammarException;
@@ -24,14 +22,12 @@ import javax.speech.recognition.RuleToken;
 
 import javax.speech.recognition.RuleReference;
 import javax.speech.recognition.RuleComponent;
-import javax.speech.recognition.RuleSpecial;
 
 import java.util.Locale;
 
 /**
  * Implementation of javax.speech.recognition.RuleGrammar.
  *
- * @version 1.8 11/04/99 14:54:02
  */
 public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 {
@@ -54,12 +50,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 
     protected Vector    imports;
     protected Vector    importedRules;
-
-    //protected Vector<Rule> privateRules = new Vector<Rule>();
-    //protected Vector<Rule> enabledPublicRules = new Vector<Rule>();
-    //protected Vector<Rule> disabledPublicRules = new Vector<Rule>();
-
-
 
     /**
      * Create a new BaseRuleGrammar
@@ -370,8 +360,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     public void setDoctype(String doctype) throws IllegalArgumentException {
         throw new RuntimeException("NOT IMPLEMENTED");
     }
-
-
 
 
     /**
