@@ -19,6 +19,11 @@ import javax.speech.recognition.RuleTag;
 import org.xml.sax.InputSource;
 import java.io.Reader;
 import java.io.InputStream;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import org.xml.sax.SAXException;
 
 /**
  * <p>Title: </p>
@@ -52,9 +57,10 @@ public class SrgsRuleGrammarParser {
 
     private Rule[] load(InputSource inputSource) {
         try {
-            Node grammarNode = (Node) xpath.evaluate("/grammar",
-                    inputSource,
-                    XPathConstants.NODE);
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+
+            Node grammarNode = (Node) xpath.evaluate("/grammar", builder.parse(inputSource), XPathConstants.NODE);
+
             Rule[] rules = parseGrammar(grammarNode);
             for (Rule r : rules) {
                 System.out.println(r);
@@ -64,6 +70,15 @@ public class SrgsRuleGrammarParser {
 
         } catch (XPathExpressionException ex2) {
             ex2.printStackTrace();
+            return null;
+        } catch (ParserConfigurationException ex) {
+            ex.printStackTrace();
+            return null;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        } catch (SAXException ex) {
+            ex.printStackTrace();
             return null;
         }
     }
