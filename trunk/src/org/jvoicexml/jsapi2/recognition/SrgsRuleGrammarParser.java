@@ -55,6 +55,29 @@ public class SrgsRuleGrammarParser {
         return load(new InputSource(stream));
     }
 
+    public Rule[] loadRule(Reader reader) {
+        try{
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().
+                                      newDocumentBuilder();
+            return parseGrammar(builder.parse(new InputSource(reader)));
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Rule[] loadRule(InputStream stream){
+        try{
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().
+                                      newDocumentBuilder();
+            return parseGrammar(builder.parse(new InputSource(stream)));
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     private Rule[] load(InputSource inputSource) {
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
