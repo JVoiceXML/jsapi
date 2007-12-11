@@ -24,6 +24,8 @@ import javax.speech.recognition.RuleReference;
 import javax.speech.recognition.RuleComponent;
 
 import java.util.Locale;
+import java.util.Iterator;
+import java.io.StringReader;
 
 /**
  * Implementation of javax.speech.recognition.RuleGrammar.
@@ -258,13 +260,19 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     }
 
     /**
-     * @todo IMPLEMENT IT
+     * Build a rule from text and add it in the grammar either by creating a new rule or
+     * updating an existing rule.
      *
      * @param ruleText String
      * @throws GrammarException
      */
     public void addRule(String ruleText)  throws GrammarException {
-        throw new RuntimeException("NOT IMPLEMENTED");
+        SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser();
+        Rule[] rules = srgsParser.loadRule(new StringReader(ruleText));
+
+        for (Rule r : rules){
+            addRule(r);
+        }
     }
 
     /**
@@ -666,8 +674,20 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * Return a String containing the specification for this Grammar.
      */
     public String toString() {
-        throw new RuntimeException(
-            "toString not yet implemented.");
+        String res = "<grammar> \n";
+
+        Iterator it = rules.keySet().iterator();
+
+        while(it.hasNext()){
+            InternalRule r = (InternalRule) rules.get(it.next());
+            res += r.toString() + "\n";
+        }
+
+        res +="</grammar>";
+
+        return res;
+        /*throw new RuntimeException(
+            "toString not yet implemented.");*/
     }
 //////////////////////
 // End RuleGrammar Methods
