@@ -82,6 +82,7 @@ import java.io.InputStream;
 import javax.xml.xpath.*;
 import java.io.StringReader;
 import javax.speech.recognition.Rule;
+import java.util.Iterator;
 
 
 /**
@@ -817,6 +818,21 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
         }
 
+        String[] newGrammars = new String[grammars.keySet().size()];
+
+        Iterator it=grammars.keySet().iterator();
+
+        for (int i=0; it.hasNext(); ++i){
+            BaseRuleGrammar baseRuleGrammar = ((BaseRuleGrammar)grammars.get(it.next()));
+            if (baseRuleGrammar.uncommitedChanges.size()>0){
+                baseRuleGrammar.commitChanges();
+            }
+            newGrammars[i] = baseRuleGrammar.toString();
+        }
+
+        if (newGrammars.length>0)
+            setGrammars(newGrammars);
+
         return status;
     }
 
@@ -830,6 +846,9 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     abstract protected boolean handlePause(int flags);
 
     abstract protected boolean handleResume();
+
+    abstract protected boolean setGrammars(String[] newGrammars);
+
 
     /**
      * @todo This is only not abstract not to break compatibilty.... for now

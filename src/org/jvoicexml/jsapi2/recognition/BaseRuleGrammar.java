@@ -26,6 +26,10 @@ import javax.speech.recognition.RuleComponent;
 import java.util.Locale;
 import java.util.Iterator;
 import java.io.StringReader;
+import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Comparator;
 
 /**
  * Implementation of javax.speech.recognition.RuleGrammar.
@@ -109,7 +113,25 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         public Rule getRule() { return rule; }
 
         public int getId() { return id; }
+
+        public String toString(){
+            return rule.toString();
+        }
     }
+
+    private class InternalRuleIdComparator implements Comparator{
+     public InternalRuleIdComparator(){
+
+     }
+
+     public int compare(Object o1, Object o2){
+         InternalRule ir1 = (InternalRule)o1;
+         InternalRule ir2 = (InternalRule)o2;
+         return ir1.getId() > ir2.getId() ? 1 :
+                 ir1.getId() < ir2.getId() ? -1 : 0;
+     }
+ }
+
 
     /**
      * Abstract class used to make uncommited operations uniform
@@ -670,18 +692,34 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     }*/
 
     /**
-     * NOT IMPLEMENTED YET.
-     * Return a String containing the specification for this Grammar.
+     * Return a String containing the specification for this Grammar,
+     * sorted by id rule
      */
     public String toString() {
-        String res = "<grammar> \n";
+        String res = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n"+
+                     "<!DOCTYPE grammar PUBLIC \"-//W3C//DTD GRAMMAR 1.0//EN\" "+
+                     "               \"http://www.w3.org/TR/speech-grammar/grammar.dtd\"> \n";
+
+
+        res += "<grammar ";
+
+        res += " version=\"" + version + "\"";
+        res += " mode=\"" + mode + "\"";
+        res += " root=\"" + getRoot() + "\"";
+
+        res += ">\n";
 
         Iterator it = rules.keySet().iterator();
-
+        ArrayList v = new ArrayList();
         while(it.hasNext()){
             InternalRule r = (InternalRule) rules.get(it.next());
-            res += r.toString() + "\n";
+            v.add(r);
         }
+
+        Collections.sort(v,new InternalRuleIdComparator());
+
+        for (int i=0; i<v.size(); ++i)
+            res += v.get(i).toString() + "\n";
 
         res +="</grammar>";
 
@@ -796,7 +834,15 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     }
 
 
-
+    protected void commitChanges(){
+        try {
+            for (RuleGrammarOperation ruleGrammarOperation : uncommitedChanges) {
+                ruleGrammarOperation.execute();
+            }
+        } catch (GrammarException ex) {
+            ex.printStackTrace();
+        }
+    }
 
 }
 
