@@ -368,6 +368,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
                 ex.printStackTrace();
             }
         }
+        ((BaseResult)event.getSource()).postResultEvent(speechEventExecutor, event);
     }
 
     public void fireResultEvent(ResultEvent event) {

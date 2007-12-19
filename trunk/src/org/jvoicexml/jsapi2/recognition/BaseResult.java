@@ -31,10 +31,12 @@ import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
 import java.util.StringTokenizer;
 import javax.speech.recognition.GrammarException;
+import java.util.Enumeration;
+import javax.speech.SpeechEventExecutor;
 
 public class BaseResult implements Result, FinalResult, FinalRuleResult, Serializable, Cloneable {
     private Vector resultListeners;
-    String theText[] = null;
+    ResultToken tokens[] = null;
     int nTokens = 0;
     transient Grammar grammar = null;
     int state = Result.UNFINALIZED;
@@ -82,9 +84,16 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
         } else {
             copy = new BaseResult(R.getGrammar());
             copy.nTokens = R.getNumTokens();
-            copy.theText = new String[copy.nTokens];
+            copy.tokens = new ResultToken[copy.nTokens];
             for (int i = 0; i < R.getNumTokens(); i++) {
-                copy.theText[i] = R.getBestToken(i).getText();
+                ResultToken sourceToken = R.getBestToken(i);
+                BaseResultToken destinationToken = new BaseResultToken(copy, sourceToken.getText());
+
+                destinationToken.setConfidenceLevel(sourceToken.getConfidenceLevel());
+                destinationToken.setStartTime(sourceToken.getStartTime());
+                destinationToken.setEndTime(sourceToken.getEndTime());
+
+                copy.tokens[i] = destinationToken;
             }
             return copy;
         }
@@ -125,7 +134,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
         if ((nth < 0) || (nth > (nTokens-1))) {
             throw new IllegalArgumentException("Token index out of range.");
         }
-        return(new BaseResultToken(this, theText[nth]));
+        return tokens[nth];
     }
 
     /**
@@ -133,11 +142,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * From javax.speech.recognition.Result.
      */
     public ResultToken[] getBestTokens() {
-	ResultToken[] bt = new ResultToken[nTokens];
-	for (int i = 0; i < nTokens; i++) {
-	    bt[i] = getBestToken(i);
-	}
-	return bt;
+        return tokens;
     }
 
     /**
@@ -358,6 +363,40 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 //////////////////////
 // Begin utility methods for sending ResultEvents
 //////////////////////
+	/**
+ 	 * Utility function to generate result event and post it to the event queue.
+	 * Eventually fireAudioReleased will be called
+     * by dispatchSpeechEvent as a result of this action.
+ 	 * @param speechEventExecutor SpeechEventExecutor
+ 	 * @param event ResultEvent
+ 	 */
+	 public void postResultEvent(SpeechEventExecutor speechEventExecutor, final ResultEvent event){
+          try {
+              speechEventExecutor.execute(new Runnable() {
+                  public void run() {
+                      fireResultEvent(event);
+                  }
+              });
+          } catch (RuntimeException ex) {
+              ex.printStackTrace();
+          }
+      }
+
+      /**
+       * Utility function to send a result event to all result
+       * listeners.
+       */
+      public void fireResultEvent(ResultEvent event) {
+          Enumeration E;
+          if (resultListeners != null) {
+              E = resultListeners.elements();
+              while (E.hasMoreElements()) {
+                  ResultListener rl = (ResultListener) E.nextElement();
+                  rl.resultUpdate(event);
+              }
+          }
+      }
+
     /**
      * Utility function to generate AUDIO_RELEASED event and post it
      * to the event queue.  Eventually fireAudioReleased will be called
@@ -546,9 +585,32 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 //////////////////////
 
     /**
+     * Utility function to set the number of finalized tokens in the Result.
+     * @param n int
+     */
+    protected void setNumTokens(int n){
+        nTokens = n;
+    }
+
+    /**
+     * Utility function to set the resultTokens.
+     * @param rt
+     */
+    public void setTokens(ResultToken rt[]){
+        tokens = new ResultToken[rt.length];
+        int i=0;
+        for (ResultToken resultToken : rt){
+            tokens[i++] = resultToken;
+        }
+    }
+
+    /**
      * Concatenate the best tokens in the Result.
      */
     public String toString() {
+        if (nTokens==0)  /** @todo change this. Is possible a result has 0 tokens?? */
+            return "";
+
         StringBuffer sb = new StringBuffer(getBestToken(0).getText());
         for (int i = 1; i < getNumTokens(); i++)
             sb.append(" " + getBestToken(i).getText());
@@ -600,9 +662,9 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
                     StringTokenizer st = new StringTokenizer(S);
                     nTokens = st.countTokens();
                     int i = 0;
-                    theText = new String[nTokens];
+                    tokens = new ResultToken[nTokens];
                     while (st.hasMoreTokens()) {
-                        theText[i++]=st.nextToken();
+                        tokens[i++]=new BaseResultToken(this, st.nextToken()); /** @todo information about startTime, endTime and confidenceLevel */
                     }
                     return true;
                 }
@@ -639,14 +701,15 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      *
      * @param result String
      */
-    public void setResult(String result) {
-        StringTokenizer st = new StringTokenizer(result);
+    public void setResult(String result) throws Exception {
+        throw new Exception("Method temporally commented. Try use setTokens()!!");
+        /*StringTokenizer st = new StringTokenizer(result);
         nTokens = st.countTokens();
         int i = 0;
         theText = new String[nTokens];
         while (st.hasMoreTokens()) {
             theText[i++]=st.nextToken();
-        }
+        }*/
     }
 
 
