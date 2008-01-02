@@ -17,6 +17,7 @@ import javax.speech.recognition.GrammarEvent;
 import java.util.Enumeration;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
+import javax.speech.SpeechEventExecutor;
 
 
 /**
@@ -172,6 +173,40 @@ public class BaseGrammar implements Grammar {
 //////////////////////
 // Begin utility methods for sending GrammarEvents
 //////////////////////
+    /**
+         * Utility function to generate grammar event and post it to the event queue.
+         * @param speechEventExecutor SpeechEventExecutor
+         * @param event ResultEvent
+         */
+         public void postGrammarEvent(SpeechEventExecutor speechEventExecutor, final GrammarEvent event){
+          try {
+              speechEventExecutor.execute(new Runnable() {
+                  public void run() {
+                      fireGrammarEvent(event);
+                  }
+              });
+          } catch (RuntimeException ex) {
+              ex.printStackTrace();
+          }
+      }
+
+      /**
+       * Utility function to send a grammar event to all grammar
+       * listeners.
+       */
+      public void fireGrammarEvent(GrammarEvent event) {
+          Enumeration E;
+          if (resultListeners != null) {
+              E = resultListeners.elements();
+              while (E.hasMoreElements()) {
+                  GrammarListener rl = (GrammarListener) E.nextElement();
+                  rl.grammarUpdate(event);
+              }
+          }
+      }
+
+
+
     /**
      * Utility function to generate GRAMMAR_ACTIVATED event and post it
      * to the event queue.  Eventually fireGrammarActivated will be called

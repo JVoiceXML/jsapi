@@ -118,6 +118,8 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     private int resultMask;
     private int grammarMask;
 
+    protected Vector<String> uncommitedDeletedGrammars = new Vector<String>();
+
 
     /**
      * Create a new Recognizer in the DEALLOCATED state.
@@ -465,8 +467,10 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             }
         }
 
-        String name = grammar.getReference();
-        grammars.remove(name);
+        if (!grammars.containsKey(grammar.getReference()))
+            throw new IllegalArgumentException("The Grammar is unknown");
+
+        uncommitedDeletedGrammars.add(grammar.getReference());
     }
 
     /**
@@ -533,8 +537,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         }
 
         //Return an array of currently known grammars
-        List grammarList = Arrays.asList(grammars.values());
-        return (Grammar[]) grammarList.toArray(new Grammar[] {});
+        return (Grammar[])grammars.values().toArray(new Grammar[grammars.values().size()]);
     }
 
     /**
@@ -811,6 +814,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      * @todo Handle grammar updates
      */
     protected boolean baseResume() {
+        boolean existChanges;
         boolean status = handleResume();
         if (status == true) {
             setEngineState(0, LISTENING);
@@ -818,6 +822,15 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             setEngineState(NOT_BUFFERING, BUFFERING);
 
         }
+
+        existChanges = uncommitedDeletedGrammars.size() > 0;
+
+        while (uncommitedDeletedGrammars.size() > 0) {
+            existChanges = true;
+            String grammarReference = uncommitedDeletedGrammars.
+                                      remove(0);
+            grammars.remove(grammarReference);
+       }
 
         String[] newGrammars = new String[grammars.keySet().size()];
 
@@ -831,8 +844,24 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             newGrammars[i] = baseRuleGrammar.toString();
         }
 
-        if (newGrammars.length>0)
-            setGrammars(newGrammars);
+        existChanges = existChanges || newGrammars.length > 0;
+
+        if (existChanges){
+            if (setGrammars(newGrammars)) {
+                postEngineEvent(PAUSED, RESUMED, RecognizerEvent.CHANGES_COMMITTED);
+                for (Grammar g : grammars.values()){
+                    ((BaseGrammar) g).postGrammarEvent(speechEventExecutor,
+                            new
+                            GrammarEvent(g, GrammarEvent.GRAMMAR_CHANGES_COMMITTED));
+                }
+            }else{
+                for (Grammar g : grammars.values()){
+                    ((BaseGrammar) g).postGrammarEvent(speechEventExecutor,
+                            new
+                            GrammarEvent(g, GrammarEvent.GRAMMAR_CHANGES_REJECTED));
+                }
+            }
+        }
 
         return status;
     }
