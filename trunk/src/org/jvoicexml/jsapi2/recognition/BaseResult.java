@@ -146,13 +146,23 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     }
 
     /**
-     * NOT IMPLEMENTED YET.
      * Return the current guess of the tokens following the unfinalized
      * tokens.
      * From javax.speech.recognition.Result.
      */
     public ResultToken[] getUnfinalizedTokens() {
-        return new ResultToken[0];
+        if (getResultState() == Result.ACCEPTED ||
+            getResultState() == Result.REJECTED)
+            return new ResultToken[0];
+
+        int numUnfinalizedTokens = getBestTokens().length - getNumTokens();
+
+        ResultToken[] unfinalizedTokens = new ResultToken[numUnfinalizedTokens];
+
+        for (int i=0; i<numUnfinalizedTokens; ++i)
+            unfinalizedTokens[i] = getBestTokens()[i+getNumTokens()];
+
+        return unfinalizedTokens;
     }
 
     /**
@@ -588,7 +598,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * Utility function to set the number of finalized tokens in the Result.
      * @param n int
      */
-    protected void setNumTokens(int n){
+    public void setNumTokens(int n){
         nTokens = n;
     }
 
