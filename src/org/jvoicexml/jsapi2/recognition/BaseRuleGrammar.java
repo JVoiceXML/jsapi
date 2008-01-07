@@ -95,6 +95,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         public InternalRule(Rule r, int id) {
             rule = r;
             this.id = id;
+            enabled = true;
         }
 
         public boolean isEnabled() {
@@ -102,7 +103,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         }
 
         public void setEnabled(boolean status) {
-            enabled = enabled;
+            enabled = status;
         }
 
         public boolean isPublic() {
@@ -247,9 +248,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     /**
      * Set a rule in the grammar either by creating a new rule or
      * updating an existing rule.
-     * @param ruleName the name of the rule.
      * @param rule the definition of the rule.
-     * @param isPublic whether this rule is public or not.
      */
     public void addRule(Rule rule) {
         InternalRule iRule = new InternalRule(rule, ruleId);
@@ -694,8 +693,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     /**
      * Return a String containing the specification for this Grammar,
      * sorted by id rule
+     * @param displayDisabledRules
      */
-    public String toString() {
+    public String toString(boolean displayDisabledRules) {
         String res = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n"+
                      "<!DOCTYPE grammar PUBLIC \"-//W3C//DTD GRAMMAR 1.0//EN\" "+
                      "               \"http://www.w3.org/TR/speech-grammar/grammar.dtd\"> \n";
@@ -710,7 +710,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         res += ">\n";
 
         Iterator it = rules.keySet().iterator();
-        ArrayList v = new ArrayList();
+        ArrayList<InternalRule> v = new ArrayList<InternalRule>();
         while(it.hasNext()){
             InternalRule r = (InternalRule) rules.get(it.next());
             v.add(r);
@@ -718,14 +718,20 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 
         Collections.sort(v,new InternalRuleIdComparator());
 
-        for (int i=0; i<v.size(); ++i)
-            res += v.get(i).toString() + "\n";
+        for (int i=0; i<v.size(); ++i){
+            if (displayDisabledRules==true || v.get(i).isEnabled())
+                res += v.get(i).toString() + "\n";
+        }
 
         res +="</grammar>";
 
         return res;
         /*throw new RuntimeException(
             "toString not yet implemented.");*/
+    }
+
+    public String toString(){
+        return toString(true);
     }
 //////////////////////
 // End RuleGrammar Methods

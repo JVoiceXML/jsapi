@@ -841,7 +841,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             if (baseRuleGrammar.uncommitedChanges.size()>0){
                 baseRuleGrammar.commitChanges();
             }
-            newGrammars[i] = baseRuleGrammar.toString();
+            newGrammars[i] = baseRuleGrammar.toString(false);
         }
 
         existChanges = existChanges || newGrammars.length > 0;
