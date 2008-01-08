@@ -38,7 +38,10 @@ public class BaseResultToken implements ResultToken {
      * @return int
      */
     public int getConfidenceLevel() {
-        return confidenceLevel;
+        if (result.getResultState() == Result.ACCEPTED)
+            return confidenceLevel;
+        else
+            return RecognizerProperties.UNKNOWN_CONFIDENCE;
     }
 
     public void setConfidenceLevel(int level) {
