@@ -184,14 +184,14 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * Class that describes an uncommited enable of RuleGrammar
      */
     private class GrammarEnablerOperation extends RuleGrammarOperation {
-        private BaseGrammar grammar;
         private boolean status;
-        public GrammarEnablerOperation(BaseGrammar grammar, boolean status) {
-            this.grammar = grammar;
+        public GrammarEnablerOperation(boolean status) {
             this.status = status;
         }
         public void execute() throws GrammarException {
-            grammar.setEnabled(status);
+            if (status != grammarEnabled) {
+                grammarEnabled = status;
+            }
         }
     }
 
@@ -235,7 +235,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * @param enabled the new desired state of the enabled property.
      */
     public void setEnabled(boolean enabled) {
-        GrammarEnablerOperation geo = new GrammarEnablerOperation(this, enabled);
+        GrammarEnablerOperation geo = new GrammarEnablerOperation(enabled);
         uncommitedChanges.add(geo);
     }
 //////////////////////
@@ -841,12 +841,14 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 
 
     protected void commitChanges(){
-        try {
-            for (RuleGrammarOperation ruleGrammarOperation : uncommitedChanges) {
+        while (uncommitedChanges.size() > 0) {
+            RuleGrammarOperation ruleGrammarOperation = uncommitedChanges.
+                    remove(0);
+            try {
                 ruleGrammarOperation.execute();
+            } catch (GrammarException ex) {
+                ex.printStackTrace();
             }
-        } catch (GrammarException ex) {
-            ex.printStackTrace();
         }
     }
 

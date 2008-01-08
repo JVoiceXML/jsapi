@@ -815,13 +815,6 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     protected boolean baseResume() {
         boolean existChanges;
-        boolean status = handleResume();
-        if (status == true) {
-            setEngineState(0, LISTENING);
-            postEngineEvent(0, LISTENING, RecognizerEvent.RECOGNIZER_LISTENING);
-            setEngineState(NOT_BUFFERING, BUFFERING);
-
-        }
 
         existChanges = uncommitedDeletedGrammars.size() > 0;
 
@@ -861,6 +854,13 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
                             GrammarEvent(g, GrammarEvent.GRAMMAR_CHANGES_REJECTED));
                 }
             }
+        }
+
+        boolean status = handleResume();
+        if (status == true) {
+            setEngineState(0, LISTENING);
+            postEngineEvent(0, LISTENING, RecognizerEvent.RECOGNIZER_LISTENING);
+            setEngineState(NOT_BUFFERING, BUFFERING);
         }
 
         return status;
