@@ -7,14 +7,12 @@
  */
 package org.jvoicexml.jsapi2.recognition;
 
-import java.io.Serializable;
 import javax.speech.recognition.Grammar;
 import java.util.Vector;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.GrammarListener;
 import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.GrammarEvent;
-import java.util.Enumeration;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.SpeechEventExecutor;
