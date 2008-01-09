@@ -24,6 +24,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import org.xml.sax.SAXException;
+import org.w3c.dom.NamedNodeMap;
+import java.util.HashMap;
 
 /**
  * <p>Title: </p>
@@ -41,10 +43,14 @@ public class SrgsRuleGrammarParser {
 
     private XPath xpath;
 
+    private HashMap<String, String> attributes;
+
+
     public SrgsRuleGrammarParser() {
         // Create a new XPath
         XPathFactory factory = XPathFactory.newInstance();
         xpath = factory.newXPath();
+        attributes = new HashMap<String,String>();
     }
 
     public Rule[] load(Reader reader) {
@@ -87,6 +93,13 @@ public class SrgsRuleGrammarParser {
             Rule[] rules = parseGrammar(grammarNode);
             for (Rule r : rules) {
                 System.out.println(r);
+            }
+
+            //Extact header from grammar
+            NamedNodeMap docAttributes = grammarNode.getAttributes();
+            for (int i = 0; i < docAttributes.getLength(); i++) {
+                attributes.put(docAttributes.item(i).getNodeName(),
+                               docAttributes.item(i).getNodeValue());
             }
 
             return rules;
@@ -250,5 +263,9 @@ public class SrgsRuleGrammarParser {
         }
 
         return ruleComponents;
+    }
+
+    public HashMap getAttributes() {
+        return attributes;
     }
 }
