@@ -618,6 +618,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             //Initialize rule grammar
             BaseRuleGrammar brg = new BaseRuleGrammar(this, grammarReference);
             brg.addRules(rules);
+            brg.setAttributes(srgsParser.getAttributes());
 
             //Register grammar
             grammars.put(grammarReference, brg);
@@ -665,6 +666,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             //Initialize rule grammar
             BaseRuleGrammar brg = new BaseRuleGrammar(this, grammarReference);
             brg.addRules(rules);
+            brg.setAttributes(srgsParser.getAttributes());
 
             //Register grammar
             grammars.put(grammarReference, brg);
@@ -825,9 +827,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
         for (int i=0; it.hasNext(); ++i){
             BaseRuleGrammar baseRuleGrammar = ((BaseRuleGrammar)grammars.get(it.next()));
-            if (baseRuleGrammar.uncommitedChanges.size()>0){
-                baseRuleGrammar.commitChanges();
-            }
+            baseRuleGrammar.commitChanges();
             newGrammars[i] = baseRuleGrammar.toString(false);
         }
 

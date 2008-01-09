@@ -79,9 +79,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         doctype = null;
 
         ruleId = 0;
-
-        //imports = new Vector();
-        //importedRules = new Vector();
     }
 
     /**
@@ -226,6 +223,27 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         }
     }
 
+    private class RootSetterOperation extends RuleGrammarOperation {
+        private String rootRuleName;
+
+        public RootSetterOperation(String rulename) {
+            rootRuleName = rulename;
+        }
+
+        public void execute() throws GrammarException {
+            if (rootRuleName == null) {
+                updateRootRule();
+            }
+            else {
+                if (getRule(rootRuleName).getScope() == Rule.PRIVATE_SCOPE) {
+                    throw new GrammarException("Cannot set a PRIVATE_SCOPE rule as root");
+                }
+
+                root = rootRuleName;
+            }
+        }
+    }
+
 //////////////////////
 // Begin overridden Grammar Methods
 //////////////////////
@@ -315,11 +333,17 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     }
 
     /**
-     * MAKE IT DO PENDING CHANGES
      * @param rulename String
      */
     public void setRoot(String rulename) {
-        throw new RuntimeException("NOT IMPLEMENTED");
+        RootSetterOperation rsgo = new RootSetterOperation(rulename);
+        uncommitedChanges.add(rsgo);
+    }
+
+    protected void setAttributes(HashMap<String, String> attributes) {
+        for (String name: attributes.keySet()) {
+            setAttribute(name, attributes.get(name));
+        }
     }
 
     public void setAttribute(String attribute, String value) throws IllegalArgumentException {
@@ -839,7 +863,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         throw new GrammarException("Unknown rule type", null);
     }
 
-
+    /**
+     * @todo Throw GrammarException when there's no root rule defined
+     */
     protected void commitChanges(){
         while (uncommitedChanges.size() > 0) {
             RuleGrammarOperation ruleGrammarOperation = uncommitedChanges.
