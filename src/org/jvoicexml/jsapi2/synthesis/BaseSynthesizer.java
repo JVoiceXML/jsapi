@@ -18,6 +18,8 @@ import java.util.Enumeration;
 import javax.speech.EngineListener;
 import javax.speech.EngineException;
 import javax.speech.AudioException;
+import org.jvoicexml.jsapi2.BaseAudioManager;
+import java.io.*;
 
 /**
  * <p>Title: JSAPI 2.0</p>
@@ -97,6 +99,35 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
         postEngineEvent(event);
 
+    }
+
+    protected void postSpeakableEvent(final SpeakableEvent event) {
+        if ((getSpeakableMask() & event.getId()) == event.getId()) {
+            try {
+                speechEventExecutor.execute(new Runnable() {
+                    public void run() {
+                        fireSpeakableEvent(event);
+                    }
+                });
+            } catch (RuntimeException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Utility function to send a speakable event to all grammar
+     * listeners.
+     */
+    public void fireSpeakableEvent(SpeakableEvent event) {
+        Enumeration E;
+        if (speakableListeners != null) {
+            E = speakableListeners.elements();
+            while (E.hasMoreElements()) {
+                SpeakableListener sl = (SpeakableListener) E.nextElement();
+                sl.speakableUpdate(event);
+            }
+        }
     }
 
 
@@ -326,20 +357,29 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
     protected class QueueManager implements Runnable {
 
         private BaseSynthesizer synthesizer;
-        private Thread thread;
+        private Thread synthThread;
+        private Thread playThread;
         private boolean done;
-        private Vector queue;
+        private Vector<QueueItem> queue;
+        private Vector<QueueItem> playQueue;
         private int queueID;
 
         public QueueManager(BaseSynthesizer synthesizer) {
             this.synthesizer = synthesizer;
             done = false;
             queue = new Vector();
+            playQueue = new Vector<QueueItem>();
             queueID = 0;
-            thread = new Thread(this,
-                                "QueueManager_" +
+
+            synthThread = new Thread(this,
+                                "QueueManager_synthesizer_" +
                                 synthesizer.getEngineMode().getEngineName());
-            thread.start();
+            synthThread.start();
+
+            playThread = new Thread(this,
+                                "QueueManager_play_" +
+                                synthesizer.getEngineMode().getEngineName());
+            playThread.start();
         }
 
         public void terminate() {
@@ -361,16 +401,16 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                 queueID += 1;
                 QueueItem item = new QueueItem(queueID, speakable, listener);
 
-                topOfQueueChanged = (queue.size() == 0);
+                topOfQueueChanged = isQueueEmpty();
                 queue.addElement(item);
                 queue.notifyAll();
             }
-            if (topOfQueueChanged) {
-                long[] states = setEngineState(QUEUE_EMPTY, QUEUE_NOT_EMPTY);
-                postSynthesizerEvent(states[0], states[1],
-                                     SynthesizerEvent.QUEUE_UPDATED,
-                                     topOfQueueChanged);
-            }
+
+            long[] states = setEngineState(topOfQueueChanged ? QUEUE_EMPTY :
+                                           QUEUE_NOT_EMPTY, QUEUE_NOT_EMPTY);
+            postSynthesizerEvent(states[0], states[1],
+                                 SynthesizerEvent.QUEUE_UPDATED,
+                                 topOfQueueChanged);
 
             return queueID;
         }
@@ -388,26 +428,78 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                 queueID += 1;
                 QueueItem item = new QueueItem(queueID, audioSegment, listener);
 
-                topOfQueueChanged = (queue.size() == 0);
-                queue.addElement(audioSegment);
+                topOfQueueChanged = isQueueEmpty();
+                queue.addElement(item);
                 queue.notifyAll();
             }
-            if (topOfQueueChanged) {
-                long[] states = setEngineState(synthesizer.QUEUE_EMPTY,
-                                               synthesizer.QUEUE_NOT_EMPTY);
-                postSynthesizerEvent(states[0], states[1],
-                                     SynthesizerEvent.QUEUE_UPDATED,
-                                     topOfQueueChanged);
-            }
+
+            long[] states = setEngineState(topOfQueueChanged ? QUEUE_EMPTY :
+                                           QUEUE_NOT_EMPTY, synthesizer.QUEUE_NOT_EMPTY);
+            postSynthesizerEvent(states[0], states[1],
+                                 SynthesizerEvent.QUEUE_UPDATED,
+                                 topOfQueueChanged);
 
             return queueID;
         }
 
+        private void playItens(){
+             QueueItem item;
+
+             while(1==1){
+                 item = getQueueItemToPlay();
+
+                 postSpeakableEvent(new SpeakableEvent(item, SpeakableEvent.TOP_OF_QUEUE,
+                                                       item.getId()));
+
+                 postSpeakableEvent(new SpeakableEvent(item,
+                                                       SpeakableEvent.SPEAKABLE_STARTED,
+                                                       item.getId()));
+
+                 byte[] buffer = new byte[1024];
+                 try {
+                     while (item.getAudioSegment().getInputStream().read(
+                             buffer) != -1) {
+                         ((BaseAudioManager) getAudioManager()).
+                                 getOutputStream().write(buffer);
+                     }
+                 } catch (IOException ex) {
+                     ex.printStackTrace();
+                 }
+
+                 postSpeakableEvent(new SpeakableEvent(item, SpeakableEvent.SPEAKABLE_ENDED,
+                                                       item.getId()));
+
+                 synchronized (playQueue) {
+                     playQueue.remove(item);
+                 }
+
+                 if (isQueueEmpty() == true) {
+                     long[] states = setEngineState(synthesizer.QUEUE_NOT_EMPTY,
+                                                    synthesizer.QUEUE_EMPTY);
+                     postSynthesizerEvent(states[0], states[1],
+                                          SynthesizerEvent.QUEUE_EMPTIED,
+                                          true);
+                 }else{
+                     long[] states = setEngineState(synthesizer.QUEUE_NOT_EMPTY,
+                                                    synthesizer.QUEUE_NOT_EMPTY);
+                     postSynthesizerEvent(states[0], states[1],
+                                          SynthesizerEvent.QUEUE_UPDATED,
+                                          true);
+                 }
+
+             }
+
+        }
 
         /**
          * Gets the next item from the queue and outputs it
          */
         public void run() {
+            if (Thread.currentThread().getName().compareTo(playThread.getName())==0){
+                playItens();
+                return ;
+            }
+
             QueueItem item;
             int currentCommand;
             boolean queueEmptied;
@@ -429,10 +521,16 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
                     //Synthetize item
                     handleSpeak(item.getSpeakable());
+
+                    //transfer item from queue to playqueue
+                    QueueItem qi = item;
                     removeQueueItem(item);
 
+                    synchronized(playQueue){
+                        playQueue.add(qi);
+                    }
 
-                    if (isQueueEmpty() == true) {
+                    /*if (isQueueEmpty() == true) {
                         long[] states = setEngineState(synthesizer.QUEUE_NOT_EMPTY,
                                                        synthesizer.QUEUE_EMPTY);
                         postSynthesizerEvent(states[0], states[1],
@@ -448,7 +546,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                             lastFocusEvent = DEFOCUSED;
                         }
 
-                    }
+                    }*/
 
 
                 }
@@ -462,8 +560,11 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
          */
         public boolean isQueueEmpty() {
             synchronized (queue) {
-                return queue.size() == 0;
+                synchronized (playQueue){
+                    return queue.size()==0 && playQueue.size()==0;
+                }
             }
+
         }
 
 
@@ -548,6 +649,32 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
 
         /**
+         * Return, but do not remove, the first item on the play queue.
+         *
+         * @return a queue item to play
+         */
+        protected QueueItem getQueueItemToPlay() {
+            QueueItem item = null;
+            synchronized (playQueue) {
+                while (((playQueue.size() == 0) || (playQueue.get(0).getAudioSegment()==null)) && !done) {
+                    try {
+                        playQueue.wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+
+                if (done) {
+                    return null;
+                }
+                item = (QueueItem) playQueue.elementAt(0);
+
+            }
+            return item;
+        }
+
+
+
+        /**
          * Return, but do not remove, the first item on the queue.
          *
          * @return a queue item
@@ -607,6 +734,28 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         }
 
 
+        public void setAudioSegment(AudioSegment audioSegment){
+            synchronized (playQueue){
+                for (QueueItem q : playQueue) {
+                    if (q.getAudioSegment() == null){
+                        q.setAudioSegment(audioSegment);
+                        break;
+                    }
+                }
+
+                playQueue.notifyAll();
+            }
+        }
+    }
+
+
+    /**
+     * Set AudioSegment in a queueItem (Not JSAPI2)
+     * @param itemId int
+     * @param audioSegment AudioSegment
+     */
+    protected void setAudioSegment(AudioSegment audioSegment){
+        queueManager.setAudioSegment(audioSegment);
     }
 
 
