@@ -53,5 +53,8 @@ public class QueueItem {
         return audioSegment;
     }
 
+    public void setAudioSegment(AudioSegment audiosegment) {
+        audioSegment = audiosegment;
+    }
 
 }
