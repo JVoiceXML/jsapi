@@ -156,11 +156,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
     }
 
     public void cancel() throws EngineStateException {
-        queueManager.cancelItem();
-    }
-
-    public void cancel(int id) throws IllegalArgumentException,
-            EngineStateException {
+        checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
         //Wait to finalize allocation
         while (testEngineState(ALLOCATING_RESOURCES)) {
@@ -169,10 +165,36 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             } catch (InterruptedException ex) {
             }
         }
-/////////////////////////////////////////        queueManager.cancelItem(id);
+
+        queueManager.cancelItem();
+    }
+
+    public void cancel(int id) throws IllegalArgumentException,
+            EngineStateException {
+        checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
+
+        //Wait to finalize allocation
+        while (testEngineState(ALLOCATING_RESOURCES)) {
+            try {
+                waitEngineState(ALLOCATED);
+            } catch (InterruptedException ex) {
+            }
+        }
+
+        queueManager.cancelItem(id);
     }
 
     public void cancelAll() throws EngineStateException {
+        checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
+
+        //Wait to finalize allocation
+        while (testEngineState(ALLOCATING_RESOURCES)) {
+            try {
+                waitEngineState(ALLOCATED);
+            } catch (InterruptedException ex) {
+            }
+        }
+
         queueManager.cancelAllItems();
     }
 
@@ -313,12 +335,18 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     abstract protected boolean handleResume();
 
+    abstract protected boolean handleCancel();
+
+    abstract protected boolean handleCancel(int id);
+
+    abstract protected boolean handleCancelAll();
+
 
     protected abstract Speakable getSpeakable(String text);
 
     protected abstract Speakable parseMarkup(String synthesisMarkup);
 
-    protected abstract void handleSpeak(Speakable item);
+    protected abstract void handleSpeak(int id, Speakable item);
 
 
     /**
@@ -363,6 +391,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         private Vector<QueueItem> queue;
         private Vector<QueueItem> playQueue;
         private int queueID;
+        private Boolean cancelFirstItem;
 
         public QueueManager(BaseSynthesizer synthesizer) {
             this.synthesizer = synthesizer;
@@ -370,6 +399,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             queue = new Vector();
             playQueue = new Vector<QueueItem>();
             queueID = 0;
+            cancelFirstItem = false;
 
             synthThread = new Thread(this,
                                 "QueueManager_synthesizer_" +
@@ -460,11 +490,30 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                      while (item.getAudioSegment().getInputStream().read(
                              buffer) != -1) {
 
-                         while (testEngineState(PAUSED)){
-                            try {
-                                waitEngineState(BaseEngine.RESUMED);
-                            } catch (InterruptedException ex1) {
-                            }
+                         synchronized (cancelFirstItem) {
+                             if (cancelFirstItem == true) {
+                                 postSpeakableEvent(new SpeakableEvent(item,
+                                                                       SpeakableEvent.
+                                                                       SPEAKABLE_CANCELLED, item.getId()));
+                                 break;
+                             }
+                         }
+
+                         while (testEngineState(PAUSED)) {
+                             try {
+                                 waitEngineState(BaseEngine.RESUMED);
+                             } catch (InterruptedException ex1) {
+                             }
+                         }
+
+                         synchronized (cancelFirstItem) {
+                             if (cancelFirstItem == true) {
+                                 postSpeakableEvent(new SpeakableEvent(item,
+                                         SpeakableEvent.
+                                         SPEAKABLE_CANCELLED, item.getId()));
+
+                                 break;
+                             }
                          }
 
                          ((BaseAudioManager) getAudioManager()).
@@ -474,12 +523,17 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                      ex.printStackTrace();
                  }
 
-                 postSpeakableEvent(new SpeakableEvent(item, SpeakableEvent.SPEAKABLE_ENDED,
-                                                       item.getId()));
+                 if (!cancelFirstItem){
+                     postSpeakableEvent(new SpeakableEvent(item,
+                                                           SpeakableEvent.SPEAKABLE_ENDED,
+                                                           item.getId()));
 
-                 synchronized (playQueue) {
-                     playQueue.remove(item);
+                     synchronized (playQueue) {
+                         playQueue.remove(item);
+                     }
                  }
+
+                 cancelFirstItem = false;
 
                  if (isQueueEmpty() == true) {
                      long[] states = setEngineState(synthesizer.QUEUE_NOT_EMPTY,
@@ -528,7 +582,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                     }
 
                     //Synthetize item
-                    handleSpeak(item.getSpeakable());
+                    handleSpeak(item.getId(), item.getSpeakable());
 
                     //transfer item from queue to playqueue
                     QueueItem qi = item;
@@ -594,6 +648,29 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
          * Cancel the current item
          */
         protected void cancelItem() {
+            if (playQueue.size() != 0) {
+                QueueItem item = playQueue.get(0);
+                if (item.getAudioSegment() == null) {
+                    handleCancel();
+                    postSpeakableEvent(new SpeakableEvent(item,
+                        SpeakableEvent.SPEAKABLE_CANCELLED, item.getId()));
+                    playQueue.remove(0);
+                }
+                else {
+                    playQueue.remove(0);
+                    synchronized (cancelFirstItem) {
+                        cancelFirstItem = true;
+                    }
+                }
+
+            } else {
+                if (queue.size() != 0) {
+                    QueueItem item = queue.get(0);
+                    postSpeakableEvent(new SpeakableEvent(item,
+                            SpeakableEvent.SPEAKABLE_CANCELLED, item.getId()));
+                    queue.remove(0);
+                }
+            }
             /*            Speakable item = null;
                         synchronized (queue) {
                             audio.cancel();
@@ -612,6 +689,22 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
          * Cancel all items in the queue
          */
         public void cancelAllItems() {
+            handleCancelAll();
+
+            if (playQueue.size() > 0) {
+                cancelItem(); //cancel and remove first item
+                while (playQueue.size()>0){
+                    QueueItem item = playQueue.get(0);
+                    postSpeakableEvent(new SpeakableEvent(item,SpeakableEvent.SPEAKABLE_CANCELLED, item.getId()));
+                    playQueue.remove(0);
+                }
+            }
+
+            while (queue.size() > 0){
+                QueueItem item = queue.get(0);
+                postSpeakableEvent(new SpeakableEvent(item,SpeakableEvent.SPEAKABLE_CANCELLED, item.getId()));
+                queue.remove(0);
+            }
             /*            Speakable item = null;
                         Vector copy;
 
@@ -652,7 +745,35 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         }
 
         protected void cancelItem(int id) {
+            //search item in playqueue
+            synchronized (playQueue) {
+                for (int i = 0; i < playQueue.size(); ++i) {
+                    QueueItem item = playQueue.get(i);
+                    if (item.getId() == id) {
+                        if (i == 0) {
+                            cancelItem();
+                        } else {
+                            if (item.getAudioSegment() == null)
+                                handleCancel(i);
+                            postSpeakableEvent(new SpeakableEvent(item,SpeakableEvent.SPEAKABLE_CANCELLED, item.getId()));
+                            playQueue.remove(i);
+                        }
+                        return;
+                    }
+                }
+            }
 
+            //search item in queue
+            synchronized (queue) {
+                for (int i = 0; i < queue.size(); ++i) {
+                    QueueItem item = queue.get(i);
+                    if (item.getId() == id) {
+                        postSpeakableEvent(new SpeakableEvent(item,SpeakableEvent.SPEAKABLE_CANCELLED, item.getId()));
+                        queue.remove(i);
+                        break;
+                    }
+                }
+            }
         }
 
 
@@ -742,10 +863,10 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         }
 
 
-        public void setAudioSegment(AudioSegment audioSegment){
-            synchronized (playQueue){
+        public void setAudioSegment(int id, AudioSegment audioSegment) {
+            synchronized (playQueue) {
                 for (QueueItem q : playQueue) {
-                    if (q.getAudioSegment() == null){
+                    if (q.getId() == id) {
                         q.setAudioSegment(audioSegment);
                         break;
                     }
@@ -762,8 +883,8 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
      * @param itemId int
      * @param audioSegment AudioSegment
      */
-    protected void setAudioSegment(AudioSegment audioSegment){
-        queueManager.setAudioSegment(audioSegment);
+    protected void setAudioSegment(int id, AudioSegment audioSegment) {
+        queueManager.setAudioSegment(id, audioSegment);
     }
 
 
