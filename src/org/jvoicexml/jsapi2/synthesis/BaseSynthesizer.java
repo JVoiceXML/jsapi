@@ -445,7 +445,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         private void playItens(){
              QueueItem item;
 
-             while(1==1){
+             while(!done){
                  item = getQueueItemToPlay();
 
                  postSpeakableEvent(new SpeakableEvent(item, SpeakableEvent.TOP_OF_QUEUE,
@@ -459,6 +459,14 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                  try {
                      while (item.getAudioSegment().getInputStream().read(
                              buffer) != -1) {
+
+                         while (testEngineState(PAUSED)){
+                            try {
+                                waitEngineState(BaseEngine.RESUMED);
+                            } catch (InterruptedException ex1) {
+                            }
+                         }
+
                          ((BaseAudioManager) getAudioManager()).
                                  getOutputStream().write(buffer);
                      }
