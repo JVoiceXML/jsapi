@@ -481,6 +481,19 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                  postSpeakableEvent(new SpeakableEvent(item, SpeakableEvent.TOP_OF_QUEUE,
                                                        item.getId()));
 
+                 while (testEngineState(PAUSED)) {
+                     postSpeakableEvent(new SpeakableEvent(item,
+                                 SpeakableEvent.
+                                 SPEAKABLE_PAUSED, item.getId()));
+                     try {
+                         waitEngineState(BaseEngine.RESUMED);
+                         postSpeakableEvent(new SpeakableEvent(item,
+                                 SpeakableEvent.
+                                 SPEAKABLE_RESUMED, item.getId()));
+                     } catch (InterruptedException ex1) {
+                     }
+                 }
+
                  postSpeakableEvent(new SpeakableEvent(item,
                                                        SpeakableEvent.SPEAKABLE_STARTED,
                                                        item.getId()));
@@ -493,15 +506,22 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                          synchronized (cancelFirstItem) {
                              if (cancelFirstItem == true) {
                                  postSpeakableEvent(new SpeakableEvent(item,
-                                                                       SpeakableEvent.
-                                                                       SPEAKABLE_CANCELLED, item.getId()));
+                                         SpeakableEvent.
+                                         SPEAKABLE_CANCELLED, item.getId()));
                                  break;
                              }
                          }
 
                          while (testEngineState(PAUSED)) {
+                             postSpeakableEvent(new SpeakableEvent(item,
+                                 SpeakableEvent.
+                                 SPEAKABLE_PAUSED, item.getId()));
                              try {
                                  waitEngineState(BaseEngine.RESUMED);
+                                 postSpeakableEvent(new SpeakableEvent(item,
+                                                                       SpeakableEvent.
+                                                                       SPEAKABLE_RESUMED, item.getId()));
+
                              } catch (InterruptedException ex1) {
                              }
                          }
@@ -548,9 +568,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                                           SynthesizerEvent.QUEUE_UPDATED,
                                           true);
                  }
-
              }
-
         }
 
         /**
@@ -756,6 +774,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                             if (item.getAudioSegment() == null)
                                 handleCancel(i);
                             postSpeakableEvent(new SpeakableEvent(item,SpeakableEvent.SPEAKABLE_CANCELLED, item.getId()));
+                            postSynthesizerEvent(getEngineState(), getEngineState(),SynthesizerEvent.QUEUE_UPDATED,false);
                             playQueue.remove(i);
                         }
                         return;
