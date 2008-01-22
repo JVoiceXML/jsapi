@@ -33,9 +33,9 @@ public class QueueItem {
         this.speakable = speakable;
         this.listener = listener;
         this.audioSegment = null;
-        this.words = null;
-        this.wordsStartTimes = null;
-        this.phonesInfo = null;
+        this.words = new String[0];
+        this.wordsStartTimes = new float[0];
+        this.phonesInfo = new PhoneInfo[0];
     }
 
     public QueueItem(int id, AudioSegment audioSegment, SpeakableListener listener) {
