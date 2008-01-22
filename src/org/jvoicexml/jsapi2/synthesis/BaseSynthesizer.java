@@ -20,6 +20,7 @@ import javax.speech.EngineException;
 import javax.speech.AudioException;
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import java.io.*;
+import javax.speech.synthesis.PhoneInfo;
 
 /**
  * <p>Title: JSAPI 2.0</p>
@@ -239,6 +240,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     public int speak(String text, SpeakableListener listener) throws
             EngineStateException {
+        checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
         //Wait to finalize allocation
         while (testEngineState(ALLOCATING_RESOURCES)) {
@@ -473,7 +475,14 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         }
 
         private void playItens(){
+            final int BUFFER_LENGTH = 1024;
+
              QueueItem item;
+             int playIndex = 0;
+             int wordIndex = 0;
+             int wordStart = 0;
+             int phonemeIndex = 0;
+             double timeNextPhone = 0;
 
              while(!done){
                  item = getQueueItemToPlay();
@@ -498,7 +507,12 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                                                        SpeakableEvent.SPEAKABLE_STARTED,
                                                        item.getId()));
 
-                 byte[] buffer = new byte[1024];
+                 playIndex = 0;
+                 wordIndex = 0;
+                 wordStart = 0;
+                 phonemeIndex = 0;
+                 timeNextPhone = 0;
+                 byte[] buffer = new byte[BUFFER_LENGTH];
                  try {
                      while (item.getAudioSegment().getInputStream().read(
                              buffer) != -1) {
@@ -531,10 +545,30 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                                  postSpeakableEvent(new SpeakableEvent(item,
                                          SpeakableEvent.
                                          SPEAKABLE_CANCELLED, item.getId()));
-
                                  break;
                              }
                          }
+
+                         while (wordIndex<item.getWords().length && item.getWordsStartTime()[wordIndex] * 16000 <= playIndex*BUFFER_LENGTH) {
+                             postSpeakableEvent(new SpeakableEvent(item,
+                                                                   SpeakableEvent.
+                                                                   WORD_STARTED, item.getId(),
+                                                                   item.getWords()[wordIndex], wordStart,
+                                                                   wordStart+item.getWords()[wordIndex].length()));
+                             wordStart += item.getWords()[wordIndex].length() + 1;
+                             wordIndex++;
+                         }
+
+                         while (phonemeIndex<item.getPhonesInfo().length && timeNextPhone*16000<playIndex*BUFFER_LENGTH){
+                             postSpeakableEvent(new SpeakableEvent(item,
+                                                                   SpeakableEvent.
+                                                                   PHONEME_STARTED, item.getId(),
+                                                                   item.getWords()[wordIndex-1], item.getPhonesInfo(), phonemeIndex));
+                             timeNextPhone += (double)item.getPhonesInfo()[phonemeIndex].getDuration()/(double)1000;
+                             phonemeIndex++;
+                         }
+
+                         playIndex++;
 
                          ((BaseAudioManager) getAudioManager()).
                                  getOutputStream().write(buffer);
@@ -599,8 +633,10 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                         lastFocusEvent = FOCUSED;
                     }
 
-                    //Synthetize item
-                    handleSpeak(item.getId(), item.getSpeakable());
+                    if (item.getAudioSegment()==null){
+                        //Synthetize item
+                        handleSpeak(item.getId(), item.getSpeakable());
+                    }
 
                     //transfer item from queue to playqueue
                     QueueItem qi = item;
@@ -894,6 +930,46 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                 playQueue.notifyAll();
             }
         }
+
+        public void setWords(int itemId, String[] words) {
+            synchronized (playQueue) {
+                for (QueueItem q : playQueue) {
+                    if (q.getId() == itemId) {
+                        q.setWords(words);
+                        break;
+                    }
+                }
+
+                playQueue.notifyAll();
+            }
+        }
+
+        public void setWordsStartTimes(int itemId, float[] starttimes) {
+            synchronized (playQueue) {
+                for (QueueItem q : playQueue) {
+                    if (q.getId() == itemId) {
+                        q.setWordsStartTimes(starttimes);
+                        break;
+                    }
+                }
+
+                playQueue.notifyAll();
+            }
+        }
+
+        public void setPhonesInfo(int itemId, PhoneInfo[] phonesinfo) {
+            synchronized (playQueue) {
+                for (QueueItem q : playQueue) {
+                    if (q.getId() == itemId) {
+                        q.setPhonesInfo(phonesinfo);
+                        break;
+                    }
+                }
+
+                playQueue.notifyAll();
+            }
+        }
+
     }
 
 
@@ -906,5 +982,26 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         queueManager.setAudioSegment(id, audioSegment);
     }
 
+    /**
+     * Set words in a queueItem (Not JSAPI2)
+     * @param itemId int
+     * @param String[] words
+     */
+    protected void setWords(int itemId, String[] words){
+        queueManager.setWords(itemId, words);
+    }
+
+    /**
+     * Set words times in a queueItem (Not JSAPI2)
+     * @param itemId int
+     * @param float[] words
+     */
+    protected void setWordsStartTimes(int itemId, float[] starttimes){
+        queueManager.setWordsStartTimes(itemId, starttimes);
+    }
+
+    protected void setPhonesInfo(int itemId, PhoneInfo[] phonesinfo){
+        queueManager.setPhonesInfo(itemId,phonesinfo);
+    }
 
 }

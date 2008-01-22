@@ -3,6 +3,8 @@ package org.jvoicexml.jsapi2.synthesis;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableListener;
 import javax.speech.AudioSegment;
+import java.util.Vector;
+import javax.speech.synthesis.PhoneInfo;
 
 /**
  * <p>Title: JSAPI 2.0</p>
@@ -22,12 +24,18 @@ public class QueueItem {
     private Speakable speakable;
     private SpeakableListener listener;
     private AudioSegment audioSegment;
+    private String[] words;
+    private float[] wordsStartTimes;
+    private PhoneInfo[] phonesInfo;
 
     public QueueItem(int id, Speakable speakable, SpeakableListener listener) {
         this.id = id;
         this.speakable = speakable;
         this.listener = listener;
         this.audioSegment = null;
+        this.words = null;
+        this.wordsStartTimes = null;
+        this.phonesInfo = null;
     }
 
     public QueueItem(int id, AudioSegment audioSegment, SpeakableListener listener) {
@@ -57,4 +65,27 @@ public class QueueItem {
         audioSegment = audiosegment;
     }
 
+    public String[] getWords(){
+        return words;
+    }
+
+	public void setWords(String[] w){
+        words = w;
+    }
+
+    public float[] getWordsStartTime(){
+        return wordsStartTimes;
+    }
+
+	public void setWordsStartTimes(float[] wordsstarttimes){
+        wordsStartTimes = wordsstarttimes;
+    }
+
+    public PhoneInfo[] getPhonesInfo(){
+        return phonesInfo;
+    }
+	
+ 	public void setPhonesInfo(PhoneInfo[] phonesinfo){
+       phonesInfo = phonesinfo;
+   	}
 }
