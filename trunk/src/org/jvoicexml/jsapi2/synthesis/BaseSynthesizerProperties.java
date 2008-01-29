@@ -23,7 +23,6 @@ import javax.speech.EngineMode;
  */
 public class BaseSynthesizerProperties extends BaseEngineProperties implements SynthesizerProperties {
 
-    private Vector propertyChangeListeners;
     private int interruptibility;
     private int pitch;
     private int pitchRange;
@@ -34,19 +33,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties implements S
 
     public BaseSynthesizerProperties(Synthesizer synthesizer) {
         super(synthesizer);
-        propertyChangeListeners = new Vector();
         reset();
-    }
-
-    /**
-     * addPropertyChangeListener
-     *
-     * @param listener PropertyChangeListener
-     */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        if (!propertyChangeListeners.contains(listener)) {
-            propertyChangeListeners.addElement(listener);
-        }
     }
 
     /**
@@ -101,15 +88,6 @@ public class BaseSynthesizerProperties extends BaseEngineProperties implements S
      */
     public int getVolume() {
         return volume;
-    }
-
-    /**
-     * removePropertyChangeListener
-     *
-     * @param listener PropertyChangeListener
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeListeners.removeElement(listener);
     }
 
     /**
