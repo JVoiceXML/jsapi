@@ -633,17 +633,17 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                         lastFocusEvent = FOCUSED;
                     }
 
-                    if (item.getAudioSegment()==null){
-                        //Synthetize item
-                        handleSpeak(item.getId(), item.getSpeakable());
-                    }
-
                     //transfer item from queue to playqueue
                     QueueItem qi = item;
                     removeQueueItem(item);
 
                     synchronized(playQueue){
                         playQueue.add(qi);
+                    }
+
+                    if (item.getAudioSegment()==null){
+                        //Synthetize item
+                        handleSpeak(item.getId(), item.getSpeakable());
                     }
 
                     /*if (isQueueEmpty() == true) {
