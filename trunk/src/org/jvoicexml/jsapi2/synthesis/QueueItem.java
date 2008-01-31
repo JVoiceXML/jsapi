@@ -20,6 +20,7 @@ import javax.speech.synthesis.PhoneInfo;
  */
 public class QueueItem {
 
+    private Object source;
     private int id;
     private Speakable speakable;
     private SpeakableListener listener;
@@ -36,6 +37,12 @@ public class QueueItem {
         this.words = new String[0];
         this.wordsStartTimes = new float[0];
         this.phonesInfo = new PhoneInfo[0];
+        this.source = speakable;
+    }
+
+    public QueueItem(int id, Speakable speakable, SpeakableListener listener, String text){
+        this(id, speakable, listener);
+        this.source = text;
     }
 
     public QueueItem(int id, AudioSegment audioSegment, SpeakableListener listener) {
@@ -46,6 +53,7 @@ public class QueueItem {
        this.words = new String[0];
        this.wordsStartTimes = new float[0];
        this.phonesInfo = new PhoneInfo[0];
+       this.source = audioSegment;
    }
 
     public Speakable getSpeakable() {
@@ -58,6 +66,10 @@ public class QueueItem {
 
     public int getId() {
         return id;
+    }
+
+    public Object getSource(){
+        return source;
     }
 
     public AudioSegment getAudioSegment() {
