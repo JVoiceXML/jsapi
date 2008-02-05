@@ -505,6 +505,9 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             return queueID;
         }
 
+        /**
+         * @todo Audio format can't be hardcoded
+         */
         private void playItens(){
             final int BUFFER_LENGTH = 1024;
 
@@ -535,6 +538,8 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                      }
                  }
 
+                 long startStreaming = System.currentTimeMillis();
+                 long totalBytesRead = 0;
                  postSpeakableEvent(new SpeakableEvent(item.getSource(),
                                                        SpeakableEvent.SPEAKABLE_STARTED,
                                                        item.getId()), item.getListener());
@@ -545,9 +550,14 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                  phonemeIndex = 0;
                  timeNextPhone = 0;
                  byte[] buffer = new byte[BUFFER_LENGTH];
+                 int bytesRead = 0;
+                 final int sampleRate = 16000;
+                 final int sampleSizeInBytes = 2;
                  try {
-                     while (item.getAudioSegment().getInputStream().read(
-                             buffer) != -1) {
+                     while ((bytesRead = item.getAudioSegment().getInputStream().read(
+                             buffer)) != -1) {
+
+                         totalBytesRead += bytesRead;
 
                          synchronized (cancelFirstItem) {
                              if (cancelFirstItem == true) {
@@ -582,7 +592,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                              }
                          }
 
-                         while (wordIndex<item.getWords().length && item.getWordsStartTime()[wordIndex] * 16000 <= playIndex*BUFFER_LENGTH) {
+                         while (wordIndex<item.getWords().length && item.getWordsStartTime()[wordIndex] * sampleRate <= playIndex*bytesRead) {
                              postSpeakableEvent(new SpeakableEvent(item.getSource(),
                                                                    SpeakableEvent.
                                                                    WORD_STARTED, item.getId(),
@@ -592,7 +602,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                              wordIndex++;
                          }
 
-                         while (phonemeIndex<item.getPhonesInfo().length && timeNextPhone*16000<playIndex*BUFFER_LENGTH){
+                         while (phonemeIndex<item.getPhonesInfo().length && timeNextPhone*sampleRate<playIndex*bytesRead){
                              postSpeakableEvent(new SpeakableEvent(item.getSource(),
                                                                    SpeakableEvent.
                                                                    PHONEME_STARTED, item.getId(),
@@ -610,7 +620,18 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                      ex.printStackTrace();
                  }
 
-                 if (!cancelFirstItem){
+                 if (!cancelFirstItem) {
+                     //Delay the event sending by the remaining time audio length
+                     long audioTime = (totalBytesRead * 1000) / (sampleRate * sampleSizeInBytes);
+                     long endStreaming = System.currentTimeMillis();
+                     long procTime = endStreaming - startStreaming;
+                     long sleepTime = audioTime - procTime;
+                     if (sleepTime > 0) {
+                         try {
+                             Thread.currentThread().sleep(sleepTime);
+                         } catch (InterruptedException ex2) {
+                         }
+                     }
                      postSpeakableEvent(new SpeakableEvent(item.getSource(),
                                                            SpeakableEvent.SPEAKABLE_ENDED,
                                                            item.getId()), item.getListener());
@@ -628,7 +649,8 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                      postSynthesizerEvent(states[0], states[1],
                                           SynthesizerEvent.QUEUE_EMPTIED,
                                           true);
-                 }else{
+                 }
+                 else {
                      long[] states = setEngineState(synthesizer.QUEUE_NOT_EMPTY,
                                                     synthesizer.QUEUE_NOT_EMPTY);
                      postSynthesizerEvent(states[0], states[1],
