@@ -32,10 +32,17 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
 
     private Vector commands;
 
+    private boolean shouldRun;
+
     public BaseSpeechEventExecutor() {
         commands = new Vector();
         thread = new Thread(this, "BaseSpeechEventExecutor");
+        shouldRun = true;
         thread.start();
+    }
+
+    protected void finalize() {
+        shouldRun = false;
     }
 
     /**
@@ -55,7 +62,7 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
     }
 
     public void run() {
-        while (true) {
+        while (shouldRun) {
             while (commands.size() < 1) {
                 synchronized (commands) {
                     try {
