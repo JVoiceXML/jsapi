@@ -21,9 +21,8 @@ import javax.speech.recognition.RuleParse;
 import javax.speech.recognition.RuleSequence;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
-import javax.speech.recognition.RuleSpecial;
 import javax.speech.recognition.RuleComponent;
-import javax.speech.*;
+import javax.speech.EngineStateException;
 
 /**
  * Implementation of the parse method(s) on
