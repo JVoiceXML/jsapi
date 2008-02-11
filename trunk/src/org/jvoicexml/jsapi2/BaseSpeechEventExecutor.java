@@ -63,10 +63,10 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
 
     public void run() {
         while (shouldRun) {
-            while (commands.size() < 1) {
+            while ((commands.size() < 1) && (shouldRun == true)) {
                 synchronized (commands) {
                     try {
-                        commands.wait();
+                        commands.wait(1000);
                     } catch (InterruptedException ex) {
                     }
                 }
