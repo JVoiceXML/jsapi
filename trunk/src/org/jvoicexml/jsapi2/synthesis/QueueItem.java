@@ -3,7 +3,6 @@ package org.jvoicexml.jsapi2.synthesis;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableListener;
 import javax.speech.AudioSegment;
-import java.util.Vector;
 import javax.speech.synthesis.PhoneInfo;
 
 /**
@@ -99,7 +98,7 @@ public class QueueItem {
     public PhoneInfo[] getPhonesInfo(){
         return phonesInfo;
     }
-	
+
  	public void setPhonesInfo(PhoneInfo[] phonesinfo){
        phonesInfo = phonesinfo;
    	}

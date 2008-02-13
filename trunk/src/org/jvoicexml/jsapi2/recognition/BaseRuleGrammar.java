@@ -720,7 +720,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * @param displayDisabledRules
      */
     public String toString(boolean displayDisabledRules) {
-        String res = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n"+
+        String res = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?> \n"+
                      "<!DOCTYPE grammar PUBLIC \"-//W3C//DTD GRAMMAR 1.0//EN\" "+
                      "               \"http://www.w3.org/TR/speech-grammar/grammar.dtd\"> \n";
 
