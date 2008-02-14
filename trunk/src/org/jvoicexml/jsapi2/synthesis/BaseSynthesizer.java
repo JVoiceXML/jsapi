@@ -19,8 +19,12 @@ import javax.speech.EngineListener;
 import javax.speech.EngineException;
 import javax.speech.AudioException;
 import org.jvoicexml.jsapi2.BaseAudioManager;
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import javax.speech.synthesis.PhoneInfo;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+
 
 /**
  * <p>Title: JSAPI 2.0</p>
@@ -257,7 +261,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         return queueManager.appendItem(getSpeakable(text), listener, text);
     }
 
-    public int speakMarkup(String synthesisMarkup, SpeakableListener listener) throws
+    public int speakMarkup(final String synthesisMarkup, SpeakableListener listener) throws
             EngineStateException, SynthesisException, IllegalArgumentException {
 
         //Wait to finalize allocation
@@ -268,7 +272,13 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             }
         }
 
-        return queueManager.appendItem(parseMarkup(synthesisMarkup), listener);
+        Speakable markupSpeakable = new Speakable() {
+            public String getMarkupText() {
+                return synthesisMarkup;
+            }
+        };
+
+        return queueManager.appendItem(markupSpeakable, listener);
     }
 
 
@@ -347,10 +357,10 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     abstract protected boolean handleCancelAll();
 
-
+    /** @todo Is it really needed? */
     protected abstract Speakable getSpeakable(String text);
 
-    protected abstract Speakable parseMarkup(String synthesisMarkup);
+    protected abstract void handleSpeak(int id, String item);
 
     protected abstract void handleSpeak(int id, Speakable item);
 
@@ -399,6 +409,8 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         private int queueID;
         private Boolean cancelFirstItem;
 
+        private FileOutputStream fos;
+
         public QueueManager(BaseSynthesizer synthesizer) {
             this.synthesizer = synthesizer;
             done = false;
@@ -406,6 +418,11 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             playQueue = new Vector<QueueItem>();
             queueID = 0;
             cancelFirstItem = false;
+            try {
+                fos = new FileOutputStream("jsapi2.synth.raw");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
 
             synthThread = new Thread(this,
                                 "QueueManager_synthesizer_" +
@@ -422,6 +439,11 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             synchronized (queue) {
                 done = true;
                 queue.notify();
+            }
+            try {
+                fos.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         }
 
@@ -505,9 +527,6 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             return queueID;
         }
 
-        /**
-         * @todo Audio format can't be hardcoded
-         */
         private void playItens(){
             final int BUFFER_LENGTH = 1024;
 
@@ -517,6 +536,9 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
              int wordStart = 0;
              int phonemeIndex = 0;
              double timeNextPhone = 0;
+
+             AudioFormat audioFormat = ((BaseAudioManager)synthesizer.getAudioManager()).getEngineAudioFormat();
+             float sampleRate = audioFormat.getSampleRate();
 
              while(!done){
                  item = getQueueItemToPlay();
@@ -551,11 +573,11 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                  timeNextPhone = 0;
                  byte[] buffer = new byte[BUFFER_LENGTH];
                  int bytesRead = 0;
-                 final int sampleRate = 16000;
-                 final int sampleSizeInBytes = 2;
                  try {
-                     while ((bytesRead = item.getAudioSegment().getInputStream().read(
-                             buffer)) != -1) {
+                     while (true) {
+
+                         bytesRead = item.getAudioSegment().getInputStream().read(buffer);
+                         if (bytesRead == -1) break;
 
                          totalBytesRead += bytesRead;
 
@@ -592,7 +614,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                              }
                          }
 
-                         while (wordIndex<item.getWords().length && item.getWordsStartTime()[wordIndex] * sampleRate <= playIndex*bytesRead) {
+                         while (wordIndex < item.getWords().length && item.getWordsStartTime()[wordIndex] * sampleRate <= playIndex * bytesRead) {
                              postSpeakableEvent(new SpeakableEvent(item.getSource(),
                                                                    SpeakableEvent.
                                                                    WORD_STARTED, item.getId(),
@@ -602,7 +624,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                              wordIndex++;
                          }
 
-                         while (phonemeIndex<item.getPhonesInfo().length && timeNextPhone*sampleRate<playIndex*bytesRead){
+                         while (phonemeIndex < item.getPhonesInfo().length && timeNextPhone * sampleRate < playIndex * bytesRead){
                              postSpeakableEvent(new SpeakableEvent(item.getSource(),
                                                                    SpeakableEvent.
                                                                    PHONEME_STARTED, item.getId(),
@@ -613,16 +635,18 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
                          playIndex++;
 
+                         fos.write(buffer, 0, bytesRead);
                          ((BaseAudioManager) getAudioManager()).
-                                 getOutputStream().write(buffer);
+                                 getOutputStream().write(buffer, 0, bytesRead);
                      }
                  } catch (IOException ex) {
                      ex.printStackTrace();
                  }
 
                  if (!cancelFirstItem) {
+
                      //Delay the event sending by the remaining time audio length
-                     long audioTime = (totalBytesRead * 1000) / (sampleRate * sampleSizeInBytes);
+                     long audioTime = ((long)((totalBytesRead * 1000) / (audioFormat.getSampleRate() * audioFormat.getSampleSizeInBits()/8)));
                      long endStreaming = System.currentTimeMillis();
                      long procTime = endStreaming - startStreaming;
                      long sleepTime = audioTime - procTime;
@@ -697,9 +721,19 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                     }
 
                     if (item.getAudioSegment()==null){
-                        //Synthetize item
+                        //Synthesize item
                         ((BaseSynthesizerProperties)synthesizer.getSynthesizerProperties()).commitPropertiesChanges();
-                        handleSpeak(item.getId(), item.getSpeakable());
+
+                        Object itemSource = item.getSource();
+                        if (itemSource instanceof String) {
+                            handleSpeak(item.getId(), (String)itemSource);
+                        }
+                        else if (itemSource instanceof Speakable) {
+                            handleSpeak(item.getId(), (Speakable)itemSource);
+                        }
+                        else {
+                            throw new RuntimeException("WTF! It could only be text or speakable....");
+                        }
                     }
 
                     /*if (isQueueEmpty() == true) {
