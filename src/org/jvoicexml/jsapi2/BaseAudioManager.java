@@ -206,8 +206,7 @@ public class BaseAudioManager implements AudioManager {
             }
 
             //Configure audio conversions
-            inputStream = getConvertedStream(is, engineAudioFormat,
-                                             getAudioFormat(url));
+            inputStream = getConvertedStream(is, getAudioFormat(url), engineAudioFormat);
         }
 
         postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
