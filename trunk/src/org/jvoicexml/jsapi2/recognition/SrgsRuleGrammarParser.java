@@ -16,6 +16,7 @@ import javax.speech.recognition.RuleAlternatives;
 import javax.speech.recognition.RuleSpecial;
 import javax.speech.recognition.RuleReference;
 import javax.speech.recognition.RuleTag;
+import javax.speech.recognition.RuleCount;
 import org.xml.sax.InputSource;
 import java.io.Reader;
 import java.io.InputStream;
@@ -95,7 +96,7 @@ public class SrgsRuleGrammarParser {
                 System.out.println(r);
             }
 
-            //Extact header from grammar
+            //Extract header from grammar
             NamedNodeMap docAttributes = grammarNode.getAttributes();
             for (int i = 0; i < docAttributes.getLength(); i++) {
                 attributes.put(docAttributes.item(i).getNodeName(),
@@ -203,9 +204,25 @@ public class SrgsRuleGrammarParser {
             } catch (XPathExpressionException ex) {
                 ex.printStackTrace();
             }
+
             ArrayList<RuleComponent> rcs = evalChildNodes(node);
             RuleSequence rs = new RuleSequence(rcs.toArray(new RuleComponent[] {}));
-            ruleComponents.add(rs);
+
+            if ((repeatMin != -1) && (repeatMax != -1) && (repeatProb != -1)) {
+                RuleCount rc = new RuleCount(rs, repeatMin, repeatMax, repeatProb);
+                ruleComponents.add(rc);
+            }
+            else if ((repeatMin != -1) && (repeatMax != -1)) {
+                RuleCount rc = new RuleCount(rs, repeatMin, repeatMax);
+                ruleComponents.add(rc);
+            }
+            else if (repeatMin != -1) {
+                RuleCount rc = new RuleCount(rs, repeatMin);
+                ruleComponents.add(rc);
+            }
+            else {
+                ruleComponents.add(rs);
+            }
 
         } else if (nodeName.equalsIgnoreCase("ruleref")) {
             System.out.println("Processing a ruleref");

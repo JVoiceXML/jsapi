@@ -356,8 +356,18 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         else if (attribute.equals("tagFormat")) tagFormat = value;
         else if (attribute.equals("xmlns:xsi")) xmlnsXsi = value;
         else if (attribute.equals("xsi:schemaLocation")) xsiSchemaLocation = value;
+        else if (attribute.equals("type") ||
+                 attribute.equals("scope") ||
+                 attribute.equals("src") ||
+                 attribute.equals("weight") ||
+                 attribute.equals("fetchtimeout") ||
+                 attribute.equals("maxage") ||
+                 attribute.equals("maxstale")) {
+            //Ignored for VoiceXml 2.0 compatibility
+            //Visit: http://www.w3.org/TR/voicexml20/vxml.dtd
+        }
         else
-            throw new IllegalArgumentException("Unknow atribute name: " + attribute);
+            throw new IllegalArgumentException("Unknown atribute name: " + attribute);
     }
 
     public String getAttribute(String attribute) throws IllegalArgumentException {
