@@ -524,7 +524,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         }
 
         //Get engine built-in grammrs
-        List<Grammar> builInGrammars = getBuilInGrammars();
+        List<Grammar> builInGrammars = getBuiltInGrammars();
 
         if (grammars.size() < 0) {
             return new Grammar[0];
@@ -875,14 +875,10 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
 
     /**
-     * @todo This is only not abstract not to break compatibilty.... for now
      *
      * Returns a list of engine built-in grammars
      * @return List
      */
-    protected List<Grammar> getBuilInGrammars() {
-        return new Vector<Grammar>();
-    }
-
+    abstract protected List<Grammar> getBuiltInGrammars();
 
 }
