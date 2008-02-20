@@ -32,7 +32,6 @@ public class BaseGrammar implements Grammar {
 
     protected boolean grammarActive;  // only changed by commit and rec focus
     protected boolean grammarEnabled;
-    protected boolean grammarChanged; // changed since last commit?
     protected int     activationMode;
 
     /**
@@ -47,7 +46,6 @@ public class BaseGrammar implements Grammar {
         myName = name;
         grammarActive = false;
         grammarEnabled = true;
-        grammarChanged = true;
         activationMode = ACTIVATION_FOCUS;
     }
 
