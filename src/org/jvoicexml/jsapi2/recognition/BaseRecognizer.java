@@ -504,6 +504,49 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     public void processGrammars() throws EngineStateException {
 
+        //Flag that indicates if grammars were changed
+        boolean existChanges = uncommitedDeletedGrammars.size() > 0;
+
+        //Process grammar deletion
+        while (uncommitedDeletedGrammars.size() > 0) {
+            existChanges = true;
+            String grammarReference = uncommitedDeletedGrammars.
+                                      remove(0);
+            grammars.remove(grammarReference);
+        }
+
+        //Build a new grammar set
+        String[] newGrammars = new String[grammars.keySet().size()];
+
+        //Commit all grammars pending changes
+        Iterator it = grammars.keySet().iterator();
+        for (int i = 0; it.hasNext(); ++i){
+            BaseRuleGrammar baseRuleGrammar = ((BaseRuleGrammar)grammars.get(it.next()));
+            baseRuleGrammar.commitChanges();
+            newGrammars[i] = baseRuleGrammar.toString(false);
+        }
+
+        //Update "modified-flag"
+        existChanges = existChanges || newGrammars.length > 0;
+
+        //Set grammars and raise proper events
+        if (existChanges) {
+            if (setGrammars(newGrammars)) {
+                postEngineEvent(PAUSED, RESUMED, RecognizerEvent.CHANGES_COMMITTED);
+                for (Grammar g : grammars.values()) {
+                    ((BaseGrammar) g).postGrammarEvent(speechEventExecutor,
+                            new
+                            GrammarEvent(g, GrammarEvent.GRAMMAR_CHANGES_COMMITTED));
+                }
+            }
+            else {
+                for (Grammar g : grammars.values()) {
+                    ((BaseGrammar) g).postGrammarEvent(speechEventExecutor,
+                            new
+                            GrammarEvent(g, GrammarEvent.GRAMMAR_CHANGES_REJECTED));
+                }
+            }
+        }
     }
 
     /**
@@ -810,44 +853,13 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      * @todo Handle grammar updates
      */
     protected boolean baseResume() {
-        boolean existChanges;
 
-        existChanges = uncommitedDeletedGrammars.size() > 0;
-
-        while (uncommitedDeletedGrammars.size() > 0) {
-            existChanges = true;
-            String grammarReference = uncommitedDeletedGrammars.
-                                      remove(0);
-            grammars.remove(grammarReference);
-       }
-
-        String[] newGrammars = new String[grammars.keySet().size()];
-
-        Iterator it=grammars.keySet().iterator();
-
-        for (int i=0; it.hasNext(); ++i){
-            BaseRuleGrammar baseRuleGrammar = ((BaseRuleGrammar)grammars.get(it.next()));
-            baseRuleGrammar.commitChanges();
-            newGrammars[i] = baseRuleGrammar.toString(false);
-        }
-
-        existChanges = existChanges || newGrammars.length > 0;
-
-        if (existChanges){
-            if (setGrammars(newGrammars)) {
-                postEngineEvent(PAUSED, RESUMED, RecognizerEvent.CHANGES_COMMITTED);
-                for (Grammar g : grammars.values()){
-                    ((BaseGrammar) g).postGrammarEvent(speechEventExecutor,
-                            new
-                            GrammarEvent(g, GrammarEvent.GRAMMAR_CHANGES_COMMITTED));
-                }
-            }else{
-                for (Grammar g : grammars.values()){
-                    ((BaseGrammar) g).postGrammarEvent(speechEventExecutor,
-                            new
-                            GrammarEvent(g, GrammarEvent.GRAMMAR_CHANGES_REJECTED));
-                }
-            }
+        //Process grammars
+        try {
+            processGrammars();
+        } catch (EngineStateException ex) {
+            ex.printStackTrace();
+            return false;
         }
 
         boolean status = handleResume();
