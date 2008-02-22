@@ -528,7 +528,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         }
 
         private void playItens(){
-            final int BUFFER_LENGTH = 1024;
+            final int BUFFER_LENGTH = 512;
 
              QueueItem item;
              int playIndex = 0;
@@ -537,7 +537,8 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
              int phonemeIndex = 0;
              double timeNextPhone = 0;
 
-             AudioFormat audioFormat = ((BaseAudioManager)synthesizer.getAudioManager()).getEngineAudioFormat();
+             //AudioFormat audioFormat = ((BaseAudioManager)synthesizer.getAudioManager()).getEngineAudioFormat();
+             AudioFormat audioFormat = ((BaseAudioManager)synthesizer.getAudioManager()).getTargetAudioFormat();
              float sampleRate = audioFormat.getSampleRate();
 
              while(!done){
@@ -643,10 +644,18 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                      ex.printStackTrace();
                  }
 
+                 //Flush audio in the stream
+                 try {
+                     ((BaseAudioManager) getAudioManager()).getOutputStream().
+                             flush();
+                 } catch (IOException ex) {
+                     ex.printStackTrace();
+                 }
+
                  if (!cancelFirstItem) {
 
                      //Delay the event sending by the remaining time audio length
-                     long audioTime = ((long)((totalBytesRead * 1000) / (audioFormat.getSampleRate() * audioFormat.getSampleSizeInBits()/8)));
+                    /* long audioTime = ((long)((totalBytesRead * 1000) / (audioFormat.getSampleRate() * audioFormat.getSampleSizeInBits()/8)));
                      long endStreaming = System.currentTimeMillis();
                      long procTime = endStreaming - startStreaming;
                      long sleepTime = audioTime - procTime;
@@ -655,7 +664,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                              Thread.currentThread().sleep(sleepTime);
                          } catch (InterruptedException ex2) {
                          }
-                     }
+                     }*/
                      postSpeakableEvent(new SpeakableEvent(item.getSource(),
                                                            SpeakableEvent.SPEAKABLE_ENDED,
                                                            item.getId()), item.getListener());

@@ -75,6 +75,9 @@ import java.io.PipedOutputStream;
 import java.io.FileOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.Array;
+import java.io.SequenceInputStream;
 
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code>
@@ -106,6 +109,8 @@ public class BaseAudioManager implements AudioManager {
      */
     protected AudioFormat engineAudioFormat;
 
+    protected AudioFormat targetAudioFormat;
+
     /**
      * Class constructor.
      */
@@ -123,6 +128,7 @@ public class BaseAudioManager implements AudioManager {
                                             2,
                                             16000,
                                             false);
+        targetAudioFormat = engineAudioFormat;
     }
 
     /**
@@ -194,8 +200,13 @@ public class BaseAudioManager implements AudioManager {
                 throw new AudioException("Cannot get OutputStream from URL: " +
                                          ex.getMessage());
             }
-            outputStream = getConvertedStream(os, engineAudioFormat,
-                                              getAudioFormat(url));
+
+            targetAudioFormat = getAudioFormat(url);
+
+            //The synthesizer already converts audio, no conversion needed here
+            //outputStream = getConvertedStream(os, engineAudioFormat, targetAudioFormat);
+            outputStream = os;
+
         } else {
             InputStream is = null;
             try {
@@ -205,8 +216,11 @@ public class BaseAudioManager implements AudioManager {
                                          ex.getMessage());
             }
 
+            targetAudioFormat = getAudioFormat(url);
+
             //Configure audio conversions
-            inputStream = getConvertedStream(is, getAudioFormat(url), engineAudioFormat);
+            inputStream = getConvertedStream(is, targetAudioFormat,
+                                             engineAudioFormat);
         }
 
         postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
@@ -371,7 +385,7 @@ public class BaseAudioManager implements AudioManager {
 
     public void fireAudioEvent(AudioEvent event) {
         synchronized (audioListeners) {
-            for (AudioListener listener: audioListeners) {
+            for (AudioListener listener : audioListeners) {
                 listener.audioUpdate(event);
             }
         }
@@ -481,6 +495,10 @@ public class BaseAudioManager implements AudioManager {
         return engineAudioFormat;
     }
 
+    public AudioFormat getTargetAudioFormat() {
+        return targetAudioFormat;
+    }
+
     /**
      * @todo Insure that this is robust...
      *
@@ -544,37 +562,37 @@ public class BaseAudioManager implements AudioManager {
             final InputStream is = getConvertedStream(pis, engineAudioFormat,
                     targetFormat);
 
-            new Thread(new Runnable() {
-                public void run() {
-                    FileOutputStream synt_conv = null;
-                    try {
-                        synt_conv = new FileOutputStream(File.
-                                createTempFile("synth", ".raw", new File(".")));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    int br;
-                    byte[] buffer = new byte[512];
-                    try {
-                        while ((br = is.read(buffer)) != -1) {
-                            os.write(buffer, 0, br);
-                            synt_conv.write(buffer, 0, br);
-                        }
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
+            /*  new Thread(new Runnable() {
+                  public void run() {
+                      FileOutputStream synt_conv = null;
+                      try {
+                          synt_conv = new FileOutputStream(File.
+             createTempFile("synth", ".raw", new File(".")));
+                      } catch (Exception ex) {
+                          ex.printStackTrace();
+                      }
+                      int br;
+                      byte[] buffer = new byte[512];
+                      try {
+                          while ((br = is.read(buffer)) != -1) {
+                              os.write(buffer, 0, br);
+                              synt_conv.write(buffer, 0, br);
+                          }
+                      } catch (IOException ex) {
+                          ex.printStackTrace();
+                      }
 
-                    try {
-                        os.close();
-                        is.close();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }, "AudioCopyer").start();
+                      try {
+                          os.close();
+                          is.close();
+                      } catch (IOException ex) {
+                          ex.printStackTrace();
+                      }
+                  }
+              }, "AudioCopyer").start();*/
 
             //Return write point for synthesizer
-            return pos;
+           // return new OutputStreamConverter(pos, is, os);
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -675,5 +693,159 @@ public class BaseAudioManager implements AudioManager {
     }
 
 
+    private int getAudioFormatBytesPerSecond(final AudioFormat audioFormat) {
+        int bps = audioFormat.getChannels();
+        bps *= audioFormat.getSampleRate();
+        bps *= (audioFormat.getSampleSizeInBits() / 8);
+        return bps;
+    }
+
+    /**
+     * Reallocates an array with a new size, and copies the contents
+     * of the old array to the new array.
+     * @param oldArray  the old array, to be reallocated.
+     * @param newSize   the new array size.
+     * @return          A new array with the same contents.
+     */
+    private static Object resizeArray (Object oldArray, int newSize) {
+        int oldSize = java.lang.reflect.Array.getLength(oldArray);
+        Class elementType = oldArray.getClass().getComponentType();
+        Object newArray = java.lang.reflect.Array.newInstance(
+            elementType,newSize);
+        int preserveLength = Math.min(oldSize,newSize);
+        if (preserveLength > 0)
+            System.arraycopy (oldArray,0,newArray,0,preserveLength);
+        return newArray;
+    }
+
+    /**
+     *
+     * @todo Have to process other silence bytes other than zero!
+     *
+     * @param in byte[]
+     * @return ByteArrayInputStream
+     */
+    public ByteArrayInputStream getConvertedAudio(byte[] in) {
+
+        //Generate 100ms os silence to compensate conversion loss
+        byte silenceSample = 0;
+        int bps = getAudioFormatBytesPerSecond(engineAudioFormat);
+        byte[] silence = new byte[bps / 10];
+        for (int i = 0; i < silence.length; i++) {
+            silence[i] = silenceSample;
+        }
+
+        //Prepare streams
+        ByteArrayInputStream sourceBais = new ByteArrayInputStream(in);
+        ByteArrayInputStream silenceBais = new ByteArrayInputStream(silence);
+        SequenceInputStream sib = new SequenceInputStream(sourceBais, silenceBais);
+
+        try {
+            InputStream convertedStream = getConvertedStream(sib, engineAudioFormat, targetAudioFormat);
+
+            //Allocate an array for 1 second of audio in target format
+            byte[] convertedArray = new byte[getAudioFormatBytesPerSecond(targetAudioFormat)];
+            int offset = 0;
+            int br;
+            int bytesPerRead = 1024;
+            do {
+                //Realloc array?
+                int availableSize = convertedArray.length - offset;
+                if (availableSize < bytesPerRead) {
+                    convertedArray = (byte[])resizeArray(convertedArray, convertedArray.length * 2);
+                }
+
+                //Read converted data and write it in array
+                br = convertedStream.read(convertedArray, offset, bytesPerRead);
+                if (br != -1) {
+                    offset += br;
+                }
+                else {
+                    break;
+                }
+            } while (true);
+
+            //Return a new ByteArrayInputStream
+            return new ByteArrayInputStream(convertedArray, 0, offset);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+            //Do not convert audio
+            return new ByteArrayInputStream(in);
+        }
+    }
+
+  /*  private class OutputStreamConverter extends OutputStream {
+        private final OutputStream sourceOut;
+        private final InputStream convertedStream;
+        private final OutputStream targetOut;
+        private long totalWriteTime = 0;
+
+        public OutputStreamConverter(OutputStream sourceOut,
+                                     InputStream convertedStream,
+                                     OutputStream targetOut) {
+            this.sourceOut = sourceOut;
+            this.convertedStream = convertedStream;
+            this.targetOut = targetOut;
+        }
+
+        public void write(int b) throws IOException {
+            byte[] buffer = new byte[1];
+            buffer[0] = (byte) b;
+            write(buffer, 0, 1);
+        }
+
+        public void write(byte[] b, int off, int len) throws IOException {
+            long sTime = System.currentTimeMillis();
+            sourceOut.write(b, off, len);
+            sourceOut.flush();
+
+            byte[] buffer = new byte[(int) Math.ceil(convertedStream.available() /
+                    10)];
+            int br = convertedStream.read(buffer);
+            if (br != -1) {
+                targetOut.write(buffer, 0, br);
+            }
+
+            long eTime = System.currentTimeMillis();
+            long wTime = eTime - sTime;
+            totalWriteTime += wTime;
+            System.err.println("------OutputStreamConverter write time: " +
+                               wTime + " total: " + totalWriteTime);
+
+        }
+
+        public void flush() throws IOException {
+            System.err.println("------OutputStreamConverter flushing stream");
+
+            sourceOut.flush();
+
+            do {
+                int bAvailable = convertedStream.available();
+                if (bAvailable > 768) {
+                    byte[] buffer = new byte[convertedStream.available() / 10];
+                    int br = convertedStream.read(buffer);
+                    if (br != -1) {
+                        targetOut.write(buffer, 0, br);
+                    }
+                } else {
+                    break;
+                }
+            } while (true);
+            targetOut.flush();
+
+            System.err.println(
+                    "------OutputStreamConverter flushed audio_time: " +
+                    totalWriteTime);
+            totalWriteTime = 0;
+        }
+
+        public void close() throws IOException {
+            flush();
+            sourceOut.close();
+            targetOut.close();
+        }
+    }*/
 }
 
