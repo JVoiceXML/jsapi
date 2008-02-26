@@ -855,6 +855,7 @@ public class BaseAudioManager implements AudioManager {
             int writeOffset = 0;
             int writeSize = 0;
             boolean noMoreInput = false;
+            boolean insertedSilence = false;
             do {
 
                 //Inject new audio in pipeline
@@ -865,6 +866,7 @@ public class BaseAudioManager implements AudioManager {
                         try {
                             pipedOutputStream.write(in, writeOffset,
                                     writeSize);
+                            writeOffset += writeSize;
                         } catch (Exception ex) {
                             ex.printStackTrace();
                             System.err.println("Off: " + writeOffset);
@@ -875,13 +877,28 @@ public class BaseAudioManager implements AudioManager {
                         pipedOutputStream.flush();
                     } catch (IOException ex) {
                         ex.printStackTrace();
-                        return null;
                     }
                 }
                 else {
                     noMoreInput = true;
+
+
+                    if (insertedSilence == false) {
+                        //Generate 100ms os silence to compensate conversion loss
+                        byte silenceSample = 0;
+                        int bps = getAudioFormatBytesPerSecond(sourceFormat);
+                        byte[] silence = new byte[bps / 10];
+                        for (int i = 0; i < silence.length; i++) {
+                            silence[i] = silenceSample;
+                        }
+                        try {
+                            pipedOutputStream.write(silence);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        insertedSilence = true;
+                    }
                 }
-                writeOffset += writeSize;
 
                 //Realloc array?
                 int availableSize = convertedArray.length - offset;
@@ -891,9 +908,22 @@ public class BaseAudioManager implements AudioManager {
 
                 //Read converted data and write it in array
                 try {
-                    if ((noMoreInput == true) && (convertedInputStream.available() < 1000)) {
+                    if ((noMoreInput == true) && (convertedInputStream.available() < (getAudioFormatBytesPerSecond(sourceFormat)) / 10)) {
                         System.out.println("STILL AVAL: "+convertedInputStream.available());
+
+                        //Read the flushed audio
+                        br = convertedInputStream.read(convertedArray, offset,
+                                bytesPerRead);
+
+                        //and go away
                         br = -1;
+
+                        //clearing the pipeline
+                        if (pipedInputStream.available() > 0) {
+                            byte[] clearBuffer = new byte[pipedInputStream.available()];
+                            pipedInputStream.read(clearBuffer);
+                        }
+
                     }
                     else {
                         br = convertedInputStream.read(convertedArray, offset,
