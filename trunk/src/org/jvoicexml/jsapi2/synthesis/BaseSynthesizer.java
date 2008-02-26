@@ -427,11 +427,10 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             synthThread = new Thread(this,
                                 "QueueManager_synthesizer_" +
                                 synthesizer.getEngineMode().getEngineName());
-            synthThread.start();
-
             playThread = new Thread(this,
                                 "QueueManager_play_" +
                                 synthesizer.getEngineMode().getEngineName());
+            synthThread.start();
             playThread.start();
         }
 
