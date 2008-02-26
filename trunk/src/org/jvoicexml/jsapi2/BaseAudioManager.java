@@ -111,6 +111,9 @@ public class BaseAudioManager implements AudioManager {
 
     protected AudioFormat targetAudioFormat;
 
+
+    private AudioFormatConverter formatConverter;
+
     /**
      * Class constructor.
      */
@@ -129,6 +132,7 @@ public class BaseAudioManager implements AudioManager {
                                             16000,
                                             false);
         targetAudioFormat = engineAudioFormat;
+        formatConverter = null;
     }
 
     /**
@@ -203,6 +207,13 @@ public class BaseAudioManager implements AudioManager {
 
             targetAudioFormat = getAudioFormat(url);
 
+            try {
+                formatConverter = new AudioFormatConverter(engineAudioFormat,
+                        targetAudioFormat);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
             //The synthesizer already converts audio, no conversion needed here
             //outputStream = getConvertedStream(os, engineAudioFormat, targetAudioFormat);
             outputStream = os;
@@ -249,6 +260,11 @@ public class BaseAudioManager implements AudioManager {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+        }
+
+        if (formatConverter != null) {
+            formatConverter.close();
+            formatConverter = null;
         }
 
         postAudioEvent(AudioEvent.AUDIO_STOPPED, AudioEvent.AUDIO_LEVEL_MIN);
@@ -718,14 +734,18 @@ public class BaseAudioManager implements AudioManager {
         return newArray;
     }
 
+    public ByteArrayInputStream getConvertedAudio(byte[] in) {
+        return formatConverter.getConvertedAudio(in);
+    }
+
     /**
      *
-     * @todo Have to process other silence bytes other than zero!
+     * @todo Have to process silence bytes other than zero!
      *
      * @param in byte[]
      * @return ByteArrayInputStream
      */
-    public ByteArrayInputStream getConvertedAudio(byte[] in) {
+    public ByteArrayInputStream getConvertedAudio_____OLD(byte[] in) {
 
         //Generate 100ms os silence to compensate conversion loss
         byte silenceSample = 0;
@@ -747,7 +767,7 @@ public class BaseAudioManager implements AudioManager {
             byte[] convertedArray = new byte[getAudioFormatBytesPerSecond(targetAudioFormat)];
             int offset = 0;
             int br;
-            int bytesPerRead = 1024;
+            int bytesPerRead = 512;
             do {
                 //Realloc array?
                 int availableSize = convertedArray.length - offset;
@@ -779,6 +799,120 @@ public class BaseAudioManager implements AudioManager {
 
             //Do not convert audio
             return new ByteArrayInputStream(in);
+        }
+
+    }
+
+
+    private class AudioFormatConverter {
+
+        private final PipedInputStream pipedInputStream;
+        private final PipedOutputStream pipedOutputStream;
+
+        private final InputStream convertedInputStream;
+
+        private final AudioFormat sourceFormat;
+        private final AudioFormat targetFormat;
+
+        private final int pipeSize;
+
+
+        public AudioFormatConverter(AudioFormat sourceFormat, AudioFormat targetFormat) throws
+                IOException {
+
+            this.sourceFormat = sourceFormat;
+            this.targetFormat = targetFormat;
+
+            //Conversion pipeline
+            pipeSize = getAudioFormatBytesPerSecond(sourceFormat) * 5;
+            pipedInputStream = new PipedInputStream(pipeSize);
+            pipedOutputStream = new PipedOutputStream(pipedInputStream);
+
+            convertedInputStream = getConvertedStream(pipedInputStream, sourceFormat, targetFormat);
+
+        }
+
+        public void close() {
+            try {
+                pipedInputStream.close();
+                pipedOutputStream.close();
+                convertedInputStream.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        public ByteArrayInputStream getConvertedAudio(byte[] in) {
+
+            //Make sure that pipeline is "as clean as possible"
+            //if (convertedInputStream.available() > 0) {}
+
+            //Allocate an array for 1 second of audio in target format
+            byte[] convertedArray = new byte[getAudioFormatBytesPerSecond(targetFormat)];
+            int offset = 0;
+            int br = -1;
+            int bytesPerRead = 512;
+            int writeOffset = 0;
+            int writeSize = 0;
+            boolean noMoreInput = false;
+            do {
+
+                //Inject new audio in pipeline
+                if (writeOffset < in.length) {
+                    try {
+                        writeSize = pipeSize - pipedInputStream.available();
+                        writeSize = Math.min(writeSize, in.length - writeOffset);
+                        try {
+                            pipedOutputStream.write(in, writeOffset,
+                                    writeSize);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            System.err.println("Off: " + writeOffset);
+                            System.err.println("WrtSz: " + writeSize);
+                            System.err.println("BUfferSz: " + in.length);
+
+                        }
+                        pipedOutputStream.flush();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                        return null;
+                    }
+                }
+                else {
+                    noMoreInput = true;
+                }
+                writeOffset += writeSize;
+
+                //Realloc array?
+                int availableSize = convertedArray.length - offset;
+                if (availableSize < bytesPerRead) {
+                    convertedArray = (byte[])resizeArray(convertedArray, convertedArray.length * 2);
+                }
+
+                //Read converted data and write it in array
+                try {
+                    if ((noMoreInput == true) && (convertedInputStream.available() < 1000)) {
+                        System.out.println("STILL AVAL: "+convertedInputStream.available());
+                        br = -1;
+                    }
+                    else {
+                        br = convertedInputStream.read(convertedArray, offset,
+                                bytesPerRead);
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    return null;
+                }
+                if (br != -1) {
+                    offset += br;
+                }
+                else {
+                    break;
+                }
+            } while (true);
+
+            //Return a new ByteArrayInputStream
+            return new ByteArrayInputStream(convertedArray, 0, offset);
         }
 
     }
