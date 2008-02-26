@@ -765,6 +765,12 @@ public class BaseAudioManager implements AudioManager {
                 }
             } while (true);
 
+            convertedStream.close();
+
+            sib.close();
+            silenceBais.close();
+            sourceBais.close();
+
             //Return a new ByteArrayInputStream
             return new ByteArrayInputStream(convertedArray, 0, offset);
 
@@ -774,6 +780,7 @@ public class BaseAudioManager implements AudioManager {
             //Do not convert audio
             return new ByteArrayInputStream(in);
         }
+
     }
 
   /*  private class OutputStreamConverter extends OutputStream {
