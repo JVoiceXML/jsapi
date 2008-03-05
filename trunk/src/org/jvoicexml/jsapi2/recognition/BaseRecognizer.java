@@ -77,6 +77,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import javax.speech.recognition.Rule;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 
 /**
@@ -515,31 +516,36 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             grammars.remove(grammarReference);
         }
 
-        //Build a new grammar set
-        String[] newGrammars = new String[grammars.keySet().size()];
+        //Build a new grammar set, with all enabled grammars
+        List<String> newGrammars = new ArrayList<String>();
 
         //Commit all grammars pending changes
         Iterator it = grammars.keySet().iterator();
         for (int i = 0; it.hasNext(); ++i){
             BaseRuleGrammar baseRuleGrammar = ((BaseRuleGrammar)grammars.get(it.next()));
-            baseRuleGrammar.commitChanges();
-            newGrammars[i] = baseRuleGrammar.toString(false);
+            //Flag that indicates if this baserulegrammar were changed
+            boolean grammarUpdated = baseRuleGrammar.commitChanges();
+            //Update "modified-flag"
+            existChanges = existChanges || grammarUpdated;
+            if (baseRuleGrammar.isEnabled())
+                newGrammars.add(baseRuleGrammar.toString(false));
         }
 
-        //Update "modified-flag"
-        existChanges = existChanges || newGrammars.length > 0;
+        //Set grammars
+        String[] ng = new String[newGrammars.size()];
+        newGrammars.toArray(ng);
+        boolean setGrammarsResult = setGrammars(ng);
 
-        //Set grammars and raise proper events
+        //Raise proper events
         if (existChanges) {
-            if (setGrammars(newGrammars)) {
+            if (setGrammarsResult) {
                 postEngineEvent(PAUSED, RESUMED, RecognizerEvent.CHANGES_COMMITTED);
                 for (Grammar g : grammars.values()) {
                     ((BaseGrammar) g).postGrammarEvent(speechEventExecutor,
                             new
                             GrammarEvent(g, GrammarEvent.GRAMMAR_CHANGES_COMMITTED));
                 }
-            }
-            else {
+            } else {
                 for (Grammar g : grammars.values()) {
                     ((BaseGrammar) g).postGrammarEvent(speechEventExecutor,
                             new

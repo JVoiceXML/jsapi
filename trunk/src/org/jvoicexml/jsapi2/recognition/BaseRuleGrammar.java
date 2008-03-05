@@ -876,7 +876,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     /**
      * @todo Throw GrammarException when there's no root rule defined
      */
-    protected void commitChanges(){
+    protected boolean commitChanges(){
+        boolean existChanges = uncommitedChanges.size() > 0;
+
         while (uncommitedChanges.size() > 0) {
             RuleGrammarOperation ruleGrammarOperation = uncommitedChanges.
                     remove(0);
@@ -886,6 +888,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
                 ex.printStackTrace();
             }
         }
+
+        return existChanges;
     }
 
 }
