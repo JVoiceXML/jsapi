@@ -824,7 +824,7 @@ public class BaseAudioManager implements AudioManager {
             this.targetFormat = targetFormat;
 
             //Conversion pipeline
-            pipeSize = getAudioFormatBytesPerSecond(sourceFormat) * 5;
+            pipeSize = getAudioFormatBytesPerSecond(sourceFormat) * 40;
             pipedInputStream = new PipedInputStream(pipeSize);
             pipedOutputStream = new PipedOutputStream(pipedInputStream);
 
@@ -909,7 +909,6 @@ public class BaseAudioManager implements AudioManager {
                 //Read converted data and write it in array
                 try {
                     if ((noMoreInput == true) && (convertedInputStream.available() < (getAudioFormatBytesPerSecond(sourceFormat)) / 10)) {
-                        System.out.println("STILL AVAL: "+convertedInputStream.available());
 
                         //Read the flushed audio
                         br = convertedInputStream.read(convertedArray, offset,
