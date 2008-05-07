@@ -527,7 +527,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         }
 
         private void playItens(){
-            final int BUFFER_LENGTH = 512;
+            final int BUFFER_LENGTH = 160;
 
              QueueItem item;
              int playIndex = 0;
@@ -535,6 +535,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
              int wordStart = 0;
              int phonemeIndex = 0;
              double timeNextPhone = 0;
+             long nextTimeStamp = 0;
 
              //AudioFormat audioFormat = ((BaseAudioManager)synthesizer.getAudioManager()).getEngineAudioFormat();
              AudioFormat audioFormat = ((BaseAudioManager)synthesizer.getAudioManager()).getTargetAudioFormat();
@@ -573,6 +574,11 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                  timeNextPhone = 0;
                  byte[] buffer = new byte[BUFFER_LENGTH];
                  int bytesRead = 0;
+
+                 long bps = audioFormat.getChannels();
+                 bps *= audioFormat.getSampleRate();
+                 bps *= (audioFormat.getSampleSizeInBits() / 8);
+
                  try {
                      while (true) {
 
@@ -636,8 +642,26 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
                          playIndex++;
 
                          fos.write(buffer, 0, bytesRead);
+
+                         long sleepTime = 0;
+                         while ((sleepTime = nextTimeStamp - System.currentTimeMillis()) > 0) {
+                             try {
+                                 Thread.currentThread().sleep(sleepTime / 2);
+                             } catch (InterruptedException ex) {
+                             }
+                         }
+
                          ((BaseAudioManager) getAudioManager()).
                                  getOutputStream().write(buffer, 0, bytesRead);
+
+                         //update next timestamp
+                         long dataTime = (long) Math.ceil(1000 * bytesRead / bps);
+                         long systm;
+                         if (nextTimeStamp - (systm = System.currentTimeMillis()) < -dataTime)
+                             nextTimeStamp = systm + dataTime;
+                         else
+                             nextTimeStamp += dataTime; 
+
                      }
                  } catch (IOException ex) {
                      ex.printStackTrace();
