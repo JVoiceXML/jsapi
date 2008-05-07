@@ -59,7 +59,6 @@ import javax.speech.Engine;
  * interface.
  */
 public abstract class BaseEngineProperties implements EngineProperties {
-
     /**
      * List of <code>PropertyChangeListeners</code> registered for
      * <code>PropertyChangeEvents</code> on this object.
