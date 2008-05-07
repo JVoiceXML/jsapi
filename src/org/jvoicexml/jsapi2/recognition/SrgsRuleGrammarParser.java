@@ -92,9 +92,6 @@ public class SrgsRuleGrammarParser {
             Node grammarNode = (Node) xpath.evaluate("/grammar", builder.parse(inputSource), XPathConstants.NODE);
 
             Rule[] rules = parseGrammar(grammarNode);
-            for (Rule r : rules) {
-                System.out.println(r);
-            }
 
             //Extract header from grammar
             NamedNodeMap docAttributes = grammarNode.getAttributes();
@@ -136,7 +133,6 @@ public class SrgsRuleGrammarParser {
                         scope = Rule.PUBLIC_SCOPE;
                 }
 
-                System.out.println("Processing rule: " + ruleId);
                 ArrayList<RuleComponent> rcs = evalChildNodes(ruleNode);
 //                NodeList nodes = (NodeList)xpath.evaluate("child::node()", ruleNode, XPathConstants.NODESET);
 //                for (int k = 0; k < nodes.getLength(); k++) {
@@ -164,21 +160,17 @@ public class SrgsRuleGrammarParser {
         ArrayList<RuleComponent> ruleComponents = new ArrayList<RuleComponent>();
         String nodeName = node.getNodeName();
         if (nodeName.equalsIgnoreCase("#text")) {
-            System.out.println("Processing a #text");
             String text = node.getNodeValue().trim();
             if (text.length() > 0) {
-                System.out.println(text);
                 RuleToken ruleToken = new RuleToken(text);
                 ruleComponents.add(ruleToken);
             }
         } else if (nodeName.equalsIgnoreCase("one-of")) {
-            System.out.println("Processing a one-of");
             ArrayList<RuleComponent> rcs = evalChildNodes(node);
             RuleAlternatives ra = new RuleAlternatives(rcs.toArray(new
                     RuleComponent[] {}));
             ruleComponents.add(ra);
         } else if (nodeName.equalsIgnoreCase("item")) {
-            System.out.println("Processing a item");
             int repeatMin = -1;
             int repeatMax = -1;
             int repeatProb = -1;
@@ -225,7 +217,6 @@ public class SrgsRuleGrammarParser {
             }
 
         } else if (nodeName.equalsIgnoreCase("ruleref")) {
-            System.out.println("Processing a ruleref");
             String specialStr = (String) xpath.evaluate("@special", node);
             if (specialStr != "") {
                 if (specialStr.equalsIgnoreCase("NULL")) {
@@ -253,13 +244,11 @@ public class SrgsRuleGrammarParser {
                 }
             }
         } else if (nodeName.equalsIgnoreCase("token")) {
-            System.out.println("Processing a token");
             String tokenText = (String) xpath.evaluate("*", node,
                     XPathConstants.STRING);
             RuleToken ruleToken = new RuleToken(tokenText);
             ruleComponents.add(ruleToken);
         } else if (nodeName.equalsIgnoreCase("tag")) {
-            System.out.println("Processing a tag");
             Object tagObject = xpath.evaluate("*", node, XPathConstants.STRING);
             RuleTag ruleTag = new RuleTag(tagObject);
             ruleComponents.add(ruleTag);
