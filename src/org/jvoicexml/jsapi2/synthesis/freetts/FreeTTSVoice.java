@@ -1,6 +1,5 @@
 package org.jvoicexml.jsapi2.synthesis.freetts;
 
-
 /**
  * Copyright 2003 Sun Microsystems, Inc.
  *
@@ -12,35 +11,34 @@ package org.jvoicexml.jsapi2.synthesis.freetts;
 /**
  * Extends the BaseVoice class to encapsulate FreeTTSSynthesizer specific data.
  */
-public class FreeTTSVoice extends javax.speech.synthesis.Voice{
-
+public class FreeTTSVoice extends javax.speech.synthesis.Voice {
+    /** The encapsulated voice. */
     private com.sun.speech.freetts.Voice freettsVoice;
 
     /**
      * Constructs a FreeTTSVoice
-     *
-     * @param freettsVoice the freetts voice
-     * @param validatorName the classname of the validator to use
+     * 
+     * @param freettsVoice
+     *                the freetts voice
+     * @param validatorName
+     *                the classname of the validator to use
      */
-    public FreeTTSVoice(com.sun.speech.freetts.Voice freettsVoice) {
-        super(freettsVoice.getLocale(),
-              freettsVoice.getName(),
-              genderToInt(freettsVoice.getGender()),
-              ageToInt(freettsVoice.getAge()),
-              VARIANT_DONT_CARE);
+    public FreeTTSVoice(com.sun.speech.freetts.Voice voice) {
+        super(voice.getLocale(), voice.getName(),
+                genderToInt(voice.getGender()), ageToInt(voice
+                        .getAge()), VARIANT_DONT_CARE);
 
+        freettsVoice = voice;
 
-	this.freettsVoice = freettsVoice;
-
-
-      //  voiceId = freettsVoice.getName()+Math.random();
+        // voiceId = freettsVoice.getName()+Math.random();
     }
 
     /**
      * Convert a freetts gender to jsapi gender
-     *
-     * @param gender the freetts gender
-     *
+     * 
+     * @param gender
+     *                the freetts gender
+     * 
      * @return the jsapi gender
      */
     private static int genderToInt(com.sun.speech.freetts.Gender gender) {
@@ -60,9 +58,10 @@ public class FreeTTSVoice extends javax.speech.synthesis.Voice{
 
     /**
      * Convert a freetts age to jsapi age
-     *
-     * @param age the freetts age
-     *
+     * 
+     * @param age
+     *                the freetts age
+     * 
      * @return the jsapi age
      */
     private static int ageToInt(com.sun.speech.freetts.Age age) {
@@ -88,21 +87,19 @@ public class FreeTTSVoice extends javax.speech.synthesis.Voice{
 
     /**
      * Gets a string representation of the object
-     *
+     * 
      * @return the name of this voice
      */
     public String toString() {
-	return freettsVoice.getName();
+        return freettsVoice.getName();
     }
-
 
     /**
      * Gets a FreeTTS com.sun.speech.freetts.Voice from this JSAPI voice
-     *
+     * 
      * @return a FreeTTS Voice or null, if the voice cannot be found
      */
     public synchronized com.sun.speech.freetts.Voice getVoice() {
         return freettsVoice;
     }
 }
-

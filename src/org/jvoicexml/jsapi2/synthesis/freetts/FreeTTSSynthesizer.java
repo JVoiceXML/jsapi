@@ -305,8 +305,4 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
     protected boolean handleCancel(){
         return false;
     }
-
-
-
-
 }

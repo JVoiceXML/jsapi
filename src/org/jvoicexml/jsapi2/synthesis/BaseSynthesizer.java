@@ -255,6 +255,8 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             try {
                 waitEngineState(ALLOCATED);
             } catch (InterruptedException ex) {
+                throw new EngineStateException(
+                        "wait engine state interrupted: " + ex.getMessage());
             }
         }
 

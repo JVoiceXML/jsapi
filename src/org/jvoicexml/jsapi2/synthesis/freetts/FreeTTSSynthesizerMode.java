@@ -26,6 +26,11 @@ public class FreeTTSSynthesizerMode extends SynthesizerMode implements
 
     //   private Vector<FreeTTSVoice> allVoices;
 
+    /**
+     * Constructs a new object.
+     */
+    public FreeTTSSynthesizerMode() {
+    }
 
     /**
      * Creates a fully-specified descriptor.
@@ -37,10 +42,7 @@ public class FreeTTSSynthesizerMode extends SynthesizerMode implements
      */
     public FreeTTSSynthesizerMode(String engineName, String modeName,
                                   Locale locale, FreeTTSVoice[] voices) {
-//        super(engineName, modeName, false, false, locale, Boolean.FALSE, null);
-        //super(locale);
         super(engineName, modeName, null, null, null, voices);
-        //  this.allVoices = allVoices;
     }
 
 
@@ -48,7 +50,7 @@ public class FreeTTSSynthesizerMode extends SynthesizerMode implements
      * Constructs a FreeTTSSynthesizer with the properties of this mode
      * descriptor.
      *
-     * @return a synthesizer that mathes the mode
+     * @return a synthesizer that matches the mode
      *
      * @throws IllegalArgumentException  if the properties of this
      * 		descriptor do not match any known engine or mode
@@ -58,8 +60,6 @@ public class FreeTTSSynthesizerMode extends SynthesizerMode implements
      */
     public Engine createEngine() throws IllegalArgumentException,
             EngineException, SecurityException {
-        FreeTTSSynthesizer s = new FreeTTSSynthesizer(this);
-        return s;
-
+        return new FreeTTSSynthesizer(this);
     }
 }
