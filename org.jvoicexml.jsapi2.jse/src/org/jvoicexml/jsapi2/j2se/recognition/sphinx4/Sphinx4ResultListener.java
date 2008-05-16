@@ -27,11 +27,12 @@
 
 package org.jvoicexml.jsapi2.j2se.recognition.sphinx4;
 
+import java.util.logging.Logger;
+
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultListener;
 
-import org.apache.log4j.Logger;
 
 
 /**
@@ -50,7 +51,7 @@ class Sphinx4ResultListener
         implements ResultListener {
     /** Logger for this class. */
     private static final Logger LOGGER =
-            Logger.getLogger(Sphinx4ResultListener.class);
+            Logger.getLogger(Sphinx4ResultListener.class.getName());
 
     /** The recognizer which is notified when a result is obtained. */
     private final Sphinx4Recognizer recognizer;

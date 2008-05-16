@@ -31,12 +31,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.speech.EngineException;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.RuleGrammar;
 
-import org.apache.log4j.Logger;
 import org.jvoicexml.jsapi2.j2se.BaseAudioManager;
 import org.jvoicexml.jsapi2.j2se.recognition.BaseRecognizer;
 
@@ -69,7 +70,7 @@ final class Sphinx4Recognizer
         extends BaseRecognizer {
     /** Logger for this class. */
     private static final Logger LOGGER =
-            Logger.getLogger(Sphinx4Recognizer.class);
+            Logger.getLogger(Sphinx4Recognizer.class.getName());
 
     /** Msecs to sleep before the status of the recognizer is checked again. */
     private static final long SLEEP_MSEC = 50;
@@ -113,7 +114,8 @@ final class Sphinx4Recognizer
             }
 
         } catch (Exception ex) {
-            LOGGER.error("error creating engine properties", ex);
+            LOGGER.warning("error creating engine properties "
+                    + ex.getMessage());
         }
 
         resultListener = new Sphinx4ResultListener(this);
@@ -124,20 +126,20 @@ final class Sphinx4Recognizer
      */
     public boolean handleResume() {
         if (recognizer == null) {
-            LOGGER.warn("no recognizer: cannot resume!");
+            LOGGER.warning("no recognizer: cannot resume!");
             return false;
         }
 
         if (recognitionThread != null) {
-            LOGGER.debug("recognition thread already started.");
+            LOGGER.fine("recognition thread already started.");
             return false;
         }
 
         recognitionThread = new RecognitionThread(this);
         recognitionThread.start();
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("recognition started");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("recognition started");
         }
 
         return true;
@@ -148,7 +150,7 @@ final class Sphinx4Recognizer
      */
     public boolean handlePause() {
         if (recognitionThread == null) {
-            LOGGER.warn("cannot pause, no decoder started");
+            LOGGER.warning("cannot pause, no decoder started");
             return false;
         }
 
@@ -179,8 +181,8 @@ final class Sphinx4Recognizer
             return false;
         }
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("allocating recognizer...");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("allocating recognizer...");
         }
 
         try {
@@ -204,9 +206,9 @@ final class Sphinx4Recognizer
            ioe.printStackTrace();
         }
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("...allocated");
-            LOGGER.debug("state: " + recognizer.getState());
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("...allocated");
+            LOGGER.fine("state: " + recognizer.getState());
         }
 
         setEngineState(CLEAR_ALL_STATE, ALLOCATED);
@@ -223,8 +225,8 @@ final class Sphinx4Recognizer
      */
     public boolean handleDeallocate() {
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("deallocating recognizer...");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("deallocating recognizer...");
         }
 
         // Stop the decoder thread.
@@ -236,14 +238,15 @@ final class Sphinx4Recognizer
             try {
                 Thread.sleep(SLEEP_MSEC);
             } catch (InterruptedException ie) {
-                LOGGER.warn("error waiting for recognizer to deallocate", ie);
+                LOGGER.warning("error waiting for recognizer to deallocate "
+                        + ie.getMessage());
             }
         }
         recognizer.resetMonitors();
    //////////////////////////////     recognizer.removeResultListener(resultListener);
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("...deallocated");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("...deallocated");
         }
 
         return true;
@@ -290,12 +293,12 @@ final class Sphinx4Recognizer
      */
     private void stopRecognitionThread() {
         if (recognitionThread == null) {
-            LOGGER.debug("recognition thread already stopped");
+            LOGGER.fine("recognition thread already stopped");
             return;
         }
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("stopping recognition thread...");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("stopping recognition thread...");
         }
         recognitionThread.stopRecognition();
 
@@ -307,16 +310,16 @@ final class Sphinx4Recognizer
                 Thread.sleep(SLEEP_MSEC);
                 sleepTime += SLEEP_MSEC;
             } catch (InterruptedException ie) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.error("recognition thread interrupted");
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("recognition thread interrupted");
                 }
             }
         }
 
         recognitionThread = null;
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("recognition thread stopped");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("recognition thread stopped");
         }
     }
 

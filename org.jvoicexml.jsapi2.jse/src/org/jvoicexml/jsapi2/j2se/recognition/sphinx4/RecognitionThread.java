@@ -27,10 +27,12 @@
 package org.jvoicexml.jsapi2.j2se.recognition.sphinx4;
 
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;
-import org.apache.log4j.Logger;
 
 /**
  * Recognition thread to run the recognizer in parallel.
@@ -48,7 +50,7 @@ final class RecognitionThread
         extends Thread {
     /** Logger for this class. */
     private static final Logger LOGGER =
-            Logger.getLogger(RecognitionThread.class);
+            Logger.getLogger(RecognitionThread.class.getName());
 
     /** The wrapper for the sphinx4 recognizer. */
     private Sphinx4Recognizer recognizer;
@@ -66,8 +68,8 @@ final class RecognitionThread
      * Runs this thread.
      */
     public void run() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("recognition thread started");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("recognition thread started");
         }
 
         final Recognizer rec = recognizer.getRecognizer();
@@ -82,15 +84,15 @@ final class RecognitionThread
         }
 
         if (started) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("start recognizing ..");
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("start recognizing ..");
             }
 
             recognize(rec, microphone);
         }
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("stopping recognition thread...");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("stopping recognition thread...");
         }
 
         if (microphone != null) {
@@ -99,8 +101,8 @@ final class RecognitionThread
                 microphone.stopRecording();
             }
         }
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("recognition thread terminated");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("recognition thread terminated");
         }
     }
 
@@ -113,26 +115,26 @@ final class RecognitionThread
     private void recognize(final Recognizer rec, final Microphone mic) {
         while (hasMoreData(mic) && !isInterrupted()) {
             try {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("recognizing...");
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("recognizing...");
                     String [] grammars =
                         recognizer.getRuleGrammar().listRuleNames();
-                    LOGGER.debug("RuleGrammars that will be used:");
+                    LOGGER.fine("RuleGrammars that will be used:");
                     for (int i = 0; i < grammars.length; i++) {
-                        LOGGER.debug("grammar: '" + grammars[i].toString()
+                        LOGGER.fine("grammar: '" + grammars[i].toString()
                                 + "'");
                     }
                 }
 
                 rec.recognize();
             } catch (IllegalArgumentException iae) {
-                LOGGER.debug("unmatched utterance", iae);
+                LOGGER.fine("unmatched utterance " + iae.getMessage());
             }
         }
     }
 
     /**
-     * Checks, if th emicrophone has more data to deliver.
+     * Checks, if the emicrophone has more data to deliver.
      * @param mic The microphone or <code>null</code> if the data processor
      * is not a microphone.
      * @return <code>true</code> if there is more data.
