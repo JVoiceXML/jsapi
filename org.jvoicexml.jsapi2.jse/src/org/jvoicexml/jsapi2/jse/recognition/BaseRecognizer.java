@@ -78,6 +78,10 @@ import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.SpeakerManager;
 
 import org.jvoicexml.jsapi2.jse.BaseEngine;
+import javax.speech.recognition.GrammarManager;
+import javax.speech.recognition.GrammarListener;
+import java.util.Locale;
+import java.io.InputStreamReader;
 
 
 /**
@@ -92,11 +96,13 @@ import org.jvoicexml.jsapi2.jse.BaseEngine;
  * modify this implementation.
  *
  */
-abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
+abstract public class BaseRecognizer extends BaseEngine implements Recognizer, GrammarManager {
 
     protected Vector resultListeners;
     protected HashMap<String, Grammar> grammars;
     protected boolean hasModalGrammars = false;
+
+    protected Vector grammarListeners;
 
     protected boolean supportsNULL = true;
     protected boolean supportsVOID = true;
@@ -135,6 +141,11 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         resultMask = ResultEvent.DEFAULT_MASK;
         grammarMask = GrammarEvent.DEFAULT_MASK;
         setEngineMask(getEngineMask() | RecognizerEvent.DEFAULT_MASK);
+        grammarListeners = new Vector();
+    }
+
+    public GrammarManager getGrammarManager() {
+        return this;
     }
 
 
@@ -291,7 +302,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     protected boolean isActive(Grammar grammar) {
         //[[[WDW - check engineState?]]]
-        if (!grammar.isEnabled()) {
+        if (!grammar.isActivatable()) {
             return false;
         } else if (grammar.getActivationMode() == Grammar.ACTIVATION_GLOBAL) {
             return true;
@@ -338,19 +349,47 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
 
     public void postEngineEvent(long oldState, long newState, int eventType) {
-        postEngineEvent(oldState, newState, eventType, 0);
+        try {
+            switch (eventType) {
+            case RecognizerEvent.SPEECH_STARTED:
+            case RecognizerEvent.SPEECH_STOPPED:
+            case RecognizerEvent.RECOGNIZER_BUFFERING:
+            case RecognizerEvent.RECOGNIZER_NOT_BUFFERING:
+                postEngineEvent(oldState, newState, eventType, 0); /** @todo DGMR rever este 0; nao faltara o audioposition nos parametros da funcao? o speechstart, o stop o buffering e not buferring passam por aqui? */
+                break;
+            default:
+                postEngineEvent(oldState, newState, eventType,
+                                RecognizerEvent.UNKNOWN_AUDIO_POSITION);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void postEngineEvent(long oldState, long newState, int eventType,
                                 long audioPosition) {
-        final RecognizerEvent event = new RecognizerEvent(this,
-                eventType,
-                oldState,
-                newState,
-                null,
-                null,
-                audioPosition);
-        postEngineEvent(event);
+        try{
+            switch (eventType) {
+            case RecognizerEvent.SPEECH_STARTED:
+            case RecognizerEvent.SPEECH_STOPPED:
+            case RecognizerEvent.RECOGNIZER_BUFFERING:
+            case RecognizerEvent.RECOGNIZER_NOT_BUFFERING:
+                break;
+            default:
+                audioPosition = RecognizerEvent.UNKNOWN_AUDIO_POSITION;
+            }
+
+            final RecognizerEvent event = new RecognizerEvent(this,
+                    eventType,
+                    oldState,
+                    newState,
+                    null,
+                    null,
+                    audioPosition);
+            postEngineEvent(event);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     protected void postResultEvent(final ResultEvent event) {
@@ -406,6 +445,14 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         resultListeners.removeElement(listener);
     }
 
+    public void addGrammarListener(GrammarListener listener) {
+        grammarListeners.addElement(listener);
+    }
+
+    public void removeGrammarListener(GrammarListener listener) {
+        grammarListeners.removeElement(listener);
+    }
+
     /**
      *
      * @param grammarReference String
@@ -417,6 +464,22 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     public RuleGrammar createRuleGrammar(String grammarReference,
                                          String rootName) throws
+            IllegalArgumentException, EngineStateException, EngineException {
+        return createRuleGrammar(grammarReference, rootName, Locale.getDefault());
+    }
+
+    /**
+     *
+     * @param grammarReference String
+     * @param rootName String
+     * @return RuleGrammar
+     * @throws IllegalArgumentException
+     * @throws EngineStateException
+     * @throws EngineException
+     */
+    public RuleGrammar createRuleGrammar(String grammarReference,
+                                         String rootName,
+                                         Locale locale) throws
             IllegalArgumentException, EngineStateException, EngineException {
 
         //Validate current state
@@ -435,6 +498,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
         //Create grammar
         BaseRuleGrammar brg = new BaseRuleGrammar(this, grammarReference);
+        brg.setAttribute("xml:lang", locale.toString());
         brg.setRoot(rootName);
 
         //Register it
@@ -527,7 +591,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             boolean grammarUpdated = baseRuleGrammar.commitChanges();
             //Update "modified-flag"
             existChanges = existChanges || grammarUpdated;
-            if (baseRuleGrammar.isEnabled())
+            if (baseRuleGrammar.isActivatable())
                 newGrammars.add(baseRuleGrammar.toString(false));
         }
 
@@ -590,7 +654,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      * @return RuleGrammar
      * @throws EngineStateException
      */
-    public RuleGrammar getRuleGrammar(String grammarReference) throws
+    public Grammar getGrammar(String grammarReference) throws
             EngineStateException {
 
         //Validate current state
@@ -602,7 +666,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             }
         }
 
-        return (RuleGrammar) grammars.get(grammarReference);
+        return grammars.get(grammarReference);
     }
 
     /**
@@ -616,10 +680,10 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      * @throws EngineStateException
      * @throws EngineException
      */
-    public RuleGrammar loadRuleGrammar(String grammarReference) throws
+    public Grammar loadGrammar(String grammarReference, String mediaType) throws
             GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
-        return loadRuleGrammar(grammarReference, true, false, null);
+        return loadGrammar(grammarReference, mediaType, true, false, null);
     }
 
     /**
@@ -637,10 +701,11 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      * @throws EngineStateException
      * @throws EngineException
      */
-    public RuleGrammar loadRuleGrammar(String grammarReference,
-                                       boolean loadReferences,
-                                       boolean reloadGrammars,
-                                       Vector loadedGrammars) throws
+    public Grammar loadGrammar(String grammarReference,
+                               String mediaType,
+                               boolean loadReferences,
+                               boolean reloadGrammars,
+                               Vector loadedGrammars) throws
             GrammarException, IllegalArgumentException,
             IOException, EngineStateException, EngineException {
 
@@ -654,7 +719,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         }
 
         //Make sure that recognizer supports markup
-        if (getEngineMode().getMarkupSupport() == false) {
+        if (getEngineMode().getSupportsMarkup() == false) {
             throw new EngineException("Engine doesn't support markup");
         }
 
@@ -690,7 +755,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      * @throws EngineStateException
      * @throws EngineException
      */
-    public RuleGrammar loadRuleGrammar(String grammarReference, Reader reader) throws
+    public Grammar loadGrammar(String grammarReference, String mediaType, Reader reader) throws
             GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
 
@@ -704,7 +769,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         }
 
         //Make sure that recognizer supports markup
-        if (getEngineMode().getMarkupSupport() == false) {
+        if (getEngineMode().getSupportsMarkup() == false) {
             throw new EngineException("Engine doesn't support markup");
         }
 
@@ -738,12 +803,40 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      * @throws EngineStateException
      * @throws EngineException
      */
-    public RuleGrammar loadRuleGrammar(String grammarReference,
+    public Grammar loadGrammar(String grammarReference,
+                                       String mediaType,
                                        String grammarText) throws
             GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
-        return loadRuleGrammar(grammarReference, new StringReader(grammarText));
+        return loadGrammar(grammarReference, mediaType, new StringReader(grammarText));
     }
+
+    /**
+     *
+     * @param grammarReference String
+     * @param mediaType String
+     * @param byteStream InputStream
+     * @param encoding String
+     * @return Grammar
+     * @throws GrammarException
+     * @throws IllegalArgumentException
+     * @throws IOException
+     * @throws EngineStateException
+     * @throws EngineException
+     */
+    public Grammar loadGrammar(String grammarReference,
+                               String mediaType,
+                               InputStream byteStream,
+                               String encoding)
+            throws GrammarException,
+            IllegalArgumentException,
+            IOException,
+            EngineStateException,
+            EngineException {
+
+        return loadGrammar(grammarReference, mediaType, new InputStreamReader(byteStream, encoding));
+    }
+
 
     public void setGrammarMask(int mask) {
         grammarMask = mask;

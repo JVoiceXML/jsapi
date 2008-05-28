@@ -126,11 +126,11 @@ public class SrgsRuleGrammarParser {
             for (int i = 0; i < ruleNodes.getLength(); i++) {
                 Node ruleNode = ruleNodes.item(i);
                 String ruleId = xpath.evaluate("@id", ruleNode);
-                int scope = Rule.PRIVATE_SCOPE;
+                int scope = Rule.PRIVATE;
                 String scopeStr = xpath.evaluate("@scope", ruleNode);
                 if (scopeStr != "") {
                     if (scopeStr.equalsIgnoreCase("public"))
-                        scope = Rule.PUBLIC_SCOPE;
+                        scope = Rule.PUBLIC;
                 }
 
                 ArrayList<RuleComponent> rcs = evalChildNodes(ruleNode);

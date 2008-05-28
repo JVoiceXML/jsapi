@@ -155,6 +155,20 @@ abstract public class BaseEngine implements Engine {
     }
 
     /**
+     * Blocks the calling Thread until the Engine is in a specified state.
+     *
+     * @param state long
+     * @return long
+     * @throws InterruptedException
+     * @throws IllegalArgumentException
+     * @throws IllegalStateException
+     */
+    public long waitEngineState(long state) throws InterruptedException,
+            IllegalArgumentException, IllegalStateException {
+        return waitEngineState(state, 0);
+    }
+
+    /**
      * Blocks the calling thread until this <code>Engine</code>
      * is in a specified state.
      *
@@ -177,21 +191,27 @@ abstract public class BaseEngine implements Engine {
      * @throws IllegalArgumentException
      *   if the specified state is unreachable
      */
-    public void waitEngineState(long state) throws InterruptedException,
+    public long waitEngineState(long state, long timeout) throws InterruptedException,
             IllegalArgumentException, IllegalStateException {
         synchronized (engineStateLock) {
             if (isValid(state) == false)
                 throw new IllegalArgumentException("Cannot wait for impossible state: " + stateToString(state));
 
             do {
-                if (testEngineState(state)) return;
+                if (testEngineState(state)) return state;
 
                 if (isReachable(state) == false)
                     throw new IllegalStateException("State is not reachable: " + stateToString(state));
 
                 //Wait for a state change
-                engineStateLock.wait();
-
+                if (timeout > 0) {
+                    engineStateLock.wait(timeout);
+                    return getEngineState();
+                }
+                else {
+                    //Will wait forever to reach that state
+                	engineStateLock.wait();
+                }
             } while (true);
         }
     }

@@ -71,7 +71,7 @@ public class RuleParser {
         Vector p = null;
         Vector<RuleParse> t = new Vector<RuleParse>();
         for (int j=0; j < rNames.length; j++) {
-            if ((ruleName == null) && !(grammar.isEnabled(rNames[j]))) {
+            if ((ruleName == null) && !(grammar.isActivatable(rNames[j]))) {
                 continue;
             }
             startRule = grammar.getRule(rNames[j]).getRuleComponent();
@@ -135,7 +135,7 @@ public class RuleParser {
                 if ((gname != null) && (gname.length() > 0)) {
                     RuleGrammar RG1 = null;
                     try {
-                        RG1 = theRec.getRuleGrammar(gname);
+                        RG1 = (RuleGrammar)theRec.getGrammarManager().getGrammar(gname);
                     } catch (EngineStateException ex) {
                         ex.printStackTrace();
                     }

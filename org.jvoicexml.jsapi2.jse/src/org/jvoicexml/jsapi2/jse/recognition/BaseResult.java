@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.Vector;
 import javax.speech.recognition.ResultToken;
 import javax.speech.recognition.ResultListener;
-import javax.speech.recognition.ResultException;
+import javax.speech.recognition.ResultStateException;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.AudioSegment;
 import javax.speech.recognition.RuleGrammar;
@@ -33,6 +33,7 @@ import java.util.StringTokenizer;
 import javax.speech.recognition.GrammarException;
 import java.util.Enumeration;
 import javax.speech.SpeechEventExecutor;
+import javax.speech.recognition.RuleReference;
 
 public class BaseResult implements Result, FinalResult, FinalRuleResult, Serializable, Cloneable {
     private Vector resultListeners;
@@ -194,7 +195,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * for this result.
      * From javax.speech.recognition.FinalResult.
      */
-    public boolean isTrainingInfoAvailable() throws ResultException {
+    public boolean isTrainingInfoAvailable() throws ResultStateException {
         checkResultState(UNFINALIZED);
         return false;
     }
@@ -203,7 +204,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * Release training info for this FinalResult.
      * From javax.speech.recognition.FinalResult.
      */
-    public void releaseTrainingInfo() throws ResultException {
+    public void releaseTrainingInfo() throws ResultStateException {
         checkResultState(UNFINALIZED);
     }
 
@@ -216,7 +217,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
                                 ResultToken fromToken,
                                 ResultToken toToken,
                                 int correctionType)
-        throws ResultException, IllegalArgumentException
+        throws ResultStateException, IllegalArgumentException
     {
         checkResultState(UNFINALIZED);
     }
@@ -225,7 +226,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * Determine if audio is available for this FinalResult.
      * From javax.speech.recognition.FinalResult.
      */
-    public boolean isAudioAvailable() throws ResultException {
+    public boolean isAudioAvailable() throws ResultStateException {
         checkResultState(UNFINALIZED);
         return false;
     }
@@ -234,7 +235,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * Release the audio for this FinalResult.
      * From javax.speech.recognition.FinalResult.
      */
-    public void releaseAudio() throws ResultException {
+    public void releaseAudio() throws ResultStateException {
         checkResultState(UNFINALIZED);
     }
 
@@ -242,7 +243,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * Get the audio for this FinalResult.
      * From javax.speech.recognition.FinalResult.
      */
-    public AudioSegment getAudio() throws ResultException {
+    public AudioSegment getAudio() throws ResultStateException {
         checkResultState(UNFINALIZED);
         return null;
     }
@@ -252,7 +253,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * From javax.speech.recognition.FinalResult.
      */
     public AudioSegment getAudio(ResultToken from, ResultToken to)
-        throws ResultException
+        throws ResultStateException
     {
         checkResultState(UNFINALIZED);
         return null;
@@ -268,10 +269,10 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * Return the number of guesses for this FinalRuleResult.
      * From javax.speech.recognition.FinalRuleResult.
      */
-    public int getNumberAlternatives() throws ResultException {
+    public int getNumberAlternatives() throws ResultStateException {
         checkResultState(UNFINALIZED);
         if (!(grammar instanceof RuleGrammar)) {
-            throw new ResultException("Result is not a FinalRuleResult");
+            throw new ResultStateException("Result is not a FinalRuleResult");
         }
         return 1;
     }
@@ -281,11 +282,11 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * From javax.speech.recognition.FinalRuleResult.
      */
     public ResultToken[] getAlternativeTokens(int nBest)
-        throws ResultException
+        throws ResultStateException
     {
         checkResultState(UNFINALIZED);
         if (!(grammar instanceof RuleGrammar)) {
-            throw new ResultException("Result is not a FinalRuleResult");
+            throw new ResultStateException("Result is not a FinalRuleResult");
         }
         if (nBest == 0) {
             return getBestTokens();
@@ -299,11 +300,11 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * From javax.speech.recognition.FinalRuleResult.
      */
     public Grammar getGrammar(int nBest)
-        throws ResultException
+        throws ResultStateException
     {
         checkResultState(UNFINALIZED);
         if (!(grammar instanceof RuleGrammar)) {
-            throw new ResultException("Result is not a FinalRuleResult");
+            throw new ResultStateException("Result is not a FinalRuleResult");
         }
         if (nBest == 0) {
             return (RuleGrammar) grammar;
@@ -317,11 +318,11 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * From javax.speech.recognition.FinalRuleResult.
      */
     public String getRuleName(int nBest)
-        throws ResultException
+        throws ResultStateException
     {
         checkResultState(UNFINALIZED);
         if (!(grammar instanceof RuleGrammar)) {
-            throw new ResultException("Result is not a FinalRuleResult");
+            throw new ResultStateException("Result is not a FinalRuleResult");
         }
         if (nBest == 0) {
             return ruleName;
@@ -335,14 +336,21 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * From javax.speech.recognition.FinalRuleResult.
      */
     public Object[] getTags(int nBest)
-            throws IllegalArgumentException, ResultException
+            throws IllegalArgumentException, ResultStateException
     {
         checkResultState(UNFINALIZED);
         if (!(grammar instanceof RuleGrammar)) {
-            throw new ResultException("Result is not a FinalRuleResult");
+            throw new ResultStateException("Result is not a FinalRuleResult");
         }
         return tags;
     }
+
+    public RuleReference getRuleReference(int nBest) throws ResultStateException, IllegalArgumentException, IllegalStateException {
+        throw new RuntimeException("BaseResult.getRuleReference NOT IMPLEMENTED");
+        //return null;
+    }
+
+
 //////////////////////
 // End FinalRuleResult Methods
 //////////////////////
@@ -638,9 +646,9 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     /**
      * If the result is in the given state, throw a ResultStateError.
      */
-    protected void checkResultState(int state) throws ResultException {
+    protected void checkResultState(int state) throws ResultStateException {
         if (getResultState() == state) {
-            throw new ResultException("Invalid ResultState: " +
+            throw new ResultStateException("Invalid ResultState: " +
                                        getResultState());
         }
     }
@@ -692,16 +700,16 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 
 
     public RuleParse parse(int _int) throws IllegalArgumentException,
-            ResultException {
+            ResultStateException {
         return null;
     }
 
-    public int getConfidenceLevel() throws ResultException {
+    public int getConfidenceLevel() throws ResultStateException {
         return 0;
     }
 
     public int getConfidenceLevel(int _int) throws IllegalArgumentException,
-            ResultException {
+            ResultStateException {
         return 0;
     }
 
