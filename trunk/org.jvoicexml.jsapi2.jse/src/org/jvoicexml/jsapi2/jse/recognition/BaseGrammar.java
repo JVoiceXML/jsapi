@@ -17,6 +17,7 @@ import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.SpeechEventExecutor;
 import java.util.Enumeration;
+import javax.speech.recognition.GrammarManager;
 
 
 /**
@@ -31,8 +32,8 @@ public class BaseGrammar implements Grammar {
     protected String    myName;
 
     protected boolean grammarActive;  // only changed by commit and rec focus
-    protected boolean grammarEnabled;
     protected int     activationMode;
+    protected boolean activatable;
 
     /**
      * Create a new BaseGrammar
@@ -45,7 +46,7 @@ public class BaseGrammar implements Grammar {
         myRec = recognizer;
         myName = name;
         grammarActive = false;
-        grammarEnabled = true;
+        activatable = false;
         activationMode = ACTIVATION_FOCUS;
     }
 
@@ -70,21 +71,17 @@ public class BaseGrammar implements Grammar {
 
     /**
      * Set the enabled property of the Grammar.
-     * From javax.speech.recognition.Grammar.
-     * @param enabled the new desired state of the enabled property.
+     * @param activatable the new desired state of the activatable property.
      */
-    public void setEnabled(boolean enabled) {
-        if (enabled != grammarEnabled) {
-            grammarEnabled = enabled;
-        }
+    public void setActivatable(boolean activatable) {
+        this.activatable = activatable;
     }
 
-    /**
-     * Determine if this Grammar is enabled or not.
-     * From javax.speech.recognition.Grammar.
+	/**
+     * Determine if this Grammar is activatable or not.
      */
-    public boolean isEnabled() {
-        return grammarEnabled;
+    public boolean isActivatable() {
+        return activatable;
     }
 
     /**
@@ -120,6 +117,15 @@ public class BaseGrammar implements Grammar {
      */
     public boolean isActive() {
         return myRec.isActive(this);
+    }
+
+    /**
+     * Returns the GrammarManager that manages this Grammar.
+     *
+     * @return GrammarManager
+     */
+    public GrammarManager getGrammarManager() {
+        return myRec.getGrammarManager();
     }
 
     /**
@@ -479,9 +485,9 @@ public class BaseGrammar implements Grammar {
     /**
      * Set the name of this Grammar.
      */
-    public void setName(String name) {
+    /*public void setName(String name) {
         myName = name;
-    }
+    }*/
 
 }
 

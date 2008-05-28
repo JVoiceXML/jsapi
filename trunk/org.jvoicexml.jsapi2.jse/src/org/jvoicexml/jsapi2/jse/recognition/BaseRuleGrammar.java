@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.io.StringReader;
 import java.util.Collections;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Comparator;
 
 /**
@@ -83,28 +82,28 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 
     /**
      * Internal representation of a Rule that
-     * holds additionally the "enabled" property
+     * holds additionally the "activable" property
      */
     private class InternalRule {
         private Rule rule;
-        private boolean enabled;
+        private boolean activable;
         private int id;
         public InternalRule(Rule r, int id) {
             rule = r;
             this.id = id;
-            enabled = true;
+            activable = true;
         }
 
-        public boolean isEnabled() {
-            return enabled;
+        public boolean isActivable() {
+            return activable;
         }
 
-        public void setEnabled(boolean status) {
-            enabled = status;
+        public void setActivable(boolean status) {
+            activable = status;
         }
 
         public boolean isPublic() {
-            return (rule.getScope() == rule.PUBLIC_SCOPE ? true : false); }
+            return (rule.getScope() == rule.PUBLIC ? true : false); }
 
         public String getRulename() { return rule.getRuleName(); }
 
@@ -186,8 +185,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
             this.status = status;
         }
         public void execute() throws GrammarException {
-            if (status != grammarEnabled) {
-                grammarEnabled = status;
+            if (status != activatable) {
+                activatable = status;
             }
         }
     }
@@ -210,10 +209,10 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
                 InternalRule iRule = rules.get(ruleName);
                 if (iRule != null) {
                     if (iRule.isPublic()) {
-                        iRule.setEnabled(status);
+                        iRule.setActivable(status);
                     }
                     else {
-                        throw new GrammarException("Rule: " + ruleName + " doesn't have PUBLIC_SCOPE");
+                        throw new GrammarException("Rule: " + ruleName + " doesn't have PUBLIC scope");
                     }
                 }
                 else {
@@ -235,7 +234,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
                 updateRootRule();
             }
             else {
-                if (getRule(rootRuleName).getScope() == Rule.PRIVATE_SCOPE) {
+                if (getRule(rootRuleName).getScope() == Rule.PRIVATE) {
                     throw new GrammarException("Cannot set a PRIVATE_SCOPE rule as root");
                 }
 
@@ -252,10 +251,10 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * From javax.speech.recognition.Grammar.
      * @param enabled the new desired state of the enabled property.
      */
-    public void setEnabled(boolean enabled) {
+   /* public void setEnabled(boolean enabled) {
         GrammarEnablerOperation geo = new GrammarEnablerOperation(enabled);
         uncommitedChanges.add(geo);
-    }
+    }*/
 //////////////////////
 // End overridden Grammar Methods
 //////////////////////
@@ -283,7 +282,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     private void updateRootRule() {
         InternalRule nextRootCandidate = null;
         for (InternalRule iRule: rules.values()) {
-            if (iRule.isPublic() && iRule.isEnabled()) {
+            if (iRule.isPublic() && iRule.isActivable()) {
                 if (nextRootCandidate == null) {
                     nextRootCandidate = iRule;
                 }
@@ -459,7 +458,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * @param ruleName the name of the rule.
      * @param enabled the new enabled state.
      */
-    public void setEnabled(String ruleName, boolean enabled) {
+    public void setActivatable(String ruleName, boolean enabled) {
         RuleEnablerOperation reo = new RuleEnablerOperation(ruleName, enabled);
         uncommitedChanges.add(reo);
     }
@@ -470,9 +469,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * @param ruleNames the names of the rules.
      * @param enabled the new enabled state.
      */
-    public void setEnabled(String[] ruleNames, boolean enabled) {
+    public void setActivatable(String[] ruleNames, boolean enabled) {
         for (String ruleName: ruleNames) {
-            setEnabled(ruleName, enabled);
+            setActivatable(ruleName, enabled);
         }
     }
 
@@ -481,9 +480,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * From javax.speech.recognition.RuleGrammar.
      * @param ruleName the name of the rule.
      */
-    public boolean isEnabled(String ruleName) {
+    public boolean isActivatable(String ruleName) {
         InternalRule iRule = rules.get(ruleName);
-        return (iRule != null ? iRule.isEnabled() : false);
+        return (iRule != null ? iRule.isActivable() : false);
     }
 
     /**
@@ -753,7 +752,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         Collections.sort(v,new InternalRuleIdComparator());
 
         for (int i=0; i<v.size(); ++i){
-            if (displayDisabledRules==true || v.get(i).isEnabled())
+            if (displayDisabledRules==true || v.get(i).isActivable())
                 res += v.get(i).toString() + "\n";
         }
 

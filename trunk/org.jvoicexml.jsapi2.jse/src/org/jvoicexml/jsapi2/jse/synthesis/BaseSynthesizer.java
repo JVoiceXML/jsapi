@@ -13,7 +13,7 @@ import javax.speech.synthesis.PhoneInfo;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableEvent;
 import javax.speech.synthesis.SpeakableListener;
-import javax.speech.synthesis.SynthesisException;
+import javax.speech.synthesis.SpeakableException;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerEvent;
 import javax.speech.synthesis.SynthesizerListener;
@@ -65,8 +65,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
     /**
      * fireEvent
      * 
-     * @param event
-     *                EngineEvent
+     * @param event EngineEvent
      */
     public void fireEvent(EngineEvent event) {
         Enumeration listeners = engineListeners.elements();
@@ -80,12 +79,9 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
     /**
      * postEngineEvent
      * 
-     * @param oldState
-     *                long
-     * @param newState
-     *                long
-     * @param eventType
-     *                int
+     * @param oldState long
+     * @param newState long
+     * @param eventType int
      * @todo Implement this org.jvoicexml.jsapi2.jse.j2se.BaseEngine method
      */
     public void postEngineEvent(long oldState, long newState, int eventType) {
@@ -98,8 +94,19 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     protected void postSynthesizerEvent(long oldState, long newState,
             int eventType, boolean changedTopOfQueue) {
-        final SynthesizerEvent event = new SynthesizerEvent(this, eventType,
-                oldState, newState, null, changedTopOfQueue);
+        switch (eventType){
+        case SynthesizerEvent.QUEUE_UPDATED :
+        case SynthesizerEvent.QUEUE_EMPTIED :
+            break;
+        default:
+            changedTopOfQueue = false;
+        }
+        final SynthesizerEvent event = new SynthesizerEvent(this,
+                eventType,
+                oldState,
+                newState,
+                null,
+                changedTopOfQueue);
 
         postEngineEvent(event);
 
@@ -163,7 +170,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         super.removeEngineListener(listener);
     }
 
-    public void cancel() throws EngineStateException {
+    public boolean cancel() throws EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
         // Wait to finalize allocation
@@ -174,10 +181,10 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             }
         }
 
-        queueManager.cancelItem();
+        return queueManager.cancelItem();
     }
 
-    public void cancel(int id) throws IllegalArgumentException,
+    public boolean cancel(int id) throws IllegalArgumentException,
             EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
@@ -189,10 +196,10 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             }
         }
 
-        queueManager.cancelItem(id);
+        return queueManager.cancelItem(id);
     }
 
-    public void cancelAll() throws EngineStateException {
+    public boolean cancelAll() throws EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
         // Wait to finalize allocation
@@ -203,7 +210,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
             }
         }
 
-        queueManager.cancelAllItems();
+        return queueManager.cancelAllItems();
     }
 
     public String getPhonemes(String text) throws EngineStateException {
@@ -233,7 +240,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
     }
 
     public int speak(Speakable speakable, SpeakableListener listener)
-            throws EngineStateException, SynthesisException,
+            throws EngineStateException, SpeakableException,
             IllegalArgumentException {
 
         // Wait to finalize allocation
@@ -266,7 +273,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     public int speakMarkup(final String synthesisMarkup,
             SpeakableListener listener) throws EngineStateException,
-            SynthesisException, IllegalArgumentException {
+            SpeakableException, IllegalArgumentException {
 
         // Wait to finalize allocation
         while (testEngineState(ALLOCATING_RESOURCES)) {
@@ -386,10 +393,8 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
     /**
      * Set AudioSegment in a queueItem (Not JSAPI2)
      * 
-     * @param itemId
-     *                int
-     * @param audioSegment
-     *                AudioSegment
+     * @param itemId int
+     * @param audioSegment AudioSegment
      */
     protected void setAudioSegment(int id, AudioSegment audioSegment) {
         queueManager.setAudioSegment(id, audioSegment);
@@ -397,11 +402,9 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     /**
      * Set words in a queueItem (Not JSAPI2)
-     * 
-     * @param itemId
-     *                int
-     * @param String[]
-     *                words
+     *
+     * @param itemId int
+     * @param String[] words
      */
     protected void setWords(int itemId, String[] words) {
         queueManager.setWords(itemId, words);
@@ -409,11 +412,9 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     /**
      * Set words times in a queueItem (Not JSAPI2)
-     * 
-     * @param itemId
-     *                int
-     * @param float[]
-     *                words
+     *
+     * @param itemId int
+     * @param float[] words
      */
     protected void setWordsStartTimes(int itemId, float[] starttimes) {
         queueManager.setWordsStartTimes(itemId, starttimes);

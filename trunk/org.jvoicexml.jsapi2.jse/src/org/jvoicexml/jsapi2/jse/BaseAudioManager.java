@@ -87,7 +87,7 @@ public class BaseAudioManager implements AudioManager {
 
     protected int audioMask;
 
-    protected String mediaLocator;
+    protected String mediaLocator = null;
 
     protected BaseEngine engine;
 
@@ -170,7 +170,7 @@ public class BaseAudioManager implements AudioManager {
             AudioException, EngineStateException {
 
         if ((mediaLocator != null) 
-                && isSupportsAudioManagement()) {
+                && !isSupportsAudioManagement()) {
             throw new SecurityException(
                     "AudioManager has no permission to access audio resources");
         }
@@ -243,7 +243,7 @@ public class BaseAudioManager implements AudioManager {
     public void audioStop() throws SecurityException,
             AudioException, EngineStateException {
 
-        if (isSupportsAudioManagement()) {
+        if (!isSupportsAudioManagement()) {
             throw new SecurityException(
                     "AudioManager has no permission to access audio resources");
         }
@@ -283,7 +283,7 @@ public class BaseAudioManager implements AudioManager {
                     "Engine is not DEALLOCATED. Cannot setMediaLocator");
         }
 
-        if (isSupportsAudioManagement()) {
+        if (!isSupportsAudioManagement()) {
             throw new SecurityException(
                     "AudioManager has no permission to access audio resources");
         }
@@ -394,7 +394,7 @@ public class BaseAudioManager implements AudioManager {
 
     protected void postAudioEvent(int eventId, int audioLevel) {
         if ((getAudioMask() & eventId) == eventId) {
-            final AudioEvent event = new AudioEvent(engine, eventId, audioLevel);
+            final AudioEvent event = new AudioEvent(engine, eventId);
 
             Runnable r = new Runnable() {
                 public void run() {
