@@ -14,6 +14,7 @@ import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer;
 import com.sun.speech.freetts.FreeTTSSpeakableImpl;
 import com.sun.speech.freetts.audio.AudioPlayer;
 import com.sun.speech.freetts.audio.JavaClipAudioPlayer;
+import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
 
 /**
  * Copyright 2003 Sun Microsystems, Inc.
@@ -289,7 +290,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
             FreeTTSAudioPlayer player = (FreeTTSAudioPlayer) audioPlayer;
             ByteArrayInputStream in =
                 new ByteArrayInputStream(player.getAudioBytes());
-            AudioSegment segment = new AudioSegment(in, null, null);
+            AudioSegment segment = new BaseAudioSegment(null, null, in);
             setAudioSegment(id, segment);
             player.clearAudioBytes();
         }
