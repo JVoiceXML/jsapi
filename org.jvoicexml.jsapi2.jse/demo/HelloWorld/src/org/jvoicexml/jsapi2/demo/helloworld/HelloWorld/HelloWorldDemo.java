@@ -3,7 +3,6 @@
  */
 package org.jvoicexml.jsapi2.demo.helloworld.HelloWorld;
 
-import javax.microedition.media.Manager;
 import javax.speech.EngineManager;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
