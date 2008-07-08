@@ -173,7 +173,7 @@ public class SrgsRuleGrammarParser {
         } else if (nodeName.equalsIgnoreCase("item")) {
             int repeatMin = -1;
             int repeatMax = -1;
-            int repeatProb = -1;
+            double repeatProb = -1;
             try {
                 String repeatStr = xpath.evaluate("@repeat", node);
                 String repeatProbStr = xpath.evaluate("@repeat-prob", node);
@@ -190,7 +190,7 @@ public class SrgsRuleGrammarParser {
                 }
 
                 if (repeatProbStr != "") {
-                    repeatProb = Integer.parseInt(repeatProbStr);
+                    repeatProb = Double.parseDouble(repeatProbStr);
                 }
 
             } catch (XPathExpressionException ex) {
@@ -201,7 +201,7 @@ public class SrgsRuleGrammarParser {
             RuleSequence rs = new RuleSequence(rcs.toArray(new RuleComponent[] {}));
 
             if ((repeatMin != -1) && (repeatMax != -1) && (repeatProb != -1)) {
-                RuleCount rc = new RuleCount(rs, repeatMin, repeatMax, repeatProb);
+                RuleCount rc = new RuleCount(rs, repeatMin, repeatMax, (int)(repeatProb*RuleCount.MAX_PROBABILITY));
                 ruleComponents.add(rc);
             }
             else if ((repeatMin != -1) && (repeatMax != -1)) {
@@ -209,8 +209,13 @@ public class SrgsRuleGrammarParser {
                 ruleComponents.add(rc);
             }
             else if (repeatMin != -1) {
-                RuleCount rc = new RuleCount(rs, repeatMin);
-                ruleComponents.add(rc);
+                if (repeatProb != -1){
+                    RuleCount rc = new RuleCount(rs, repeatMin, RuleCount.REPEAT_INDEFINITELY, (int)(repeatProb*RuleCount.MAX_PROBABILITY));
+                    ruleComponents.add(rc);
+                } else {
+                    RuleCount rc = new RuleCount(rs, repeatMin);
+                    ruleComponents.add(rc);
+                }
             }
             else {
                 ruleComponents.add(rs);
@@ -249,7 +254,7 @@ public class SrgsRuleGrammarParser {
             RuleToken ruleToken = new RuleToken(tokenText);
             ruleComponents.add(ruleToken);
         } else if (nodeName.equalsIgnoreCase("tag")) {
-            Object tagObject = xpath.evaluate("*", node, XPathConstants.STRING);
+            Object tagObject = xpath.evaluate(".", node, XPathConstants.STRING);
             RuleTag ruleTag = new RuleTag(tagObject);
             ruleComponents.add(ruleTag);
         } else if (nodeName.equalsIgnoreCase("example")) {
