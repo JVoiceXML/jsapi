@@ -26,19 +26,19 @@ import org.jvoicexml.jsapi2.jse.BaseEngine;
  * <p>
  * Title: JSAPI 2.0
  * </p>
- * 
+ *
  * <p>
  * Description: An independent reference implementation of JSR 113
  * </p>
- * 
+ *
  * <p>
  * Copyright: Copyright (c) 2007
  * </p>
- * 
+ *
  * <p>
  * Company: JVoiceXML group - http://jvoicexml.sourceforge.net
  * </p>
- * 
+ *
  * @author Renato Cassaca
  * @version 1.0
  */
@@ -47,7 +47,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
     protected Vector speakableListeners;
     protected SynthesizerProperties synthesizerProperties;
     protected int speakableMask;
-    private QueueManager queueManager;
+    protected QueueManager queueManager;
 
     public BaseSynthesizer() {
         this(null);
@@ -64,7 +64,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     /**
      * fireEvent
-     * 
+     *
      * @param event EngineEvent
      */
     public void fireEvent(EngineEvent event) {
@@ -78,7 +78,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     /**
      * postEngineEvent
-     * 
+     *
      * @param oldState long
      * @param newState long
      * @param eventType int
@@ -316,7 +316,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
     /**
      * Called from the <code>deallocate</code> method. Override this in
      * subclasses.
-     * 
+     *
      * @throws EngineException
      *                 if this <code>Engine</code> cannot be deallocated.
      */
@@ -343,7 +343,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     /**
      * Called from the <code>resume</code> method. Override in subclasses.
-     * 
+     *
      * @todo Handle grammar updates
      */
     protected boolean baseResume() {
@@ -374,10 +374,10 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
     /**
      * Returns a <code>String</code> of the names of all the
      * <code>Engine</code> states in the given <code>Engine</code> state.
-     * 
+     *
      * @param state
      *                the bitmask of states
-     * 
+     *
      * @return a <code>String</code> containing the names of all the states
      *         set in <code>state</code>
      */
@@ -392,7 +392,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
 
     /**
      * Set AudioSegment in a queueItem (Not JSAPI2)
-     * 
+     *
      * @param itemId int
      * @param audioSegment AudioSegment
      */
