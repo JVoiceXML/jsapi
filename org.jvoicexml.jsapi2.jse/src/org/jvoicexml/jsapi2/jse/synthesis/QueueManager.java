@@ -17,23 +17,23 @@ import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 import org.jvoicexml.jsapi2.jse.BaseEngine;
 
 /**
- * 
+ *
  * <p>
  * Title: JSAPI 2.0
  * </p>
- * 
+ *
  * <p>
  * Description: An independent reference implementation of JSR 113
  * </p>
- * 
+ *
  * <p>
  * Copyright: Copyright (c) 2007
  * </p>
- * 
+ *
  * <p>
  * Company: JVoiceXML group - http://jvoicexml.sourceforge.net
  * </p>
- * 
+ *
  * @author Renato Cassaca
  * @version 1.0
  */
@@ -86,7 +86,7 @@ public class QueueManager implements Runnable {
     /**
      * Add an item to be spoken to the output queue. Fires the appropriate queue
      * events
-     * 
+     *
      * @param item
      *                the item to add to the queue
      */
@@ -114,7 +114,7 @@ public class QueueManager implements Runnable {
     /**
      * Add an item to be spoken to the output queue. Fires the appropriate queue
      * events
-     * 
+     *
      */
     public int appendItem(Speakable speakable, SpeakableListener listener,
             String text) {
@@ -141,7 +141,7 @@ public class QueueManager implements Runnable {
     /**
      * Add an item to be spoken to the output queue. Fires the appropriate queue
      * events
-     * 
+     *
      * @param item
      *                the item to add to the queue
      */
@@ -167,7 +167,7 @@ public class QueueManager implements Runnable {
     }
 
     private void playItens() {
-        final int BUFFER_LENGTH = 160;
+        final int BUFFER_LENGTH = 2048;
 
         QueueItem item;
         int playIndex = 0;
@@ -208,7 +208,7 @@ public class QueueManager implements Runnable {
                 }
             }
 
-            long startStreaming = System.currentTimeMillis();
+            //long startStreaming = System.currentTimeMillis();
             long totalBytesRead = 0;
             synthesizer.postSpeakableEvent(new SpeakableEvent(item.getSource(),
                     SpeakableEvent.SPEAKABLE_STARTED, item.getId()), item
@@ -302,14 +302,14 @@ public class QueueManager implements Runnable {
 
                     fos.write(buffer, 0, bytesRead);
 
-                    long sleepTime = 0;
-                    while ((sleepTime = nextTimeStamp
+                  /**************************  long sleepTime = 0;
+                  while ((sleepTime = nextTimeStamp
                             - System.currentTimeMillis()) > 0) {
                         try {
                             Thread.currentThread().sleep(sleepTime / 2);
                         } catch (InterruptedException ex) {
                         }
-                    }
+                    }*/
 
                     ((BaseAudioManager) synthesizer.getAudioManager())
                             .getOutputStream().write(buffer, 0, bytesRead);
@@ -433,7 +433,7 @@ public class QueueManager implements Runnable {
                  * setEngineState(synthesizer.QUEUE_NOT_EMPTY,
                  * synthesizer.QUEUE_EMPTY); postSynthesizerEvent(states[0],
                  * states[1], SynthesizerEvent.QUEUE_UPDATED, true);
-                 * 
+                 *
                  * if (lastFocusEvent != DEFOCUSED) { states =
                  * setEngineState(FOCUSED, DEFOCUSED);
                  * postSynthesizerEvent(states[0], states[1], SynthesizerEvent.
@@ -446,7 +446,7 @@ public class QueueManager implements Runnable {
 
     /**
      * Determines if the input queue is empty
-     * 
+     *
      * @return true if the queue is empty; otherwise false
      */
     public boolean isQueueEmpty() {
@@ -460,7 +460,7 @@ public class QueueManager implements Runnable {
 
     /**
      * Returns an enumeration of the queue
-     * 
+     *
      * @return the enumeration queue
      */
     /*
@@ -538,7 +538,7 @@ public class QueueManager implements Runnable {
         }
         /*
          * Speakable item = null; Vector copy;
-         * 
+         *
          * synchronized (queue) { audio.cancel(); copy = (Vector) queue.clone();
          * queue.clear(); queueDrained(); } for (Iterator i = copy.iterator();
          * i.hasNext(); ) { item = (Speakable) i.next(); //
@@ -549,7 +549,7 @@ public class QueueManager implements Runnable {
 
     /**
      * Cancel the given item.
-     * 
+     *
      * @param source
      *                the item to cancel.
      */
@@ -610,7 +610,7 @@ public class QueueManager implements Runnable {
 
     /**
      * Return, but do not remove, the first item on the play queue.
-     * 
+     *
      * @return a queue item to play
      */
     protected QueueItem getQueueItemToPlay() {
@@ -636,7 +636,7 @@ public class QueueManager implements Runnable {
 
     /**
      * Return, but do not remove, the first item on the queue.
-     * 
+     *
      * @return a queue item
      */
     protected QueueItem getQueueItem() {
@@ -662,7 +662,7 @@ public class QueueManager implements Runnable {
     /**
      * removes the given item, posting the appropriate events. The item may have
      * already been removed (due to a cancel).
-     * 
+     *
      * @param item
      *                the item to remove
      */
