@@ -133,7 +133,7 @@ public class BaseRecognizerProperties extends BaseEngineProperties implements
     public void reset() {
         setAdaptation(ADAPT_PAUSED | ADAPT_RESUMED);
         setCompleteTimeout(500);
-        setConfidenceThreshold((MAX_CONFIDENCE - MIN_CONFIDENCE) / 4);
+        setConfidenceThreshold(NORM_CONFIDENCE);
         setEndpointStyle(ENDPOINT_SPEECH_DETECTION);
         setIncompleteTimeout(1000);
         setNumResultAlternatives(1);

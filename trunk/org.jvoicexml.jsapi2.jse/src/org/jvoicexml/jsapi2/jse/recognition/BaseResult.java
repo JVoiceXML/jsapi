@@ -34,6 +34,7 @@ import javax.speech.recognition.GrammarException;
 import java.util.Enumeration;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.recognition.RuleReference;
+import javax.speech.recognition.RecognizerProperties;
 
 public class BaseResult implements Result, FinalResult, FinalRuleResult, Serializable, Cloneable {
     private Vector resultListeners;
@@ -41,6 +42,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     int nTokens = 0;
     transient Grammar grammar = null;
     int state = Result.UNFINALIZED;
+    int confidenceLevel = RecognizerProperties.UNKNOWN_CONFIDENCE;
 
     String[] tags = null;
     String   ruleName = null;
@@ -704,13 +706,28 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
         return null;
     }
 
-    public int getConfidenceLevel() throws ResultStateException {
-        return 0;
+    public void setConfidenceLevel(int confidenceLevel) {
+        if (confidenceLevel < RecognizerProperties.MIN_CONFIDENCE ||
+            confidenceLevel > RecognizerProperties.MAX_CONFIDENCE)
+            throw new IllegalArgumentException("Invalid confidenceThreshold: " +
+                                               confidenceLevel);
+        this.confidenceLevel = confidenceLevel;
     }
 
-    public int getConfidenceLevel(int _int) throws IllegalArgumentException,
+
+    public int getConfidenceLevel() throws ResultStateException {
+        return getConfidenceLevel(0);
+    }
+
+    public int getConfidenceLevel(int nBest) throws IllegalArgumentException,
             ResultStateException {
-        return 0;
+        if (state != Result.ACCEPTED)
+           throw new ResultStateException();
+
+       if (nBest<0 || nBest>=getNumberAlternatives())
+           throw new IllegalArgumentException();
+
+       return confidenceLevel;
     }
 
     /**
