@@ -581,24 +581,24 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer, G
         }
 
         //Build a new grammar set, with all enabled grammars
-        List<String> newGrammars = new ArrayList<String>();
+        List<GrammarDefinition> newGrammars = new ArrayList<GrammarDefinition>();
 
         //Commit all grammars pending changes
         Iterator it = grammars.keySet().iterator();
-        for (int i = 0; it.hasNext(); ++i){
-            BaseRuleGrammar baseRuleGrammar = ((BaseRuleGrammar)grammars.get(it.next()));
+        for (int i = 0; it.hasNext(); ++i) {
+            BaseRuleGrammar baseRuleGrammar = ((BaseRuleGrammar) grammars.get(it.
+                    next()));
             //Flag that indicates if this baserulegrammar were changed
             boolean grammarUpdated = baseRuleGrammar.commitChanges();
             //Update "modified-flag"
             existChanges = existChanges || grammarUpdated;
             if (baseRuleGrammar.isActivatable())
-                newGrammars.add(baseRuleGrammar.toString(false));
+                newGrammars.add(new GrammarDefinition(baseRuleGrammar.toString(false),
+                                                     baseRuleGrammar.getReference()));
         }
 
         //Set grammars
-        String[] ng = new String[newGrammars.size()];
-        newGrammars.toArray(ng);
-        boolean setGrammarsResult = setGrammars(ng);
+        boolean setGrammarsResult = setGrammars(newGrammars);
 
         //Raise proper events
         if (existChanges) {
@@ -982,7 +982,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer, G
 
     abstract protected boolean handleResume();
 
-    abstract protected boolean setGrammars(String[] newGrammars);
+    abstract protected boolean setGrammars(List grammarDefinition);
 
 
     /**

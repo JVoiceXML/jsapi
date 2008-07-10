@@ -337,7 +337,7 @@ final class Sphinx4Recognizer
      * @param newGrammars String[]
      * @return boolean
      */
-    protected boolean setGrammars(String[] newGrammars) {
+    protected boolean setGrammars(List grammarDefinition) {
         return false;
     }
 
