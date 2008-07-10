@@ -273,9 +273,6 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      */
     public int getNumberAlternatives() throws ResultStateException {
         checkResultState(UNFINALIZED);
-        if (!(grammar instanceof RuleGrammar)) {
-            throw new ResultStateException("Result is not a FinalRuleResult");
-        }
         return 1;
     }
 
