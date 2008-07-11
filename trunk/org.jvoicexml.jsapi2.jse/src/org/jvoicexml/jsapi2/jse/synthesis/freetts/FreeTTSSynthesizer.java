@@ -37,6 +37,9 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
     /** The audio player to use. */
     private AudioPlayer audioPlayer;
 
+    /** The ssml to jsml transformer*/
+    Ssml2JsmlTransformer transformer = new Ssml2JsmlTransformer();
+
     /**
      * All voice output for this synthesizer goes through this central utterance
      * queue
@@ -45,7 +48,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
     // private OutputQueue outputQueue;
     /**
      * Creates a new Synthesizer in the DEALLOCATED state.
-     * 
+     *
      * @param desc
      *                describes the allowed mode of operations for this
      *                synthesizer.
@@ -98,7 +101,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
     /**
      * Sets the given voice to be the current voice. If the voice cannot be
      * loaded, this call has no affect.
-     * 
+     *
      * @param voice
      *                the new voice.
      */
@@ -119,7 +122,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
              * player"); }
              */
             freettsVoice.setAudioPlayer(audioPlayer);
-        } 
+        }
 
         if (freettsVoice.isLoaded()) {
             curVoice = voice;
@@ -136,7 +139,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
     /**
      * Handles a deallocation request. Cancels all pending items, terminates the
      * output handler, and posts the state changes.
-     * 
+     *
      * @throws EngineException
      *                 if a deallocation error occurs
      */
@@ -162,7 +165,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
     /**
      * Factory method to create a BaseSynthesizerQueueItem.
-     * 
+     *
      * @return a queue item appropriate for this synthesizer
      */
     /*
@@ -172,10 +175,10 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
     /**
      * Returns an enumeration of the queue.
-     * 
+     *
      * @return an enumeration of the contents of the queue. This enumeration
      *         contains FreeTTSSynthesizerQueueItem objects
-     * 
+     *
      * @throws EngineStateError
      *                 if the engine was not in the proper state
      */
@@ -187,7 +190,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
     /**
      * Places an item on the speaking queue and send the queue update event.
-     * 
+     *
      * @param item
      *                the item to place in the queue
      */
@@ -198,7 +201,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
     /**
      * Cancels the item at the top of the queue.
-     * 
+     *
      * @throws EngineStateError
      *                 if the synthesizer is not in the proper state
      */
@@ -210,10 +213,10 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
     /**
      * Cancels a specific object on the queue.
-     * 
+     *
      * @param source
      *                the object to cancel
-     * 
+     *
      * @throws IllegalArgumentException
      *                 if the source object is not currently in the queue
      * @throws EngineStateError
@@ -227,7 +230,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
     /**
      * Cancels all items on the output queue.
-     * 
+     *
      * @throws EngineStateError
      */
     /*
@@ -277,27 +280,33 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
     /**
      * Outputs the given queue item to the current voice
-     * 
+     *
      * @param item
      *                the item to output
      */
-    protected void handleSpeak(int id, Speakable item) {
+    private void handleSpeak(int id, FreeTTSSpeakableImpl speakElement) {
         com.sun.speech.freetts.Voice voice = curVoice.getVoice();
         voice.setVerbose(true);
         voice.setAudioPlayer(audioPlayer);
-        voice.speak(new FreeTTSSpeakableImpl(item.getMarkupText()));
+
+        voice.speak(speakElement);
+
         if (audioPlayer instanceof FreeTTSAudioPlayer) {
             FreeTTSAudioPlayer player = (FreeTTSAudioPlayer) audioPlayer;
             ByteArrayInputStream in =
                 new ByteArrayInputStream(player.getAudioBytes());
-            AudioSegment segment = new BaseAudioSegment(null, null, in);
+            AudioSegment segment = new BaseAudioSegment(getAudioManager().getMediaLocator(), "", in);
             setAudioSegment(id, segment);
             player.clearAudioBytes();
         }
     }
 
+    protected void handleSpeak(int id, Speakable item) {
+        handleSpeak(id, new FreeTTSSpeakableImpl(transformer.transform(item.getMarkupText())));
+    }
+
     protected void handleSpeak(int id, String text) {
-        handleSpeak(id, new FreeTTSSpeakable(text));
+        handleSpeak(id, new FreeTTSSpeakableImpl(text));
     }
 
     protected boolean handleCancelAll() {
