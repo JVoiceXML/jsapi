@@ -912,13 +912,19 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer, G
         //Procceed to real engine deallocation
         boolean status = handleDeallocate();
         if (status == true) {
-            long states[] = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
-            postEngineEvent(states[0], states[1],
+          //Stops AudioManager
+          audioManager.audioStop();
+
+          long states[] = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
+          postEngineEvent(states[0], states[1],
                             EngineEvent.ENGINE_DEALLOCATED);
         }
+        else {
+          //Stops AudioManager
+          audioManager.audioStop();
+        }
 
-        //Stops AudioManager
-        audioManager.audioStop();
+
         return status;
     }
 
