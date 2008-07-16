@@ -127,7 +127,8 @@ public class TestEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public void waitEngineState(long state) {
+    public long waitEngineState(long state) {
+        return state;
     }
 
     public SpeechEventExecutor getSpeechEventExecutor() {
@@ -135,5 +136,11 @@ public class TestEngine implements Engine {
     }
 
     public void setSpeechEventExecutor(SpeechEventExecutor speechEventExecutor) {
+    }
+
+    public long waitEngineState(long _long, long _long1) throws
+            InterruptedException, IllegalArgumentException,
+            IllegalStateException {
+        return 0L;
     }
 }

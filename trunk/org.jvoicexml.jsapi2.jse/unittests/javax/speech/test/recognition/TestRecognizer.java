@@ -261,7 +261,8 @@ public class TestRecognizer implements Recognizer {
     /**
      * {@inheritDoc}
      */
-    public void waitEngineState(long state) {
+    public long waitEngineState(long state) {
+        return state;
     }
 
     /**
@@ -292,5 +293,15 @@ public class TestRecognizer implements Recognizer {
     }
 
     public void setSpeechEventExecutor(SpeechEventExecutor speechEventExecutor) {
+    }
+
+    public long waitEngineState(long _long, long _long1) throws
+            InterruptedException, IllegalArgumentException,
+            IllegalStateException {
+        return 0L;
+    }
+
+    public GrammarManager getGrammarManager() {
+        return null;
     }
 }
