@@ -37,6 +37,21 @@ This file builds the JSR 113.jar.
 		<mkdir dir="${build}" />
 		<mkdir dir="${dist}" />
 	</target>
+	
+	<path id="classpath">	
+		<fileset dir="3rdparty\jsapi2\lib">
+      <include name="jsapi2.jar"/>
+		</fileset>
+		<fileset dir="3rdparty\freetts1.2\lib">
+      <include name="cmulex.jar"/>
+      <include name="cmu_us_kal.jar"/>
+      <include name="en_us.jar"/>
+      <include name="freetts.jar"/>
+		</fileset>
+		<fileset dir="3rdparty\sphinx4\lib">
+      <include name="sphinx4.jar"/>
+		</fileset>
+	</path>
 
 	<target name="clean" description="Remove all compiled and distribution files">
 		<delete dir="${build}" />
@@ -47,10 +62,11 @@ This file builds the JSR 113.jar.
 	<target name="compile" depends="-init" description="Compile the JAVA sources">
 		<echo message="compiling with debug=${debug}, optimize=${optimize}" />
 		<javac bootclasspathref="midp.lib" destdir="${build}" 
-			source="1.2" target="1.1"
+			source="1.5" target="1.5"
 			optimize="${optimize}" debug="${debug}" deprecation="on"
 		  	encoding="iso-8859-1">
 			<src path="${src}" />
+			<classpath refid="classpath"/>
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
 	</target>
@@ -60,7 +76,7 @@ This file builds the JSR 113.jar.
 		<jar jarfile="${dist.jsr113.jar}" compress="false">
 			<fileset dir="${build}">
 				<include name="**/*.class" />
-			    <exclude name="org/jvoicexml/**" />
+			   <!-- <exclude name="org/jvoicexml/**" />-->
 			</fileset>
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />

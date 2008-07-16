@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package javax.speech.recognition;
 
@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 
 /**
  * Test case for {@link javax.speech.recognition.GrammarExceptionDetail}.
- * 
+ *
  * @author Dirk Schnelle
  */
 public class GrammarExceptionDetailTest extends TestCase {
