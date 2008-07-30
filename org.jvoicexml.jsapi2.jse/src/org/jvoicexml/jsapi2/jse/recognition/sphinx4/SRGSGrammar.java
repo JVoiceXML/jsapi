@@ -221,7 +221,6 @@ public class SRGSGrammar extends Grammar {
             if (grammarReference.contains(":")) {
                 url = new URL(grammarReference);
             } else {
-                System.out.println("ESTAMOS EM : " + baseURL + grammarReference);
                 url = new URL(baseURL + grammarReference);
             }
             grammarStream = url.openStream();
@@ -331,10 +330,10 @@ public class SRGSGrammar extends Grammar {
             GrammarGraph tmpGraph;
             while (countNodes < minRepeat) {
                 countNodes++;
-                tmpGraph = parseRule(ruleCount.getRuleComponent());   /** @todo dgmr how can i copy a graph */
+                tmpGraph = parseRule(ruleCount.getRuleComponent());   /** @todo how can i copy a graph */
                 lastNode = tmpGraph;
                 newNodes.getEndNode().add(tmpGraph.getStartNode(), 0.0f);
-                newNodes.endNode = tmpGraph.getEndNode();             /** @todo dgmr CUIDADO, estou a aceder directamente à variavel!!!! */
+                newNodes.endNode = tmpGraph.getEndNode();             /** @todo review this */
             }
         }
 
@@ -344,11 +343,11 @@ public class SRGSGrammar extends Grammar {
             lastNode = newNodes;
             while (countNodes < maxRepeat) {
                 ++countNodes;
-                tmpGraph = parseRule(ruleCount.getRuleComponent());    /** @todo dgmr how can i copy a graph */
+                tmpGraph = parseRule(ruleCount.getRuleComponent());    /** @todo how can i copy a graph */
                 v.add(lastNode.getEndNode());
                 newNodes.getEndNode().add(tmpGraph.getStartNode(), 0.0f);
                 newNodes.getEndNode().add(tmpGraph.getEndNode(), 0.0f);
-                newNodes.endNode = tmpGraph.getEndNode();              /** @todo dgmr CUIDADO, estou a aceder directamente à variavel!!!! */
+                newNodes.endNode = tmpGraph.getEndNode();              /** @todo review this */
                 lastNode = tmpGraph;
             }
 
@@ -417,7 +416,7 @@ public class SRGSGrammar extends Grammar {
 
 
     private boolean isRuleDisabled(RuleComponent rule) throws GrammarException {
-       /* @todo dgmr do it */
+       /* @todo do it */
        /* RuleName ruleName = ruleGrammar.resolve(new RuleName(rule.toString()));
         boolean isRuleEnabled = ruleName != null && !ruleGrammar.isEnabled(ruleName.getSimpleRuleName());
         return isRuleEnabled; */
