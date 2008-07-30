@@ -288,7 +288,7 @@ abstract public class BaseEngine implements Engine {
     public void allocate() throws AudioException, EngineException,
             EngineStateException {
         //Validate current state
-        if (testEngineState(ALLOCATED) || 
+        if (testEngineState(ALLOCATED) ||
                 testEngineState(ALLOCATING_RESOURCES)) {
             return;
         }
@@ -552,6 +552,9 @@ abstract public class BaseEngine implements Engine {
             this.speechEventExecutor = new BaseSpeechEventExecutor();
         }
         else {
+            if (this.speechEventExecutor instanceof BaseSpeechEventExecutor) {
+                ((BaseSpeechEventExecutor)this.speechEventExecutor).terminate();
+            }
             this.speechEventExecutor = speechEventExecutor;
         }
     }
@@ -648,7 +651,7 @@ abstract public class BaseEngine implements Engine {
         if ((state & Engine.DEALLOCATED) != 0) {
             buf.append("DEALLOCATED");
         }
-        if ((state & Engine.ALLOCATING_RESOURCES) != 0) { 
+        if ((state & Engine.ALLOCATING_RESOURCES) != 0) {
             if (buf.length() > 0) {
                 buf.append(' ');
             }

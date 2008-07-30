@@ -28,9 +28,9 @@ import java.util.Vector;
  */
 public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
 
-    private Thread thread;
+    private final Thread thread;
 
-    private Vector commands;
+    private final Vector commands;
 
     private boolean shouldRun;
 
@@ -42,7 +42,14 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
     }
 
     protected void finalize() {
+        terminate();
+    }
+
+    protected void terminate() {
         shouldRun = false;
+        synchronized (commands) {
+            commands.notifyAll();
+        }
     }
 
     /**
@@ -62,7 +69,7 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
     }
 
     public void run() {
-        while (shouldRun) {
+        while (shouldRun == true) {
             while ((commands.size() < 1) && (shouldRun == true)) {
                 synchronized (commands) {
                     try {
@@ -71,6 +78,7 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
                     }
                 }
             }
+            if (shouldRun == false) return;
 
             //Use this thread to run the command
             Runnable command = (Runnable) commands.firstElement();
