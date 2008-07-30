@@ -6,7 +6,7 @@
  *
  * JVoiceXML - A free VoiceXML implementation.
  *
- * Copyright (C) 2005-2007 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2005-2008 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -36,17 +36,23 @@ import java.util.logging.Logger;
 
 import javax.speech.EngineException;
 import javax.speech.recognition.Grammar;
+import javax.speech.recognition.RecognizerEvent;
+import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.RuleGrammar;
+
+import javax.sound.sampled.AudioFormat;
 
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 import org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer;
 
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.Microphone;
-import edu.cmu.sphinx.jsapi.JSGFGrammar;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
+import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyException;
 
 /**
  * JSAPI wrapper for sphinx4.
@@ -61,13 +67,12 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
  * @version $Revision$
  *
  * <p>
- * Copyright &copy; 2005-2007 JVoiceXML group -
+ * Copyright &copy; 2005-2008 JVoiceXML group -
  * <a href="http://jvoicexml.sourceforge.net">
  * http://jvoicexml.sourceforge.net/</a>
  * </p>
  */
-final class Sphinx4Recognizer
-        extends BaseRecognizer {
+final class Sphinx4Recognizer extends BaseRecognizer {
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(Sphinx4Recognizer.class.getName());
@@ -82,7 +87,7 @@ final class Sphinx4Recognizer
     private DataProcessor dataProcessor;
 
     /** The grammar manager. */
-    private JSGFGrammar grammar;
+    private SRGSGrammar grammar;
 
     /** The result listener. */
     private final Sphinx4ResultListener resultListener;
@@ -99,7 +104,12 @@ final class Sphinx4Recognizer
     public Sphinx4Recognizer(SphinxRecognizerMode recognizerMode) {
         super(recognizerMode);
 
-        URL url = Sphinx4Recognizer.class.getResource("/sphinx4.config.xml");
+        String configFile = System.getProperty(
+                "org.jvoicexml.jsapi2.jse.recognition.sphinx4.configPath",
+        		"/sphinx4.config.xml");
+
+
+        URL url = Sphinx4Recognizer.class.getResource(configFile);
 
         try {
             final ConfigurationManager configuration =
@@ -107,7 +117,7 @@ final class Sphinx4Recognizer
 
             recognizer = (Recognizer) configuration.lookup("recognizer");
             dataProcessor = (DataProcessor) configuration.lookup("sphinxInputDataProcessor");
-            grammar = (JSGFGrammar) configuration.lookup("jsgfGrammar");
+            grammar = (SRGSGrammar) configuration.lookup("srgsGrammar");
 
             if ((dataProcessor instanceof SphinxInputDataProcessor) == false) {
                 throw new EngineException("Unsupported input type");
@@ -118,6 +128,7 @@ final class Sphinx4Recognizer
                     + ex.getMessage());
         }
 
+        ((BaseAudioManager)getAudioManager()).setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, true));
         resultListener = new Sphinx4ResultListener(this);
     }
 
@@ -198,9 +209,9 @@ final class Sphinx4Recognizer
             final RuleGrammar[] grammars = listRuleGrammars();
             for (int i = 0; i < grammars.length; i++) {
                 deleteRuleGrammar(grammars[i]);
-            }
+            }*/
 
-            recognizer.addResultListener(resultListener);*/
+            recognizer.addResultListener(resultListener);
 
         } catch (java.io.IOException ioe) {
            ioe.printStackTrace();
@@ -345,4 +356,29 @@ final class Sphinx4Recognizer
     protected List<Grammar> getBuiltInGrammars() {
         return new ArrayList<Grammar>(0);
     }
+
+    public void postStartOfSpeechEvent(){
+        postEngineEvent(new RecognizerEvent(this,RecognizerEvent.SPEECH_STARTED,1,1,null,null,0));
+    }
+
+    public void postEndOfSpeechEvent(){
+        postEngineEvent(new RecognizerEvent(this,RecognizerEvent.SPEECH_STOPPED,1,1,null,null,0));
+    }
+
+    public void postProcessingEvent(){
+        long states[] = setEngineState(LISTENING, PROCESSING);
+        postEngineEvent(states[0], states[1],
+                        RecognizerEvent.RECOGNIZER_PROCESSING,(long)0);
+    }
+
+    public void postListeningEvent(){
+        long states[] = setEngineState(PROCESSING, LISTENING);
+        postEngineEvent(states[0], states[1],RecognizerEvent.RECOGNIZER_LISTENING,(long)0);
+
+    }
+
+    public void postResultEvent(ResultEvent resultEvent){
+        super.postResultEvent(resultEvent);
+    }
+
 }

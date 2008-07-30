@@ -6,7 +6,7 @@
  *
  * JVoiceXML - A free VoiceXML implementation.
  *
- * Copyright (C) 2005-2007 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2005-2008 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -29,9 +29,17 @@ package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
 import java.util.logging.Logger;
 
-import javax.speech.recognition.Result;
+import edu.cmu.sphinx.result.ResultListener;
+import edu.cmu.sphinx.result.Result;
+
+import java.util.StringTokenizer;
+
 import javax.speech.recognition.ResultEvent;
-import javax.speech.recognition.ResultListener;
+import javax.speech.recognition.ResultToken;
+import javax.speech.recognition.RuleGrammar;
+
+import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
+import org.jvoicexml.jsapi2.jse.recognition.BaseResultToken;
 
 
 
@@ -42,19 +50,21 @@ import javax.speech.recognition.ResultListener;
  * @version $Revision$
  *
  * <p>
- * Copyright &copy; 2005-2007 JVoiceXML group -
+ * Copyright &copy; 2005-2008 JVoiceXML group -
  * <a href="http://jvoicexml.sourceforge.net">
  * http://jvoicexml.sourceforge.net/</a>
  * </p>
  */
-class Sphinx4ResultListener
-        implements ResultListener {
+class Sphinx4ResultListener implements ResultListener {
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(Sphinx4ResultListener.class.getName());
 
     /** The recognizer which is notified when a result is obtained. */
     private final Sphinx4Recognizer recognizer;
+
+	/** The current Result */
+    private BaseResult currentResult;
 
     /**
      * Construct a new result listener.
@@ -65,52 +75,65 @@ class Sphinx4ResultListener
     }
 
     /**
+     * Creates a vector of ResultToken (jsapi) from a sphinx result
+     * @param result The Sphinx4 result
+     * @param currentResult The current BaseResult (jsapi)
+     * @return ResultToken[]
+     */
+    private ResultToken[] Sphinx4ResultToResultToken(final Result result, final BaseResult currentResult){
+        String strRes = result.getBestFinalResultNoFiller();
+        StringTokenizer st = new StringTokenizer(strRes);
+        int nTokens = st.countTokens();
+
+        ResultToken res[] = new ResultToken[nTokens];
+
+        for (int i = 0; i < nTokens; ++i) {
+            String text = st.nextToken();
+
+            BaseResultToken brt = new BaseResultToken(currentResult, text);
+            if (currentResult.getResultState() == BaseResult.ACCEPTED) {
+                // @todo set confidenceLevel, startTime and end time,
+                // of each token
+            }
+
+            res[i] = brt;
+        }
+        return res;
+   }
+
+
+    /**
      * Method called when a result is generated.
      * @param result The new result.
      */
     public void newResult(final Result result) {
-   /*     if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("received result: " + result);
-            LOGGER.debug("isFinal: " + result.isFinal());
-        }
+        LOGGER.info("received result: " + result);
+        LOGGER.info("isFinal: " + result.isFinal());
 
         if (!result.isFinal()) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("result is not final. forget about it.");
-            }
-
+            LOGGER.warning("result is not final. forget about it.");
             return;
         }
 
         final RuleGrammar grammar = recognizer.getRuleGrammar();
-        final Sphinx4Result res = new Sphinx4Result(grammar, result);
+        currentResult = new BaseResult(grammar);
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("number of finalized tokens: " + res.numTokens());
-        }
+        recognizer.postResultEvent(new ResultEvent(currentResult,ResultEvent.RESULT_CREATED, false, false));
 
-        if (res.numTokens() == 0) {
-            res.setResultState(javax.speech.recognition.Result.REJECTED);
+        ResultToken[] rt = Sphinx4ResultToResultToken(result, currentResult);
+        int numTokens = rt.length;
 
-            final ResultEvent event =
-                    new ResultEvent(res, ResultEvent.RESULT_REJECTED);
-            recognizer.fireResultRejected(event);
+        recognizer.postResultEvent(new ResultEvent(currentResult,ResultEvent.GRAMMAR_FINALIZED));
+
+        if (numTokens == 0) {
+            currentResult.setResultState(BaseResult.REJECTED);
+            recognizer.postResultEvent(new ResultEvent(currentResult,ResultEvent.RESULT_REJECTED,false,false));
         } else {
-            res.setResultState(javax.speech.recognition.Result.ACCEPTED);
+            currentResult.setResultState(BaseResult.ACCEPTED);
 
-            final ResultEvent event =
-                    new ResultEvent(res, ResultEvent.RESULT_ACCEPTED);
-            recognizer.fireResultAccepted(event);
-        }*/
-
-    }
-
-    /**
-     *
-     * JSAPI2 ResultListener
-     *
-     * @param e ResultEvent
-     */
-    public void resultUpdate(ResultEvent e) {
+            currentResult.setNumTokens(numTokens);
+            currentResult.setTokens(rt);
+            recognizer.postResultEvent(new ResultEvent(currentResult,ResultEvent.RESULT_ACCEPTED,false,false));
+        }
     }
 }
