@@ -1,9 +1,10 @@
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
-import javax.speech.recognition.RecognizerMode;
-import javax.speech.spi.EngineFactory;
 import javax.speech.Engine;
 import javax.speech.EngineException;
+import javax.speech.recognition.RecognizerMode;
+import javax.speech.spi.EngineFactory;
+
 import java.util.Locale;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Locale;
  *
  * <p>Description: An independent reference implementation of JSR 113</p>
  *
- * <p>Copyright: Copyright (c) 2007</p>
+ * <p>Copyright: Copyright (c) 2007-2008</p>
  *
  * <p>Company: JVoiceXML group - http://jvoicexml.sourceforge.net</p>
  *
@@ -20,7 +21,7 @@ import java.util.Locale;
  */
 public class SphinxRecognizerMode extends RecognizerMode implements EngineFactory {
     public SphinxRecognizerMode() {
-        super("sphinx4", null, true, false, false, 10000, new Locale[] {new Locale("en_US")}, null);
+        super("sphinx4", null, true, false, true, 10000, new Locale[] {new Locale("en_US")}, null);
     }
 
     /**

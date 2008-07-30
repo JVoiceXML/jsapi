@@ -6,7 +6,7 @@
  *
  * JVoiceXML - A free VoiceXML implementation.
  *
- * Copyright (C) 2005-2007 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2005-2008 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -41,7 +41,7 @@ import edu.cmu.sphinx.recognizer.Recognizer;
  * @version $Revision$
  *
  * <p>
- * Copyright &copy; 2005-2007 JVoiceXML group -
+ * Copyright &copy; 2005-2008 JVoiceXML group -
  * <a href="http://jvoicexml.sourceforge.net">
  * http://jvoicexml.sourceforge.net/</a>
  * </p>
@@ -60,6 +60,7 @@ final class RecognitionThread
      * @param rec The wrapper for the sphinx4 recognizer.
      */
     public RecognitionThread(final Sphinx4Recognizer rec) {
+        super("RecognitionThread");
         recognizer = rec;
         setDaemon(true);
     }
@@ -73,34 +74,43 @@ final class RecognitionThread
         }
 
         final Recognizer rec = recognizer.getRecognizer();
-        final Microphone microphone = getMicrophone();
+        final SphinxInputDataProcessor inputData = getInputData();
         final boolean started;
 
-        if (microphone != null) {
+        /*if (microphone != null) {
             microphone.clear();
             started = microphone.startRecording();
         } else {
             started = true;
-        }
+        }*/
+        started = true;
 
+        // send start of speach and processing event
+        // @todo change this;
+        recognizer.postStartOfSpeechEvent();
+        recognizer.postProcessingEvent();
         if (started) {
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("start recognizing ..");
             }
 
-            recognize(rec, microphone);
+            recognize(rec, inputData);
         }
+        // send end of speach and listening event
+        // @todo change this;
+        recognizer.postEndOfSpeechEvent();
+        recognizer.postListeningEvent();
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("stopping recognition thread...");
         }
 
-        if (microphone != null) {
+       /* if (microphone != null) {
             // Stop recording from the microphone.
             while (microphone.isRecording()) {
                 microphone.stopRecording();
             }
-        }
+        }*/
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("recognition thread terminated");
         }
@@ -131,6 +141,11 @@ final class RecognitionThread
                 LOGGER.fine("unmatched utterance " + iae.getMessage());
             }
         }
+    }
+
+    private void recognize(final Recognizer rec,
+                           final SphinxInputDataProcessor inputData) {
+        rec.recognize();
     }
 
     /**
@@ -173,5 +188,14 @@ final class RecognitionThread
         }
 
         return null;
+    }
+
+    private SphinxInputDataProcessor getInputData() {
+        final DataProcessor dataProcessor = recognizer.getDataProcessor();
+         if (dataProcessor instanceof SphinxInputDataProcessor) {
+             return (SphinxInputDataProcessor) dataProcessor;
+         }
+
+         return null;
     }
 }
