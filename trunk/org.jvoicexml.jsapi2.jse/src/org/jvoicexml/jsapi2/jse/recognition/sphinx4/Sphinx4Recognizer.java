@@ -28,6 +28,7 @@
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
 import java.io.InputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,15 +45,13 @@ import javax.sound.sampled.AudioFormat;
 
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 import org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer;
+import org.jvoicexml.jsapi2.jse.recognition.GrammarDefinition;
 
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
-import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyException;
 
 /**
  * JSAPI wrapper for sphinx4.
@@ -344,12 +343,23 @@ final class Sphinx4Recognizer extends BaseRecognizer {
 
 
     /**
-     * todo: implement it
+     * @todo: in case of grammarDefinition.size > 1, make <one-of> of
+     * all the grammars
      * @param newGrammars String[]
      * @return boolean
      */
     protected boolean setGrammars(List grammarDefinition) {
-        return false;
+        if (grammarDefinition.size() == 1) {
+            try {
+                grammar.loadSRGS(((GrammarDefinition) grammarDefinition.get(0)).
+                                 getName());
+            } catch (IOException ex) {
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
