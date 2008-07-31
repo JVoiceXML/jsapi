@@ -4,17 +4,18 @@ import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 
 import javax.speech.AudioSegment;
-import javax.speech.EngineException;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SynthesizerMode;
+import javax.sound.sampled.AudioFormat;
 
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
 import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer;
 
 import com.sun.speech.freetts.FreeTTSSpeakableImpl;
 import com.sun.speech.freetts.audio.AudioPlayer;
 import com.sun.speech.freetts.audio.JavaClipAudioPlayer;
-import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
+
 
 /**
  * Copyright 2003 Sun Microsystems, Inc.
@@ -59,6 +60,10 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
         // OutputHandler();
         audioPlayer = null;
         super.setSynthesizerProperties(new FreeTTSEngineProperties(this));
+
+        ((BaseAudioManager) getAudioManager()).setEngineAudioFormat(new
+                AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000, 16, 1, 2,
+                            8000, true));
     }
 
     /**
