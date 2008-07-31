@@ -145,11 +145,11 @@ public class SRGSGrammar extends Grammar {
      * @param grammarName the name of the grammar
      * @throws IOException if an error occurs while loading or compiling the grammar
      */
-   /* public void loadJSGF(String grammarName) throws IOException {
-        this.grammarName = grammarName;
+    public void loadSRGS(String grammarName) throws IOException {
+        grammarURL = new URL(grammarName);
         loadGrammar = true;
         commitChanges();
-    }*/
+    }
 
 
     /**
