@@ -352,7 +352,7 @@ final class Sphinx4Recognizer extends BaseRecognizer {
         if (grammarDefinition.size() == 1) {
             try {
                 grammar.loadSRGS(((GrammarDefinition) grammarDefinition.get(0)).
-                                 getName());
+							getGrammar());
             } catch (IOException ex) {
                 return false;
             }

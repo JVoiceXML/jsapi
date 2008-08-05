@@ -17,7 +17,9 @@ import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -84,6 +86,7 @@ public class SRGSGrammar extends Grammar {
     private String grammarName;
     private URL baseURL = null;
     private URL grammarURL = null;
+    private String grammarSTR;
     private LogMath logMath;
 
     private boolean loadGrammar = true;
@@ -145,12 +148,18 @@ public class SRGSGrammar extends Grammar {
      * @param grammarName the name of the grammar
      * @throws IOException if an error occurs while loading or compiling the grammar
      */
-    public void loadSRGS(String grammarName) throws IOException {
-        grammarURL = new URL(grammarName);
+    public void loadSRGS(URL gramarURL) throws IOException {
+        this.grammarURL = grammarURL;
         loadGrammar = true;
         commitChanges();
     }
 
+    public void loadSRGS(String grammar) throws IOException {
+        this.grammarURL = null;
+        grammarSTR = grammar;
+        loadGrammar = true;
+        commitChanges();
+    }
 
     /**
      * Creates the grammar.
@@ -570,8 +579,14 @@ public class SRGSGrammar extends Grammar {
         try {
             SrgsRuleGrammarParser srgsRuleGrammarParser = new SrgsRuleGrammarParser();
 
-            InputStream grammarStream = grammarURL.openStream();
-            Rule rules[] = srgsRuleGrammarParser.load(grammarStream);
+            Rule rules[];
+
+            if (grammarURL != null) {
+                InputStream grammarStream = grammarURL.openStream();
+                rules = srgsRuleGrammarParser.load(grammarStream);
+            } else {
+                rules = srgsRuleGrammarParser.load(new InputStreamReader(new ByteArrayInputStream(grammarSTR.getBytes())));
+            }
 
             if (rules != null) {
                 ruleGrammar = new BaseRuleGrammar(null, grammarName);  /** @todo dgmr cuidado com isto */
