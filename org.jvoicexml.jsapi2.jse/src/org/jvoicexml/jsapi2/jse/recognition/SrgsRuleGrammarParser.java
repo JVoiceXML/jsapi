@@ -249,7 +249,7 @@ public class SrgsRuleGrammarParser {
                 }
             }
         } else if (nodeName.equalsIgnoreCase("token")) {
-            String tokenText = (String) xpath.evaluate("*", node,
+            String tokenText = (String) xpath.evaluate(".", node,
                     XPathConstants.STRING);
             RuleToken ruleToken = new RuleToken(tokenText);
             ruleComponents.add(ruleToken);

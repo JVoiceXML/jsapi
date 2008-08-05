@@ -206,6 +206,8 @@ public class RuleParser {
                 if (!ta[j].equals(input[iPos])) {
                     return null;
                 }
+                if (j > 0)
+                    strBuffer.append(" ");
                 strBuffer.append(ta[j]);
                 iPos++;
                 j++;
