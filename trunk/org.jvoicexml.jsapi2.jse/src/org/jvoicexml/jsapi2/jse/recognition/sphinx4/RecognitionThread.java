@@ -166,13 +166,13 @@ final class RecognitionThread
      * Stop this recognition thread.
      */
     public void stopRecognition() {
-        final Microphone microphone = getMicrophone();
+        /*final Microphone microphone = getMicrophone();
         if (microphone != null) {
             microphone.stopRecording();
         }
 
         Thread thread = currentThread();
-        thread.interrupt();
+        thread.interrupt();*/
     }
 
     /**
