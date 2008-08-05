@@ -1,14 +1,19 @@
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
 
-import javax.sound.sampled.AudioFormat;
 import com.sun.speech.freetts.audio.AudioPlayer;
-import java.io.OutputStream;
-import java.io.IOException;
+
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.ArrayList;
+
+import javax.sound.sampled.AudioFormat;
+
+import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 
 
 /**
@@ -35,7 +40,11 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
 
     private boolean paused;
 
-    public FreeTTSAudioPlayer(OutputStream targetStream) {
+    private BaseAudioManager baseAudioManager;
+
+    public FreeTTSAudioPlayer(OutputStream targetStream,
+                              BaseAudioManager baseAudioManager) {
+        this.baseAudioManager = baseAudioManager;
         this.targetStream = targetStream;
         audioDuringPause = new ArrayList<byte[]>();
         audioBytes = new ArrayList<byte[]>();
@@ -209,6 +218,10 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
      */
     public boolean write(byte[] audioData) {
         byte[] a = audioData.clone();
+        try {
+            fos.write(audioData);
+        } catch (IOException ex) {
+        }
         audioBytes.add(a);
         return true;
         //return write(audioData, 0, audioData.length);
@@ -266,6 +279,14 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
             for (int j=0; j<audioBytes.get(i).length; ++j)
                 res[writer++] = audioBytes.get(i)[j];
         }
+
+        ByteArrayInputStream bais = baseAudioManager.getConvertedAudio(res);
+        res = new byte[bais.available()];
+        try {
+            bais.read(res);
+        } catch (IOException ex) {
+        }
+
         return res;
     }
 
