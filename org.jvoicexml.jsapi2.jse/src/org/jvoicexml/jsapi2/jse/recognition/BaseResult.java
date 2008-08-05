@@ -16,25 +16,32 @@
  */
 package org.jvoicexml.jsapi2.jse.recognition;
 
-import javax.speech.recognition.Result;
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.speech.AudioSegment;
+import javax.speech.SpeechEventExecutor;
+import javax.speech.recognition.Grammar;
+import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.FinalResult;
 import javax.speech.recognition.FinalRuleResult;
-import javax.speech.recognition.Grammar;
-import java.io.Serializable;
-import java.util.Vector;
+import javax.speech.recognition.RecognizerProperties;
+import javax.speech.recognition.Result;
+import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultToken;
 import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.ResultStateException;
-import javax.speech.recognition.ResultEvent;
-import javax.speech.AudioSegment;
+import javax.speech.recognition.RuleAlternatives;
+import javax.speech.recognition.RuleComponent;
+import javax.speech.recognition.RuleCount;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
-import java.util.StringTokenizer;
-import javax.speech.recognition.GrammarException;
-import java.util.Enumeration;
-import javax.speech.SpeechEventExecutor;
 import javax.speech.recognition.RuleReference;
-import javax.speech.recognition.RecognizerProperties;
+import javax.speech.recognition.RuleSequence;
+import javax.speech.recognition.RuleTag;
+import javax.speech.recognition.RuleToken;
 
 public class BaseResult implements Result, FinalResult, FinalRuleResult, Serializable, Cloneable {
     private Vector resultListeners;
@@ -162,8 +169,8 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 
         ResultToken[] unfinalizedTokens = new ResultToken[numUnfinalizedTokens];
 
-        for (int i=0; i<numUnfinalizedTokens; ++i)
-            unfinalizedTokens[i] = getBestTokens()[i+getNumTokens()];
+        for (int i = 0; i < numUnfinalizedTokens; ++i)
+            unfinalizedTokens[i] = getBestTokens()[i + getNumTokens()];
 
         return unfinalizedTokens;
     }
@@ -610,14 +617,74 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     }
 
     /**
+     * Simple implementation of tags.
+     *
+     * ATTENTION: This method changes the ResultToken content.
+     * <p>
+     * This implementation replaces each token text by tag information,
+     * if it exists.
+     * </p>
+     *
+     * @todo the tag information can not be only text! It can be anything.
+     *
+     * @param rt the result tokens
+     * @param rc the rule component that will be analyzed
+     * @param iPos the position in rt of next token that will be appear
+     * in the graph
+     * @return int
+     */
+    private int applyTags(ResultToken rt[], final RuleComponent rc,
+                          int iPos) {
+        if (rc instanceof RuleReference) {
+            return iPos;
+        } else if (rc instanceof RuleToken) {
+            return iPos + 1;
+        } else if (rc instanceof RuleAlternatives) {
+            return applyTags(rt, ((RuleAlternatives) rc).getRuleComponents()[0],
+                             iPos);
+        } else if (rc instanceof RuleSequence) {
+            for (RuleComponent r : ((RuleSequence) rc).getRuleComponents()) {
+                iPos = applyTags(rt, r, iPos);
+            }
+            return iPos;
+        } else if (rc instanceof RuleTag) {
+            String tag = (String) ((RuleTag) rc).getTag();
+
+            //assumes that ruleTag component appears after RuleToken component
+            rt[iPos - 1] = new BaseResultToken(rt[iPos - 1].getResult(), tag);
+            return iPos;
+        } else if (rc instanceof RuleCount) {
+            return applyTags(rt, ((RuleCount) rc).getRuleComponent(), iPos);
+        }
+
+        return iPos;
+    }
+
+    /**
      * Utility function to set the resultTokens.
      * @param rt
      */
-    public void setTokens(ResultToken rt[]){
+    public void setTokens(ResultToken rt[]) {
+        setTokens(rt, false);
+    }
+
+    /**
+     * Utility function to set the resultTokens.
+     * @param rt
+     * @param replaceTags if true, tokens must be replaced by tags content.
+     */
+    public void setTokens(ResultToken rt[], boolean replaceTags) {
         tokens = new ResultToken[rt.length];
-        int i=0;
-        for (ResultToken resultToken : rt){
+        int i = 0;
+        for (ResultToken resultToken : rt) {
             tokens[i++] = resultToken;
+        }
+
+        if (replaceTags) {
+            final RuleParse ruleParse = parse(0);
+            if (ruleParse != null) {
+                applyTags(tokens, ruleParse.getParse(), 0);
+            }
         }
     }
 
@@ -698,8 +765,19 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 
 
 
-    public RuleParse parse(int _int) throws IllegalArgumentException,
+    public RuleParse parse(int nBest) throws IllegalArgumentException,
             ResultStateException {
+         ResultToken[] rt = getAlternativeTokens(0);
+         String tokens[] = new String[rt.length];
+         for (int i = 0; i < rt.length; ++i) {
+             tokens[i] = rt[i].getText();
+         }
+
+         try {
+             return ((RuleGrammar) getGrammar()).parse(tokens, ((BaseRuleGrammar)getGrammar()).getRoot());
+         } catch (GrammarException e) {
+             e.printStackTrace();
+         }
         return null;
     }
 
