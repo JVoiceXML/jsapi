@@ -513,20 +513,28 @@ public class BaseAudioManager implements AudioManager {
         AudioInputStream sourceStream = new AudioInputStream(is, sourceFormat,
                 AudioSystem.NOT_SPECIFIED);
 
-        //Convert endianess
-        sourceStream = convertEndianess(sourceStream, targetFormat);
-
         //Convert number of channels
         sourceStream = convertChannels(sourceStream, targetFormat);
 
-        //Convert sample rate
-        sourceStream = convertSampleRate(sourceStream, targetFormat);
 
-        //Convert encoding
-        sourceStream = convertEncoding(sourceStream, targetFormat);
+        try{
+            //Convert sample rate
+            sourceStream = convertSampleRate(sourceStream, targetFormat);
+
+            //Convert encoding
+            sourceStream = convertEncoding(sourceStream, targetFormat);
+        }catch(Exception e) {
+            //Convert encoding
+            sourceStream = convertEncoding(sourceStream, targetFormat);
+
+            sourceStream = convertSampleRate(sourceStream, targetFormat);
+        }
 
         //Convert sample size
         sourceStream = convertSampleSize(sourceStream, targetFormat);
+
+        //Convert endianess
+        sourceStream = convertEndianess(sourceStream, targetFormat);
 
         return sourceStream;
     }
@@ -556,6 +564,7 @@ public class BaseAudioManager implements AudioManager {
             final InputStream is = getConvertedStream(pis, engineAudioFormat,
                     targetFormat);
 
+            return pos;
             /*  new Thread(new Runnable() {
                   public void run() {
                       FileOutputStream synt_conv = null;
@@ -713,7 +722,11 @@ public class BaseAudioManager implements AudioManager {
     }
 
     public ByteArrayInputStream getConvertedAudio(byte[] in) {
-        return formatConverter.getConvertedAudio(in);
+        if (formatConverter == null) {
+            return new ByteArrayInputStream(in);
+        } else {
+            return formatConverter.getConvertedAudio(in);
+        }
     }
 
     /**
