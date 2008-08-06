@@ -219,8 +219,9 @@ public class RuleParser {
     /**
      * ALTERNATIVES
      **/
-    private RuleComponent parse(RuleGrammar G, RuleAlternatives r, String input[]) {
-        RuleComponent rar[] = r.getRuleComponents();
+    private RuleComponent parse(final RuleGrammar G, final RuleAlternatives r,
+                                final String[] input) {
+        RuleComponent[] rar = r.getRuleComponents();
         Vector result = new Vector();
         for (int i = 0; i < rar.length; i++) {
             RuleComponent p = parse(G, rar[i], input);
@@ -228,10 +229,15 @@ public class RuleParser {
                 continue;
             }
             result.add(p);
+            break;
         }
-        RuleComponent rc[] = new RuleComponent[result.size()];
-        result.copyInto(rc);
-        return new RuleAlternatives(rc);
+        if (result.size() == 0) {
+            return null;
+        } else {
+            RuleComponent[] rc = new RuleComponent[result.size()];
+            result.copyInto(rc);
+            return new RuleAlternatives(rc);
+        }
     }
 
     /**
@@ -273,34 +279,35 @@ public class RuleParser {
      *   ...
      *   input: aa
      **/
-    private RuleComponent parse(RuleGrammar G, RuleCount r, String input[]) {
+    private RuleComponent parse(final RuleGrammar G, final RuleCount r,
+                                final String[] input) {
         int rcount = r.getRepeatMax() - r.getRepeatMin();
-        RuleComponent ruleComponent = null;
+        Vector ruleComponents = new Vector();
         int i = 0;
 
         for (; i < r.getRepeatMin(); ++i) {
             RuleComponent rc = parse(G, r.getRuleComponent(), input);
-            if (rc == null)
+            if (rc == null) {
                 return null;
-            if (ruleComponent == null) {
-                ruleComponent = rc;
             }
+            ruleComponents.add(rc);
         }
 
         for (; i < r.getRepeatMax(); ++i) {
             RuleComponent rc = parse(G, r.getRuleComponent(), input);
-            if (rc == null)
+            if (rc == null) {
                 break;
-            if (ruleComponent == null) {
-                ruleComponent = rc;
             }
-
+            ruleComponents.add(rc);
         }
 
+        RuleComponent[] copy = new RuleComponent[ruleComponents.size()];
+        ruleComponents.copyInto(copy);
         if (r.getRepeatProbability() != RuleCount.MAX_PROBABILITY) {
-            return new RuleCount(ruleComponent, i, i, r.getRepeatProbability());
+            return new RuleCount(new RuleSequence(copy), i, i,
+                                 r.getRepeatProbability());
         } else {
-            return new RuleCount(ruleComponent, i, i);
+            return new RuleCount(new RuleSequence(copy), i, i);
         }
     }
 
