@@ -221,11 +221,16 @@ public class RuleParser {
      **/
     private RuleComponent parse(final RuleGrammar G, final RuleAlternatives r,
                                 final String[] input) {
+        final int currentIpos = iPos;
+
         RuleComponent[] rar = r.getRuleComponents();
         Vector result = new Vector();
         for (int i = 0; i < rar.length; i++) {
             RuleComponent p = parse(G, rar[i], input);
             if (p == null) {
+                //if an alternative fails, the itens consumed
+                //must be turned available again
+                iPos = currentIpos;
                 continue;
             }
             result.add(p);
