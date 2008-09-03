@@ -30,10 +30,11 @@ import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarListener;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.ResultListener;
+import javax.speech.recognition.GrammarManager;
 
 /**
  * Grammar for test purposes.
- * 
+ *
  * @author Dirk Schnelle
  */
 public class TestGrammar implements Grammar {
@@ -106,5 +107,16 @@ public class TestGrammar implements Grammar {
      * {@inheritDoc}
      */
     public void setEnabled(boolean flag) {
+    }
+
+    public GrammarManager getGrammarManager() {
+        return null;
+    }
+
+    public boolean isActivatable() {
+        return false;
+    }
+
+    public void setActivatable(boolean _boolean) {
     }
 }
