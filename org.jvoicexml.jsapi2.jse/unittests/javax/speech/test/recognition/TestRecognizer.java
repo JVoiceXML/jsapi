@@ -44,6 +44,7 @@ import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.SpeakerManager;
 import javax.speech.SpeechEventExecutor;
+import javax.speech.recognition.GrammarManager;
 
 /**
  * Recognizer for test purposes.
