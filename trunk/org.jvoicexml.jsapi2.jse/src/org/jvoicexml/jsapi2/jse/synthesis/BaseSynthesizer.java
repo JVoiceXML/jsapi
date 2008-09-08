@@ -68,9 +68,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
      * @param event EngineEvent
      */
     public void fireEvent(EngineEvent event) {
-        Enumeration listeners = engineListeners.elements();
-        while (listeners.hasMoreElements()) {
-            EngineListener el = (EngineListener) listeners.nextElement();
+        for (EngineListener el: engineListeners) {
             ((SynthesizerListener) el)
                     .synthesizerUpdate((SynthesizerEvent) event);
         }
