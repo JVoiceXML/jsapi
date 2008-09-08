@@ -12,7 +12,6 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.speech.EngineStateException;
-import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleAlternatives;
 import javax.speech.recognition.RuleComponent;
@@ -23,6 +22,8 @@ import javax.speech.recognition.RuleParse;
 import javax.speech.recognition.RuleSequence;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
+import javax.speech.recognition.GrammarManager;
+import javax.speech.recognition.Grammar;
 
 /**
  * Implementation of the parse method(s) on
@@ -32,23 +33,28 @@ import javax.speech.recognition.RuleToken;
  */
 public class RuleParser {
 
-    private Recognizer theRec;
+    private GrammarManager grammarManager;
 
     private int iPos;
+
+    public RuleParser(GrammarManager grammarManager, int pos) {
+        this.grammarManager = grammarManager;
+        iPos = pos;
+    }
 
     /*
      * parse a text string against a particular rule from a particluar grammar
      * returning a RuleParse data structure is successful and null otherwise
      */
-    public static RuleParse parse(String text, Recognizer recognizer,
-                                  RuleGrammar grammar, String ruleName) {
+    public static RuleParse parse(String text, GrammarManager grammarManager,
+                                  String grammarReference, String ruleName) {
         String inputTokens[] = tokenize(text);
-        return parse(inputTokens, recognizer, grammar, ruleName);
+        return parse(inputTokens, grammarManager, grammarReference, ruleName);
     }
 
-    public static RuleParse parse(String inputTokens[], Recognizer recognizer,
-                                  RuleGrammar grammar, String ruleName) {
-        RuleParse rpa[] = mparse(inputTokens, recognizer, grammar, ruleName);
+    public static RuleParse parse(String inputTokens[], GrammarManager grammarManager,
+                                  String grammarReference, String ruleName) {
+        RuleParse rpa[] = mparse(inputTokens, grammarManager, grammarReference, ruleName);
         if (rpa == null) {
             return null;
         } else {
@@ -56,20 +62,26 @@ public class RuleParser {
         }
     }
 
-    public static RuleParse[] mparse(String text, Recognizer recognizer,
-                                     RuleGrammar grammar, String ruleName) {
+    public static RuleParse[] mparse(String text, GrammarManager grammarManager,
+                                     String grammarReference, String ruleName) {
         String inputTokens[] = tokenize(text);
-        return mparse(inputTokens, recognizer, grammar, ruleName);
+        return mparse(inputTokens, grammarManager, grammarReference, ruleName);
     }
 
     public static RuleParse[] mparse(String inputTokens[],
-                                     Recognizer recognizer, RuleGrammar grammar,
+                                     GrammarManager grammarManager, String grammarReference, //RuleGrammar grammar,
                                      String ruleName) {
-        RuleParser rp = new RuleParser();
-        rp.iPos = 0;
-        rp.theRec = recognizer;
+        RuleParser rp = new RuleParser(grammarManager, 0);
         String rNames[];
         RuleComponent startRule = null;
+        Grammar g = grammarManager.getGrammar(grammarReference);
+        RuleGrammar grammar;
+        if (g instanceof RuleGrammar) {
+            grammar = (RuleGrammar)g;
+        }
+        else {
+            return null;
+        }
         if (ruleName != null) {
             rNames = new String[1];
             rNames[0] = ruleName;
@@ -145,8 +157,7 @@ public class RuleParser {
             if ((gname != null) && (gname.length() > 0)) {
                 RuleGrammar RG1 = null;
                 try {
-                    RG1 = (RuleGrammar) theRec.getGrammarManager().getGrammar(
-                            gname);
+                    RG1 = (RuleGrammar) grammarManager.getGrammar(gname);
                 } catch (EngineStateException ex) {
                     ex.printStackTrace();
                 }
