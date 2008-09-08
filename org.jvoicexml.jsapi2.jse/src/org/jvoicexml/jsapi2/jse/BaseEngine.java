@@ -48,7 +48,6 @@ package org.jvoicexml.jsapi2.jse;
 import javax.speech.Engine;
 import javax.speech.EngineEvent;
 import javax.speech.EngineListener;
-import javax.speech.EngineProperties;
 import javax.speech.EngineException;
 import javax.speech.AudioManager;
 import javax.speech.AudioException;
@@ -57,6 +56,8 @@ import javax.speech.VocabularyManager;
 import javax.speech.EngineMode;
 import java.util.Vector;
 import javax.speech.SpeechEventExecutor;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Supports the JSAPI 2.0 <code>Engine</code> interface.
@@ -81,7 +82,7 @@ abstract public class BaseEngine implements Engine {
      * List of <code>EngineListeners</code> registered for
      * <code>EngineEvents</code> on this <code>Engine</code>.
      */
-    protected Vector engineListeners;
+    protected final List<EngineListener> engineListeners;
 
     /**
      * The <code>AudioManager</code> for this <code>Engine</code>.
@@ -127,7 +128,7 @@ abstract public class BaseEngine implements Engine {
      */
     public BaseEngine(EngineMode engineMode) {
         this.engineMode = engineMode;
-        engineListeners = new Vector();
+        engineListeners = new ArrayList<EngineListener>();
         engineState = DEALLOCATED;
         engineStateLock = new Object();
         //engineProperties = createEngineProperties();
@@ -567,7 +568,7 @@ abstract public class BaseEngine implements Engine {
      */
     public void addEngineListener(EngineListener listener) {
         if (!engineListeners.contains(listener)) {
-            engineListeners.addElement(listener);
+            engineListeners.add(listener);
         }
     }
 
@@ -578,7 +579,7 @@ abstract public class BaseEngine implements Engine {
      * @param listener the listener to remove.
      */
     public void removeEngineListener(EngineListener listener) {
-        engineListeners.removeElement(listener);
+        engineListeners.remove(listener);
     }
 
     public void setEngineMask(int mask) {
