@@ -7,6 +7,8 @@ import javax.speech.EngineManager;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
 
+import org.jvoicexml.jsapi2.jse.synthesis.freetts.FreeTTSEngineListFactory;
+
 /**
  * @author DS01191
  *
@@ -14,6 +16,8 @@ import javax.speech.synthesis.SynthesizerMode;
 public class HelloWorldDemo {
     public static void main(String args[]) {
         try {
+        	EngineManager.registerEngineListFactory(
+        			FreeTTSEngineListFactory.class.getName());
             // Create a synthesizer for the default Locale
             Synthesizer synth = (Synthesizer)
                 EngineManager.createEngine(SynthesizerMode.DEFAULT);
