@@ -340,7 +340,7 @@ public class BaseAudioManager implements AudioManager {
 
     /**
      * Checks if audio management is supported.
-     * @return <code>true</code> if audio managment is supported.
+     * @return <code>true</code> if audio management is supported.
      */
     private boolean isSupportsAudioManagement() {
         String management =
