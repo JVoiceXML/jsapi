@@ -427,19 +427,6 @@ public class QueueManager implements Runnable {
                                 "WTF! It could only be text or speakable....");
                     }
                 }
-
-                /*
-                 * if (isQueueEmpty() == true) { long[] states =
-                 * setEngineState(synthesizer.QUEUE_NOT_EMPTY,
-                 * synthesizer.QUEUE_EMPTY); postSynthesizerEvent(states[0],
-                 * states[1], SynthesizerEvent.QUEUE_UPDATED, true);
-                 *
-                 * if (lastFocusEvent != DEFOCUSED) { states =
-                 * setEngineState(FOCUSED, DEFOCUSED);
-                 * postSynthesizerEvent(states[0], states[1], SynthesizerEvent.
-                 * ENGINE_DEFOCUSED, true); lastFocusEvent = DEFOCUSED; } }
-                 */
-
             }
         }
     }
@@ -626,6 +613,21 @@ public class QueueManager implements Runnable {
             }
 
             if (done) {
+                if (isQueueEmpty()) {
+                   long[] states = synthesizer.setEngineState(
+                           Synthesizer.QUEUE_NOT_EMPTY,
+                           Synthesizer.QUEUE_EMPTY);
+                   synthesizer.postSynthesizerEvent(states[0], states[1],
+                           SynthesizerEvent.QUEUE_UPDATED, true);
+
+//                   if (lastFocusEvent != Synthesizer.DEFOCUSED) {
+//                       states = synthesizer.setEngineState(Synthesizer.FOCUSED, 
+//                               Synthesizer.DEFOCUSED);
+//                       synthesizer.postSynthesizerEvent(states[0], states[1],
+//                               SynthesizerEvent.ENGINE_DEFOCUSED, true);
+//                       lastFocusEvent = Synthesizer.DEFOCUSED;
+//                   }
+                }
                 return null;
             }
             item = (QueueItem) playQueue.elementAt(0);

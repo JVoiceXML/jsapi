@@ -1,27 +1,23 @@
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
-import org.w3c.dom.Document;
-
-
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import javax.xml.transform.TransformerFactory;
-
-import javax.xml.transform.Transformer;
 import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class Ssml2JsmlTransformer {
@@ -48,10 +44,9 @@ public class Ssml2JsmlTransformer {
 
         /** create a template from a xsl file */
         try {
-            template = tfactory.newTemplates(new StreamSource(new
-                    FileInputStream("ssml2jsml.xsl")));
-        } catch (FileNotFoundException ex2) {
-            ex2.printStackTrace();
+        	InputStream in = Ssml2JsmlTransformer.class.getResourceAsStream(
+        			"/ssml2jsml.xsl");
+            template = tfactory.newTemplates(new StreamSource(in));
         } catch (TransformerConfigurationException ex2) {
             ex2.printStackTrace();
         }
