@@ -567,8 +567,10 @@ abstract public class BaseEngine implements Engine {
      * @param listener the listener to add.
      */
     public void addEngineListener(EngineListener listener) {
-        if (!engineListeners.contains(listener)) {
-            engineListeners.add(listener);
+        synchronized (engineListeners) {
+            if (!engineListeners.contains(listener)) {
+                engineListeners.add(listener);
+            }
         }
     }
 
@@ -579,7 +581,9 @@ abstract public class BaseEngine implements Engine {
      * @param listener the listener to remove.
      */
     public void removeEngineListener(EngineListener listener) {
-        engineListeners.remove(listener);
+        synchronized (engineListeners) {
+            engineListeners.remove(listener);
+        }
     }
 
     public void setEngineMask(int mask) {

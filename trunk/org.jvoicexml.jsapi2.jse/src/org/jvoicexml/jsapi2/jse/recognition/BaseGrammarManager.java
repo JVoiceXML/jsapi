@@ -373,7 +373,7 @@ public class BaseGrammarManager implements GrammarManager {
     private void insureValidEngineState() throws EngineStateException {
         if (recognizer != null) {
             //Validate current state
-            if (recognizer.testEngineState(recognizer.DEALLOCATED | recognizer.DEALLOCATING_RESOURCES) == false) {
+            if (recognizer.testEngineState(recognizer.DEALLOCATED | recognizer.DEALLOCATING_RESOURCES) == true) {
                 throw new EngineStateException("Cannot execute GrammarManager operation: invalid engine state: " + recognizer.stateToString(recognizer.getEngineState()));
             }
 
