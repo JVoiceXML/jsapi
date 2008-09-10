@@ -123,7 +123,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         resultListeners = new Vector();
         speakerManager = new BaseSpeakerManager();
         recognizerProperties = new BaseRecognizerProperties(this);
-        grammarManager = new BaseGrammarManager();
+        grammarManager = new BaseGrammarManager(this);
         resultMask = ResultEvent.DEFAULT_MASK;
         setEngineMask(getEngineMask() | RecognizerEvent.DEFAULT_MASK);
     }
@@ -257,8 +257,11 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
 
 
     public void fireEvent(EngineEvent event) {
-        for (EngineListener el: engineListeners) {
-            ((RecognizerListener) el).recognizerUpdate((RecognizerEvent) event);
+        synchronized (engineListeners) {
+            for (EngineListener el : engineListeners) {
+                ((RecognizerListener) el).recognizerUpdate((RecognizerEvent)
+                        event);
+            }
         }
     }
 
@@ -428,13 +431,13 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
                 for (int i = 0; i < grammars.length; i++) {
                     ((BaseGrammar) grammars[i]).postGrammarEvent(speechEventExecutor,
                             new
-                            GrammarEvent(grammars[i], GrammarEvent.GRAMMAR_CHANGES_COMMITTED));
+                            GrammarEvent(grammars[i], GrammarEvent.GRAMMAR_CHANGES_COMMITTED, false, false, null));
                 }
             } else {
                 for (int i = 0; i < grammars.length; i++) {
                     ((BaseGrammar) grammars[i]).postGrammarEvent(speechEventExecutor,
                             new
-                            GrammarEvent(grammars[i], GrammarEvent.GRAMMAR_CHANGES_REJECTED));
+                            GrammarEvent(grammars[i], GrammarEvent.GRAMMAR_CHANGES_REJECTED, false, false, null));
                 }
             }
         }

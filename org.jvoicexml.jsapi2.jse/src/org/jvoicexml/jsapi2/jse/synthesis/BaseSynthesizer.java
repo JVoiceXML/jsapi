@@ -68,9 +68,11 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
      * @param event EngineEvent
      */
     public void fireEvent(EngineEvent event) {
-        for (EngineListener el: engineListeners) {
-            ((SynthesizerListener) el)
-                    .synthesizerUpdate((SynthesizerEvent) event);
+        synchronized (engineListeners) {
+            for (EngineListener el : engineListeners) {
+                ((SynthesizerListener) el)
+                        .synthesizerUpdate((SynthesizerEvent) event);
+            }
         }
     }
 
