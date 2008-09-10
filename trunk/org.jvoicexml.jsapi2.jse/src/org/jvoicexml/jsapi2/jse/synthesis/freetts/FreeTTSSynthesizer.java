@@ -291,7 +291,6 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
      */
     private void handleSpeak(int id, FreeTTSSpeakableImpl speakElement) {
         com.sun.speech.freetts.Voice voice = curVoice.getVoice();
-        voice.setVerbose(true);
         voice.setAudioPlayer(audioPlayer);
 
         voice.speak(speakElement);
