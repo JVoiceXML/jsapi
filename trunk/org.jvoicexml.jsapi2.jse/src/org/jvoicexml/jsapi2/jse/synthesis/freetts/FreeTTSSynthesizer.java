@@ -2,11 +2,13 @@ package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
 import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
+import java.util.logging.Logger;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioSegment;
+import javax.speech.EngineException;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SynthesizerMode;
-import javax.sound.sampled.AudioFormat;
 
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
@@ -30,6 +32,9 @@ import com.sun.speech.freetts.audio.JavaClipAudioPlayer;
  * synthesis system.
  */
 public class FreeTTSSynthesizer extends BaseSynthesizer {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(FreeTTSSynthesizer.class.getName());
     /**
      * The currently active voice for this synthesizer
      */
@@ -96,7 +101,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
                 setEngineState(CLEAR_ALL_STATE, newState);
             }
         } else {
-            System.out.println("Can't allocate FreeTTS synthesizer");
+            LOGGER.warning("Can't allocate FreeTTS synthesizer");
             return false;
         }
 

@@ -6,14 +6,22 @@ import javax.speech.AudioSegment;
 import javax.speech.synthesis.PhoneInfo;
 
 /**
- * <p>Title: JSAPI 2.0</p>
- *
- * <p>Description: An independent reference implementation of JSR 113</p>
- *
- * <p>Copyright: Copyright (c) 2007</p>
- *
- * <p>Company: JVoiceXML group - http://jvoicexml.sourceforge.net</p>
- *
+ * <p>
+ * Title: JSAPI 2.0
+ * </p>
+ * 
+ * <p>
+ * Description: An independent reference implementation of JSR 113
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2007
+ * </p>
+ * 
+ * <p>
+ * Company: JVoiceXML group - http://jvoicexml.sourceforge.net
+ * </p>
+ * 
  * @author Renato Cassaca
  * @version 1.0
  */
@@ -39,21 +47,22 @@ public class QueueItem {
         this.source = speakable;
     }
 
-    public QueueItem(int id, Speakable speakable, SpeakableListener listener, String text){
+    public QueueItem(int id, Speakable speakable, SpeakableListener listener,
+            String text) {
         this(id, speakable, listener);
         this.source = text;
     }
 
-    public QueueItem(int id, AudioSegment audioSegment, SpeakableListener listener) {
-       this.id = id;
-       this.speakable = speakable;
-       this.listener = null;
-       this.audioSegment = audioSegment;
-       this.words = new String[0];
-       this.wordsStartTimes = new float[0];
-       this.phonesInfo = new PhoneInfo[0];
-       this.source = audioSegment;
-   }
+    public QueueItem(int id, AudioSegment audioSegment,
+            SpeakableListener listener) {
+        this.id = id;
+        this.listener = listener;
+        this.audioSegment = audioSegment;
+        this.words = new String[0];
+        this.wordsStartTimes = new float[0];
+        this.phonesInfo = new PhoneInfo[0];
+        this.source = audioSegment;
+    }
 
     public Speakable getSpeakable() {
         return speakable;
@@ -67,7 +76,7 @@ public class QueueItem {
         return id;
     }
 
-    public Object getSource(){
+    public Object getSource() {
         return source;
     }
 
@@ -79,27 +88,27 @@ public class QueueItem {
         audioSegment = audiosegment;
     }
 
-    public String[] getWords(){
+    public String[] getWords() {
         return words;
     }
 
-	public void setWords(String[] w){
+    public void setWords(String[] w) {
         words = w;
     }
 
-    public float[] getWordsStartTime(){
+    public float[] getWordsStartTime() {
         return wordsStartTimes;
     }
 
-	public void setWordsStartTimes(float[] wordsstarttimes){
+    public void setWordsStartTimes(float[] wordsstarttimes) {
         wordsStartTimes = wordsstarttimes;
     }
 
-    public PhoneInfo[] getPhonesInfo(){
+    public PhoneInfo[] getPhonesInfo() {
         return phonesInfo;
     }
 
- 	public void setPhonesInfo(PhoneInfo[] phonesinfo){
-       phonesInfo = phonesinfo;
-   	}
+    public void setPhonesInfo(PhoneInfo[] phonesinfo) {
+        phonesInfo = phonesinfo;
+    }
 }

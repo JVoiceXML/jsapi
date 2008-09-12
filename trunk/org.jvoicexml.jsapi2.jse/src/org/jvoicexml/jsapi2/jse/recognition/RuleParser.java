@@ -10,20 +10,20 @@ package org.jvoicexml.jsapi2.jse.recognition;
 
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.speech.EngineStateException;
-import javax.speech.recognition.Rule;
+import javax.speech.recognition.Grammar;
+import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.RuleAlternatives;
 import javax.speech.recognition.RuleComponent;
 import javax.speech.recognition.RuleCount;
 import javax.speech.recognition.RuleGrammar;
-import javax.speech.recognition.RuleReference;
 import javax.speech.recognition.RuleParse;
+import javax.speech.recognition.RuleReference;
 import javax.speech.recognition.RuleSequence;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
-import javax.speech.recognition.GrammarManager;
-import javax.speech.recognition.Grammar;
 
 /**
  * Implementation of the parse method(s) on
@@ -32,6 +32,9 @@ import javax.speech.recognition.Grammar;
  * @version 1.5 10/27/99 16:33:49
  */
 public class RuleParser {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(RuleParser.class.getName());
 
     private GrammarManager grammarManager;
 
@@ -96,7 +99,7 @@ public class RuleParser {
             }
             startRule = grammar.getRule(rNames[j]).getRuleComponent();
             if (startRule == null) {
-                System.out.println("BAD RULENAME " + rNames[j]);
+                LOGGER.warning("BAD RULENAME " + rNames[j]);
                 continue;
             }
             p = new Vector();
@@ -165,11 +168,11 @@ public class RuleParser {
                     ruleref = RG1.getRule(simpleName).getRuleComponent();
                     G = RG1;
                 } else {
-                    System.out.println("ERROR: UNKNOWN GRAMMAR " + gname);
+                    LOGGER.warning("ERROR: UNKNOWN GRAMMAR " + gname);
                 }
             }
             if (ruleref == null) {
-                System.out.println("ERROR: UNKNOWN RULE NAME " + r.getRuleName() +
+                LOGGER.warning("ERROR: UNKNOWN RULE NAME " + r.getRuleName() +
                                    " " + r);
                 return null;
             }

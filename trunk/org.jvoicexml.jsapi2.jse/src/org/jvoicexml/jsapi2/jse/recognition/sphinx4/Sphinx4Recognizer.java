@@ -187,7 +187,7 @@ final class Sphinx4Recognizer extends BaseRecognizer {
      */
     public boolean handleAllocate() {
         if (recognizer == null) {
-            System.out.println("cannot allocate: no recognizer created!");
+            LOGGER.warning("cannot allocate: no recognizer created!");
             return false;
         }
 
