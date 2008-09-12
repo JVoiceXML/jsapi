@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.Semaphore;
 
+import javax.speech.EngineMode;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.SynthesizerProperties;
@@ -156,12 +157,16 @@ public class BaseSynthesizerProperties extends BaseEngineProperties implements S
         properties.put("speakingRate", DEFAULT_RATE);
         properties.put("volume", MEDIUM_VOLUME);
         //Set default voice
-        Voice[] voices = ((SynthesizerMode)((Synthesizer)engine).getEngineMode()).getVoices();
-        if ((voices != null) && (voices.length > 0)) {
-            properties.put("voice", voices[0]);
-        }
-        else {
+        SynthesizerMode mode = (SynthesizerMode)engine.getEngineMode();
+        if (mode == null) {
             properties.put("voice", null);
+        } else {
+            Voice[] voices = mode.getVoices();
+            if ((voices != null) && (voices.length > 0)) {
+                properties.put("voice", voices[0]);
+            } else {
+                properties.put("voice", null);
+            }
         }
 
         propertiesSemaphore.release();

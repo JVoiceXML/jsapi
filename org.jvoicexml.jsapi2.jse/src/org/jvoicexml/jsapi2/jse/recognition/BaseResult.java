@@ -20,19 +20,20 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.speech.AudioSegment;
 import javax.speech.SpeechEventExecutor;
-import javax.speech.recognition.Grammar;
-import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.FinalResult;
 import javax.speech.recognition.FinalRuleResult;
+import javax.speech.recognition.Grammar;
+import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.RecognizerProperties;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
-import javax.speech.recognition.ResultToken;
 import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.ResultStateException;
+import javax.speech.recognition.ResultToken;
 import javax.speech.recognition.RuleAlternatives;
 import javax.speech.recognition.RuleComponent;
 import javax.speech.recognition.RuleCount;
@@ -44,6 +45,10 @@ import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
 
 public class BaseResult implements Result, FinalResult, FinalRuleResult, Serializable, Cloneable {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(BaseResult.class.getName());
+
     private Vector resultListeners;
     ResultToken tokens[] = null;
     int nTokens = 0;
@@ -88,7 +93,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
             try {
                 copy = (BaseResult) ((BaseResult)R).clone();
             } catch (CloneNotSupportedException e) {
-                System.out.println("ERROR: " + e);
+                LOGGER.warning("ERROR: " + e);
             }
             return copy;
         } else {
