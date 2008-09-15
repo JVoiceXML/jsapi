@@ -88,11 +88,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
         if (ok) {
             BaseAudioManager manager = (BaseAudioManager) getAudioManager();
             OutputStream stream = manager.getOutputStream();
-            if (stream == null) {
-                audioPlayer = new JavaClipAudioPlayer();
-            } else {
-                audioPlayer = new FreeTTSAudioPlayer(stream, manager);
-            }
+            audioPlayer = new FreeTTSAudioPlayer(stream, manager);
 
             synchronized (engineStateLock) {
                 long newState = ALLOCATED | RESUMED;

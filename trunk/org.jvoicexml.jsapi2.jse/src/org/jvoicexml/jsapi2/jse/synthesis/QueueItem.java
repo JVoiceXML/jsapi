@@ -61,7 +61,7 @@ public class QueueItem {
         this.words = new String[0];
         this.wordsStartTimes = new float[0];
         this.phonesInfo = new PhoneInfo[0];
-        this.source = audioSegment;
+        this.source = audioSegment.getMarkupText();
     }
 
     public Speakable getSpeakable() {

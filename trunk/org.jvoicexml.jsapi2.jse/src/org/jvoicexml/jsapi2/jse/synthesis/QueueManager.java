@@ -1,3 +1,29 @@
+/*
+ * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
+ * Version: $LastChangedRevision$
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy$
+ *
+ * JSAPI - An independent reference implementation of JSR 113.
+ *
+ * Copyright (C) 2007-2008 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
 package org.jvoicexml.jsapi2.jse.synthesis;
 
 import java.io.FileOutputStream;
@@ -20,22 +46,10 @@ import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 import org.jvoicexml.jsapi2.jse.BaseEngine;
 
 /**
- *
- * <p>
- * Title: JSAPI 2.0
- * </p>
- *
- * <p>
- * Description: An independent reference implementation of JSR 113
- * </p>
- *
- * <p>
- * Copyright: Copyright (c) 2007
- * </p>
- *
- * <p>
- * Company: JVoiceXML group - http://jvoicexml.sourceforge.net
- * </p>
+ * The {@link QueueManager} basically accepts the speech seqgments to 
+ * synthesized, appends them to a corresponding queue and hands them to the
+ * synthesizer to convert those pieces into audio chunks. These chunks are added
+ * to the play queue to be delivered via the configured media locator.
  *
  * @author Renato Cassaca
  * @version 1.0
@@ -199,7 +213,9 @@ public class QueueManager implements Runnable {
             item = getQueueItemToPlay();
 
             //Update audio descriptor
-            audioFormat = ((BaseAudioManager)synthesizer.getAudioManager()).getTargetAudioFormat();
+            final BaseAudioManager manager =
+                (BaseAudioManager) synthesizer.getAudioManager();
+            audioFormat = manager.getTargetAudioFormat();
             sampleRate = audioFormat.getSampleRate();
 
             final Object source = item.getSource();
@@ -330,8 +346,7 @@ public class QueueManager implements Runnable {
                         }
                     }*/
 
-                    ((BaseAudioManager) synthesizer.getAudioManager())
-                            .getOutputStream().write(buffer, 0, bytesRead);
+                    manager.getOutputStream().write(buffer, 0, bytesRead);
 
                     // update next timestamp
                     long dataTime = (long) Math.ceil(1000 * bytesRead / bps);
@@ -348,14 +363,9 @@ public class QueueManager implements Runnable {
 
             // Flush audio in the stream
             try {
-                final AudioManager manager = synthesizer.getAudioManager();
-                if (manager instanceof BaseAudioManager) {
-                    final BaseAudioManager baseManager =
-                        (BaseAudioManager) manager;
-                    final OutputStream out = baseManager.getOutputStream();
-                    if (out != null) {
-                        out.flush();
-                    }
+                final OutputStream out = manager.getOutputStream();
+                if (out != null) {
+                    out.flush();
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -431,23 +441,21 @@ public class QueueManager implements Runnable {
                     playQueue.notifyAll();
                 }
 
-                if (item.getAudioSegment() == null) {
-                    // Synthesize item
-                    ((BaseSynthesizerProperties) synthesizer
-                            .getSynthesizerProperties())
-                            .commitPropertiesChanges();
+                // Synthesize item
+                ((BaseSynthesizerProperties) synthesizer
+                        .getSynthesizerProperties())
+                        .commitPropertiesChanges();
 
-                    Object itemSource = item.getSource();
-                    if (itemSource instanceof String) {
-                        synthesizer.handleSpeak(item.getId(),
-                                (String) itemSource);
-                    } else if (itemSource instanceof Speakable) {
-                        synthesizer.handleSpeak(item.getId(),
-                                (Speakable) itemSource);
-                    } else {
-                        throw new RuntimeException(
-                                "WTF! It could only be text or speakable....");
-                    }
+                Object itemSource = item.getSource();
+                if (itemSource instanceof String) {
+                    synthesizer.handleSpeak(item.getId(),
+                            (String) itemSource);
+                } else if (itemSource instanceof Speakable) {
+                    synthesizer.handleSpeak(item.getId(),
+                            (Speakable) itemSource);
+                } else {
+                    throw new RuntimeException(
+                            "WTF! It could only be text or speakable....");
                 }
             }
         }
