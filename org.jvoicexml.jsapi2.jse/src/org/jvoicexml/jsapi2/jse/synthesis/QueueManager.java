@@ -32,7 +32,6 @@ import java.io.OutputStream;
 import java.util.Vector;
 
 import javax.sound.sampled.AudioFormat;
-import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
 import javax.speech.EngineMode;
 import javax.speech.synthesis.PhoneInfo;
@@ -69,7 +68,6 @@ public class QueueManager implements Runnable {
 
     public QueueManager(BaseSynthesizer synthesizer) {
         this.synthesizer = synthesizer;
-        done = false;
         queue = new Vector<QueueItem>();
         playQueue = new Vector<QueueItem>();
         queueID = 0;
@@ -88,12 +86,15 @@ public class QueueManager implements Runnable {
             name = mode.getEngineName();
         }
         synthThread = new Thread(this, "QueueManager_synthesizer_"  + name);
+        synthThread.setDaemon(true);
         Runnable playRunnable = new Runnable() {
             public void run() {
                 playItems();
             }
         };
         playThread = new Thread(playRunnable, "QueueManager_play_" + name);
+        playThread.setDaemon(true);
+
         synthThread.start();
         playThread.start();
     }
@@ -259,7 +260,7 @@ public class QueueManager implements Runnable {
             try {
                 while (true) {
                     final AudioSegment segment = item.getAudioSegment();
-                    if (!segment.isGettable()) {
+                    if ((segment == null) || !segment.isGettable()) {
                         // TODO How to handle this?
                         break;
                     }
@@ -633,9 +634,7 @@ public class QueueManager implements Runnable {
     protected QueueItem getQueueItemToPlay() {
         QueueItem item = null;
         synchronized (playQueue) {
-            while (((playQueue.size() == 0) || (playQueue.get(0)
-                    .getAudioSegment() == null))
-                    && !done) {
+            while (playQueue.isEmpty() && !done) {
                 try {
                     playQueue.wait();
                 } catch (InterruptedException e) {

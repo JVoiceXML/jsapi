@@ -25,8 +25,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -81,9 +81,6 @@ public class BaseAudioManager implements AudioManager {
         this.engine = engine;
         audioListeners = new ArrayList<AudioListener>();
         audioMask = AudioEvent.DEFAULT_MASK;
-        inputStream = null;
-        outputStream = null;
-        mediaLocator = null;
         engineAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
                                             16000,
                                             16,
@@ -92,7 +89,6 @@ public class BaseAudioManager implements AudioManager {
                                             16000,
                                             false);
         targetAudioFormat = engineAudioFormat;
-        formatConverter = null;
     }
 
     /**
@@ -141,36 +137,29 @@ public class BaseAudioManager implements AudioManager {
                     "AudioManager has no permission to access audio resources");
         }
 
-        if (mediaLocator != null) {
-            //Open URL described in locator
-            URL url = null;
-            try {
-                url = new URL(mediaLocator);
-            } catch (MalformedURLException ex) {
-                throw new IllegalArgumentException(ex);
+        if (mediaLocator == null) {
+            if (engine instanceof Synthesizer) {
+                outputStream = new ClipOutputStream();
             }
-
-            //Open a connection to URL
-            URLConnection urlConnection = null;
+        } else {
+            //Open URL described in locator
+            final URLConnection urlConnection;
             try {
-                urlConnection = url.openConnection();
-                urlConnection.connect();
-            } catch (IOException ex) {
-                throw new AudioException("Cannot open connection to locator URL: " +
-                        ex.getMessage());
+                urlConnection = openURLConnection();
+            } catch (IOException e) {
+                throw new AudioException(e.getMessage());
             }
 
             //Gets IO from that connection
             if (engine instanceof Synthesizer) {
-                OutputStream os = null;
                 try {
-                    os = urlConnection.getOutputStream();
+                    outputStream = urlConnection.getOutputStream();
                 } catch (IOException ex) {
                     throw new AudioException("Cannot get OutputStream from URL: " +
                             ex.getMessage());
                 }
-
-                targetAudioFormat = getAudioFormat(url);
+            
+                targetAudioFormat = getAudioFormat();
 
                 try {
                     formatConverter = new AudioFormatConverter(engineAudioFormat,
@@ -178,11 +167,6 @@ public class BaseAudioManager implements AudioManager {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-
-                //The synthesizer already converts audio, no conversion needed here
-                //outputStream = getConvertedStream(os, engineAudioFormat, targetAudioFormat);
-                outputStream = os;
-
             } else {
                 InputStream is = null;
                 try {
@@ -192,7 +176,7 @@ public class BaseAudioManager implements AudioManager {
                             ex.getMessage());
                 }
 
-                targetAudioFormat = getAudioFormat(url);
+                targetAudioFormat = getAudioFormat();
 
                 //Configure audio conversions
                 inputStream = getConvertedStream(is, targetAudioFormat,
@@ -201,6 +185,24 @@ public class BaseAudioManager implements AudioManager {
         }
         postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
 
+    }
+
+    private URLConnection openURLConnection() throws IOException {
+        if (mediaLocator == null) {
+            return null;
+        }
+
+        final URL url;
+        try {
+            url = new URL(mediaLocator);
+        } catch (MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+
+        //Open a connection to URL
+        URLConnection connection = url.openConnection();
+        connection.connect();
+        return connection;
     }
 
     /**
@@ -398,18 +400,19 @@ public class BaseAudioManager implements AudioManager {
      *
      * @return AudioFormat
      */
-    private AudioFormat getAudioFormat(URL mediaLocator) {
+    private AudioFormat getAudioFormat() {
         //Get matching URI to extract query parameters
         URI uri = null;
         try {
-            uri = mediaLocator.toURI();
+            uri = new URI(mediaLocator);
         } catch (URISyntaxException ex) {
             ex.printStackTrace();
             //Continue and give back a default AudioFormat
         }
 
         //Initialize parameters
-        HashMap<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters =
+            new java.util.HashMap<String, String>();
         if (uri.getQuery() != null) {
             String[] parametersString = uri.getQuery().split("\\&");
             for (String part : parametersString) {
