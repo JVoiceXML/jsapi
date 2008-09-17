@@ -32,8 +32,8 @@ public class QueueManagerTest {
      * Test method for {@link org.jvoicexml.jsapi2.jse.synthesis.QueueManager#appendItem(javax.speech.synthesis.Speakable, javax.speech.synthesis.SpeakableListener)}.
      */
     @Test
-    public void testAppendItemSpeakableSpeakableListener() {
-        QueueManager manager = new QueueManager(synthesizer);
+    public void testAppendItemSpeakableSpeakableListener() throws Exception {
+        QueueManager manager = synthesizer.getQueueManager();
         AudioSegment segment = new AudioSegment(null, "test");
         SpeakableListener listener = new DummySpeakableListener();
         manager.appendItem(segment, listener);
@@ -41,6 +41,7 @@ public class QueueManagerTest {
         Assert.assertNotNull(item);
         Assert.assertEquals(segment, item.getAudioSegment());
         Assert.assertEquals(listener, item.getListener());
+        Thread.sleep(10000);
     }
 
 }

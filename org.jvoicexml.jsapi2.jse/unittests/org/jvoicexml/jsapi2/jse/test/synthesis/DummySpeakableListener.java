@@ -12,10 +12,9 @@ import javax.speech.synthesis.SpeakableListener;
  */
 public class DummySpeakableListener implements SpeakableListener {
 
-    /* (non-Javadoc)
-     * @see javax.speech.synthesis.SpeakableListener#speakableUpdate(javax.speech.synthesis.SpeakableEvent)
+    /**
+     * {@inheritDoc}
      */
-    @Override
     public void speakableUpdate(SpeakableEvent e) {
         System.out.println(e);
     }
