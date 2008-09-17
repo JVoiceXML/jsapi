@@ -47,7 +47,6 @@ package org.jvoicexml.jsapi2.jse.recognition;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -58,6 +57,7 @@ import javax.speech.EngineListener;
 import javax.speech.EngineStateException;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarEvent;
+import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerEvent;
 import javax.speech.recognition.RecognizerListener;
@@ -68,8 +68,8 @@ import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.SpeakerManager;
 
+import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 import org.jvoicexml.jsapi2.jse.BaseEngine;
-import javax.speech.recognition.GrammarManager;
 
 
 /**
@@ -119,7 +119,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
      * Create a new Recognizer in the DEALLOCATED state.
      */
     public BaseRecognizer(RecognizerMode mode) {
-        super(mode);
+        super(mode, new BaseRecognizerAudioManager());
         resultListeners = new Vector();
         speakerManager = new BaseSpeakerManager();
         recognizerProperties = new BaseRecognizerProperties(this);
