@@ -36,15 +36,13 @@ import javax.speech.AudioException;
 import javax.speech.AudioListener;
 import javax.speech.AudioManager;
 import javax.speech.EngineStateException;
-import javax.speech.recognition.Recognizer;
-import javax.speech.synthesis.Synthesizer;
 
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code>
  * interface.  Actual JSAPI implementations might want to extend
  * or modify this implementation.
  */
-public class BaseAudioManager implements AudioManager {
+public abstract class BaseAudioManager implements AudioManager {
     /**
      * List of <code>AudioListeners</code> registered for
      * <code>AudioEvents</code> on this object.
@@ -56,11 +54,7 @@ public class BaseAudioManager implements AudioManager {
     protected String mediaLocator = null;
 
     protected BaseEngine engine;
-
-    protected OutputStream outputStream;
-
-    protected InputStream inputStream;
-
+    
     protected AudioInputStream ais;
 
     /**
@@ -72,13 +66,12 @@ public class BaseAudioManager implements AudioManager {
     protected AudioFormat targetAudioFormat;
 
 
-    private AudioFormatConverter formatConverter;
+    protected AudioFormatConverter formatConverter;
 
     /**
      * Class constructor.
      */
-    public BaseAudioManager(BaseEngine engine) {
-        this.engine = engine;
+    public BaseAudioManager() {
         audioListeners = new ArrayList<AudioListener>();
         audioMask = AudioEvent.DEFAULT_MASK;
         engineAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
@@ -89,6 +82,14 @@ public class BaseAudioManager implements AudioManager {
                                             16000,
                                             false);
         targetAudioFormat = engineAudioFormat;
+    }
+
+    /**
+     * Sets the engine.
+     * @param engine the engine.
+     */
+    public void setEngine(BaseEngine engine) {
+        this.engine = engine;
     }
 
     /**
@@ -128,66 +129,10 @@ public class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public void audioStart() throws SecurityException,
-            AudioException, EngineStateException {
+    public abstract void audioStart() throws SecurityException,
+            AudioException, EngineStateException;
 
-        if ((mediaLocator != null)
-                && !isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
-        if (mediaLocator == null) {
-            if (engine instanceof Synthesizer) {
-                outputStream = new ClipOutputStream();
-            }
-        } else {
-            //Open URL described in locator
-            final URLConnection urlConnection;
-            try {
-                urlConnection = openURLConnection();
-            } catch (IOException e) {
-                throw new AudioException(e.getMessage());
-            }
-
-            //Gets IO from that connection
-            if (engine instanceof Synthesizer) {
-                try {
-                    outputStream = urlConnection.getOutputStream();
-                } catch (IOException ex) {
-                    throw new AudioException("Cannot get OutputStream from URL: " +
-                            ex.getMessage());
-                }
-            
-                targetAudioFormat = getAudioFormat();
-
-                try {
-                    formatConverter = new AudioFormatConverter(engineAudioFormat,
-                            targetAudioFormat);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            } else {
-                InputStream is = null;
-                try {
-                    is = urlConnection.getInputStream();
-                } catch (IOException ex) {
-                    throw new AudioException("Cannot get InputStream from URL: " +
-                            ex.getMessage());
-                }
-
-                targetAudioFormat = getAudioFormat();
-
-                //Configure audio conversions
-                inputStream = getConvertedStream(is, targetAudioFormat,
-                        engineAudioFormat);
-            }
-        }
-        postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
-
-    }
-
-    private URLConnection openURLConnection() throws IOException {
+    protected URLConnection openURLConnection() throws IOException {
         if (mediaLocator == null) {
             return null;
         }
@@ -208,38 +153,8 @@ public class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public void audioStop() throws SecurityException,
-            AudioException, EngineStateException {
-
-        if (!isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
-        //Release IO
-        if (inputStream != null) {
-            try {
-                inputStream.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-        if (outputStream != null) {
-            try {
-                outputStream.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        if (formatConverter != null) {
-            formatConverter.close();
-            formatConverter = null;
-        }
-
-        postAudioEvent(AudioEvent.AUDIO_STOPPED, AudioEvent.AUDIO_LEVEL_MIN);
-
-    }
+    public abstract void audioStop() throws SecurityException,
+            AudioException, EngineStateException;
 
     public void setMediaLocator(String locator) throws AudioException,
             AudioException, EngineStateException, IllegalArgumentException,
@@ -262,57 +177,6 @@ public class BaseAudioManager implements AudioManager {
         }
 
         mediaLocator = locator;
-    }
-
-    public void setMediaLocator(String locator, InputStream stream) throws
-            AudioException, EngineStateException, IllegalArgumentException,
-            SecurityException {
-
-        if (System.getProperty("javax.speech.supports.audio.management") == null) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
-        if (engine instanceof Synthesizer) {
-            throw new IllegalArgumentException(
-                    "Engine doesn't support OutputStreams");
-        }
-
-        //Insure that engine is DEALLOCATED
-        if (engine.testEngineState(engine.DEALLOCATED) == false) {
-            throw new EngineStateException(
-                    "Engine is not DEALLOCATED. Cannot setMediaLocator");
-        }
-
-        mediaLocator = locator;
-        this.inputStream = stream;
-    }
-
-    public void setMediaLocator(String locator, OutputStream stream) throws
-            AudioException, EngineStateException, IllegalArgumentException,
-            SecurityException {
-
-        //Check that audio IO can be made
-        if (System.getProperty("javax.speech.supports.audio.management") == null) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
-        if (engine instanceof Recognizer) {
-            throw new IllegalArgumentException(
-                    "Engine doesn't support OutputStreams");
-        }
-
-        //Insure that engine is DEALLOCATED
-        if (engine.testEngineState(engine.DEALLOCATED) == false) {
-            throw new EngineStateException(
-                    "Engine is not DEALLOCATED. Cannot setMediaLocator");
-        }
-
-        //     Connection c = javax.microedition.io.Connector.open("");
-
-        mediaLocator = locator;
-        this.outputStream = stream;
     }
 
     public String getMediaLocator() {
@@ -344,7 +208,7 @@ public class BaseAudioManager implements AudioManager {
      * Checks if audio management is supported.
      * @return <code>true</code> if audio management is supported.
      */
-    private boolean isSupportsAudioManagement() {
+    protected boolean isSupportsAudioManagement() {
         String management =
             System.getProperty("javax.speech.supports.audio.management");
         return Boolean.valueOf(management).equals(Boolean.TRUE);
@@ -387,20 +251,24 @@ public class BaseAudioManager implements AudioManager {
         }
     }
 
-    public OutputStream getOutputStream() {
-        return outputStream;
-    }
+    /**
+     * Retrieves the output stream associated with the given media locator.
+     * @return output stream.
+     */
+    public abstract OutputStream getOutputStream();
 
-    public InputStream getInputStream() {
-        return inputStream;
-    }
+    /**
+     * Retrieves the input stream associated with the given media locator.
+     * @return input stream.
+     */
+    public abstract InputStream getInputStream();
 
     /**
      * Given URI parameters, constructs an AudioFormat
      *
      * @return AudioFormat
      */
-    private AudioFormat getAudioFormat() {
+    protected AudioFormat getAudioFormat() {
         //Get matching URI to extract query parameters
         URI uri = null;
         try {
@@ -504,7 +372,7 @@ public class BaseAudioManager implements AudioManager {
      * @param targetFormat AudioFormat
      * @return InputStream
      */
-    private InputStream getConvertedStream(InputStream is,
+    protected InputStream getConvertedStream(InputStream is,
                                            AudioFormat sourceFormat,
                                            AudioFormat targetFormat) {
         /** @todo Compare more preciselly AudioFormat (not using AudioFormat.matches()) */
@@ -560,7 +428,7 @@ public class BaseAudioManager implements AudioManager {
 
         try {
             //Basic Conversion support
-            PipedInputStream pis = new PipedInputStream(16000000);
+            PipedInputStream pis = new PipedInputStream();
             PipedOutputStream pos = new PipedOutputStream(pis);
 
             //Describe source audio
@@ -798,7 +666,7 @@ public class BaseAudioManager implements AudioManager {
     }
 
 
-    private class AudioFormatConverter {
+    protected class AudioFormatConverter {
 
         private final PipedInputStream pipedInputStream;
         private final PipedOutputStream pipedOutputStream;
@@ -819,7 +687,7 @@ public class BaseAudioManager implements AudioManager {
 
             //Conversion pipeline
             pipeSize = getAudioFormatBytesPerSecond(sourceFormat) * 40;
-            pipedInputStream = new PipedInputStream(pipeSize);
+            pipedInputStream = new PipedInputStream();
             pipedOutputStream = new PipedOutputStream(pipedInputStream);
 
             convertedInputStream = getConvertedStream(pipedInputStream, sourceFormat, targetFormat);

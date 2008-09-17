@@ -1,13 +1,12 @@
 /**
  * 
  */
-package org.jvoicexml.jsapi2.jse;
+package org.jvoicexml.jsapi2.jse.synthesis;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -20,15 +19,17 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  *
  */
 public class ClipOutputStream extends OutputStream {
-    private ByteArrayOutputStream buffer;
-    
+    private PipedOutputStream out;
+    private PipedInputStream inPipe;
+    private AudioInputStream in;
+
     private Clip clip;
     
     public ClipOutputStream() {
-        buffer = new ByteArrayOutputStream();
+        out = new PipedOutputStream();
         try {
-            clip = AudioSystem.getClip();
-        } catch (LineUnavailableException e) {
+            inPipe = new PipedInputStream(out);
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -36,7 +37,7 @@ public class ClipOutputStream extends OutputStream {
 
     @Override
     public void write(int b) throws IOException {
-        buffer.write(b);
+        out.write(b);
     }
 
     /* (non-Javadoc)
@@ -44,17 +45,17 @@ public class ClipOutputStream extends OutputStream {
      */
     @Override
     public void flush() throws IOException {
-        byte[] bytes = buffer.toByteArray();
-        System.out.println("*** flush " + bytes.length);
-        InputStream input = new ByteArrayInputStream(bytes);
         try {
-            AudioInputStream in = AudioSystem.getAudioInputStream(input);
+            if (in == null) {
+                clip = AudioSystem.getClip();
+                in = AudioSystem.getAudioInputStream(inPipe);
+            }
             clip.open(in);
             clip.start();
-        } catch (UnsupportedAudioFileException e) {
+        } catch (LineUnavailableException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (LineUnavailableException e) {
+        } catch (UnsupportedAudioFileException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

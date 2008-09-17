@@ -54,7 +54,7 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
     }
 
     public BaseSynthesizer(SynthesizerMode engineMode) {
-        super(engineMode);
+        super(engineMode, new BaseSynthesizerAudioManager());
         speakableListeners = new Vector();
         synthesizerProperties = new BaseSynthesizerProperties(this);
         speakableMask = SpeakableEvent.DEFAULT_MASK;

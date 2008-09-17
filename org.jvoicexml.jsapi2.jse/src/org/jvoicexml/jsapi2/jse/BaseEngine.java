@@ -45,19 +45,19 @@
  */
 package org.jvoicexml.jsapi2.jse;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.speech.AudioException;
+import javax.speech.AudioManager;
 import javax.speech.Engine;
 import javax.speech.EngineEvent;
-import javax.speech.EngineListener;
 import javax.speech.EngineException;
-import javax.speech.AudioManager;
-import javax.speech.AudioException;
-import javax.speech.EngineStateException;
-import javax.speech.VocabularyManager;
+import javax.speech.EngineListener;
 import javax.speech.EngineMode;
-import java.util.Vector;
+import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
-import java.util.List;
-import java.util.ArrayList;
+import javax.speech.VocabularyManager;
 
 /**
  * Supports the JSAPI 2.0 <code>Engine</code> interface.
@@ -87,12 +87,12 @@ abstract public class BaseEngine implements Engine {
     /**
      * The <code>AudioManager</code> for this <code>Engine</code>.
      */
-    protected AudioManager audioManager = null;
+    protected AudioManager audioManager;
 
     /**
      * The <code>EngineModeDesc</code> for this <code>Engine</code>.
      */
-    protected EngineMode engineMode = null;
+    protected EngineMode engineMode;
 
     /**
      * The <code>EngineProperties</code> for this <code>Engine</code>.
@@ -102,7 +102,7 @@ abstract public class BaseEngine implements Engine {
     /**
      * Event executor
      */
-    protected SpeechEventExecutor speechEventExecutor = null;
+    protected SpeechEventExecutor speechEventExecutor;
 
     /**
      * Utility state for clearing the <code>engineState</code>.
@@ -117,7 +117,7 @@ abstract public class BaseEngine implements Engine {
      * <code>DEALLOCATED</code> state.
      */
     public BaseEngine() {
-        this(null);
+        this(null, null);
     }
 
     /**
@@ -126,14 +126,15 @@ abstract public class BaseEngine implements Engine {
      *
      * @param desc the operating mode of this <code>Engine</code>
      */
-    public BaseEngine(EngineMode engineMode) {
+    public BaseEngine(EngineMode engineMode, BaseAudioManager manager) {
         this.engineMode = engineMode;
         engineListeners = new ArrayList<EngineListener>();
         engineState = DEALLOCATED;
         engineStateLock = new Object();
         //engineProperties = createEngineProperties();
         setSpeechEventExecutor(null);
-        audioManager = new BaseAudioManager(this);
+        manager.setEngine(this);
+        audioManager = manager;
     }
 
     /**
