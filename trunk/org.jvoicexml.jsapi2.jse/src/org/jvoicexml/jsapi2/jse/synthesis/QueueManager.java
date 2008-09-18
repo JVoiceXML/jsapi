@@ -634,7 +634,7 @@ public class QueueManager implements Runnable {
     protected QueueItem getQueueItemToPlay() {
         QueueItem item = null;
         synchronized (playQueue) {
-            while (playQueue.isEmpty() && !done) {
+            while (playQueue.isEmpty() || playQueue.get(0).getAudioSegment()==null && !done) {
                 try {
                     playQueue.wait();
                 } catch (InterruptedException e) {

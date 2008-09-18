@@ -428,7 +428,7 @@ public abstract class BaseAudioManager implements AudioManager {
 
         try {
             //Basic Conversion support
-            PipedInputStream pis = new PipedInputStream();
+            PipedInputStream pis = new PipedInputStream(16000000);
             PipedOutputStream pos = new PipedOutputStream(pis);
 
             //Describe source audio
@@ -687,7 +687,7 @@ public abstract class BaseAudioManager implements AudioManager {
 
             //Conversion pipeline
             pipeSize = getAudioFormatBytesPerSecond(sourceFormat) * 40;
-            pipedInputStream = new PipedInputStream();
+            pipedInputStream = new PipedInputStream(pipeSize);
             pipedOutputStream = new PipedOutputStream(pipedInputStream);
 
             convertedInputStream = getConvertedStream(pipedInputStream, sourceFormat, targetFormat);
