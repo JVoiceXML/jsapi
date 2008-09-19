@@ -195,7 +195,7 @@ public class QueueManager implements Runnable {
     }
 
     private void playItems() {
-        final int BUFFER_LENGTH = 2048;
+        final int BUFFER_LENGTH = 1024;
 
         QueueItem item;
         int playIndex = 0;
@@ -208,7 +208,8 @@ public class QueueManager implements Runnable {
         // AudioFormat audioFormat =
         // ((BaseAudioManager)synthesizer.getAudioManager()).getEngineAudioFormat();
         AudioFormat audioFormat = null;
-        float sampleRate = 16000;
+        float sampleRate;
+        final byte[] buffer = new byte[BUFFER_LENGTH];
 
         while (!done) {
             item = getQueueItemToPlay();
@@ -250,7 +251,6 @@ public class QueueManager implements Runnable {
             wordStart = 0;
             phonemeIndex = 0;
             timeNextPhone = 0;
-            byte[] buffer = new byte[BUFFER_LENGTH];
             int bytesRead = 0;
 
             long bps = audioFormat.getChannels();
@@ -416,8 +416,6 @@ public class QueueManager implements Runnable {
      */
     public void run() {
         QueueItem item;
-        int currentCommand;
-        boolean queueEmptied;
 
         long lastFocusEvent = Synthesizer.DEFOCUSED;
         long lastQueueEvent = Synthesizer.QUEUE_EMPTY;
