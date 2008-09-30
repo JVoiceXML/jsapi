@@ -20,15 +20,19 @@ import org.jvoicexml.jsapi2.jse.synthesis.freetts.FreeTTSEngineListFactory;
  */
 public class HelloWorldDemo {
     public static void main(String args[]) {
+        // Enable logging at all levels.
         Handler handler = new ConsoleHandler();
         handler.setLevel(Level.ALL);
-        Logger.getLogger("com.sun").addHandler(handler);
-        Logger.getLogger("com.sun").setLevel(Level.ALL);
+        Logger.getLogger("").addHandler(handler);
+        Logger.getLogger("").setLevel(Level.ALL);
+        
         try {
             EngineManager
                     .registerEngineListFactory(FreeTTSEngineListFactory.class
                             .getName());
             System.setProperty("javax.speech.supports.audio.management",
+                    Boolean.TRUE.toString());
+            System.setProperty("javax.speech.supports.audio.capture",
                     Boolean.TRUE.toString());
             // Create a synthesizer for the default Locale
             Synthesizer synth = (Synthesizer) EngineManager

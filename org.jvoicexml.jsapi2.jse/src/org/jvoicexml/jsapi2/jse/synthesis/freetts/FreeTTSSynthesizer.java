@@ -1,10 +1,12 @@
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
+import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
 import javax.speech.EngineException;
 import javax.speech.synthesis.Speakable;
@@ -16,7 +18,6 @@ import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer;
 
 import com.sun.speech.freetts.FreeTTSSpeakableImpl;
 import com.sun.speech.freetts.audio.AudioPlayer;
-import com.sun.speech.freetts.audio.JavaClipAudioPlayer;
 
 
 /**
@@ -298,9 +299,11 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
         if (audioPlayer instanceof FreeTTSAudioPlayer) {
             FreeTTSAudioPlayer player = (FreeTTSAudioPlayer) audioPlayer;
-            ByteArrayInputStream in =
+            InputStream in =
                 new ByteArrayInputStream(player.getAudioBytes());
-            AudioSegment segment = new BaseAudioSegment(getAudioManager().getMediaLocator(), "", in);
+            final AudioManager manager = getAudioManager();
+            final String locator = manager.getMediaLocator();
+            AudioSegment segment = new BaseAudioSegment(locator, "", in);
             setAudioSegment(id, segment);
             player.clearAudioBytes();
         }
