@@ -58,7 +58,7 @@ public abstract class BaseAudioManager implements AudioManager {
     protected AudioInputStream ais;
 
     /**
-     *  Audio format of the audio nativelly produced
+     * Audio format of the audio natively produced
      * by the engine
      */
     protected AudioFormat engineAudioFormat;

@@ -4,6 +4,7 @@ package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 import com.sun.speech.freetts.audio.AudioPlayer;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
 
     private FileOutputStream fos;
 
-    private List<byte[]> audioBytes;
+    private ByteArrayOutputStream buffer;
 
     private List<byte[]> audioDuringPause;
 
@@ -47,7 +48,7 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
         this.baseAudioManager = baseAudioManager;
         this.targetStream = targetStream;
         audioDuringPause = new ArrayList<byte[]>();
-        audioBytes = new ArrayList<byte[]>();
+        buffer = new ByteArrayOutputStream();
         paused = false;
 
         try {
@@ -217,14 +218,13 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
      * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
      */
     public boolean write(byte[] audioData) {
-        byte[] a = audioData.clone();
         try {
             fos.write(audioData);
+            buffer.write(audioData);
         } catch (IOException ex) {
+            ex.printStackTrace();
         }
-        audioBytes.add(a);
         return true;
-        //return write(audioData, 0, audioData.length);
     }
 
     /**
@@ -246,8 +246,7 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
                 ex.printStackTrace();
                 return false;
             }
-        }
-        else {
+        } else {
             synchronized (audioDuringPause) {
                 byte[] buffer;
                 if ((offset != 0) && (size != audioData.length)) {
@@ -264,22 +263,11 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
     }
 
     public void clearAudioBytes(){
-        audioBytes.clear();
+        buffer.reset();
     }
 
     public byte[] getAudioBytes(){
-        int size=0;
-        for (int i=0; i<audioBytes.size(); ++i){
-            size += audioBytes.get(0).length;
-        }
-
-        byte[] res = new byte[size];
-
-        for (int i=0,writer=0; i<audioBytes.size(); ++i){
-            for (int j=0; j<audioBytes.get(i).length; ++j)
-                res[writer++] = audioBytes.get(i)[j];
-        }
-
+        byte[] res = buffer.toByteArray();
         ByteArrayInputStream bais = baseAudioManager.getConvertedAudio(res);
         res = new byte[bais.available()];
         try {
