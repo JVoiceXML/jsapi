@@ -105,7 +105,7 @@ public class RuleParser {
             p = new Vector();
             RuleComponent ruleComponent = rp.parse(grammar, startRule,
                     inputTokens);
-            if (ruleComponent != null) {
+            if (ruleComponent != null && rp.iPos==inputTokens.length) {
                 RuleParse ruleParse = new RuleParse(new RuleReference(rNames[j]),
                         ruleComponent);
                 p.add(ruleParse);
