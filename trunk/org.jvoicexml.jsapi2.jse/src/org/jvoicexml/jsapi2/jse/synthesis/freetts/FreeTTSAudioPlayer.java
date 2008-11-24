@@ -1,225 +1,152 @@
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
 
-import com.sun.speech.freetts.audio.AudioPlayer;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFormat;
 
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 
+import com.sun.speech.freetts.audio.AudioPlayer;
+
 
 /**
- * <p>Title: JSAPI2Engines</p>
- *
- * <p>Description: JSAPI 2.0 Engines implementations</p>
- *
- * <p>Copyright: Copyright (c) 2007</p>
- *
- * <p>Company: INESC-ID L2F</p>
+ * Audioplayer for the JSAPI 2 base implementation.
  *
  * @author Renato Cassaca
+ * @author Dirk Schnelle-Walka
  * @version 1.0
  */
 public class FreeTTSAudioPlayer implements AudioPlayer {
-
-    private OutputStream targetStream;
-
-    private FileOutputStream fos;
-
+    /** The collected audio data. */
     private ByteArrayOutputStream buffer;
-
-    private List<byte[]> audioDuringPause;
-
-    private boolean paused;
 
     private BaseAudioManager baseAudioManager;
 
-    public FreeTTSAudioPlayer(OutputStream targetStream,
-                              BaseAudioManager baseAudioManager) {
-        this.baseAudioManager = baseAudioManager;
-        this.targetStream = targetStream;
-        audioDuringPause = new ArrayList<byte[]>();
-        buffer = new ByteArrayOutputStream();
-        paused = false;
+    /** The audio format to use. */
+    private AudioFormat audioFormat;
 
-        try {
-            fos = new FileOutputStream("freetts_dump.raw");
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        }
+    /**
+     * Constructs a new object.
+     * @param baseAudioManager the audio manager.
+     */
+    public FreeTTSAudioPlayer(BaseAudioManager baseAudioManager) {
+        this.baseAudioManager = baseAudioManager;
+        buffer = new ByteArrayOutputStream();
+        audioFormat = baseAudioManager.getEngineAudioFormat();
     }
 
     /**
-     * Starts the output of a set of data.
-     *
-     * @param size the size of data in bytes to be output before
-     *   <code>end</code> is called.
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public void begin(int size) {
     }
 
     /**
-     * Cancels all queued output.
-     *
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public void cancel() {
     }
 
     /**
-     * Waits for all audio playback to stop, and closes this AudioPlayer.
-     *
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public void close() {
     }
 
     /**
-     * Waits for all queued audio to be played
-     *
-     * @return <code>true</code> if the audio played to completion;
-     *   otherwise <code> false </code> if the audio was stopped
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public boolean drain() {
         return false;
     }
 
     /**
-     * Signals the end of a set of data.
-     *
-     * @return <code>true</code> if the audio was output properly, <code>
-     *   false</code> if the output was cancelled or interrupted.
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public boolean end() {
+        // This algorithm is not very efficient. Needs some cleanup.
         return true;
     }
 
     /**
-     * Retrieves the audio format for this player
-     *
-     * @return the current audio format
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public AudioFormat getAudioFormat() {
-        return null;
+        return audioFormat;
     }
 
     /**
-     * Gets the amount of audio played since the last resetTime
-     *
-     * @return the amount of audio in milliseconds
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public long getTime() {
         return 0L;
     }
 
     /**
-     * Returns the current volume.
-     *
-     * @return the current volume (between 0 and 1)
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public float getVolume() {
         return 0.0F;
     }
 
     /**
-     * Pauses all audio output on this player.
-     *
+     * {@inheritDoc}
      */
     public void pause() {
-        paused = true;
     }
 
     /**
-     * Prepares for another batch of output.
-     *
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public void reset() {
+        buffer.reset();
     }
 
     /**
-     *
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public void resetTime() {
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     public void resume() {
-        //Writes pending audio
-        synchronized (audioDuringPause) {
-            for (byte[] buffer : audioDuringPause) {
-                try {
-                    fos.write(buffer);
-                    targetStream.write(buffer);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            paused = false;
-        }
     }
 
     /**
-     * Sets the audio format to use for the next set of outputs.
-     *
-     * @param format the audio format
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public void setAudioFormat(AudioFormat format) {
+        audioFormat = format;
     }
 
     /**
-     * Sets the current volume.
-     *
-     * @param volume the new volume (between 0 and 1)
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public void setVolume(float volume) {
     }
 
     /**
-     *
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public void showMetrics() {
     }
 
     /**
-     *
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public void startFirstSampleTimer() {
     }
 
     /**
-     * Writes the given bytes to the audio stream
-     *
-     * @param audioData audio data to write to the device
-     * @return <code>true</code> of the write completed successfully, <code>
-     *   false </code>if the write was cancelled.
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public boolean write(byte[] audioData) {
         try {
-            fos.write(audioData);
             buffer.write(audioData);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -228,45 +155,18 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
     }
 
     /**
-     * Writes the given bytes to the audio stream
-     *
-     * @param audioData audio data to write to the device
-     * @param offset the offset into the buffer
-     * @param size the number of bytes to write.
-     * @return <code>true</code> of the write completed successfully, <code>
-     *   false </code>if the write was cancelled.
-     * @todo Implement this com.sun.speech.freetts.audio.AudioPlayer method
+     * {@inheritDoc}
      */
     public boolean write(byte[] audioData, int offset, int size) {
-        if (paused == false) {
-            try {
-                fos.write(audioData, offset, size);
-                targetStream.write(audioData, offset, size);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                return false;
-            }
-        } else {
-            synchronized (audioDuringPause) {
-                byte[] buffer;
-                if ((offset != 0) && (size != audioData.length)) {
-                    buffer = new byte[size - offset];
-                    System.arraycopy(audioData, offset, buffer, 0, size - offset);
-                }
-                else {
-                    buffer = audioData;
-                }
-                audioDuringPause.add(buffer);
-            }
-        }
+        buffer.write(audioData, offset, size);
         return true;
     }
 
-    public void clearAudioBytes(){
-        buffer.reset();
-    }
-
-    public byte[] getAudioBytes(){
+    /**
+     * Retrieves the collected audio data.
+     * @return the collected audio data.
+     */
+    public byte[] getAudioBytes() throws IOException {
         byte[] res = buffer.toByteArray();
         ByteArrayInputStream bais = baseAudioManager.getConvertedAudio(res);
         res = new byte[bais.available()];
@@ -277,5 +177,4 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
 
         return res;
     }
-
 }
