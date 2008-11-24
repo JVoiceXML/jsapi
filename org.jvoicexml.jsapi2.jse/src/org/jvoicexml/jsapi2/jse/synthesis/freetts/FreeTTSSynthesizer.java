@@ -1,6 +1,7 @@
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Logger;
@@ -88,8 +89,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
         if (ok) {
             BaseAudioManager manager = (BaseAudioManager) getAudioManager();
-            OutputStream stream = manager.getOutputStream();
-            audioPlayer = new FreeTTSAudioPlayer(stream, manager);
+            audioPlayer = new FreeTTSAudioPlayer(manager);
 
             synchronized (engineStateLock) {
                 long newState = ALLOCATED | RESUMED;
@@ -299,13 +299,19 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
         if (audioPlayer instanceof FreeTTSAudioPlayer) {
             FreeTTSAudioPlayer player = (FreeTTSAudioPlayer) audioPlayer;
-            InputStream in =
-                new ByteArrayInputStream(player.getAudioBytes());
+            InputStream in;
+            try {
+                in = new ByteArrayInputStream(player.getAudioBytes());
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return;
+            }
             final AudioManager manager = getAudioManager();
             final String locator = manager.getMediaLocator();
             AudioSegment segment = new BaseAudioSegment(locator, "", in);
             setAudioSegment(id, segment);
-            player.clearAudioBytes();
+            player.reset();
         }
     }
 
