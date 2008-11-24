@@ -18,11 +18,11 @@ import java.io.IOException;
  */
 public class BaseAudioSegment extends AudioSegment {
 
-    private InputStream is;
+    private final InputStream is;
 
     public BaseAudioSegment(String locator, String markupText) {
         super(locator, markupText);
-        this.is = null;
+        is = null;
     }
 
     public BaseAudioSegment(String locator, String markupText, InputStream is) {
@@ -31,10 +31,11 @@ public class BaseAudioSegment extends AudioSegment {
     }
 
     public InputStream openInputStream()  throws IOException, SecurityException{
-        if (is==null)
+        if (is == null) {
             return super.openInputStream();
-        else
+        } else {
             return is;
+        }
     }
 
 }
