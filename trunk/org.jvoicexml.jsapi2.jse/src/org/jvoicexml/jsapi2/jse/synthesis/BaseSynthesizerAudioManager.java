@@ -21,10 +21,12 @@ import java.net.URLConnection;
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioEvent;
 import javax.speech.AudioException;
+import javax.speech.Engine;
 import javax.speech.EngineStateException;
 import javax.speech.recognition.Recognizer;
 import javax.speech.synthesis.Synthesizer;
 
+import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 
 /**
@@ -52,9 +54,7 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
         }
 
         if (mediaLocator == null) {
-            if (engine instanceof Synthesizer) {
-                outputStream = new ClipOutputStream();
-            }
+            outputStream = new ClipOutputStream();
         } else {
             // Open URL described in locator
             final URLConnection urlConnection;
@@ -73,13 +73,12 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
             }
 
             targetAudioFormat = getAudioFormat();
-
-            try {
-                formatConverter = new AudioFormatConverter(engineAudioFormat,
-                        targetAudioFormat);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+        }
+        try {
+            formatConverter = new AudioFormatConverter(this, engineAudioFormat,
+                    targetAudioFormat);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
         postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
 
@@ -186,7 +185,7 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
         }
 
         // Insure that engine is DEALLOCATED
-        if (engine.testEngineState(engine.DEALLOCATED) == false) {
+        if (!engine.testEngineState(Engine.DEALLOCATED)) {
             throw new EngineStateException(
                     "Engine is not DEALLOCATED. Cannot setMediaLocator");
         }
