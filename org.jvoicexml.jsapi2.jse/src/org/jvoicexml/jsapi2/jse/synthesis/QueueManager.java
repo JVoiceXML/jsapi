@@ -28,6 +28,7 @@ package org.jvoicexml.jsapi2.jse.synthesis;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
 
@@ -64,19 +65,12 @@ public class QueueManager implements Runnable {
     private int queueID;
     private Boolean cancelFirstItem;
 
-    private FileOutputStream fos;
-
     public QueueManager(BaseSynthesizer synthesizer) {
         this.synthesizer = synthesizer;
         queue = new Vector<QueueItem>();
         playQueue = new Vector<QueueItem>();
         queueID = 0;
         cancelFirstItem = false;
-        try {
-            fos = new FileOutputStream("jsapi2.synth.raw");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
 
         final String name;
         final EngineMode mode = synthesizer.getEngineMode();
@@ -103,11 +97,6 @@ public class QueueManager implements Runnable {
         synchronized (queue) {
             done = true;
             queue.notify();
-        }
-        try {
-            fos.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -264,14 +253,13 @@ public class QueueManager implements Runnable {
                         // TODO How to handle this?
                         break;
                     }
-                    bytesRead = segment.openInputStream().read(
-                            buffer);
+                    final InputStream inputStream = segment.openInputStream();
+                    bytesRead = inputStream.read(buffer);
                     if (bytesRead < 0)  {
                         break;
                     }
 
                     totalBytesRead += bytesRead;
-
                     synchronized (cancelFirstItem) {
                         if (cancelFirstItem == true) {
                             synthesizer.postSpeakableEvent(new SpeakableEvent(
@@ -336,8 +324,6 @@ public class QueueManager implements Runnable {
 
                     playIndex++;
 
-                    fos.write(buffer, 0, bytesRead);
-
                   /**************************  long sleepTime = 0;
                   while ((sleepTime = nextTimeStamp
                             - System.currentTimeMillis()) > 0) {
@@ -347,16 +333,16 @@ public class QueueManager implements Runnable {
                         }
                     }*/
 
-                    manager.getOutputStream().write(buffer, 0, bytesRead);
-
+                    final OutputStream out = manager.getOutputStream();
+                    out.write(buffer, 0, bytesRead);
                     // update next timestamp
                     long dataTime = (long) Math.ceil(1000 * bytesRead / bps);
                     long systm;
-                    if (nextTimeStamp - (systm = System.currentTimeMillis()) < -dataTime)
+                    if (nextTimeStamp - (systm = System.currentTimeMillis()) < -dataTime) {
                         nextTimeStamp = systm + dataTime;
-                    else
+                    } else {
                         nextTimeStamp += dataTime;
-
+                    }
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
