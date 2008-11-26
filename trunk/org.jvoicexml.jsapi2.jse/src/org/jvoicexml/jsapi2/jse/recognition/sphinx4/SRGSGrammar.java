@@ -168,7 +168,7 @@ public class SRGSGrammar extends Grammar {
      * @param grammarName the name of the grammar
      * @throws IOException if an error occurs while loading or compiling the grammar
      */
-    public void loadSRGS(URL gramarURL) throws IOException {
+    public void loadSRGS(URL grammarURL) throws IOException {
         this.grammarURL = grammarURL;
         loadGrammar = true;
         commitChanges();
