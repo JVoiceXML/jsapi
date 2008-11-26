@@ -8,6 +8,8 @@
 
 package org.jvoicexml.jsapi2.jse.recognition;
 
+import java.util.ArrayList;
+import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -36,28 +38,62 @@ public class RuleParser {
     private static final Logger LOGGER =
             Logger.getLogger(RuleParser.class.getName());
 
+    /** the grammarManager that contains all the grammars. */
     private GrammarManager grammarManager;
 
+    /** Represents the current position of the input array,
+     * during the parse algorithm.
+     */
     private int iPos;
 
-    public RuleParser(GrammarManager grammarManager, int pos) {
-        this.grammarManager = grammarManager;
+    /** This stack helps the construction of the RuleParse in
+     * Deepth-search algorithm.
+     */
+    private Stack<Object> grammarElements;
+
+    /**
+     * Creates a Rule Parser.
+     * @param gm GrammarManager
+     * @param pos int
+     */
+    public RuleParser(final GrammarManager gm, final int pos) {
+        this.grammarManager = gm;
         iPos = pos;
+        grammarElements = new Stack<Object>();
     }
 
-    /*
-     * parse a text string against a particular rule from a particluar grammar
-     * returning a RuleParse data structure is successful and null otherwise
+    /**
+     * Parse a text string against a particular rule from a particluar grammar
+     * returning a RuleParse data structure is successful and null otherwise.
+     * @param text text to search
+     * @param grammarManager the grammar manager
+     * @param grammarReference the grammar reference
+     * @param ruleName the start rule name
+     * @return RuleParse
      */
-    public static RuleParse parse(String text, GrammarManager grammarManager,
-                                  String grammarReference, String ruleName) {
-        String inputTokens[] = tokenize(text);
+    public static RuleParse parse(final String text,
+                                  final GrammarManager grammarManager,
+                                  final String grammarReference,
+                                  final String ruleName) {
+        String[] inputTokens = tokenize(text);
         return parse(inputTokens, grammarManager, grammarReference, ruleName);
     }
 
-    public static RuleParse parse(String inputTokens[], GrammarManager grammarManager,
-                                  String grammarReference, String ruleName) {
-        RuleParse rpa[] = mparse(inputTokens, grammarManager, grammarReference, ruleName);
+    /**
+     * Parse a set of tokens against a particular rule from a particluar grammar
+     * returning a RuleParse data structure is successful and null otherwise.
+     * @param inputTokens String[]
+     * @param grammarManager GrammarManager
+     * @param grammarReference String
+     * @param ruleName String
+     * @return RuleParse the start rule name
+     */
+    public static RuleParse parse(final String[] inputTokens,
+                                  final GrammarManager grammarManager,
+                                  final String grammarReference,
+                                  final String ruleName) {
+        RuleParse[] rpa = mparse(inputTokens, grammarManager, grammarReference,
+                                 ruleName);
         if (rpa == null) {
             return null;
         } else {
@@ -65,24 +101,44 @@ public class RuleParser {
         }
     }
 
-    public static RuleParse[] mparse(String text, GrammarManager grammarManager,
-                                     String grammarReference, String ruleName) {
-        String inputTokens[] = tokenize(text);
+    /**
+     * Parse a text against a particular rule from a particluar grammar
+     * returning a RuleParse data structure is successful and null otherwise.
+     * @param text String
+     * @param grammarManager GrammarManager
+     * @param grammarReference String
+     * @param ruleName String
+     * @return RuleParse[]
+     */
+    public static RuleParse[] mparse(final String text,
+                                     final GrammarManager grammarManager,
+                                     final String grammarReference,
+                                     final String ruleName) {
+        String[] inputTokens = tokenize(text);
         return mparse(inputTokens, grammarManager, grammarReference, ruleName);
     }
 
-    public static RuleParse[] mparse(String inputTokens[],
-                                     GrammarManager grammarManager, String grammarReference, //RuleGrammar grammar,
-                                     String ruleName) {
+    /**
+     * Parse a set of tokens against a particular rule from a particluar grammar
+     * returning a RuleParse data structure is successful and null otherwise.
+     * @param inputTokens String[]
+     * @param grammarManager GrammarManager
+     * @param grammarReference String
+     * @param ruleName String
+     * @return RuleParse[]
+     */
+    public static RuleParse[] mparse(final String[] inputTokens,
+                                     final GrammarManager grammarManager,
+                                     final String grammarReference,
+                                     final String ruleName) {
         RuleParser rp = new RuleParser(grammarManager, 0);
-        String rNames[];
+        String[] rNames;
         RuleComponent startRule = null;
         Grammar g = grammarManager.getGrammar(grammarReference);
         RuleGrammar grammar;
         if (g instanceof RuleGrammar) {
-            grammar = (RuleGrammar)g;
-        }
-        else {
+            grammar = (RuleGrammar) g;
+        } else {
             return null;
         }
         if (ruleName != null) {
@@ -103,240 +159,552 @@ public class RuleParser {
                 continue;
             }
             p = new Vector();
-            RuleComponent ruleComponent = rp.parse(grammar, startRule,
-                    inputTokens);
-            if (ruleComponent != null && rp.iPos==inputTokens.length) {
-                RuleParse ruleParse = new RuleParse(new RuleReference(rNames[j]),
-                        ruleComponent);
-                p.add(ruleParse);
+
+            GrammarGraph grammarGraph = rp.buildGrammarGraph(grammar,
+                    rNames[j]);
+
+            if (rp.parse(grammarGraph.getStartNode(), inputTokens)) {
+                p.add(rp.grammarElements.pop());
             }
         }
         if (p.size() == 0) {
             //No parse is available
             return null;
         }
-        RuleParse rpa[] = new RuleParse[p.size()];
+        RuleParse[] rpa = new RuleParse[p.size()];
         p.copyInto(rpa);
         return rpa;
     }
 
-    /*
-     * parse routine called recursively while traversing the Rule structure
-     * in a depth first manner. Returns a list of valid parses.
+    /**
+     * this method starts the recursively of the parse.
+     * @param currentNode the start node
+     * @param input the text
+     * @return RuleComponent
      */
-    private RuleComponent parse(RuleGrammar G, RuleComponent r, String input[]) {
+    public final RuleComponent parse(final GrammarNode currentNode,
+                               final String input) {
+        String[] in = tokenize(input);
+        iPos = 0;
+        grammarElements = new Stack<Object>();
+        if (parse(currentNode, in) && !grammarElements.empty()) {
+            return (RuleComponent) grammarElements.pop();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Creates a grammar graph, from a rule grammar and a start rule name.
+     * @param rg the rule grammar
+     * @param startRuleName the start rule name
+     * @return GrammarGraph the graph that represents this grammar
+     */
+    public final GrammarGraph buildGrammarGraph(final RuleGrammar rg,
+                                          final String startRuleName) {
+        RuleComponent startRuleComponent = rg.getRule(startRuleName).
+                                           getRuleComponent();
+        RuleReference startRule = new RuleReference(startRuleName);
+
+        GrammarNode startNode = new GrammarNode(false,
+                                                GrammarNode.START_REFERENCE,
+                                                startRule);
+        GrammarNode endNode = new GrammarNode(true, GrammarNode.END_REFERENCE);
+        GrammarGraph newNodes = buildGrammarGraph(rg, startRuleComponent);
+
+        startNode.addArc(newNodes.getStartNode());
+        newNodes.getEndNode().addArc(endNode);
+
+        return new GrammarGraph(startNode, endNode);
+    }
+
+    /**
+     * this method processes recursively an rule component.
+     * It returns the an GrammarGraph
+     * @param rg the rule grammar
+     * @param r the rule component
+     * @return GrammarGraph
+     */
+    private GrammarGraph buildGrammarGraph(final RuleGrammar rg,
+                                                 final RuleComponent r) {
         if (r instanceof RuleReference) {
-            return parse(G, (RuleReference) r, input);
+            return buildGrammarGraph(rg, (RuleReference) r);
         } else if (r instanceof RuleToken) {
-            return parse(G, (RuleToken) r, input);
+            return buildGrammarGraph(rg, (RuleToken) r);
         } else if (r instanceof RuleAlternatives) {
-            return parse(G, (RuleAlternatives) r, input);
+            return buildGrammarGraph(rg, (RuleAlternatives) r);
         } else if (r instanceof RuleSequence) {
-            return parse(G, (RuleSequence) r, input);
+            return buildGrammarGraph(rg, (RuleSequence) r);
         } else if (r instanceof RuleTag) {
-            return parse(G, (RuleTag) r, input);
+            return buildGrammarGraph(rg, (RuleTag) r);
         } else if (r instanceof RuleCount) {
-            return parse(G, (RuleCount) r, input);
+            return buildGrammarGraph(rg, (RuleCount) r);
         } else {
             return null;
         }
     }
 
     /**
-     * RULE REFERENCES
-     * @todo void, null and garbage ??
-     * @todo not tested with external rules (rules defined in other files)
+    * Creates an sub-graph that represents a rule reference.
+    * @param rg the rule grammar
+    * @param r the rule reference
+    * @return GrammarGraph
+    */
+   private GrammarGraph buildGrammarGraph(final RuleGrammar rg,
+                                          final RuleReference r) {
+       RuleGrammar currentRuleGrammar = rg;
+       GrammarNode startNode = new GrammarNode(false,
+                                               GrammarNode.START_REFERENCE, r);
+       GrammarNode endNode = new GrammarNode(false, GrammarNode.END_REFERENCE);
+
+       String simpleName = r.getRuleName();
+       RuleComponent ruleref;
+       if (currentRuleGrammar.getRule(simpleName) == null) {
+           ruleref = null;
+       } else {
+           ruleref = currentRuleGrammar.getRule(simpleName).getRuleComponent();
+       }
+       if (ruleref == null) {
+           String gname = r.getGrammarReference();
+           if ((gname != null) && (gname.length() > 0)) {
+               RuleGrammar rg1 = null;
+               try {
+                   rg1 = (RuleGrammar) grammarManager.getGrammar(gname);
+               } catch (EngineStateException ex) {
+                   ex.printStackTrace();
+               }
+               if (rg1 != null) {
+                   ruleref = rg1.getRule(simpleName).getRuleComponent();
+                   currentRuleGrammar = rg1;
+               } else {
+                   LOGGER.warning("ERROR: UNKNOWN GRAMMAR " + gname);
+               }
+           }
+           if (ruleref == null) {
+               LOGGER.warning("ERROR: UNKNOWN RULE NAME " + r.getRuleName()
+                              + " " + r);
+               return null;
+           }
+       }
+
+       GrammarGraph rc = buildGrammarGraph(currentRuleGrammar, ruleref);
+       if (rc == null) {
+           return null;
+       }
+       startNode.addArc(rc.getStartNode());
+       rc.getEndNode().addArc(endNode);
+
+       return new GrammarGraph(startNode, endNode);
+
+   }
+
+    /**
+    * Creates an sub-graph that represents a rule token.
+    * @param rg the rule grammar
+    * @param r the rule token
+    * @return GrammarGraph
+    */
+    private GrammarGraph buildGrammarGraph(final RuleGrammar rg,
+                                           final RuleToken r) {
+        GrammarNode startNode = new GrammarNode(false, GrammarNode.TOKEN, r);
+        return new GrammarGraph(startNode, startNode);
+    }
+
+    /**
+    * Creates an sub-graph that represents a rule alternative.
+    * @param rg the rule grammar
+    * @param r the rule alternative
+    * @return GrammarGraph
+    */
+    private GrammarGraph buildGrammarGraph(final RuleGrammar rg,
+                                           final RuleAlternatives r) {
+        GrammarNode startNode = new GrammarNode(false,
+                                                GrammarNode.START_ALTERNATIVE,
+                                                r);
+        GrammarNode endNode = new GrammarNode(false,
+                                              GrammarNode.END_ALTERNATIVE);
+
+        RuleComponent[] rules = r.getRuleComponents();
+        int[] weights = r.getWeights();
+        // @todo implement it in jsapi2/srgsrulegrammarparser
+        //normalizeWeights(weights);
+
+        // expand each alternative, and connect them in parallel
+        for (int i = 0; i < rules.length; i++) {
+            RuleComponent rule = rules[i];
+            float weight = 0.0f;
+            if (weights != null) {
+                weight = weights[i];
+            }
+            GrammarGraph newNodes = buildGrammarGraph(rg, rule);
+
+            if (newNodes.getStartNode() != null) {
+                startNode.addArc(newNodes.getStartNode()); //@todo ??weight?
+                newNodes.getEndNode().addArc(endNode);
+            }
+        }
+
+        return new GrammarGraph(startNode, endNode);
+
+    }
+
+    /**
+    * Creates an sub-graph that represents a rule sequence.
+    * @param rg the rule grammar
+    * @param r the rule sequence
+    * @return GrammarGraph
+    */
+    private GrammarGraph buildGrammarGraph(final RuleGrammar rg,
+                                           final RuleSequence r) {
+        GrammarNode startNode = new GrammarNode(false,
+                                                GrammarNode.START_SEQUENCE, r);
+        GrammarNode endNode = new GrammarNode(false, GrammarNode.END_SEQUENCE);
+
+        RuleComponent[] rules = r.getRuleComponents();
+
+        GrammarNode lastGrammarNode = null;
+
+        // expand and connect each rule in the sequence serially
+        for (int i = 0; i < rules.length; i++) {
+            RuleComponent rule = rules[i];
+            GrammarGraph newNodes = buildGrammarGraph(rg, rule);
+
+            // first node
+            if (i == 0) {
+                startNode.addArc(newNodes.getStartNode());
+            }
+
+            // last node
+            if (i == (rules.length - 1)) {
+                newNodes.getEndNode().addArc(endNode);
+            }
+
+            if (i > 0) {
+                lastGrammarNode.addArc(newNodes.getStartNode());
+            }
+            lastGrammarNode = newNodes.getEndNode();
+        }
+
+        return new GrammarGraph(startNode, endNode);
+    }
+
+    /**
+    * Creates an sub-graph that represents a rule tag.
+    * @param rg the rule grammar
+    * @param r the rule tag
+    * @return GrammarGraph
+    */
+   private GrammarGraph buildGrammarGraph(final RuleGrammar rg,
+                                          final RuleTag r) {
+       GrammarNode startNode = new GrammarNode(false, GrammarNode.TAG, r);
+       return new GrammarGraph(startNode, startNode);
+   }
+
+    /**
+    * Creates an sub-graph that represents a rule count.
+    * @param rg the rule grammar
+    * @param r the rule count
+    * @return GrammarGraph
+    */
+   private GrammarGraph buildGrammarGraph(final RuleGrammar rg,
+                                          final RuleCount r) {
+       GrammarNode startNode = new GrammarNode(false, GrammarNode.START_COUNT,
+                                               r);
+       GrammarNode endNode = new GrammarNode(false, GrammarNode.END_COUNT);
+
+       int minRepeat = r.getRepeatMin();
+       int maxRepeat = r.getRepeatMax();
+       GrammarGraph newNodes = buildGrammarGraph(rg, r.getRuleComponent());
+       int countNodes = 1;
+
+       GrammarGraph lastNode = newNodes;
+
+       if (minRepeat > 1) {
+           GrammarGraph tmpGraph;
+           while (countNodes < minRepeat) {
+               countNodes++;
+               /** @todo how can i copy a graph */
+               tmpGraph = buildGrammarGraph(rg, r.getRuleComponent());
+               lastNode = tmpGraph;
+               newNodes.getEndNode().addArc(tmpGraph.getStartNode());
+               /** @todo review this */
+               newNodes.setEndNode(tmpGraph.getEndNode());
+           }
+       }
+
+       if (maxRepeat != RuleCount.REPEAT_INDEFINITELY) {
+           GrammarGraph tmpGraph;
+           ArrayList<GrammarNode> v = new ArrayList();
+           lastNode = newNodes;
+           while (countNodes < maxRepeat) {
+               ++countNodes;
+               /** @todo how can i copy a graph */
+               tmpGraph = buildGrammarGraph(rg, r.getRuleComponent());
+               v.add(lastNode.getEndNode());
+               newNodes.getEndNode().addArc(tmpGraph.getStartNode());
+               /** @todo review this */
+               newNodes.setEndNode(tmpGraph.getEndNode());
+               lastNode = tmpGraph;
+           }
+
+           //set this nodes optional
+           for (GrammarNode g : v) {
+               g.addArc(endNode);
+           }
+       }
+
+       startNode.addArc(newNodes.getStartNode());
+       newNodes.getEndNode().addArc(endNode);
+
+       // if this is optional, add a bypass arc
+       if (minRepeat == 0) {
+           startNode.addArc(endNode);
+       }
+
+       // if this can possibly occur indefinitely add a loopback
+       if (maxRepeat == RuleCount.REPEAT_INDEFINITELY) {
+           if (lastNode != null) {
+               newNodes.getEndNode().addArc(lastNode.getStartNode());
+           }
+       }
+       return new GrammarGraph(startNode, endNode);
+   }
+
+   /** this method parses a token.
+     * @param currentNode the current node of this grammar
+     * @param input the set of tokens
+     * @return <code>true</code> if this nodes accepts the current (iPos) input
      */
-    private RuleComponent parse(RuleGrammar G, RuleReference r, String input[]) {
-        String simpleName = r.getRuleName();
-        RuleComponent ruleref;
-        if (G.getRule(simpleName) == null) {
-            ruleref = null;
-        } else {
-            ruleref = G.getRule(simpleName).getRuleComponent();
-        }
-        if (ruleref == null) {
-            String gname = r.getGrammarReference();
-            if ((gname != null) && (gname.length() > 0)) {
-                RuleGrammar RG1 = null;
-                try {
-                    RG1 = (RuleGrammar) grammarManager.getGrammar(gname);
-                } catch (EngineStateException ex) {
-                    ex.printStackTrace();
-                }
-                if (RG1 != null) {
-                    ruleref = RG1.getRule(simpleName).getRuleComponent();
-                    G = RG1;
-                } else {
-                    LOGGER.warning("ERROR: UNKNOWN GRAMMAR " + gname);
-                }
-            }
-            if (ruleref == null) {
-                LOGGER.warning("ERROR: UNKNOWN RULE NAME " + r.getRuleName() +
-                                   " " + r);
-                return null;
-            }
-        }
-
-        RuleComponent rc = parse(G, ruleref, input);
-        if (rc == null)
-            return null;
-
-        return new RuleParse(new RuleReference(simpleName), rc);
-    }
-
-
-    /**
-     * LITERAL TOKENS
-     **/
-    private RuleToken parse(RuleGrammar G, RuleToken r, String input[]) {
+    public final boolean parseToken(final GrammarNode currentNode,
+                                    final String[] input) {
         if (iPos >= input.length) {
-            return null;
+            return false;
         }
-
-        // @TODO: what about case sensitivity ??????
-        String tText = r.getText().toLowerCase();
-        if (tText.equals(input[iPos]) || (input[iPos].equals("%")) ||
-            (input[iPos].equals("*"))) {
+        // @todo what about case sensitivity ??????
+        String tText = ((RuleToken) currentNode.getRuleComponent()).getText().
+                       toLowerCase();
+        if (tText.equals(input[iPos]) || (input[iPos].equals("%"))
+            || (input[iPos].equals("*"))) {
             iPos++;
-            return new RuleToken(tText);
+            if (parse(currentNode.getArcList().get(0).getGrammarNode(),
+                      input)) {
+                grammarElements.push(new RuleToken(tText));
+                return true;
+            } else {
+                return false;
+            }
         } else {
             if (tText.indexOf(' ') < 0) {
-                return null;
+                return false;
             }
             if (!tText.startsWith(input[iPos])) {
-                return null;
+                return false;
             }
-            String ta[] = tokenize(tText);
+            String[] ta = tokenize(tText);
             int j = 0;
             StringBuffer strBuffer = new StringBuffer("");
+            // this while is necessary because an token
+            // can contain more than a single word
             while (true) {
                 if (j >= ta.length) {
                     break;
                 }
                 if (iPos >= input.length) {
-                    return null;
+                    return false;
                 }
                 if (!ta[j].equals(input[iPos])) {
-                    return null;
+                    return false;
                 }
-                if (j > 0)
+                if (j > 0) {
                     strBuffer.append(" ");
+                }
                 strBuffer.append(ta[j]);
                 iPos++;
                 j++;
             }
-            return new RuleToken(strBuffer.toString());
-        }
-    }
-
-    /**
-     * ALTERNATIVES
-     **/
-    private RuleComponent parse(final RuleGrammar G, final RuleAlternatives r,
-                                final String[] input) {
-        final int currentIpos = iPos;
-
-        RuleComponent[] rar = r.getRuleComponents();
-        Vector result = new Vector();
-        for (int i = 0; i < rar.length; i++) {
-            RuleComponent p = parse(G, rar[i], input);
-            if (p == null) {
-                //if an alternative fails, the itens consumed
-                //must be turned available again
-                iPos = currentIpos;
-                continue;
+            if (parse(currentNode.getArcList().get(0).getGrammarNode(),
+                      input)) {
+                grammarElements.push(new RuleToken(strBuffer.toString()));
+                return true;
+            } else {
+                return false;
             }
-            result.add(p);
-            break;
-        }
-        if (result.size() == 0) {
-            return null;
-        } else {
-            RuleComponent[] rc = new RuleComponent[result.size()];
-            result.copyInto(rc);
-            return new RuleAlternatives(rc);
         }
     }
 
     /**
-     * RULESEQUENCE
-     **/
-    private RuleComponent parse(RuleGrammar G, RuleSequence r, String input[]) {
-        Vector<RuleComponent> result = new Vector<RuleComponent>();
-        RuleComponent rarry[] = r.getRuleComponents();
-        if ((rarry == null) || (rarry.length == 0)) {
-            return null;
-        }
-
-        for (int j = 0; j < rarry.length; ++j) {
-            final RuleComponent subres = parse(G, rarry[j], input);
-            if (subres == null)
-                return null;
-            result.add(subres);
-        }
-
-        RuleComponent[] rc = new RuleComponent[result.size()];
-        result.copyInto(rc);
-        return new RuleSequence(rc);
-    }
-
-    /**
-     * TAGS
-     **/
-    private RuleComponent parse(RuleGrammar G, RuleTag r, String input[]) {
-        Object theTag = r.getTag();
-        return new RuleTag(theTag);
-    }
-
-    /**
-     * RULECOUNT
-     * @todo have some problems with
-     *   ...
-     *   <item repeat="0-3">a</item>
-     *   <item>a</item>
-     *   ...
-     *   input: aa
-     **/
-    private RuleComponent parse(final RuleGrammar G, final RuleCount r,
-                                final String[] input) {
-        int rcount = r.getRepeatMax() - r.getRepeatMin();
-        Vector ruleComponents = new Vector();
-        int i = 0;
-
-        for (; i < r.getRepeatMin(); ++i) {
-            RuleComponent rc = parse(G, r.getRuleComponent(), input);
-            if (rc == null) {
-                return null;
-            }
-            ruleComponents.add(rc);
-        }
-
-        for (; i < r.getRepeatMax(); ++i) {
-            RuleComponent rc = parse(G, r.getRuleComponent(), input);
-            if (rc == null) {
+     * This method constructs an RuleSequence for the rule parser.
+     */
+    private void posParseStartSequence() {
+        Vector<RuleComponent> arSeq = new Vector<RuleComponent>();
+        while (true) {
+            if (grammarElements.empty()) {
                 break;
             }
-            ruleComponents.add(rc);
-        }
-
-        RuleComponent[] copy = new RuleComponent[ruleComponents.size()];
-        ruleComponents.copyInto(copy);
-        if (r.getRepeatProbability() != RuleCount.MAX_PROBABILITY) {
-            return new RuleCount(new RuleSequence(copy), i, i,
-                                 r.getRepeatProbability());
-        } else {
-            return new RuleCount(new RuleSequence(copy), i, i);
+            Object topElement = grammarElements.pop();
+            if (topElement instanceof GrammarNode
+                && ((GrammarNode) topElement).getNodeType()
+                == GrammarNode.END_SEQUENCE) {
+                RuleComponent[] rc = new RuleComponent[arSeq.size()];
+                arSeq.copyInto(rc);
+                grammarElements.push(new RuleSequence(rc));
+                break;
+            } else if (topElement instanceof RuleComponent) {
+                arSeq.add((RuleComponent) topElement);
+            }
         }
     }
 
     /**
-     * tokenize a string
+     * This method constructs an RuleCount for the rule parser.
+     * @param currentNode the current node
+     */
+    private void posParseStartCount(final GrammarNode currentNode) {
+        Vector ruleComponents = new Vector();
+        int count = 0;
+        while (true) {
+            if (grammarElements.empty()) {
+                break;
+            }
+            Object topElement = grammarElements.pop();
+            if (topElement instanceof GrammarNode
+                && ((GrammarNode) topElement).getNodeType()
+                == GrammarNode.END_COUNT) {
+                RuleComponent[] copy = new RuleComponent[ruleComponents.size()];
+                ruleComponents.copyInto(copy);
+
+                int repeatProb = ((RuleCount) currentNode.getRuleComponent()).
+                                 getRepeatProbability();
+                if (repeatProb != RuleCount.MAX_PROBABILITY) {
+                    grammarElements.push(new RuleCount(new RuleSequence(copy),
+                            count, count, repeatProb));
+                } else {
+                    grammarElements.push(new RuleCount(new RuleSequence(copy),
+                            count, count));
+                }
+                break;
+            } else if (topElement instanceof RuleComponent) {
+                ruleComponents.add(topElement);
+                count++;
+            }
+        }
+    }
+
+    /**
+     * This method constructs an RuleReference for the rule parser.
+     * @param currentNode the current node
+     */
+    private void posParseStartReference(final GrammarNode currentNode) {
+        RuleComponent arReference = null;
+        while (true) {
+            if (grammarElements.empty()) {
+                break;
+            }
+            Object topElement = grammarElements.pop();
+            if (topElement instanceof GrammarNode
+                && ((GrammarNode) topElement).getNodeType()
+                == GrammarNode.END_REFERENCE) {
+                String ruleName = ((RuleReference) currentNode.
+                                   getRuleComponent()).getRuleName();
+                grammarElements.push(new RuleParse(new RuleReference(ruleName),
+                        arReference));
+                break;
+            } else if (topElement instanceof RuleComponent) {
+                if (arReference == null) {
+                    arReference = (RuleComponent) topElement;
+                }
+            }
+        }
+    }
+
+    /**
+     * This method constructs an RuleAlternative for the rule parser.
+     */
+    private void posParseStartAlternative() {
+        Vector<RuleComponent> arAlternative = new Vector<RuleComponent>();
+        while (true) {
+            if (grammarElements.empty()) {
+                break;
+            }
+            Object topElement = grammarElements.pop();
+            if (topElement instanceof GrammarNode
+                && ((GrammarNode) topElement).getNodeType()
+                == GrammarNode.END_ALTERNATIVE) {
+                RuleComponent[] rc = new RuleComponent[arAlternative.size()];
+                arAlternative.copyInto(rc);
+                grammarElements.add(new RuleAlternatives(rc));
+                break;
+            } else if (topElement instanceof RuleComponent) {
+                arAlternative.add((RuleComponent) topElement);
+            }
+        }
+    }
+
+    /** this method parses recursively an grammar graph, to check if
+     * a set of tokens belongs at this grammar.
+     * @param currentNode the current node of this grammar
+     * @param input the set of tokens
+     * @return <code>true</code> if starting in the current node exists an
+     * way in the graph to ends in a final node.
+     */
+    private boolean parse(final GrammarNode currentNode,
+                                final String[] input) {
+        final int currentIPos = iPos;
+
+        if (currentNode.isFinalNode()) {
+            if (iPos == input.length) {
+                grammarElements.push(currentNode);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        if (currentNode.getNodeType() == GrammarNode.TOKEN) {
+            return parseToken(currentNode, input);
+        } else {
+            for (GrammarArc arc : currentNode.getArcList()) {
+                if (parse(arc.getGrammarNode(), input)) {
+                    switch (currentNode.getNodeType()) {
+                    case GrammarNode.END_ALTERNATIVE:
+                    case GrammarNode.END_COUNT:
+                    case GrammarNode.END_REFERENCE:
+                    case GrammarNode.END_SEQUENCE:
+                        grammarElements.push(currentNode);
+                        break;
+                    case GrammarNode.START_SEQUENCE:
+                        posParseStartSequence();
+                        break;
+                    case GrammarNode.START_COUNT:
+                        posParseStartCount(currentNode);
+                        break;
+                    case GrammarNode.START_REFERENCE:
+                        posParseStartReference(currentNode);
+                        break;
+                    case GrammarNode.START_ALTERNATIVE:
+                        posParseStartAlternative();
+                        break;
+                    default:
+                        break;
+                    }
+                    return true;
+                }
+            }
+            iPos = currentIPos;
+            return false;
+        }
+    }
+
+
+    /**
+     * tokenize a string.
+     * @param text the text to tokenize
+     * @return an array of tokens
      **/
-    static String[] tokenize(String text) {
+    static String[] tokenize(final String text) {
         StringTokenizer st = new StringTokenizer(text);
         int size = st.countTokens();
-        String res[] = new String[size];
+        String[] res = new String[size];
         int i = 0;
         while (st.hasMoreTokens()) {
             res[i++] = st.nextToken().toLowerCase();
