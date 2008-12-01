@@ -45,7 +45,7 @@ public class Ssml2JsmlTransformer {
         /** create a template from a xsl file */
         try {
         	InputStream in = Ssml2JsmlTransformer.class.getResourceAsStream(
-        			"/ssml2jsml.xsl");
+        			"ssml2jsml.xsl");
             template = tfactory.newTemplates(new StreamSource(in));
         } catch (TransformerConfigurationException ex2) {
             ex2.printStackTrace();
