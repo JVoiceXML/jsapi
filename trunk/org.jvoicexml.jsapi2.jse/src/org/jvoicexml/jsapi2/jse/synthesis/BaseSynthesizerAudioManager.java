@@ -54,7 +54,7 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
         }
 
         if (mediaLocator == null) {
-            outputStream = new ClipOutputStream();
+            outputStream = new ClipOutputStream(this);
         } else {
             // Open URL described in locator
             final URLConnection urlConnection;

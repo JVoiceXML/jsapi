@@ -16,21 +16,33 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 
+import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+
 /**
  * @author DS01191
  *
  */
 public class ClipOutputStream extends OutputStream implements LineListener {
+    /** The audio buffer. */
     private ByteArrayOutputStream buffer;
 
+    /** The clip to use to play back the audio. */
     private Clip clip;
 
     /** Synchronization of start and end play back. */
     private final Semaphore sem;
 
-    public ClipOutputStream() {
+    /** The audio manager to use. */
+    private final BaseAudioManager manager;
+
+    /**
+     * Constructs a new object.
+     * @param audioManager the audio manger
+     */
+    public ClipOutputStream(final BaseAudioManager audioManager) {
         buffer = new ByteArrayOutputStream();
         sem = new Semaphore(1);
+        manager = audioManager;
     }
 
     @Override
@@ -38,28 +50,19 @@ public class ClipOutputStream extends OutputStream implements LineListener {
         buffer.write(b);
     }
 
-    /* (non-Javadoc)
-     * @see java.io.OutputStream#flush()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void flush() throws IOException {
+        final AudioFormat format = manager.getTargetAudioFormat();
         try {
-            AudioFormat format = new AudioFormat(
-                    AudioFormat.Encoding.PCM_SIGNED,
-                    16000,
-                    16,
-                    1,
-                    2,
-                    16000,
-                    false);
-            DataLine.Info info = new DataLine.Info(Clip.class, format);
-
+            final DataLine.Info info = new DataLine.Info(Clip.class, format);
 
             try {
                 sem.acquire();
             } catch (InterruptedException e) {
-                e.printStackTrace();
-                return;
+                throw new IOException(e.getMessage(), e);
             }
             clip = (Clip) AudioSystem.getLine(info);
             byte[] bytes = buffer.toByteArray();
@@ -67,18 +70,21 @@ public class ClipOutputStream extends OutputStream implements LineListener {
             clip.addLineListener(this);
             clip.start();
         } catch (LineUnavailableException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new IOException(e.getMessage(), e);
         }
 
+        // Wait until all data has been played back.
         try {
             sem.acquire();
             sem.release();
         } catch (InterruptedException e) {
-            return;
+            throw new IOException(e.getMessage(), e);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void update(LineEvent event) {
         if ((event.getType() == LineEvent.Type.CLOSE)

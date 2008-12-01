@@ -45,7 +45,6 @@ public class HelloWorldDemo {
             System.out.println("Speaking 'Hello, world!'...");
             synth.speak("Hello, world!", null);
             synth.waitEngineState(Synthesizer.QUEUE_EMPTY);
-//            Thread.sleep(3000);
             System.out.println("done.");
 
             // Clean up - includes waiting for the queue to empty

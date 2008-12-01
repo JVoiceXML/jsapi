@@ -11,7 +11,6 @@ import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 
 import com.sun.speech.freetts.audio.AudioPlayer;
 
-
 /**
  * Audioplayer for the JSAPI 2 base implementation.
  *
@@ -67,7 +66,6 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
      * {@inheritDoc}
      */
     public boolean end() {
-        // This algorithm is not very efficient. Needs some cleanup.
         return true;
     }
 
