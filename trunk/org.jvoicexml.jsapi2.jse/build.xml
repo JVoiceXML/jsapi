@@ -1,116 +1,91 @@
 <project name="JSR 113" default="jar" basedir=".">
-	<description>
+  <description>
 This file builds the JSR 113.jar.
     </description>
 
-	<!-- allow the user to override setting in an own propertiesfile. -->
-	<property file="personal-props/ant.properties" />
-	<property file="config-props/ant.properties" />
+  <!-- allow the user to override setting in an own propertiesfile. -->
+  <property file="personal-props/ant.properties" />
+  <property file="config-props/ant.properties" />
 
-	<!-- directory structure -->
-	<property name="src" value="src" />
-	<property name="build" value="classes" />
-	<property name="dist" value="dist" />
-	<property name="apidoc" value="doc/api" />
-	
-    <!-- distribution files -->
-	<property name="dist.jsr113.jar" value="${dist}/jsr-113.jar" />
-	<property name="dist.jsr113-base.jar" value="${dist}/jsr-113-base.jar" />
-    <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
-	
-	<path id="midp.lib">
-		<pathelement location="${midp.home}/midpapi.zip"/>
-	</path>
-	
-	<property name="debug" value="on"/>
-	<property name="optimize" value="off"/>
+  <!-- directory structure -->
+  <property name="src" value="src" />
+  <property name="build" value="classes" />
+  <property name="dist" value="dist" />
+  <property name="apidoc" value="doc/api" />
 
-    <fileset dir="." id="dist.files.additional">
-        <include name="AUTHORS"/>
-        <include name="COPYING"/>
-        <include name="INSTALL"/>
-        <include name="README"/>
-        <include name="ChangeLog"/>
+  <!-- distribution files -->
+  <property name="dist.jsr113-base.jar" value="${dist}/jsr-113-base.jar" />
+  <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
+
+  <path id="midp.lib">
+    <pathelement location="${midp.home}/midpapi.zip" />
+  </path>
+
+  <property name="debug" value="on" />
+  <property name="optimize" value="off" />
+
+  <fileset dir="." id="dist.files.additional">
+    <include name="AUTHORS" />
+    <include name="COPYING" />
+    <include name="INSTALL" />
+    <include name="README" />
+    <include name="ChangeLog" />
+  </fileset>
+
+  <target name="-init">
+    <mkdir dir="${build}" />
+    <mkdir dir="${dist}" />
+  </target>
+
+  <path id="classpath">
+    <fileset dir="3rdparty\jsapi2\lib">
+      <include name="jsapi2.jar" />
     </fileset>
-  
-	<target name="-init">
-		<mkdir dir="${build}" />
-		<mkdir dir="${dist}" />
-	</target>
-	
-	<path id="classpath">	
-		<fileset dir="3rdparty\jsapi2\lib">
-      <include name="jsapi2.jar"/>
-		</fileset>
-		<fileset dir="3rdparty\freetts1.2\lib">
-      <include name="cmulex.jar"/>
-      <include name="cmu_us_kal.jar"/>
-      <include name="en_us.jar"/>
-      <include name="freetts.jar"/>
-		</fileset>
-		<fileset dir="3rdparty\sphinx4\lib">
-      <include name="sphinx4.jar"/>
-		</fileset>
-	</path>
+    <fileset dir="3rdparty\freetts1.2\lib">
+      <include name="cmulex.jar" />
+      <include name="cmu_us_kal.jar" />
+      <include name="en_us.jar" />
+      <include name="freetts.jar" />
+    </fileset>
+    <fileset dir="3rdparty\sphinx4\lib">
+      <include name="sphinx4.jar" />
+    </fileset>
+  </path>
 
-	<target name="clean" description="Remove all compiled and distribution files">
-		<delete dir="${build}" />
-		<delete file="${dist.jsr113.jar}" />
-		<delete file="${dist.jsr113-base.jar}" />
-	</target>
+  <target name="clean" description="Remove all compiled and distribution files">
+    <delete dir="${build}" />
+    <delete file="${dist.jsr113-base.jar}" />
+  </target>
 
-	<target name="compile" depends="-init" description="Compile the JAVA sources">
-		<echo message="compiling with debug=${debug}, optimize=${optimize}" />
-		<javac bootclasspathref="midp.lib" destdir="${build}" 
-			source="1.5" target="1.5"
-			optimize="${optimize}" debug="${debug}" deprecation="on"
-		  	encoding="iso-8859-1">
-			<src path="${src}" />
-			<classpath refid="classpath"/>
-			<compilerarg value="-Xlint:unchecked" />
-		</javac>
-	</target>
+  <target name="compile" depends="-init" description="Compile the JAVA sources">
+    <echo message="compiling with debug=${debug}, optimize=${optimize}" />
+    <javac bootclasspathref="midp.lib" destdir="${build}" source="1.5" target="1.5" optimize="${optimize}" debug="${debug}" deprecation="on" encoding="iso-8859-1">
+      <src path="${src}" />
+      <classpath refid="classpath" />
+      <compilerarg value="-Xlint:unchecked" />
+    </javac>
+  </target>
 
-	<target name="jar" depends="compile" 
-	  description="Pack all compiled files into jar files">
-		<jar jarfile="${dist.jsr113.jar}" compress="false">
-			<fileset dir="${build}">
-				<include name="**/*.class" />
-			   <!-- <exclude name="org/jvoicexml/**" />-->
-			</fileset>
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<section name="common">
-					<attribute name="Implementation-Vendor"
-					  value="JVoiceXML group" />
-					<attribute name="Implementation-Title"
-					  value="JSR 113" />
-				</section>
-			</manifest>
-		</jar>
+  <target name="jar" depends="compile" description="Pack all compiled files into jar files">
+    <jar jarfile="${dist.jsr113-base.jar}" compress="false">
+      <fileset dir="${build}">
+        <include name="org/jvoicexml/**/*.class" />
+        <include name="org/jvoicexml/**/*.xsl" />
+      </fileset>
+      <manifest>
+        <attribute name="Built-By" value="${user.name}" />
+        <section name="common">
+          <attribute name="Implementation-Vendor" value="JVoiceXML group" />
+          <attribute name="Implementation-Title" value="Base implementation for JSR 113 vendors" />
+        </section>
+      </manifest>
+    </jar>
+  </target>
 
-		<jar jarfile="${dist.jsr113-base.jar}" compress="false">
-			<fileset dir="${build}">
-				<include name="org/jvoicexml/**/*.class" />
-			</fileset>
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<section name="common">
-					<attribute name="Implementation-Vendor"
-					  value="JVoiceXML group" />
-					<attribute name="Implementation-Title"
-					  value="Base implementation for JSR 113 vendors" />
-				</section>
-			</manifest>
-		</jar>
-	</target>
-
-    <target name="distribution" description="Build the distribution files"
-        depends="jar">
-        <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
-        	<include name="${dist.jsr113.jar}"/>
-	      	<include name="${dist.jsr113-base.jar}"/>
-            <fileset refid="dist.files.additional"/>
-        </zip>
-    </target>
+  <target name="distribution" description="Build the distribution files" depends="jar">
+    <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
+      <include name="${dist.jsr113-base.jar}" />
+      <fileset refid="dist.files.additional" />
+    </zip>
+  </target>
 </project>
