@@ -270,23 +270,25 @@ public abstract class BaseAudioManager implements AudioManager {
      * @return AudioFormat
      */
     protected AudioFormat getAudioFormat() {
-        //Get matching URI to extract query parameters
-        URI uri = null;
-        try {
-            uri = new URI(mediaLocator);
-        } catch (URISyntaxException ex) {
-            ex.printStackTrace();
-            //Continue and give back a default AudioFormat
-        }
-
         //Initialize parameters
         Map<String, String> parameters =
             new java.util.HashMap<String, String>();
-        if (uri.getQuery() != null) {
-            String[] parametersString = uri.getQuery().split("\\&");
-            for (String part : parametersString) {
-                String[] queryElement = part.split("\\=");
-                parameters.put(queryElement[0], queryElement[1]);
+        if (mediaLocator != null) {
+            //Get matching URI to extract query parameters
+            URI uri = null;
+            try {
+                uri = new URI(mediaLocator);
+            } catch (URISyntaxException ex) {
+                ex.printStackTrace();
+                //Continue and give back a default AudioFormat
+            }
+    
+            if (uri.getQuery() != null) {
+                String[] parametersString = uri.getQuery().split("\\&");
+                for (String part : parametersString) {
+                    String[] queryElement = part.split("\\=");
+                    parameters.put(queryElement[0], queryElement[1]);
+                }
             }
         }
 
