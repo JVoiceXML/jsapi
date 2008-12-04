@@ -125,6 +125,7 @@ final class Sphinx4Recognizer extends BaseRecognizer {
         } catch (Exception ex) {
             LOGGER.warning("error creating engine properties "
                     + ex.getMessage());
+            ex.printStackTrace();
         }
 
         ((BaseAudioManager)getAudioManager()).setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, true));

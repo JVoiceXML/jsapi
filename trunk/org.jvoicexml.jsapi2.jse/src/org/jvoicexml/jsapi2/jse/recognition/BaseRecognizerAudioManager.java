@@ -46,29 +46,32 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
                     "AudioManager has no permission to access audio resources");
         }
 
-        // Open URL described in locator
-        final URLConnection urlConnection;
-        try {
-            urlConnection = openURLConnection();
-        } catch (IOException e) {
-            throw new AudioException(e.getMessage());
-        }
-
-        InputStream is = null;
-        try {
-            is = urlConnection.getInputStream();
-        } catch (IOException ex) {
-            throw new AudioException("Cannot get InputStream from URL: "
-                    + ex.getMessage());
-        }
-
         targetAudioFormat = getAudioFormat();
+
+        // Open URL described in locator
+        final InputStream is;
+        if (mediaLocator == null) {
+            is = new LineInputStream(this);
+        } else {
+            final URLConnection urlConnection;
+            try {
+                urlConnection = openURLConnection();
+            } catch (IOException e) {
+                throw new AudioException(e.getMessage());
+            }
+    
+            try {
+                is = urlConnection.getInputStream();
+            } catch (IOException ex) {
+                throw new AudioException("Cannot get InputStream from URL: "
+                        + ex.getMessage());
+            }
+        }
 
         // Configure audio conversions
         inputStream = getConvertedStream(is, targetAudioFormat,
                 engineAudioFormat);
         postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
-
     }
 
     /**
