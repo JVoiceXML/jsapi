@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="3rdparty/freetts1.2/lib/cmulex.jar"/>
 	<classpathentry kind="lib" path="3rdparty/freetts1.2/lib/en_us.jar"/>
 	<classpathentry kind="lib" path="3rdparty/freetts1.2/lib/freetts.jar" sourcepath="/FreeTTS"/>
-	<classpathentry kind="lib" path="3rdparty/sphinx4/lib/sphinx4.jar"/>
+	<classpathentry kind="lib" path="3rdparty/sphinx4/lib/sphinx4.jar" sourcepath="/sphinx4"/>
 	<classpathentry kind="lib" path="3rdparty/jsapi2/lib/jsr-113.jar" sourcepath="/javax.speech"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
