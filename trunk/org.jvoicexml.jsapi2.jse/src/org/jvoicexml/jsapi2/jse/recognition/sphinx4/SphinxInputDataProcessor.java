@@ -1,18 +1,20 @@
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
 
-import java.io.InputStream;
 import java.io.IOException;
-import edu.cmu.sphinx.frontend.util.DataUtil;
+import java.io.InputStream;
+import java.util.logging.Logger;
+
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DataStartSignal;
-import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
+import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
 
 /**
  * <p>Title: JSAPI2Engines</p>
@@ -26,7 +28,11 @@ import edu.cmu.sphinx.util.props.PropertyException;
  * @author Renato Cassaca
  * @version 1.0
  */
-public class SphinxInputDataProcessor extends BaseDataProcessor implements Configurable {
+public class SphinxInputDataProcessor extends BaseDataProcessor
+    implements Configurable {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(SphinxInputDataProcessor.class.getName());
 
     private InputStream inputStream;
     private long totalSamplesRead = 0;
@@ -53,9 +59,10 @@ public class SphinxInputDataProcessor extends BaseDataProcessor implements Confi
         int sampleSizeInBytes = 2;
         boolean signed = true;
         int sampleRate = 16000;
-        int frameSizeInBytes = sampleRate * sampleSizeInBytes * channels * 10 / 1000;
+        int frameSizeInBytes =
+            sampleRate * sampleSizeInBytes * channels * 10 / 1000;
 
-        if (started == false) {
+        if (!started) {
             started = true;
             return new DataStartSignal(sampleRate);
         }
@@ -66,11 +73,20 @@ public class SphinxInputDataProcessor extends BaseDataProcessor implements Confi
 
         //Read data
         byte[] data = new byte[frameSizeInBytes];
-        int numBytesRead;
-        try {
-            numBytesRead = inputStream.read(data);
-        } catch (IOException ex) {
-            throw new DataProcessingException(ex.getMessage());
+        int numBytesRead = 0;
+        while (numBytesRead == 0) {
+            try {
+                numBytesRead = inputStream.read(data);
+            } catch (IOException e) {
+                throw new DataProcessingException(e.getMessage());
+            }
+            if (numBytesRead == 0) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new DataProcessingException(e.getMessage());
+                }
+            }
         }
         if (numBytesRead == -1) {
             long duration = (long)
@@ -84,7 +100,7 @@ public class SphinxInputDataProcessor extends BaseDataProcessor implements Confi
         if (numBytesRead != frameSizeInBytes) {
             if (numBytesRead % sampleSizeInBytes != 0) {
                 //Is it an error?
-                System.err.println("[JSAPI2] Sphinx ReadData: Incomplete sample read.");
+                LOGGER.warning("Sphinx ReadData: Incomplete sample read.");
             }
 
             byte[] shrinked = new byte[numBytesRead];
@@ -96,15 +112,10 @@ public class SphinxInputDataProcessor extends BaseDataProcessor implements Confi
         totalSamplesRead += (numBytesRead / sampleSizeInBytes);
 
         //Convert it to double
-        double[] samples = DataUtil.bytesToValues
-                           (data, 0, data.length, sampleSizeInBytes, signed);
+        double[] samples = DataUtil.bytesToValues(data, 0, data.length,
+                sampleSizeInBytes, signed);
 
-        return (new DoubleData
-                (samples, (int) sampleRate,
-                 collectTime, firstSampleNumber));
-    }
-
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        super.newProperties(ps);
+        return new DoubleData(samples, (int) sampleRate, collectTime,
+                firstSampleNumber);
     }
 }

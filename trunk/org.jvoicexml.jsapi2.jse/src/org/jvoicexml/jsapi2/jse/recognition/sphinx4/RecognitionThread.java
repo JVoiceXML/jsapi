@@ -30,21 +30,13 @@ package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;
 
 /**
  * Recognition thread to run the recognizer in parallel.
  *
- * @author Dirk Schnelle
+ * @author Dirk Schnelle-Walka
  * @version $Revision$
- *
- * <p>
- * Copyright &copy; 2005-2008 JVoiceXML group -
- * <a href="http://jvoicexml.sourceforge.net">
- * http://jvoicexml.sourceforge.net/</a>
- * </p>
  */
 final class RecognitionThread
         extends Thread {
@@ -74,18 +66,11 @@ final class RecognitionThread
         }
 
         final Recognizer rec = recognizer.getRecognizer();
-        final SphinxInputDataProcessor inputData = getInputData();
         final boolean started;
 
-        /*if (microphone != null) {
-            microphone.clear();
-            started = microphone.startRecording();
-        } else {
-            started = true;
-        }*/
         started = true;
 
-        // send start of speach and processing event
+        // send start of speech and processing event
         // @todo change this;
         recognizer.postStartOfSpeechEvent();
         recognizer.postProcessingEvent();
@@ -94,9 +79,9 @@ final class RecognitionThread
                 LOGGER.fine("start recognizing ..");
             }
 
-            recognize(rec, inputData);
+            rec.recognize();
         }
-        // send end of speach and listening event
+        // send end of speech and listening event
         // @todo change this;
         recognizer.postEndOfSpeechEvent();
         recognizer.postListeningEvent();
@@ -105,97 +90,16 @@ final class RecognitionThread
             LOGGER.fine("stopping recognition thread...");
         }
 
-       /* if (microphone != null) {
-            // Stop recording from the microphone.
-            while (microphone.isRecording()) {
-                microphone.stopRecording();
-            }
-        }*/
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("recognition thread terminated");
         }
     }
 
     /**
-     * Recognition loop. Continue recognizing until this thread is
-     * requested to stop.
-     * @param rec The recognizer to use.
-     * @param mic The microphone to use.
-     */
-    private void recognize(final Recognizer rec, final Microphone mic) {
-        while (hasMoreData(mic) && !isInterrupted()) {
-            try {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("recognizing...");
-                    String [] grammars =
-                        recognizer.getRuleGrammar().listRuleNames();
-                    LOGGER.fine("RuleGrammars that will be used:");
-                    for (int i = 0; i < grammars.length; i++) {
-                        LOGGER.fine("grammar: '" + grammars[i].toString()
-                                + "'");
-                    }
-                }
-
-                rec.recognize();
-            } catch (IllegalArgumentException iae) {
-                LOGGER.fine("unmatched utterance " + iae.getMessage());
-            }
-        }
-    }
-
-    private void recognize(final Recognizer rec,
-                           final SphinxInputDataProcessor inputData) {
-        rec.recognize();
-    }
-
-    /**
-     * Checks, if the emicrophone has more data to deliver.
-     * @param mic The microphone or <code>null</code> if the data processor
-     * is not a microphone.
-     * @return <code>true</code> if there is more data.
-     */
-    private boolean hasMoreData(final Microphone mic) {
-        if (mic == null) {
-            return true;
-        }
-
-        return mic.hasMoreData();
-    }
-
-    /**
      * Stop this recognition thread.
      */
     public void stopRecognition() {
-        /*final Microphone microphone = getMicrophone();
-        if (microphone != null) {
-            microphone.stopRecording();
-        }
-
         Thread thread = currentThread();
-        thread.interrupt();*/
-    }
-
-    /**
-     * Retrieves the microphone.
-     * @return The microphone, <code>null</code> if the data processor is
-     * not a microphone.
-     * @since 0.5.5
-     */
-    private Microphone getMicrophone() {
-        final DataProcessor dataProcessor = recognizer.getDataProcessor();
-        if (dataProcessor instanceof Microphone) {
-            return (Microphone) dataProcessor;
-        }
-
-        return null;
-    }
-
-    private SphinxInputDataProcessor getInputData() {
-        final DataProcessor dataProcessor = recognizer.getDataProcessor();
-         if (dataProcessor instanceof SphinxInputDataProcessor) {
-             return (SphinxInputDataProcessor) dataProcessor;
-         }
-
-         return null;
+        thread.interrupt();
     }
 }

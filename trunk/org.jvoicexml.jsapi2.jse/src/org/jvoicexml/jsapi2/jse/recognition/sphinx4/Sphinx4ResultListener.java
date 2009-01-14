@@ -42,7 +42,6 @@ import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.jse.recognition.BaseResultToken;
 
 
-
 /**
  * Result listener for results from the sphinx recognizer.
  *
@@ -63,7 +62,7 @@ class Sphinx4ResultListener implements ResultListener {
     /** The recognizer which is notified when a result is obtained. */
     private final Sphinx4Recognizer recognizer;
 
-	/** The current Result */
+    /** The current Result. */
     private BaseResult currentResult;
 
     /**
@@ -75,7 +74,7 @@ class Sphinx4ResultListener implements ResultListener {
     }
 
     /**
-     * Creates a vector of ResultToken (jsapi) from a sphinx result
+     * Creates a vector of ResultToken (jsapi) from a sphinx result.
      * @param result The Sphinx4 result
      * @param currentResult The current BaseResult (jsapi)
      * @return ResultToken[]

@@ -14,7 +14,7 @@ This file builds the JSR 113.jar.
   <property name="apidoc" value="doc/api" />
 
   <!-- distribution files -->
-  <property name="dist.jsr113-base.jar" value="${dist}/jsr-113-base.jar" />
+  <property name="dist.jsr113-j2sebase.jar" value="${dist}/jsr113-j2sebase.jar" />
   <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
 
   <path id="midp.lib">
@@ -39,7 +39,7 @@ This file builds the JSR 113.jar.
 
   <path id="classpath">
     <fileset dir="3rdparty\jsapi2\lib">
-      <include name="jsapi2.jar" />
+      <include name="*.jar" />
     </fileset>
     <fileset dir="3rdparty\freetts1.2\lib">
       <include name="cmulex.jar" />
@@ -54,7 +54,7 @@ This file builds the JSR 113.jar.
 
   <target name="clean" description="Remove all compiled and distribution files">
     <delete dir="${build}" />
-    <delete file="${dist.jsr113-base.jar}" />
+    <delete file="${dist.jsr113-j2sebase.jar}" />
   </target>
 
   <target name="compile" depends="-init" description="Compile the JAVA sources">
@@ -67,7 +67,7 @@ This file builds the JSR 113.jar.
   </target>
 
   <target name="jar" depends="compile" description="Pack all compiled files into jar files">
-    <jar jarfile="${dist.jsr113-base.jar}" compress="false">
+    <jar jarfile="${dist.jsr113-j2sebase.jar}" compress="false">
       <fileset dir="${build}">
         <include name="org/jvoicexml/**/*.class" />
         <include name="org/jvoicexml/**/*.xsl" />
@@ -84,7 +84,7 @@ This file builds the JSR 113.jar.
 
   <target name="distribution" description="Build the distribution files" depends="jar">
     <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
-      <include name="${dist.jsr113-base.jar}" />
+      <include name="${dist.jsr113-j2sebase.jar}" />
       <fileset refid="dist.files.additional" />
     </zip>
   </target>

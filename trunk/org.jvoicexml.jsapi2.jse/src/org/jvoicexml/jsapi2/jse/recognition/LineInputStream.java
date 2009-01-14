@@ -5,6 +5,8 @@ package org.jvoicexml.jsapi2.jse.recognition;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -15,11 +17,15 @@ import javax.sound.sampled.TargetDataLine;
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 
 /**
- * An {@link InputStream} that reads the ata from the microphone.
+ * An {@link InputStream} that reads the d^^ata from the microphone.
  * @author Dirk Schnelle-Walka
  *
  */
-public class LineInputStream extends InputStream {
+public final class LineInputStream extends InputStream {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(LineInputStream.class.getName());
+
     /** The line to read the audio from. */
     private TargetDataLine line;
 
@@ -47,7 +53,16 @@ public class LineInputStream extends InputStream {
      * {@inheritDoc}
      */
     @Override
-    public int read(byte[] buffer, int off, int len) throws IOException {
+    public int read(final byte[] buffer) throws IOException {
+        return read(buffer, 0, buffer.length);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int read(final byte[] buffer, final int off, final int len)
+        throws IOException {
         if (line == null) {
             getLine();
         }
@@ -67,11 +82,27 @@ public class LineInputStream extends InputStream {
             final DataLine.Info info =
                 new DataLine.Info(TargetDataLine.class, format);
 
-            line =
-                (TargetDataLine) AudioSystem.getLine(info);
-
+            line = (TargetDataLine) AudioSystem.getLine(info);
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("opened line " + line);
+            }
+            line.open();
+            line.start();
         } catch (LineUnavailableException e) {
             throw new IOException(e.getMessage(), e);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        if (line != null) {
+            line.stop();
+            line = null;
+        }
+        super.close();
+    }
+
 }
