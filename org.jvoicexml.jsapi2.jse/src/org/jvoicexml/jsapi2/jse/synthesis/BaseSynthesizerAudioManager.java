@@ -24,7 +24,6 @@ import javax.speech.AudioException;
 import javax.speech.Engine;
 import javax.speech.EngineStateException;
 import javax.speech.recognition.Recognizer;
-import javax.speech.synthesis.Synthesizer;
 
 import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;

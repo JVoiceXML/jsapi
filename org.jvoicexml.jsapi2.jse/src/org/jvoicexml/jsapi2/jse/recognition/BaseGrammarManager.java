@@ -291,7 +291,7 @@ public class BaseGrammarManager implements GrammarManager {
 
         //Make sure that recognizer supports markup
         if (recognizer != null) {
-            if (recognizer.getEngineMode().getSupportsMarkup() == false) {
+            if (!recognizer.getEngineMode().getSupportsMarkup()) {
                 throw new EngineException("Engine doesn't support markup");
             }
         }
