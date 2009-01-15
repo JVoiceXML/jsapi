@@ -1,8 +1,9 @@
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
-import javax.speech.spi.EngineListFactory;
-import javax.speech.EngineMode;
 import javax.speech.EngineList;
+import javax.speech.EngineMode;
+import javax.speech.recognition.RecognizerMode;
+import javax.speech.spi.EngineListFactory;
 
 
 /**
@@ -32,9 +33,12 @@ public class SphinxEngineListFactory implements EngineListFactory {
      *
      * @param require EngineMode
      * @return EngineList
-     * @todo Implement this javax.speech.spi.EngineListFactory method
      */
     public EngineList createEngineList(EngineMode require) {
+        // Must be a recognizer.
+        if (!(require instanceof RecognizerMode)) {
+            return null;
+        }
         EngineList engineList = new EngineList(engineModes);
 
         if (require != null) {
