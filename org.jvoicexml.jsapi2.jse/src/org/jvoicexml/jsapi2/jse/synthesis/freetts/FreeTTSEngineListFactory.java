@@ -1,6 +1,7 @@
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
 import javax.speech.spi.EngineListFactory;
+import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.EngineList;
 import javax.speech.EngineMode;
 import java.util.Vector;
@@ -76,6 +77,10 @@ public class FreeTTSEngineListFactory implements EngineListFactory {
      *		no matching engines are found
      */
     public EngineList createEngineList(EngineMode require) {
+        // Must be a synthesizer.
+        if (!(require instanceof SynthesizerMode)) {
+            return null;
+        }
 
         //Instatiate FreeTTS VoiceManager to get all voices available
         VoiceManager voiceManager = VoiceManager.getInstance();
