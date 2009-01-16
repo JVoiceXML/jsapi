@@ -216,15 +216,16 @@ public class QueueManager implements Runnable {
             while (synthesizer.testEngineState(Synthesizer.PAUSED)) {
                 synthesizer.postSpeakableEvent(
                         new SpeakableEvent(
-                                source, SpeakableEvent.SPEAKABLE_PAUSED, id), 
+                                source, SpeakableEvent.SPEAKABLE_PAUSED, id),
                                 item.getListener());
 
                 try {
                     synthesizer.waitEngineState(BaseEngine.RESUMED);
-                    synthesizer.postSpeakableEvent(new SpeakableEvent(source, 
+                    synthesizer.postSpeakableEvent(new SpeakableEvent(source,
                             SpeakableEvent.SPEAKABLE_RESUMED,
                             id), item.getListener());
                 } catch (InterruptedException ex1) {
+                    return;
                 }
             }
 
@@ -260,7 +261,7 @@ public class QueueManager implements Runnable {
 
                     totalBytesRead += bytesRead;
                     synchronized (cancelFirstItem) {
-                        if (cancelFirstItem == true) {
+                        if (cancelFirstItem) {
                             synthesizer.postSpeakableEvent(new SpeakableEvent(
                                     item.getSource(),
                                     SpeakableEvent.SPEAKABLE_CANCELLED, item
@@ -295,8 +296,8 @@ public class QueueManager implements Runnable {
                     }
 
                     while (wordIndex < item.getWords().length
-                            && item.getWordsStartTime()[wordIndex] * sampleRate <= playIndex
-                                    * bytesRead) {
+                            && (item.getWordsStartTime()[wordIndex] * sampleRate
+                                <= playIndex * bytesRead)) {
                         synthesizer.postSpeakableEvent(new SpeakableEvent(item
                                 .getSource(), SpeakableEvent.WORD_STARTED, item
                                 .getId(), item.getWords()[wordIndex],
@@ -315,9 +316,9 @@ public class QueueManager implements Runnable {
                                 item.getId(), item.getWords()[wordIndex - 1],
                                 item.getPhonesInfo(), phonemeIndex), item
                                 .getListener());
-                        timeNextPhone += (double) item.getPhonesInfo()[phonemeIndex]
-                                .getDuration()
-                                / (double) 1000;
+                        timeNextPhone +=
+                            (double) item.getPhonesInfo()[phonemeIndex]
+                                .getDuration() / (double) 1000;
                         phonemeIndex++;
                     }
 
@@ -397,7 +398,7 @@ public class QueueManager implements Runnable {
     }
 
     /**
-     * Gets the next item from the queue and outputs it
+     * Gets the next item from the queue and outputs it.
      */
     public void run() {
         QueueItem item;
@@ -446,7 +447,7 @@ public class QueueManager implements Runnable {
     }
 
     /**
-     * Determines if the input queue is empty
+     * Determines if the input queue is empty.
      *
      * @return true if the queue is empty; otherwise false
      */
@@ -470,7 +471,7 @@ public class QueueManager implements Runnable {
      */
 
     /**
-     * Cancel the current item
+     * Cancel the current item.
      */
     protected boolean cancelItem() {
         if (playQueue.size() != 0) {
@@ -511,7 +512,7 @@ public class QueueManager implements Runnable {
     }
 
     /**
-     * Cancel all items in the queue
+     * Cancel all items in the queue.
      */
     public boolean cancelAllItems() {
         synthesizer.handleCancelAll();
@@ -525,7 +526,7 @@ public class QueueManager implements Runnable {
                         .getSource(), SpeakableEvent.SPEAKABLE_CANCELLED, item
                         .getId()), item.getListener());
                 playQueue.remove(0);
-                found=true;
+                found = true;
             }
         }
 
@@ -554,7 +555,7 @@ public class QueueManager implements Runnable {
      * @param source
      *                the item to cancel.
      */
-    protected void cancelItem(Object source) {
+    protected void cancelItem(final Object source) {
         /*
          * Speakable item = null; synchronized (queue) { int index =
          * queue.indexOf(source); if (index == 0) { cancelItem(); } else { item =
@@ -563,7 +564,7 @@ public class QueueManager implements Runnable {
          */
     }
 
-    protected boolean cancelItem(int id) {
+    protected boolean cancelItem(final int id) {
         boolean found = false;
 
         // search item in playqueue
@@ -574,8 +575,9 @@ public class QueueManager implements Runnable {
                     if (i == 0) {
                         found = cancelItem();
                     } else {
-                        if (item.getAudioSegment() == null)
+                        if (item.getAudioSegment() == null) {
                             synthesizer.handleCancel(i);
+                        }
                         synthesizer.postSpeakableEvent(new SpeakableEvent(item
                                 .getSource(),
                                 SpeakableEvent.SPEAKABLE_CANCELLED, item
@@ -617,10 +619,12 @@ public class QueueManager implements Runnable {
     protected QueueItem getQueueItemToPlay() {
         QueueItem item = null;
         synchronized (playQueue) {
-            while (playQueue.isEmpty() || playQueue.get(0).getAudioSegment()==null && !done) {
+            while (playQueue.isEmpty()
+                    || (playQueue.get(0).getAudioSegment()) == null && !done) {
                 try {
                     playQueue.wait();
                 } catch (InterruptedException e) {
+                    return null;
                 }
             }
             if (done) {
