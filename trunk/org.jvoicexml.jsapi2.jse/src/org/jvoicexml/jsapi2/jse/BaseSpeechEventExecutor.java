@@ -60,8 +60,9 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
      */
     public void execute(Runnable command) throws
             IllegalStateException, NullPointerException {
-        if (command == null)
-            throw new NullPointerException("Command is null");
+        if (command == null) {
+            throw new NullPointerException("Command must not be null!");
+        }
         commands.addElement(command);
         synchronized (commands) {
             commands.notify();
@@ -69,8 +70,8 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
     }
 
     public void run() {
-        while (shouldRun == true) {
-            while ((commands.size() < 1) && (shouldRun == true)) {
+        while (shouldRun) {
+            while ((commands.size() < 1) && (shouldRun)) {
                 synchronized (commands) {
                     try {
                         commands.wait(1000);
@@ -78,7 +79,9 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
                     }
                 }
             }
-            if (shouldRun == false) return;
+            if (!shouldRun) {
+                return;
+            }
 
             //Use this thread to run the command
             Runnable command = (Runnable) commands.firstElement();

@@ -193,26 +193,32 @@ abstract public class BaseEngine implements Engine {
      * @throws IllegalArgumentException
      *   if the specified state is unreachable
      */
-    public long waitEngineState(long state, long timeout) throws InterruptedException,
-            IllegalArgumentException, IllegalStateException {
+    public long waitEngineState(long state, long timeout)
+        throws InterruptedException, IllegalArgumentException,
+            IllegalStateException {
         synchronized (engineStateLock) {
-            if (isValid(state) == false)
-                throw new IllegalArgumentException("Cannot wait for impossible state: " + stateToString(state));
-
+            if (!isValid(state)) {
+                throw new IllegalArgumentException(
+                        "Cannot wait for impossible state: "
+                        + stateToString(state));
+            }
             do {
-                if (testEngineState(state)) return state;
+                if (testEngineState(state)) {
+                    return state;
+                }
 
-                if (isReachable(state) == false)
-                    throw new IllegalStateException("State is not reachable: " + stateToString(state));
+                if (!isReachable(state)) {
+                    throw new IllegalStateException("State is not reachable: "
+                            + stateToString(state));
+                }
 
                 //Wait for a state change
                 if (timeout > 0) {
                     engineStateLock.wait(timeout);
                     return getEngineState();
-                }
-                else {
+                } else {
                     //Will wait forever to reach that state
-                	engineStateLock.wait();
+                    engineStateLock.wait();
                 }
             } while (true);
         }
