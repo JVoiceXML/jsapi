@@ -18,10 +18,11 @@ import com.sun.speech.freetts.audio.AudioPlayer;
  * @author Dirk Schnelle-Walka
  * @version 1.0
  */
-public class FreeTTSAudioPlayer implements AudioPlayer {
+public final class FreeTTSAudioPlayer implements AudioPlayer {
     /** The collected audio data. */
     private ByteArrayOutputStream buffer;
 
+    /** Reference to the audio manager. */
     private BaseAudioManager baseAudioManager;
 
     /** The audio format to use. */
@@ -29,10 +30,10 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
 
     /**
      * Constructs a new object.
-     * @param baseAudioManager the audio manager.
+     * @param manager the audio manager.
      */
-    public FreeTTSAudioPlayer(BaseAudioManager baseAudioManager) {
-        this.baseAudioManager = baseAudioManager;
+    public FreeTTSAudioPlayer(final BaseAudioManager manager) {
+        baseAudioManager = manager;
         buffer = new ByteArrayOutputStream();
         audioFormat = baseAudioManager.getEngineAudioFormat();
     }
@@ -40,7 +41,7 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
     /**
      * {@inheritDoc}
      */
-    public void begin(int size) {
+    public void begin(final int size) {
     }
 
     /**
@@ -118,14 +119,14 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
     /**
      * {@inheritDoc}
      */
-    public void setAudioFormat(AudioFormat format) {
+    public void setAudioFormat(final AudioFormat format) {
         audioFormat = format;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setVolume(float volume) {
+    public void setVolume(final float volume) {
     }
 
     /**
@@ -143,7 +144,7 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
     /**
      * {@inheritDoc}
      */
-    public boolean write(byte[] audioData) {
+    public boolean write(final byte[] audioData) {
         try {
             buffer.write(audioData);
         } catch (IOException ex) {
@@ -155,7 +156,8 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
     /**
      * {@inheritDoc}
      */
-    public boolean write(byte[] audioData, int offset, int size) {
+    public boolean write(final byte[] audioData, final int offset,
+            final int size) {
         buffer.write(audioData, offset, size);
         return true;
     }
@@ -163,15 +165,14 @@ public class FreeTTSAudioPlayer implements AudioPlayer {
     /**
      * Retrieves the collected audio data.
      * @return the collected audio data.
+     * @exception IOException
+     *            error reading the audio data
      */
     public byte[] getAudioBytes() throws IOException {
         byte[] res = buffer.toByteArray();
         ByteArrayInputStream bais = baseAudioManager.getConvertedAudio(res);
         res = new byte[bais.available()];
-        try {
-            bais.read(res);
-        } catch (IOException ex) {
-        }
+        bais.read(res);
 
         return res;
     }

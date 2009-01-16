@@ -3,7 +3,6 @@ package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
@@ -38,15 +37,15 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
     private static final Logger LOGGER =
             Logger.getLogger(FreeTTSSynthesizer.class.getName());
     /**
-     * The currently active voice for this synthesizer
+     * The currently active voice for this synthesizer.
      */
     private FreeTTSVoice curVoice;
 
     /** The audio player to use. */
     private AudioPlayer audioPlayer;
 
-    /** The ssml to jsml transformer*/
-    Ssml2JsmlTransformer transformer = new Ssml2JsmlTransformer();
+    /** The ssml to jsml transformer. */
+    private final Ssml2JsmlTransformer transformer = new Ssml2JsmlTransformer();
 
     /**
      * All voice output for this synthesizer goes through this central utterance
@@ -61,7 +60,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
      *                describes the allowed mode of operations for this
      *                synthesizer.
      */
-    public FreeTTSSynthesizer(FreeTTSSynthesizerMode desc) {
+    public FreeTTSSynthesizer(final FreeTTSSynthesizerMode desc) {
         super(desc);
         // /////////////////////////////////// outputHandler = new
         // OutputHandler();
@@ -119,7 +118,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
         // Load the voice if it is not loaded.
         if (!freettsVoice.isLoaded()) {
-            // /////////////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////
             // freettsVoice.setOutputQueue(outputQueue);
             freettsVoice.allocate();
             /*
@@ -304,7 +303,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
                 in = new ByteArrayInputStream(player.getAudioBytes());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.warning(e.getLocalizedMessage());
                 return;
             }
             final AudioManager manager = getAudioManager();
