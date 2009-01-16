@@ -19,7 +19,9 @@ import javax.sound.sampled.LineUnavailableException;
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 
 /**
- * @author DS01191
+ * A simple {@link OutputStream} that writes the data to the local speaker.
+ *
+ * @author Dirk Schnelle-Walka
  *
  */
 public class ClipOutputStream extends OutputStream implements LineListener {
@@ -45,8 +47,29 @@ public class ClipOutputStream extends OutputStream implements LineListener {
         manager = audioManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void write(int b) throws IOException {
+    public void write(final int b) throws IOException {
+        buffer.write(b);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final byte[] b, final int off, final int len)
+        throws IOException {
+        buffer.write(b, off, len);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(final byte[] b) throws IOException {
         buffer.write(b);
     }
 
@@ -87,11 +110,10 @@ public class ClipOutputStream extends OutputStream implements LineListener {
      * {@inheritDoc}
      */
     @Override
-    public void update(LineEvent event) {
+    public void update(final LineEvent event) {
         if ((event.getType() == LineEvent.Type.CLOSE)
                 || (event.getType() == LineEvent.Type.STOP)) {
             sem.release();
         }
     }
-
 }
