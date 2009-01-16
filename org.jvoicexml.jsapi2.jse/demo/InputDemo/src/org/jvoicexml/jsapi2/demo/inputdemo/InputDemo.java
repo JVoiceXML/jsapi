@@ -99,6 +99,7 @@ public class InputDemo implements ResultListener {
      */
     @Override
     public void resultUpdate(final ResultEvent event) {
+        System.out.println(event);
         if (event.getId() == ResultEvent.RESULT_ACCEPTED) {
             Result result = (Result) (event.getSource());
             ResultToken tokens[] = result.getBestTokens();
@@ -108,7 +109,7 @@ public class InputDemo implements ResultListener {
             }
             System.out.println();
         } else {
-            synthesizer.speak("I did not understand what you said", null);
+//            synthesizer.speak("I did not understand what you said", null);
         }
     }
 

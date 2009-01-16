@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.speech.AudioSegment;
@@ -404,6 +405,9 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
           try {
               speechEventExecutor.execute(new Runnable() {
                   public void run() {
+                      if (LOGGER.isLoggable(Level.FINE)) {
+                          LOGGER.fine("notifying event " + event);
+                      }
                       fireResultEvent(event);
                   }
               });
