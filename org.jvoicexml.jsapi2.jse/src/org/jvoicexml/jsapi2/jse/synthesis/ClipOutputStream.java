@@ -66,6 +66,7 @@ public class ClipOutputStream extends OutputStream implements LineListener {
             }
             clip = (Clip) AudioSystem.getLine(info);
             byte[] bytes = buffer.toByteArray();
+            buffer.reset();
             clip.open(format, bytes, 0, bytes.length);
             clip.addLineListener(this);
             clip.start();
