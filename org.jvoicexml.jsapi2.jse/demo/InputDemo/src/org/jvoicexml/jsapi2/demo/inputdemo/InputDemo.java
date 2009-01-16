@@ -108,7 +108,7 @@ public class InputDemo implements ResultListener {
             }
             System.out.println();
         } else {
-            synthesizer.speak("I did not undersatnd what you said", null);
+            synthesizer.speak("I did not understand what you said", null);
         }
     }
 
