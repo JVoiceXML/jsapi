@@ -49,6 +49,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.speech.AudioException;
 import javax.speech.EngineEvent;
@@ -84,6 +86,9 @@ import org.jvoicexml.jsapi2.jse.BaseEngine;
  *
  */
 abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(BaseRecognizer.class.getName());
 
     protected Vector resultListeners;
 
@@ -198,13 +203,14 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             try {
                 waitEngineState(ALLOCATED);
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                LOGGER.warning(ex.getLocalizedMessage());
+                return;
             }
         }
 
         //Handle pause
         boolean status = basePause(flags);
-        if (status == true) {
+        if (status) {
             long[] states = setEngineState(RESUMED, PAUSED);
             postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
         }
@@ -279,7 +285,7 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
                                 RecognizerEvent.UNKNOWN_AUDIO_POSITION);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warning(e.getLocalizedMessage());
         }
     }
 
@@ -304,8 +310,8 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
                     null,
                     audioPosition);
             postEngineEvent(event);
-        }catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception e) {
+            LOGGER.warning(e.getLocalizedMessage());
         }
     }
 
@@ -314,14 +320,18 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
             try {
                 speechEventExecutor.execute(new Runnable() {
                     public void run() {
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.fine("notifying event " + event);
+                        }
                         fireResultEvent(event);
                     }
                 });
-            } catch (RuntimeException ex) {
-                ex.printStackTrace();
+            } catch (RuntimeException e) {
+                LOGGER.warning(e.getLocalizedMessage());
             }
         }
-        ((BaseResult)event.getSource()).postResultEvent(speechEventExecutor, event);
+        final BaseResult base = (BaseResult) event.getSource();
+        base.postResultEvent(speechEventExecutor, event);
     }
 
     public void fireResultEvent(ResultEvent event) {
@@ -558,13 +568,13 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
         //Process grammars
         try {
             processGrammars();
-        } catch (EngineStateException ex) {
-            ex.printStackTrace();
+        } catch (EngineStateException e) {
+            LOGGER.warning(e.getLocalizedMessage());
             return false;
         }
 
         boolean status = handleResume();
-        if (status == true) {
+        if (status) {
             setEngineState(0, LISTENING);
             postEngineEvent(0, LISTENING, RecognizerEvent.RECOGNIZER_LISTENING);
             setEngineState(NOT_BUFFERING, BUFFERING);
