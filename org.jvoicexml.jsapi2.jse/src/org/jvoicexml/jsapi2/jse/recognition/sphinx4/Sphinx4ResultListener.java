@@ -76,21 +76,22 @@ class Sphinx4ResultListener implements ResultListener {
     /**
      * Creates a vector of ResultToken (jsapi) from a sphinx result.
      * @param result The Sphinx4 result
-     * @param currentResult The current BaseResult (jsapi)
+     * @param current The current BaseResult (jsapi)
      * @return ResultToken[]
      */
-    private ResultToken[] Sphinx4ResultToResultToken(final Result result, final BaseResult currentResult){
+    private ResultToken[] sphinx4ResultToResultToken(final Result result,
+            final BaseResult current) {
         String strRes = result.getBestFinalResultNoFiller();
         StringTokenizer st = new StringTokenizer(strRes);
         int nTokens = st.countTokens();
 
-        ResultToken res[] = new ResultToken[nTokens];
+        final ResultToken[] res = new ResultToken[nTokens];
 
         for (int i = 0; i < nTokens; ++i) {
             String text = st.nextToken();
 
-            BaseResultToken brt = new BaseResultToken(currentResult, text);
-            if (currentResult.getResultState() == BaseResult.ACCEPTED) {
+            BaseResultToken brt = new BaseResultToken(current, text);
+            if (current.getResultState() == BaseResult.ACCEPTED) {
                 // @todo set confidenceLevel, startTime and end time,
                 // of each token
             }
@@ -117,22 +118,30 @@ class Sphinx4ResultListener implements ResultListener {
         final RuleGrammar grammar = recognizer.getRuleGrammar();
         currentResult = new BaseResult(grammar);
 
-        recognizer.postResultEvent(new ResultEvent(currentResult,ResultEvent.RESULT_CREATED, false, false));
+        final ResultEvent created = new ResultEvent(currentResult,
+                ResultEvent.RESULT_CREATED, false, false);
+        recognizer.postResultEvent(created);
 
-        ResultToken[] rt = Sphinx4ResultToResultToken(result, currentResult);
+        ResultToken[] rt = sphinx4ResultToResultToken(result, currentResult);
         int numTokens = rt.length;
 
-        recognizer.postResultEvent(new ResultEvent(currentResult,ResultEvent.GRAMMAR_FINALIZED));
+        final ResultEvent grammarFinalized =
+            new ResultEvent(currentResult, ResultEvent.GRAMMAR_FINALIZED);
+        recognizer.postResultEvent(grammarFinalized);
 
         if (numTokens == 0) {
             currentResult.setResultState(BaseResult.REJECTED);
-            recognizer.postResultEvent(new ResultEvent(currentResult,ResultEvent.RESULT_REJECTED,false,false));
+            final ResultEvent rejected =
+                new ResultEvent(currentResult, ResultEvent.RESULT_REJECTED,
+                        false, false);
+            recognizer.postResultEvent(rejected);
         } else {
             currentResult.setResultState(BaseResult.ACCEPTED);
-
             currentResult.setNumTokens(numTokens);
             currentResult.setTokens(rt);
-            recognizer.postResultEvent(new ResultEvent(currentResult,ResultEvent.RESULT_ACCEPTED,false,false));
+            final ResultEvent accepted = new ResultEvent(currentResult,
+                        ResultEvent.RESULT_ACCEPTED, false, false);
+            recognizer.postResultEvent(accepted);
         }
     }
 }

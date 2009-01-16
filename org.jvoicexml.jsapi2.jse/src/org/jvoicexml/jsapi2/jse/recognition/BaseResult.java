@@ -392,14 +392,15 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 //////////////////////
 // Begin utility methods for sending ResultEvents
 //////////////////////
-	/**
- 	 * Utility function to generate result event and post it to the event queue.
-	 * Eventually fireAudioReleased will be called
+    /**
+     * Utility function to generate result event and post it to the event queue.
+     * Eventually fireAudioReleased will be called
      * by dispatchSpeechEvent as a result of this action.
- 	 * @param speechEventExecutor SpeechEventExecutor
- 	 * @param event ResultEvent
- 	 */
-	 public void postResultEvent(SpeechEventExecutor speechEventExecutor, final ResultEvent event){
+     * @param speechEventExecutor SpeechEventExecutor
+     * @param event ResultEvent
+     */
+    public void postResultEvent(final SpeechEventExecutor speechEventExecutor,
+            final ResultEvent event) {
           try {
               speechEventExecutor.execute(new Runnable() {
                   public void run() {
@@ -407,7 +408,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
                   }
               });
           } catch (RuntimeException ex) {
-              ex.printStackTrace();
+              LOGGER.warning(ex.getLocalizedMessage());
           }
       }
 
@@ -415,12 +416,12 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
        * Utility function to send a result event to all result
        * listeners.
        */
-      public void fireResultEvent(ResultEvent event) {
-          Enumeration E;
+      public void fireResultEvent(final ResultEvent event) {
           if (resultListeners != null) {
-              E = resultListeners.elements();
-              while (E.hasMoreElements()) {
-                  ResultListener rl = (ResultListener) E.nextElement();
+              final Enumeration enumeration = resultListeners.elements();
+              while (enumeration.hasMoreElements()) {
+                  ResultListener rl =
+                      (ResultListener) enumeration.nextElement();
                   rl.resultUpdate(event);
               }
           }

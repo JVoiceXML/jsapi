@@ -388,7 +388,10 @@ final class Sphinx4Recognizer extends BaseRecognizer {
 
     }
 
-    public void postResultEvent(ResultEvent resultEvent){
+    /**
+     * {@inheritDoc}
+     */
+    public void postResultEvent(final ResultEvent resultEvent){
         super.postResultEvent(resultEvent);
     }
 
