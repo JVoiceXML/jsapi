@@ -85,7 +85,7 @@ import org.jvoicexml.jsapi2.jse.BaseEngine;
  * modify this implementation.
  *
  */
-abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
+public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(BaseRecognizer.class.getName());
@@ -316,25 +316,23 @@ abstract public class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
     protected void postResultEvent(final ResultEvent event) {
-        if ((getResultMask() & event.getId()) == event.getId()) {
-            try {
-                speechEventExecutor.execute(new Runnable() {
-                    public void run() {
-                        if (LOGGER.isLoggable(Level.FINE)) {
-                            LOGGER.fine("notifying event " + event);
-                        }
-                        fireResultEvent(event);
+        try {
+            speechEventExecutor.execute(new Runnable() {
+                public void run() {
+                    if (LOGGER.isLoggable(Level.FINE)) {
+                        LOGGER.fine("notifying event " + event);
                     }
-                });
-            } catch (RuntimeException e) {
-                LOGGER.warning(e.getLocalizedMessage());
-            }
+                    fireResultEvent(event);
+                }
+            });
+        } catch (RuntimeException e) {
+            LOGGER.warning(e.getLocalizedMessage());
         }
         final BaseResult base = (BaseResult) event.getSource();
         base.postResultEvent(speechEventExecutor, event);
     }
 
-    public void fireResultEvent(ResultEvent event) {
+    public void fireResultEvent(final ResultEvent event) {
         Enumeration listeners = resultListeners.elements();
         while (listeners.hasMoreElements()) {
             ResultListener el = (ResultListener) listeners.nextElement();
