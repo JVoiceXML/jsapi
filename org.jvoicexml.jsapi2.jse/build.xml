@@ -14,8 +14,10 @@ This file builds the JSR 113.jar.
   <property name="apidoc" value="doc/api" />
 
   <!-- distribution files -->
-  <property name="dist.jsr113-j2sebase.jar" value="${dist}/jsr113-j2sebase.jar" />
-  <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
+  <property name="dist.jsr113-jsebase.jar" value="${dist}/jsr113-jsebase.jar" />
+  <property name="dist.jsr113-jsebase-impl.jar" value="${dist}/jsr113-jsebase-impl.jar" />
+  <property name="dist.zip" value="${dist}/jsr113-base-${version}.zip" />
+  <property name="dist.src.zip" value="${dist}/jsr113-base-${version}-src.zip" />
 
   <path id="midp.lib">
     <pathelement location="${midp.home}/midpapi.zip" />
@@ -64,13 +66,20 @@ This file builds the JSR 113.jar.
       <classpath refid="classpath" />
       <compilerarg value="-Xlint:unchecked" />
     </javac>
+    <copy todir="${build}">
+      <fileset dir="${src}">
+        <include/>
+     </fileset>
+    </copy>
   </target>
 
   <target name="jar" depends="compile" description="Pack all compiled files into jar files">
-    <jar jarfile="${dist.jsr113-j2sebase.jar}" compress="false">
+    <jar jarfile="${dist.jsr113-jsebase.jar}" compress="false">
       <fileset dir="${build}">
         <include name="org/jvoicexml/**/*.class" />
         <include name="org/jvoicexml/**/*.xsl" />
+        <exclude name="org/jvoicexml/jsapi2/jse/recognition/sphinx4/**" />
+        <exclude name="org/jvoicexml/jsapi2/jse/synthesis/freetts/**" />
       </fileset>
       <manifest>
         <attribute name="Built-By" value="${user.name}" />
@@ -80,11 +89,34 @@ This file builds the JSR 113.jar.
         </section>
       </manifest>
     </jar>
+    <jar jarfile="${dist.jsr113-jsebase-impl.jar}" compress="false">
+      <fileset dir="${build}">
+        <include name="org/jvoicexml/jsapi2/jse/recognition/sphinx4/**" />
+        <include name="org/jvoicexml/jsapi2/jse/synthesis/freetts/**" />
+      </fileset>
+      <manifest>
+        <attribute name="Built-By" value="${user.name}" />
+        <section name="common">
+          <attribute name="Implementation-Vendor" value="JVoiceXML group" />
+          <attribute name="Implementation-Title" value="Demo implementation for Sphinx4 and FreeTTS" />
+        </section>
+      </manifest>
+    </jar>
   </target>
 
-  <target name="distribution" description="Build the distribution files" depends="jar">
+  <target name="distribution" description="Build the distribution files"
+    depends="jar">
     <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
-      <include name="${dist.jsr113-j2sebase.jar}" />
+      <include name="*.jar" />
+      <fileset refid="dist.files.additional" />
+    </zip>
+    <zip basedir="." destfile="${dist.src.zip}" compress="true">
+      <include name="*src/**/*.java" />
+      <include name="*src/**/*.xsl" />
+      <include name="demo/**/*.java" />
+      <include name="build.xml" />
+      <include name="config-props/**" />
+      <include name="etc/**" />
       <fileset refid="dist.files.additional" />
     </zip>
   </target>
