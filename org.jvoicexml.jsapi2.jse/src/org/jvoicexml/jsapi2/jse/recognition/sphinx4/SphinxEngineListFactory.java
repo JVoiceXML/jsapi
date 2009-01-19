@@ -19,22 +19,20 @@ import javax.speech.spi.EngineListFactory;
  * @version 1.0
  */
 public class SphinxEngineListFactory implements EngineListFactory {
-
+    /** Available engined modes. */
     private final EngineMode[] engineModes;
 
+    /**
+     * Constructs a new object.
+     */
     public SphinxEngineListFactory() {
-        engineModes = new EngineMode[] {
-                      new SphinxRecognizerMode()
-        };
+        engineModes = new EngineMode[] {new SphinxRecognizerMode()};
     }
 
     /**
-     * createEngineList
-     *
-     * @param require EngineMode
-     * @return EngineList
+     * {@inheritDoc}
      */
-    public EngineList createEngineList(EngineMode require) {
+    public EngineList createEngineList(final EngineMode require) {
         // Must be a recognizer.
         if (!(require instanceof RecognizerMode)) {
             return null;
