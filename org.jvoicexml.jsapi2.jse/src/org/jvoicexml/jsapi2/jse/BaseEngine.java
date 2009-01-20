@@ -193,7 +193,7 @@ abstract public class BaseEngine implements Engine {
      * @throws IllegalArgumentException
      *   if the specified state is unreachable
      */
-    public long waitEngineState(long state, long timeout)
+    public long waitEngineState(final long state, final long timeout)
         throws InterruptedException, IllegalArgumentException,
             IllegalStateException {
         synchronized (engineStateLock) {
@@ -254,8 +254,9 @@ abstract public class BaseEngine implements Engine {
      * @throws IllegalArgumentException
      *   if the specified state is unreachable
      */
-    public boolean testEngineState(long state) throws IllegalArgumentException {
-        return ((getEngineState() & state) == state);
+    public boolean testEngineState(final long state)
+        throws IllegalArgumentException {
+        return (getEngineState() & state) == state;
     }
 
     /**
