@@ -246,7 +246,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
      */
 
     /**
-     * Pauses the output
+     * Pauses the output.
      */
     public boolean handlePause() {
         audioPlayer.pause();
@@ -254,7 +254,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
     }
 
     /**
-     * Resumes the output
+     * Resumes the output.
      */
     public boolean handleResume() {
         audioPlayer.resume();
@@ -302,7 +302,6 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
             try {
                 in = new ByteArrayInputStream(player.getAudioBytes());
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 LOGGER.warning(e.getLocalizedMessage());
                 return;
             }
