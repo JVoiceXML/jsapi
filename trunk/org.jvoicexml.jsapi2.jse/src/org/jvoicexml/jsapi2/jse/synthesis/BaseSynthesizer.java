@@ -2,6 +2,8 @@ package org.jvoicexml.jsapi2.jse.synthesis;
 
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.speech.AudioException;
 import javax.speech.AudioSegment;
@@ -12,8 +14,8 @@ import javax.speech.EngineStateException;
 import javax.speech.synthesis.PhoneInfo;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableEvent;
-import javax.speech.synthesis.SpeakableListener;
 import javax.speech.synthesis.SpeakableException;
+import javax.speech.synthesis.SpeakableListener;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerEvent;
 import javax.speech.synthesis.SynthesizerListener;
@@ -42,7 +44,11 @@ import org.jvoicexml.jsapi2.jse.BaseEngine;
  * @author Renato Cassaca
  * @version 1.0
  */
-abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer {
+public abstract class BaseSynthesizer extends BaseEngine
+    implements Synthesizer {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(BaseSynthesizer.class.getName());
 
     protected Vector speakableListeners;
     protected SynthesizerProperties synthesizerProperties;
@@ -254,14 +260,22 @@ abstract public class BaseSynthesizer extends BaseEngine implements Synthesizer 
         return queueManager.appendItem(speakable, listener);
     }
 
-    public int speak(String text, SpeakableListener listener)
+    /**
+     * {@inheritDoc}
+     */
+    public int speak(final String text, final SpeakableListener listener)
             throws EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
         // Wait to finalize allocation
+        if (LOGGER.isLoggable(Level.FINE)
+                && testEngineState(ALLOCATING_RESOURCES)) {
+            LOGGER.fine("waiting until synthesizer is allocated");
+        }
         while (testEngineState(ALLOCATING_RESOURCES)) {
             try {
-                waitEngineState(ALLOCATED);
+                final long delay = 300;
+                waitEngineState(ALLOCATED, delay);
             } catch (InterruptedException ex) {
                 throw new EngineStateException(
                         "wait engine state interrupted: " + ex.getMessage());

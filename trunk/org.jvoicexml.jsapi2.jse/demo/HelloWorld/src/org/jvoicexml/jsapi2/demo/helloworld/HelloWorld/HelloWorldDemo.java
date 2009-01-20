@@ -19,13 +19,13 @@ import org.jvoicexml.jsapi2.jse.synthesis.freetts.FreeTTSEngineListFactory;
  * 
  */
 public class HelloWorldDemo {
-    public static void main(String args[]) {
+    public static void main(final String args[]) {
         // Enable logging at all levels.
         Handler handler = new ConsoleHandler();
         handler.setLevel(Level.ALL);
         Logger.getLogger("").addHandler(handler);
         Logger.getLogger("").setLevel(Level.ALL);
-        
+
         try {
             EngineManager
                     .registerEngineListFactory(FreeTTSEngineListFactory.class
