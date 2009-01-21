@@ -4,6 +4,7 @@ package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 
@@ -19,6 +20,10 @@ import com.sun.speech.freetts.audio.AudioPlayer;
  * @version 1.0
  */
 public final class FreeTTSAudioPlayer implements AudioPlayer {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(FreeTTSAudioPlayer.class.getName());
+
     /** The collected audio data. */
     private ByteArrayOutputStream buffer;
 
@@ -101,7 +106,9 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
      * {@inheritDoc}
      */
     public void reset() {
-        buffer.reset();
+        synchronized (buffer) {
+            buffer.reset();
+        }
     }
 
     /**
@@ -146,7 +153,9 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
      */
     public boolean write(final byte[] audioData) {
         try {
-            buffer.write(audioData);
+            synchronized (buffer) {
+                buffer.write(audioData);
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -158,7 +167,9 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
      */
     public boolean write(final byte[] audioData, final int offset,
             final int size) {
-        buffer.write(audioData, offset, size);
+        synchronized (buffer) {
+            buffer.write(audioData, offset, size);
+        }
         return true;
     }
 
@@ -169,8 +180,13 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
      *            error reading the audio data
      */
     public byte[] getAudioBytes() throws IOException {
-        byte[] res = buffer.toByteArray();
-        ByteArrayInputStream bais = baseAudioManager.getConvertedAudio(res);
+        byte[] res;
+        synchronized (buffer) {
+            res = buffer.toByteArray();
+            buffer.reset();
+        }
+        final ByteArrayInputStream bais =
+            baseAudioManager.getConvertedAudio(res);
         res = new byte[bais.available()];
         bais.read(res);
 

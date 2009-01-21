@@ -118,7 +118,7 @@ final class Sphinx4Recognizer extends BaseRecognizer {
             dataProcessor = (DataProcessor) configuration.lookup("sphinxInputDataProcessor");
             grammar = (SRGSGrammar) configuration.lookup("srgsGrammar");
 
-            if ((dataProcessor instanceof SphinxInputDataProcessor) == false) {
+            if (!(dataProcessor instanceof SphinxInputDataProcessor)) {
                 throw new EngineException("Unsupported input type");
             }
 

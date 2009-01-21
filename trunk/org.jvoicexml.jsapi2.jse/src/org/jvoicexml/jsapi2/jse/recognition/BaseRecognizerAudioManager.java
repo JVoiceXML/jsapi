@@ -18,6 +18,7 @@ import java.net.URLConnection;
 
 import javax.speech.AudioEvent;
 import javax.speech.AudioException;
+import javax.speech.Engine;
 import javax.speech.EngineStateException;
 
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
@@ -27,6 +28,7 @@ import org.jvoicexml.jsapi2.jse.BaseAudioManager;
  * implementations might want to extend or modify this implementation.
  */
 public class BaseRecognizerAudioManager extends BaseAudioManager {
+    /** The input stream for the recognizer. */
     protected InputStream inputStream;
 
     /**
@@ -59,7 +61,7 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
             } catch (IOException e) {
                 throw new AudioException(e.getMessage());
             }
-    
+
             try {
                 is = urlConnection.getInputStream();
             } catch (IOException ex) {
@@ -107,13 +109,13 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
             throws AudioException, EngineStateException,
             IllegalArgumentException, SecurityException {
 
-        if (System.getProperty("javax.speech.supports.audio.management") == null) {
+        if (!isSupportsAudioManagement()) {
             throw new SecurityException(
                     "AudioManager has no permission to access audio resources");
         }
 
         // Insure that engine is DEALLOCATED
-        if (engine.testEngineState(engine.DEALLOCATED) == false) {
+        if (!engine.testEngineState(Engine.DEALLOCATED)) {
             throw new EngineStateException(
                     "Engine is not DEALLOCATED. Cannot setMediaLocator");
         }
