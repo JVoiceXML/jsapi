@@ -162,7 +162,7 @@ public abstract class BaseAudioManager implements AudioManager {
             SecurityException {
 
         //Insure that engine is DEALLOCATED
-        if (engine.testEngineState(Engine.DEALLOCATED) == false) {
+        if (!engine.testEngineState(Engine.DEALLOCATED)) {
             throw new EngineStateException(
                     "Engine is not DEALLOCATED. Cannot setMediaLocator");
         }
@@ -173,7 +173,7 @@ public abstract class BaseAudioManager implements AudioManager {
         }
 
         //Insure that media locator is supported
-        if (isSupportedMediaLocator(locator) == false) {
+        if (!isSupportedMediaLocator(locator)) {
             throw new AudioException("Unsupported locator: " + locator);
         }
 
@@ -202,7 +202,7 @@ public abstract class BaseAudioManager implements AudioManager {
         String[] supportedMediaLocators = getSupportedMediaLocators(
                 mediaLocator);
 
-        return (supportedMediaLocators == null ? false : true);
+        return supportedMediaLocators == null ? false : true;
     }
 
     /**
