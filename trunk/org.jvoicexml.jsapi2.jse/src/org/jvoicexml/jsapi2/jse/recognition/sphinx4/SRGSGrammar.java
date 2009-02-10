@@ -432,7 +432,7 @@ public class SRGSGrammar extends Grammar {
         /** @todo implement it in jsapi2/srgsrulegrammarparser */
         //normalizeWeights(weights);
 
-        // expand each alternative, and connect them in parallel
+        // end each alternative, and connect them in parallel
         for (int i = 0; i < rules.length; i++) {
             RuleComponent rule = rules[i];
             float weight = 0.0f;
