@@ -4,6 +4,7 @@
 	<classpathentry kind="src" path="demo/HelloWorld/src"/>
 	<classpathentry kind="src" path="unittests"/>
 	<classpathentry kind="src" path="demo/InputDemo/src"/>
+	<classpathentry kind="src" path="demo/RTPDemo/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="3rdparty/freetts1.2/lib/cmu_us_kal.jar"/>
@@ -12,5 +13,6 @@
 	<classpathentry kind="lib" path="3rdparty/freetts1.2/lib/freetts.jar" sourcepath="/FreeTTS"/>
 	<classpathentry kind="lib" path="3rdparty/sphinx4/lib/sphinx4.jar" sourcepath="/sphinx4"/>
 	<classpathentry kind="lib" path="3rdparty/jsapi2/lib/jsr-113.jar" sourcepath="/javax.speech"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="lib" path="3rdparty/jlibrtp/lib/jlibrtp.jar" sourcepath="/jlibrtp"/>
+	<classpathentry kind="output" path="eclipse-compiled"/>
 </classpath>
