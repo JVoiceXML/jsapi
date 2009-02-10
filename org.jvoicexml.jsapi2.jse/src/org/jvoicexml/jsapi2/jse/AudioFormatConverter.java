@@ -4,19 +4,16 @@
 package org.jvoicexml.jsapi2.jse;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 
 /**
- * @author DS01191
+ * @author Renato Cassaca
+ * @author Dirk Schnelle-Walka
  *
  */
 public class AudioFormatConverter {
@@ -65,10 +62,11 @@ public class AudioFormatConverter {
         //if (convertedInputStream.available() > 0) {}
 
         //Allocate an array for 1 second of audio in target format
-        byte[] convertedArray = new byte[manager.getAudioFormatBytesPerSecond(targetFormat)];
+        byte[] convertedArray =
+            new byte[manager.getAudioFormatBytesPerSecond(targetFormat)];
         int offset = 0;
         int br = -1;
-        int bytesPerRead = 512;
+        final int bytesPerRead = 512;
         int writeOffset = 0;
         int writeSize = 0;
         boolean noMoreInput = false;
@@ -95,15 +93,14 @@ public class AudioFormatConverter {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-            }
-            else {
+            } else {
                 noMoreInput = true;
 
-
-                if (insertedSilence == false) {
+                if (!insertedSilence) {
                     //Generate 100ms os silence to compensate conversion loss
                     byte silenceSample = 0;
-                    int bps = manager.getAudioFormatBytesPerSecond(sourceFormat);
+                    int bps =
+                        manager.getAudioFormatBytesPerSecond(sourceFormat);
                     byte[] silence = new byte[bps / 10];
                     for (int i = 0; i < silence.length; i++) {
                         silence[i] = silenceSample;
@@ -120,12 +117,15 @@ public class AudioFormatConverter {
             //Realloc array?
             int availableSize = convertedArray.length - offset;
             if (availableSize < bytesPerRead) {
-                convertedArray = (byte[]) manager.resizeArray(convertedArray, convertedArray.length * 2);
+                convertedArray =(byte[]) manager.resizeArray(
+                        convertedArray, convertedArray.length * 2);
             }
 
             //Read converted data and write it in array
             try {
-                if ((noMoreInput == true) && (convertedInputStream.available() < (manager.getAudioFormatBytesPerSecond(sourceFormat)) / 10)) {
+                if (noMoreInput && (convertedInputStream.available()
+                        < (manager.getAudioFormatBytesPerSecond(sourceFormat))
+                        / 10)) {
 
                     //Read the flushed audio
                     br = convertedInputStream.read(convertedArray, offset,
@@ -136,12 +136,12 @@ public class AudioFormatConverter {
 
                     //clearing the pipeline
                     if (pipedInputStream.available() > 0) {
-                        byte[] clearBuffer = new byte[pipedInputStream.available()];
+                        byte[] clearBuffer =
+                            new byte[pipedInputStream.available()];
                         pipedInputStream.read(clearBuffer);
                     }
 
-                }
-                else {
+                } else {
                     br = convertedInputStream.read(convertedArray, offset,
                             bytesPerRead);
                 }
@@ -151,8 +151,7 @@ public class AudioFormatConverter {
             }
             if (br != -1) {
                 offset += br;
-            }
-            else {
+            } else {
                 break;
             }
         } while (true);

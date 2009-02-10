@@ -64,7 +64,7 @@ import javax.speech.VocabularyManager;
  * Actual JSAPI implementations might want to extend or modify this
  * implementation.
  */
-abstract public class BaseEngine implements Engine {
+public abstract class BaseEngine implements Engine {
 
     /**
      * A bitmask holding the current state of this <code>Engine</code>.
@@ -319,7 +319,7 @@ abstract public class BaseEngine implements Engine {
         } catch (EngineException ex) {
             throw ex;
         } finally {
-            if (success == false) {
+            if (!success) {
                 states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
                 postEngineEvent(states[0], states[1],
                         EngineEvent.ENGINE_DEALLOCATED);
@@ -348,8 +348,7 @@ abstract public class BaseEngine implements Engine {
                     }
                 }
             }, "Asynchronous allocate").start();
-        }
-        else {
+        } else {
             allocate();
         }
     }
@@ -417,8 +416,7 @@ abstract public class BaseEngine implements Engine {
                     }
                 }
             }, "Asynchronous deallocate").start();
-        }
-        else {
+        } else {
             deallocate();
         }
     }
@@ -435,7 +433,9 @@ abstract public class BaseEngine implements Engine {
     public void pause() throws EngineStateException {
 
         //Validate current state
-        if (testEngineState(PAUSED)) return;
+        if (testEngineState(PAUSED)) {
+            return;
+        }
 
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
@@ -449,7 +449,7 @@ abstract public class BaseEngine implements Engine {
 
         //Handle pause
         boolean status = basePause();
-        if (status == true) {
+        if (status) {
             long[] states = setEngineState(RESUMED, PAUSED);
             postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
         }
@@ -467,7 +467,9 @@ abstract public class BaseEngine implements Engine {
     public boolean resume() throws EngineStateException {
 
         //Validate current state
-        if (testEngineState(RESUMED)) return true;
+        if (testEngineState(RESUMED)) {
+            return true;
+        }
 
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
@@ -484,8 +486,7 @@ abstract public class BaseEngine implements Engine {
             postEngineEvent(states[0], states[1], EngineEvent.ENGINE_RESUMED);
 
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -559,8 +560,7 @@ abstract public class BaseEngine implements Engine {
     public void setSpeechEventExecutor(SpeechEventExecutor speechEventExecutor) {
         if (speechEventExecutor == null) {
             this.speechEventExecutor = new BaseSpeechEventExecutor();
-        }
-        else {
+        } else {
             if (this.speechEventExecutor instanceof BaseSpeechEventExecutor) {
                 ((BaseSpeechEventExecutor)this.speechEventExecutor).terminate();
             }
@@ -603,7 +603,7 @@ abstract public class BaseEngine implements Engine {
     }
 
     /**
-     * Adds an event to SpeechEventExecutor
+     * Adds an event to SpeechEventExecutor.
      *
      * @param event EngineEvent
      */
@@ -703,8 +703,8 @@ abstract public class BaseEngine implements Engine {
      * @return the engine name and mode.
      */
     public String toString() {
-        return getEngineMode().getEngineName() +
-                ":" + getEngineMode().getModeName();
+        return getEngineMode().getEngineName()
+                + ":" + getEngineMode().getModeName();
     }
 
     /**
@@ -714,9 +714,13 @@ abstract public class BaseEngine implements Engine {
      * @return boolean
      */
     protected boolean isValid(long state) {
-        if (testEngineState(PAUSED | RESUMED)) return false;
+        if (testEngineState(PAUSED | RESUMED)) {
+            return false;
+        }
 
-        if (testEngineState(FOCUSED | DEFOCUSED)) return false;
+        if (testEngineState(FOCUSED | DEFOCUSED)) {
+            return false;
+        }
 
         return true;
     }
@@ -729,12 +733,13 @@ abstract public class BaseEngine implements Engine {
      * @return boolean
      */
     protected boolean isReachable(long state) {
-        if ((state & ERROR_OCCURRED) == ERROR_OCCURRED)
+        if ((state & ERROR_OCCURRED) == ERROR_OCCURRED) {
             return false;
+        }
 
-        if (testEngineState(ALLOCATED) == false) {
-            if (((state & RESUMED) == RESUMED) ||
-                ((state & PAUSED) == PAUSED)) {
+        if (!testEngineState(ALLOCATED)) {
+            if (((state & RESUMED) == RESUMED)
+                || ((state & PAUSED) == PAUSED)) {
                 return false;
             }
         }

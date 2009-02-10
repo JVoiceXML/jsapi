@@ -60,13 +60,14 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * Audio format of the audio natively produced
-     * by the engine
+     * by the engine.
      */
     protected AudioFormat engineAudioFormat;
 
+    /** Audio format to be delivered. */
     protected AudioFormat targetAudioFormat;
 
-
+    /** Converter from the source to the target format. */
     protected AudioFormatConverter formatConverter;
 
     /**
@@ -89,7 +90,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * Sets the engine.
      * @param engine the engine.
      */
-    public void setEngine(BaseEngine engine) {
+    public void setEngine(final BaseEngine engine) {
         this.engine = engine;
     }
 
@@ -99,7 +100,7 @@ public abstract class BaseAudioManager implements AudioManager {
      *
      * @param listener the listener to add
      */
-    public void addAudioListener(AudioListener listener) {
+    public void addAudioListener(final AudioListener listener) {
         synchronized (audioListeners) {
             if (!audioListeners.contains(listener)) {
                 audioListeners.add(listener);
@@ -309,7 +310,7 @@ public abstract class BaseAudioManager implements AudioManager {
         String encodingStr = parameters.get("encoding");
         if (encodingStr != null) {
             if (encodingStr.equals("pcm")) {
-                encoding = (signed == true ? AudioFormat.Encoding.PCM_SIGNED :
+                encoding = (signed ? AudioFormat.Encoding.PCM_SIGNED :
                             AudioFormat.Encoding.PCM_UNSIGNED);
             } else if (encodingStr.equals("alaw")) {
                 encoding = AudioFormat.Encoding.ALAW;
