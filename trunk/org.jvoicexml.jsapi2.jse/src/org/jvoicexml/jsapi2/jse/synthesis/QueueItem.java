@@ -1,3 +1,15 @@
+/*
+ * File:    $HeadURL: $
+ * Version: $LastChangedRevision: $
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy: lyncher $
+ *
+ * JSAPI - An base implementation for JSR 113.
+ *
+ * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ */
+
 package org.jvoicexml.jsapi2.jse.synthesis;
 
 import javax.speech.synthesis.Speakable;
@@ -6,37 +18,26 @@ import javax.speech.AudioSegment;
 import javax.speech.synthesis.PhoneInfo;
 
 /**
- * <p>
- * Title: JSAPI 2.0
- * </p>
- * 
- * <p>
- * Description: An independent reference implementation of JSR 113
- * </p>
- * 
- * <p>
- * Copyright: Copyright (c) 2007
- * </p>
- * 
- * <p>
- * Company: JVoiceXML group - http://jvoicexml.sourceforge.net
- * </p>
- * 
+ * An item of the {@link QueueManager}.
  * @author Renato Cassaca
- * @version 1.0
+ * @version $Revision: 1370 $
  */
 public class QueueItem {
 
     private Object source;
-    private int id;
-    private Speakable speakable;
-    private SpeakableListener listener;
+    private final int id;
+
+    /** The queued speakable. */
+    private final Speakable speakable;
+
+    private final SpeakableListener listener;
     private AudioSegment audioSegment;
     private String[] words;
     private float[] wordsStartTimes;
     private PhoneInfo[] phonesInfo;
 
-    public QueueItem(int id, Speakable speakable, SpeakableListener listener) {
+    public QueueItem(final int id, final Speakable speakable,
+            final SpeakableListener listener) {
         this.id = id;
         this.speakable = speakable;
         this.listener = listener;
@@ -56,6 +57,7 @@ public class QueueItem {
     public QueueItem(int id, AudioSegment audioSegment,
             SpeakableListener listener) {
         this.id = id;
+        this.speakable = null;
         this.listener = listener;
         this.audioSegment = audioSegment;
         this.words = new String[0];
@@ -64,6 +66,10 @@ public class QueueItem {
         this.source = audioSegment.getMarkupText();
     }
 
+    /**
+     * Retrieves the speakable.
+     * @return the speakable.
+     */
     public Speakable getSpeakable() {
         return speakable;
     }
