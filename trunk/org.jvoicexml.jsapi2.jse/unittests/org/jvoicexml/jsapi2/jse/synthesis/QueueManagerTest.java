@@ -3,8 +3,6 @@
  */
 package org.jvoicexml.jsapi2.jse.synthesis;
 
-import static org.junit.Assert.fail;
-
 import javax.speech.AudioSegment;
 import javax.speech.synthesis.SpeakableListener;
 
@@ -16,13 +14,17 @@ import org.jvoicexml.jsapi2.jse.test.synthesis.DummySpeakableListener;
 import org.jvoicexml.jsapi2.jse.test.synthesis.DummySynthesizer;
 
 /**
- * @author DS01191
+ * Test cases for {@link QueueManager}.
+ * @author Dirk Schnelle-Walka
  *
  */
-public class QueueManagerTest {
+public final class QueueManagerTest {
     /** Synthesizer. */
     private BaseSynthesizer synthesizer;
 
+    /**
+     * Set up the test environment.
+     */
     @Before
     public void setUp() {
         synthesizer = new DummySynthesizer();
@@ -30,6 +32,8 @@ public class QueueManagerTest {
 
     /**
      * Test method for {@link org.jvoicexml.jsapi2.jse.synthesis.QueueManager#appendItem(javax.speech.synthesis.Speakable, javax.speech.synthesis.SpeakableListener)}.
+     * @exception Exception
+     *            test failed.
      */
     @Test
     public void testAppendItemSpeakableSpeakableListener() throws Exception {
