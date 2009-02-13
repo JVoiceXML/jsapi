@@ -1,6 +1,15 @@
-/**
- * 
+/*
+ * File:    $HeadURL$
+ * Version: $LastChangedRevision$
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy$
+ *
+ * JSAPI - An base implementation for JSR 113.
+ *
+ * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
  */
+
 package org.jvoicexml.jsapi2.jse;
 
 import java.io.ByteArrayInputStream;
@@ -12,6 +21,7 @@ import java.io.PipedOutputStream;
 import javax.sound.sampled.AudioFormat;
 
 /**
+ * Utility to convert audio from a source format to another format.
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
  *
@@ -22,23 +32,21 @@ public class AudioFormatConverter {
     private final PipedOutputStream pipedOutputStream;
 
     private final InputStream convertedInputStream;
-
+    /** The source audio format. */
     private final AudioFormat sourceFormat;
+    /** The target audio format. */
     private final AudioFormat targetFormat;
 
     private final int pipeSize;
 
-    private final BaseAudioManager manager;
-
     public AudioFormatConverter(BaseAudioManager manager,
-            AudioFormat sourceFormat, AudioFormat targetFormat) throws
-            IOException {
-        this.manager = manager;
+            AudioFormat sourceFormat, AudioFormat targetFormat)
+        throws IOException {
         this.sourceFormat = sourceFormat;
         this.targetFormat = targetFormat;
 
         //Conversion pipeline
-        pipeSize = manager.getAudioFormatBytesPerSecond(sourceFormat) * 40;
+        pipeSize = getAudioFormatBytesPerSecond(sourceFormat) * 40;
         pipedInputStream = new PipedInputStream(pipeSize);
         pipedOutputStream = new PipedOutputStream(pipedInputStream);
 
@@ -57,13 +65,21 @@ public class AudioFormatConverter {
         }
     }
 
-    public ByteArrayInputStream getConvertedAudio(byte[] in) throws IOException {
+    /**
+     * Convert the given audio data from the source format to the target format.
+     * @param in bytes to convert.
+     * @return converted bytes stream
+     * @throws IOException
+     *         error converting
+     */
+    public InputStream getConvertedAudio(final byte[] in)
+        throws IOException {
         //Make sure that pipeline is "as clean as possible"
         //if (convertedInputStream.available() > 0) {}
 
         //Allocate an array for 1 second of audio in target format
         byte[] convertedArray =
-            new byte[manager.getAudioFormatBytesPerSecond(targetFormat)];
+            new byte[getAudioFormatBytesPerSecond(targetFormat)];
         int offset = 0;
         int br = -1;
         final int bytesPerRead = 512;
@@ -75,24 +91,20 @@ public class AudioFormatConverter {
 
             //Inject new audio in pipeline
             if (writeOffset < in.length) {
+                writeSize = pipeSize - pipedInputStream.available();
+                writeSize = Math.min(writeSize, in.length - writeOffset);
                 try {
-                    writeSize = pipeSize - pipedInputStream.available();
-                    writeSize = Math.min(writeSize, in.length - writeOffset);
-                    try {
-                        pipedOutputStream.write(in, writeOffset,
-                                writeSize);
-                        writeOffset += writeSize;
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        System.err.println("Off: " + writeOffset);
-                        System.err.println("WrtSz: " + writeSize);
-                        System.err.println("BUfferSz: " + in.length);
-
-                    }
-                    pipedOutputStream.flush();
-                } catch (IOException ex) {
+                    pipedOutputStream.write(in, writeOffset,
+                            writeSize);
+                    writeOffset += writeSize;
+                } catch (Exception ex) {
                     ex.printStackTrace();
+                    System.err.println("Off: " + writeOffset);
+                    System.err.println("WrtSz: " + writeSize);
+                    System.err.println("BUfferSz: " + in.length);
+
                 }
+                pipedOutputStream.flush();
             } else {
                 noMoreInput = true;
 
@@ -100,16 +112,12 @@ public class AudioFormatConverter {
                     //Generate 100ms os silence to compensate conversion loss
                     byte silenceSample = 0;
                     int bps =
-                        manager.getAudioFormatBytesPerSecond(sourceFormat);
+                        getAudioFormatBytesPerSecond(sourceFormat);
                     byte[] silence = new byte[bps / 10];
                     for (int i = 0; i < silence.length; i++) {
                         silence[i] = silenceSample;
                     }
-                    try {
-                        pipedOutputStream.write(silence);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
+                    pipedOutputStream.write(silence);
                     insertedSilence = true;
                 }
             }
@@ -117,37 +125,31 @@ public class AudioFormatConverter {
             //Realloc array?
             int availableSize = convertedArray.length - offset;
             if (availableSize < bytesPerRead) {
-                convertedArray =(byte[]) manager.resizeArray(
+                convertedArray = (byte[]) BaseAudioManager.resizeArray(
                         convertedArray, convertedArray.length * 2);
             }
 
             //Read converted data and write it in array
-            try {
-                if (noMoreInput && (convertedInputStream.available()
-                        < (manager.getAudioFormatBytesPerSecond(sourceFormat))
-                        / 10)) {
+            if (noMoreInput && (convertedInputStream.available()
+                    < (getAudioFormatBytesPerSecond(sourceFormat)) / 10)) {
 
-                    //Read the flushed audio
-                    br = convertedInputStream.read(convertedArray, offset,
-                            bytesPerRead);
+                //Read the flushed audio
+                br = convertedInputStream.read(convertedArray, offset,
+                        bytesPerRead);
 
-                    //and go away
-                    br = -1;
+                //and go away
+                br = -1;
 
-                    //clearing the pipeline
-                    if (pipedInputStream.available() > 0) {
-                        byte[] clearBuffer =
-                            new byte[pipedInputStream.available()];
-                        pipedInputStream.read(clearBuffer);
-                    }
-
-                } else {
-                    br = convertedInputStream.read(convertedArray, offset,
-                            bytesPerRead);
+                //clearing the pipeline
+                if (pipedInputStream.available() > 0) {
+                    byte[] clearBuffer =
+                        new byte[pipedInputStream.available()];
+                    pipedInputStream.read(clearBuffer);
                 }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                return null;
+
+            } else {
+                br = convertedInputStream.read(convertedArray, offset,
+                        bytesPerRead);
             }
             if (br != -1) {
                 offset += br;
@@ -158,5 +160,19 @@ public class AudioFormatConverter {
 
         //Return a new ByteArrayInputStream
         return new ByteArrayInputStream(convertedArray, 0, offset);
+    }
+
+    /**
+     * Retrieves the number of bytes per second for the given audio
+     * format.
+     * @param audioFormat the audio format
+     * @return number of bytes per second.
+     */
+    public static int getAudioFormatBytesPerSecond(
+            final AudioFormat audioFormat) {
+        int bps = audioFormat.getChannels();
+        bps *= audioFormat.getSampleRate();
+        bps *= (audioFormat.getSampleSizeInBits() / 8);
+        return bps;
     }
 }

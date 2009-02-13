@@ -1,9 +1,9 @@
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
@@ -185,8 +185,7 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
             res = buffer.toByteArray();
             buffer.reset();
         }
-        final ByteArrayInputStream bais =
-            baseAudioManager.getConvertedAudio(res);
+        final InputStream bais = baseAudioManager.getConvertedAudio(res);
         res = new byte[bais.available()];
         bais.read(res);
 

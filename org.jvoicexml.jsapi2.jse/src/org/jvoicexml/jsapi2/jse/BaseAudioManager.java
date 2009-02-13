@@ -4,13 +4,13 @@
  * Date:    $LastChangedDate $
  * Author:  $LastChangedBy: lyncher $
  *
- * JSAPI - An independent reference implementation of JSR 113.
+ * JSAPI - An base implementation for JSR 113.
  *
- * Copyright (C) 2007 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
-package org.jvoicexml.jsapi2.jse;
 
+package org.jvoicexml.jsapi2.jse;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -538,13 +538,6 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
 
-    int getAudioFormatBytesPerSecond(final AudioFormat audioFormat) {
-        int bps = audioFormat.getChannels();
-        bps *= audioFormat.getSampleRate();
-        bps *= (audioFormat.getSampleSizeInBits() / 8);
-        return bps;
-    }
-
     /**
      * Reallocates an array with a new size, and copies the contents
      * of the old array to the new array.
@@ -563,7 +556,7 @@ public abstract class BaseAudioManager implements AudioManager {
         return newArray;
     }
 
-    public ByteArrayInputStream getConvertedAudio(byte[] in) throws IOException {
+    public InputStream getConvertedAudio(byte[] in) throws IOException {
         if (formatConverter == null) {
             return new ByteArrayInputStream(in);
         } else {
@@ -582,7 +575,8 @@ public abstract class BaseAudioManager implements AudioManager {
 
         //Generate 100ms os silence to compensate conversion loss
         byte silenceSample = 0;
-        int bps = getAudioFormatBytesPerSecond(engineAudioFormat);
+        int bps = AudioFormatConverter.getAudioFormatBytesPerSecond(
+                engineAudioFormat);
         byte[] silence = new byte[bps / 10];
         for (int i = 0; i < silence.length; i++) {
             silence[i] = silenceSample;
@@ -597,7 +591,9 @@ public abstract class BaseAudioManager implements AudioManager {
             InputStream convertedStream = getConvertedStream(sib, engineAudioFormat, targetAudioFormat);
 
             //Allocate an array for 1 second of audio in target format
-            byte[] convertedArray = new byte[getAudioFormatBytesPerSecond(targetAudioFormat)];
+            final int targetbps =
+                AudioFormatConverter.getAudioFormatBytesPerSecond(targetAudioFormat);
+            byte[] convertedArray = new byte[targetbps];
             int offset = 0;
             int br;
             int bytesPerRead = 512;
