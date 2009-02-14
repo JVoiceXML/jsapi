@@ -15,36 +15,50 @@ import javax.speech.SpeechEventExecutor;
 import java.util.Vector;
 
 /**
- * <p>Title: JSAPI 2.0</p>
+ * A speech event executor that is based on a thread.
  *
- * <p>Description: An independent reference implementation of JSR 113</p>
- *
- * <p>Copyright: Copyright (c) 2007</p>
- *
- * <p>Company: JVoiceXML group - http://jvoicexml.sourceforge.net</p>
- *
+ * <p>
+ * There is only one single thread that is responsible to execute the
+ * commands asynchronously.
+ * </p>
  * @author Renato Cassaca
- * @version 1.0
+ * @version $Revision: 1370 $
  */
 public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
+    /** Number of msec to wait before inspecting the command queue. */
+    private static final int COMMAND_POLL_INTERVALL = 1000;
 
+    /** The thread that executes the commands. */
     private final Thread thread;
 
-    private final Vector commands;
+    /** Commands to execute. */
+    private final Vector<Runnable> commands;
 
+    /** <code>false</code> if the executor is terminating. */
     private boolean shouldRun;
 
+    /**
+     * Constructs a new object.
+     */
     public BaseSpeechEventExecutor() {
-        commands = new Vector();
+        commands = new Vector<Runnable>();
         thread = new Thread(this, "BaseSpeechEventExecutor");
         shouldRun = true;
         thread.start();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Terminates the execution thread.
+     */
     protected void finalize() {
         terminate();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected void terminate() {
         shouldRun = false;
         synchronized (commands) {
@@ -55,13 +69,15 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
     /**
      * Executes the given command.
      *
-     * @param command Runnable
-     * @throws InterruptedException
+     * @param command the command to execute.
      */
-    public void execute(Runnable command) throws
-            IllegalStateException, NullPointerException {
+    public void execute(final Runnable command) {
         if (command == null) {
             throw new NullPointerException("Command must not be null!");
+        }
+        if (!shouldRun) {
+            throw new IllegalStateException(
+                    "SpeechEventExecutor is terminated!");
         }
         commands.addElement(command);
         synchronized (commands) {
@@ -69,13 +85,17 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void run() {
         while (shouldRun) {
             while ((commands.size() < 1) && (shouldRun)) {
                 synchronized (commands) {
                     try {
-                        commands.wait(1000);
+                        commands.wait(COMMAND_POLL_INTERVALL);
                     } catch (InterruptedException ex) {
+                        return;
                     }
                 }
             }

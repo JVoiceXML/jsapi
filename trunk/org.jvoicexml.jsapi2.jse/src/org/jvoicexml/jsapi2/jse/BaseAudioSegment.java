@@ -22,7 +22,7 @@ import javax.speech.AudioSegment;
  * Basic implementation of an {@link AudioSegment}.
  * <p>
  * The association of audio data to a representation is based on an
- * {@link InputStream}.
+ * {@link InputStream} or retreived from the given media locator.
  * </p>
  * @author Renato Cassaca
  * @version $Revision: 1370 $
