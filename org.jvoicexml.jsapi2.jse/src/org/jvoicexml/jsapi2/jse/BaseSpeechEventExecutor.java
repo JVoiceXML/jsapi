@@ -104,7 +104,7 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
             }
 
             //Use this thread to run the command
-            Runnable command = (Runnable) commands.firstElement();
+            final Runnable command = (Runnable) commands.firstElement();
             commands.removeElementAt(0);
             command.run();
         }
