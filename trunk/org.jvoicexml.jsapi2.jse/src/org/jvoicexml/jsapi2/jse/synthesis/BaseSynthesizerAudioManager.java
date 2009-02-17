@@ -76,8 +76,8 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
         try {
             formatConverter = new AudioFormatConverter(this, engineAudioFormat,
                     targetAudioFormat);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {
+             throw new AudioException("Cannot solve required audio formats: " + ex.getMessage());
         }
         postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
 
@@ -116,7 +116,7 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
 
     /**
      * @todo Insure that this is robust...
-     * 
+     *
      * @param os
      *            OutputStream
      * @param engineAudioFormat
@@ -153,7 +153,7 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
              * new byte[512]; try { while ((br = is.read(buffer)) != -1) {
              * os.write(buffer, 0, br); synt_conv.write(buffer, 0, br); } }
              * catch (IOException ex) { ex.printStackTrace(); }
-             * 
+             *
              * try { os.close(); is.close(); } catch (IOException ex) {
              * ex.printStackTrace(); } } }, "AudioCopyer").start();
              */
