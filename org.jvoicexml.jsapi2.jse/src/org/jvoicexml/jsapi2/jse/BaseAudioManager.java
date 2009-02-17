@@ -55,7 +55,7 @@ public abstract class BaseAudioManager implements AudioManager {
     protected String mediaLocator = null;
 
     protected BaseEngine engine;
-    
+
     protected AudioInputStream ais;
 
     /**
@@ -283,7 +283,7 @@ public abstract class BaseAudioManager implements AudioManager {
                 ex.printStackTrace();
                 //Continue and give back a default AudioFormat
             }
-    
+
             if (uri.getQuery() != null) {
                 String[] parametersString = uri.getQuery().split("\\&");
                 for (String part : parametersString) {
@@ -559,6 +559,8 @@ public abstract class BaseAudioManager implements AudioManager {
     public InputStream getConvertedAudio(byte[] in) throws IOException {
         if (formatConverter == null) {
             return new ByteArrayInputStream(in);
+        } else if (engineAudioFormat.matches(targetAudioFormat)) {
+          return new ByteArrayInputStream(in);
         } else {
             return formatConverter.getConvertedAudio(in);
         }
