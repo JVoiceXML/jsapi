@@ -290,7 +290,8 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
      * @param item
      *                the item to output
      */
-    private void handleSpeak(int id, FreeTTSSpeakableImpl speakElement) {
+    private void handleSpeak(final int id,
+            final FreeTTSSpeakableImpl speakElement) {
         com.sun.speech.freetts.Voice voice = curVoice.getVoice();
         voice.setAudioPlayer(audioPlayer);
 
@@ -307,7 +308,13 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
             }
             final AudioManager manager = getAudioManager();
             final String locator = manager.getMediaLocator();
-            AudioSegment segment = new BaseAudioSegment(locator, "", in);
+            final String markupText = speakElement.getText();
+            final AudioSegment segment;
+            if (locator == null) {
+                segment = new BaseAudioSegment(markupText, in);
+            } else {
+                segment = new BaseAudioSegment(locator, markupText, in);
+            }
             setAudioSegment(id, segment);
             player.reset();
         }

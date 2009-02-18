@@ -25,13 +25,18 @@ import javax.speech.synthesis.PhoneInfo;
 public class QueueItem {
 
     private Object source;
+    /** A unique id for this queued item. */
     private final int id;
 
     /** The queued speakable. */
     private final Speakable speakable;
 
+    /** The associated speakable listener. */
     private final SpeakableListener listener;
-    private AudioSegment audioSegment;
+
+    /** The associated audio segment. */
+    private AudioSegment segment;
+
     private String[] words;
     private float[] wordsStartTimes;
     private PhoneInfo[] phonesInfo;
@@ -41,7 +46,7 @@ public class QueueItem {
         this.id = id;
         this.speakable = speakable;
         this.listener = listener;
-        this.audioSegment = null;
+        this.segment = null;
         this.words = new String[0];
         this.wordsStartTimes = new float[0];
         this.phonesInfo = new PhoneInfo[0];
@@ -59,7 +64,7 @@ public class QueueItem {
         this.id = id;
         this.speakable = null;
         this.listener = listener;
-        this.audioSegment = audioSegment;
+        this.segment = audioSegment;
         this.words = new String[0];
         this.wordsStartTimes = new float[0];
         this.phonesInfo = new PhoneInfo[0];
@@ -74,10 +79,18 @@ public class QueueItem {
         return speakable;
     }
 
+    /**
+     * Retrieves the speakable listener for this queue item.
+     * @return the speakable listener
+     */
     public SpeakableListener getListener() {
         return listener;
     }
 
+    /**
+     * Retrieves the id of this item.
+     * @return id of this queue item.
+     */
     public int getId() {
         return id;
     }
@@ -86,12 +99,20 @@ public class QueueItem {
         return source;
     }
 
+    /**
+     * Retrieves the associated audio segment.
+     * @return the audio segment.
+     */
     public AudioSegment getAudioSegment() {
-        return audioSegment;
+        return segment;
     }
 
-    public void setAudioSegment(AudioSegment audiosegment) {
-        audioSegment = audiosegment;
+    /**
+     * Sets the audio segment.
+     * @param audiosegment new value for the audio segment.
+     */
+    public void setAudioSegment(final AudioSegment audiosegment) {
+        segment = audiosegment;
     }
 
     public String[] getWords() {
@@ -106,15 +127,15 @@ public class QueueItem {
         return wordsStartTimes;
     }
 
-    public void setWordsStartTimes(float[] wordsstarttimes) {
-        wordsStartTimes = wordsstarttimes;
+    public void setWordsStartTimes(float[] starttimes) {
+        wordsStartTimes = starttimes;
     }
 
     public PhoneInfo[] getPhonesInfo() {
         return phonesInfo;
     }
 
-    public void setPhonesInfo(PhoneInfo[] phonesinfo) {
-        phonesInfo = phonesinfo;
+    public void setPhonesInfo(PhoneInfo[] info) {
+        phonesInfo = info;
     }
 }

@@ -69,15 +69,15 @@ public abstract class BaseSynthesizer extends BaseEngine
     }
 
     /**
-     * fireEvent
-     *
-     * @param event EngineEvent
+     * {@inheritDoc}
      */
-    public void fireEvent(EngineEvent event) {
+    @Override
+    public void fireEvent(final EngineEvent event) {
         synchronized (engineListeners) {
+            final SynthesizerEvent synthesizerEvent =
+                (SynthesizerEvent) event;
             for (EngineListener el : engineListeners) {
-                ((SynthesizerListener) el)
-                        .synthesizerUpdate((SynthesizerEvent) event);
+                ((SynthesizerListener) el).synthesizerUpdate(synthesizerEvent);
             }
         }
     }
@@ -405,19 +405,20 @@ public abstract class BaseSynthesizer extends BaseEngine
     }
 
     /**
-     * Set AudioSegment in a queueItem (Not JSAPI2)
+     * Sets AudioSegment in a queueItem.
      *
-     * @param itemId int
-     * @param audioSegment AudioSegment
+     * @param id current id
+     * @param audioSegment the audio segment.
      */
-    protected void setAudioSegment(int id, AudioSegment audioSegment) {
+    protected void setAudioSegment(final int id,
+            final AudioSegment audioSegment) {
         queueManager.setAudioSegment(id, audioSegment);
     }
 
     /**
-     * Set words in a queueItem (Not JSAPI2)
+     * Utility method to set words in a queue item.
      *
-     * @param itemId int
+     * @param itemId the id of the queued item
      * @param String[] words
      */
     protected void setWords(int itemId, String[] words) {

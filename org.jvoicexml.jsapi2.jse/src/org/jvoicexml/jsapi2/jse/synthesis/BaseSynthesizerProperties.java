@@ -3,7 +3,10 @@ package org.jvoicexml.jsapi2.jse.synthesis;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.Semaphore;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javax.speech.Engine;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.SynthesizerProperties;
@@ -23,7 +26,11 @@ import org.jvoicexml.jsapi2.jse.BaseEngineProperties;
  * @author lyncher
  * @version 1.0
  */
-public class BaseSynthesizerProperties extends BaseEngineProperties implements SynthesizerProperties {
+public class BaseSynthesizerProperties extends BaseEngineProperties
+    implements SynthesizerProperties {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(BaseSynthesizerProperties.class.getName());
 
     private HashMap<String,Object> uncommitedProperties;
     private HashMap<String,Object> properties;
@@ -156,7 +163,8 @@ public class BaseSynthesizerProperties extends BaseEngineProperties implements S
         properties.put("speakingRate", DEFAULT_RATE);
         properties.put("volume", MEDIUM_VOLUME);
         //Set default voice
-        SynthesizerMode mode = (SynthesizerMode)engine.getEngineMode();
+        final Engine engine = getEngine();
+        SynthesizerMode mode = (SynthesizerMode) engine.getEngineMode();
         if (mode == null) {
             properties.put("voice", null);
         } else {
@@ -272,26 +280,37 @@ public class BaseSynthesizerProperties extends BaseEngineProperties implements S
     /**
      * commitPropertiesChanges
      */
-    public void commitPropertiesChanges(){
+    public void commitPropertiesChanges() {
+        boolean acquiredUncommitted = false;
+        boolean acquiredProperties = false;
+
         try {
             uncommitedSemaphore.acquire();
+            acquiredUncommitted = true;
             propertiesSemaphore.acquire();
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
+            acquiredProperties = true;
 
-        Iterator it = uncommitedProperties.keySet().iterator();
-        while (it.hasNext()){
-            String propertieName = (String)it.next();
-            Object oldValue = properties.get(propertieName);
-            Object newValue = uncommitedProperties.get(propertieName);
-            properties.put(propertieName, newValue);
-            postPropertyChangeEvent(propertieName, oldValue, newValue);
-            uncommitedProperties.remove(propertieName);
+            final Iterator it = uncommitedProperties.keySet().iterator();
+            while (it.hasNext()) {
+                final String name = (String) it.next();
+                final Object oldValue = properties.get(name);
+                final Object newValue = uncommitedProperties.get(name);
+                properties.put(name, newValue);
+                postPropertyChangeEvent(name, oldValue, newValue);
+                uncommitedProperties.remove(name);
+            }
+        } catch (InterruptedException e) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(e.getMessage());
+            }
+        } finally {
+            if (acquiredUncommitted) {
+                uncommitedSemaphore.release();
+            }
+            if (acquiredProperties) {
+                propertiesSemaphore.release();
+            }
         }
-
-        uncommitedSemaphore.release();
-        propertiesSemaphore.release();
     }
 
 }

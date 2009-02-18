@@ -1,37 +1,41 @@
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
-import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizerProperties;
-
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.Voice;
-import javax.speech.*;
+
+import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizerProperties;
 
 
 /**
- * <p>Title: JSAPI2Engines</p>
- *
- * <p>Description: JSAPI 2.0 Engines implementations</p>
- *
- * <p>Copyright: Copyright (c) 2007</p>
- *
- * <p>Company: INESC-ID L2F</p>
+ * Engine properties for FreeTTS.
  *
  * @author Renato Cassaca
  * @version 1.0
  */
 public class FreeTTSEngineProperties extends BaseSynthesizerProperties {
-    public FreeTTSEngineProperties(Synthesizer synthesizer) {
+    /**
+     * Constructs a new object.
+     * @param synthesizer the associated synthesizer
+     */
+    public FreeTTSEngineProperties(final Synthesizer synthesizer) {
         super(synthesizer);
     }
 
 
-    public void setVoice(Voice voice) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setVoice(final Voice voice) {
         if (voice instanceof FreeTTSVoice) {
-            FreeTTSVoice freettsVoice = (FreeTTSVoice)voice;
-            boolean ok = ((FreeTTSSynthesizer) engine).setCurrentVoice(freettsVoice);
-            if (!ok) return;
-
-            super.setVoice(voice);
+            FreeTTSVoice freettsVoice = (FreeTTSVoice) voice;
+            final FreeTTSSynthesizer engine = (FreeTTSSynthesizer) getEngine();
+            boolean ok = engine.setCurrentVoice(freettsVoice);
+            if (!ok) {
+                return;
+            }
         }
+
+        super.setVoice(voice);
     }
 }
