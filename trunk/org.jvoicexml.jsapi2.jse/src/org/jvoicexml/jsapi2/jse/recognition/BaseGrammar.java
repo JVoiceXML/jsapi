@@ -36,11 +36,11 @@ public class BaseGrammar implements Grammar {
     protected boolean activatable;
 
     /**
-     * Create a new BaseGrammar
-     * @param R the BaseRecognizer for this Grammar.
+     * Creates a new BaseGrammar.
+     * @param recognizer the BaseRecognizer for this Grammar.
      * @param name the name of this Grammar.
      */
-    public BaseGrammar(BaseRecognizer recognizer, String name) {
+    public BaseGrammar(final BaseRecognizer recognizer, final String name) {
         grammarListeners = new Vector();
         resultListeners = new Vector();
         myRec = recognizer;

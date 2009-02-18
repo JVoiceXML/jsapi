@@ -3,7 +3,7 @@ package org.jvoicexml.jsapi2.jse.recognition;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerProperties;
 
-import org.jvoicexml.jsapi2.jse.BaseEngineProperties;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
 
 /**
  * <p>Title: JSAPI 2.0</p>

@@ -59,6 +59,8 @@ import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
 
+import org.jvoicexml.jsapi2.BaseSpeechEventExecutor;
+
 /**
  * Supports the JSAPI 2.0 <code>Engine</code> interface.
  * Actual JSAPI implementations might want to extend or modify this
@@ -69,7 +71,7 @@ public abstract class BaseEngine implements Engine {
     /**
      * A bitmask holding the current state of this <code>Engine</code>.
      */
-    protected long engineState;
+    private long engineState;
 
     /**
      * An <code>Object</code> used for synchronizing access to
@@ -94,22 +96,15 @@ public abstract class BaseEngine implements Engine {
      */
     protected EngineMode engineMode;
 
-    /**
-     * The <code>EngineProperties</code> for this <code>Engine</code>.
-     */
-    //protected EngineProperties engineProperties = null;
-
-    /**
-     * Event executor
-     */
-    protected SpeechEventExecutor speechEventExecutor;
+    /** The current speech event executor. */
+    private SpeechEventExecutor speechEventExecutor;
 
     /**
      * Utility state for clearing the <code>engineState</code>.
      */
     protected final static long CLEAR_ALL_STATE = ~(0L);
 
-
+    /** The engine mask. */
     protected int engineMask = EngineEvent.DEFAULT_MASK;
 
     /**
@@ -124,10 +119,12 @@ public abstract class BaseEngine implements Engine {
      * Creates a new <code>Engine</code> in the
      * <code>DEALLOCATED</code> state.
      *
-     * @param desc the operating mode of this <code>Engine</code>
+     * @param mode the operating mode of this <code>Engine</code>
+     * @param manager the audio manager
      */
-    public BaseEngine(EngineMode engineMode, BaseAudioManager manager) {
-        this.engineMode = engineMode;
+    public BaseEngine(final EngineMode mode,
+            final BaseAudioManager manager) {
+        engineMode = mode;
         engineListeners = new ArrayList<EngineListener>();
         engineState = DEALLOCATED;
         engineStateLock = new Object();
@@ -157,16 +154,9 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     * Blocks the calling Thread until the Engine is in a specified state.
-     *
-     * @param state long
-     * @return long
-     * @throws InterruptedException
-     * @throws IllegalArgumentException
-     * @throws IllegalStateException
+     * {@inheritDoc}
      */
-    public long waitEngineState(long state) throws InterruptedException,
-            IllegalArgumentException, IllegalStateException {
+    public long waitEngineState(final long state) throws InterruptedException {
         return waitEngineState(state, 0);
     }
 
@@ -262,11 +252,12 @@ public abstract class BaseEngine implements Engine {
     /**
      * Updates this <code>Engine</code> state by clearing defined bits,
      * then setting other specified bits.
-     *
+     * @param clear the flags to clear
+     * @param set the flags to set
      * @return a length-2 array with old and new state values.
      */
-    protected long[] setEngineState(long clear, long set) {
-        long states[] = new long[2];
+    protected long[] setEngineState(final long clear, final long set) {
+        long[] states = new long[2];
         synchronized (engineStateLock) {
             states[0] = engineState;
             engineState = engineState & (~clear);
@@ -278,27 +269,12 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     * Allocates the resources required for this <code>Engine</code> and
-     * puts it into the <code>ALLOCATED</code> state.  When this method
-     * returns successfully the <code>ALLOCATED</code> bit of this
-     * <code>Engine</code> state is set, and the
-     * <code>testEngineState(Engine.ALLOCATED)</code> method returns
-     * <code>true</code>.
-     *
-     * <p>During the processing of the method, this <code>Engine</code> is
-     * temporarily in the <code>ALLOCATING_RESOURCES</code> state.
-     *
-     * @see #deallocate
-     *
-     * @throws EngineException if this <code>Engine</code> cannot be allocated
-     * @throws EngineStateException if this <code>Engine</code> is in the
-     *   <code>DEALLOCATING_RESOURCES</code> state
+     * {@inheritDoc}
      */
-    public void allocate() throws AudioException, EngineException,
-            EngineStateException {
+    public void allocate() throws AudioException, EngineException {
         //Validate current state
-        if (testEngineState(ALLOCATED) ||
-                testEngineState(ALLOCATING_RESOURCES)) {
+        if (testEngineState(ALLOCATED)
+                || testEngineState(ALLOCATING_RESOURCES)) {
             return;
         }
 
@@ -314,10 +290,6 @@ public abstract class BaseEngine implements Engine {
         try {
             //Handle allocate
             success = baseAllocate();
-        } catch (AudioException ex) {
-            throw ex;
-        } catch (EngineException ex) {
-            throw ex;
         } finally {
             if (!success) {
                 states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
@@ -328,18 +300,12 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     *
-     *
-     * @param mode int
-     * @throws AudioException
-     * @throws EngineException
-     * @throws EngineStateException
+     * {@inheritDoc}
      */
-    public void allocate(int mode) throws AudioException, EngineException,
-            EngineStateException {
-
+    public void allocate(final int mode)
+        throws AudioException, EngineException {
         if (mode == ASYNCHRONOUS_MODE) {
-            new Thread(new Runnable() {
+            final Runnable runnable = new Runnable() {
                 public void run() {
                     try {
                         allocate();
@@ -347,65 +313,41 @@ public abstract class BaseEngine implements Engine {
                         ex.printStackTrace();
                     }
                 }
-            }, "Asynchronous allocate").start();
+            };
+            new Thread(runnable, "Asynchronous allocate").start();
         } else {
             allocate();
         }
     }
 
-
-
-
     /**
-     * Frees the resources of this <code>Engine</code> that were
-     * acquired during allocation and during operation and return this
-     * <code>Engine</code> to the <code>DEALLOCATED</code>.  When this
-     * method returns the <code>DEALLOCATED</code> bit of this
-     * <code>Engine</code> state is set so the
-     * <code>testEngineState(Engine.DEALLOCATED)</code> method returns
-     * <code>true</code>.
-     *
-     * <p>During the processing of the method, this
-     * <code>Engine</code> is temporarily in the
-     * <code>DEALLOCATING_RESOURCES</code> state.
-     *
-     * <p>A deallocated engine can be re-started with a subsequent
-     * call to <code>allocate</code>.
-     *
-     * @see #allocate
-     *
-     * @throws EngineException if this <code>Engine</code> cannot be
-     *   deallocated
-     * @throws EngineStateException if this <code>Engine</code> is in the
-     *   <code>ALLOCATING_RESOURCES</code> state
+     * {@inheritDoc}
      */
-    public void deallocate() throws AudioException, EngineException, EngineStateException {
+    public void deallocate()
+        throws AudioException, EngineException {
 
         //Validate current state
-        if (testEngineState(DEALLOCATED) || testEngineState(DEALLOCATING_RESOURCES))  return;
+        if (testEngineState(DEALLOCATED)
+                || testEngineState(DEALLOCATING_RESOURCES)) {
+            return;
+        }
 
         checkEngineState(ALLOCATING_RESOURCES);
 
         //Update current state
         long[] states = setEngineState(CLEAR_ALL_STATE,
                                        DEALLOCATING_RESOURCES);
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEALLOCATING_RESOURCES);
+        postEngineEvent(states[0], states[1],
+                EngineEvent.ENGINE_DEALLOCATING_RESOURCES);
         baseDeallocate();
     }
 
 
     /**
-     *
-     *
-     * @param mode int
-     * @throws AudioException
-     * @throws EngineException
-     * @throws EngineStateException
+     * {@inheritDoc}
      */
-
-    public void deallocate(int mode) throws AudioException, EngineException,
-            EngineStateException {
-
+    public void deallocate(final int mode)
+        throws AudioException, EngineException {
         if (mode == ASYNCHRONOUS_MODE) {
             new Thread(new Runnable() {
                 public void run() {
@@ -423,15 +365,9 @@ public abstract class BaseEngine implements Engine {
 
 
     /**
-     * Pauses the audio stream for this <code>Engine</code> and put
-     * this <code>Engine</code> into the <code>PAUSED</code> state.
-     *
-     * @throws EngineStateException if this <code>Engine</code> is in the
-     *   <code>DEALLOCATING_RESOURCES</code> or
-     *   <code>DEALLOCATED</code> state.
+     * {@inheritDoc}
      */
-    public void pause() throws EngineStateException {
-
+    public void pause() {
         //Validate current state
         if (testEngineState(PAUSED)) {
             return;
@@ -443,7 +379,7 @@ public abstract class BaseEngine implements Engine {
             try {
                 waitEngineState(ALLOCATED);
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                return;
             }
         }
 
@@ -457,14 +393,9 @@ public abstract class BaseEngine implements Engine {
 
 
     /**
-     * Resumes the audio stream for this <code>Engine</code> and put
-     * this <code>Engine</code> into the <code>RESUMED</code> state.
-     *
-     * @throws EngineStateException if this <code>Engine</code> is in the
-     *   <code>DEALLOCATING_RESOURCES</code> or
-     *   <code>DEALLOCATED</code> state
+     * {@inheritDoc}
      */
-    public boolean resume() throws EngineStateException {
+    public boolean resume() {
 
         //Validate current state
         if (testEngineState(RESUMED)) {
@@ -477,6 +408,7 @@ public abstract class BaseEngine implements Engine {
             try {
                 waitEngineState(ALLOCATED);
             } catch (InterruptedException ex) {
+                return false;
             }
         }
 
@@ -484,7 +416,6 @@ public abstract class BaseEngine implements Engine {
         if (baseResume()) {
             long[] states = setEngineState(PAUSED, RESUMED);
             postEngineEvent(states[0], states[1], EngineEvent.ENGINE_RESUMED);
-
             return true;
         } else {
             return false;
@@ -493,39 +424,18 @@ public abstract class BaseEngine implements Engine {
 
 
     /**
-     * Returns an object that provides management of the audio input
-     * or output of this <code>Engine</code>.
-     *
-     * @return the audio manader for this <code>Engine</code>
+     * {@inheritDoc}
      */
     public AudioManager getAudioManager() {
         return audioManager;
     }
 
     /**
-     * Returns an object that provides management of the vocabulary for
-     * this <code>Engine</code>.  Returns <code>null</code> if this
-     * <code>Engine</code> does not support vocabulary management.
-     *
-     * @return the vocabulary manager of this <code>Engine</code>
-     *
-     * @throws EngineStateException if this <code>Engine</code> in the
-     *   <code>DEALLOCATING_RESOURCES</code> or
-     *   <code>DEALLOCATED</code> state
+     * {@inheritDoc}
      */
-    public VocabularyManager getVocabularyManager() throws EngineStateException {
+    public VocabularyManager getVocabularyManager() {
         return null;
     }
-
-    /**
-     * Gets the <code>EngineProperties</code> of this <code>Engine</code>.
-     * Must be set in subclasses.
-     *
-     * @return the <code>EngineProperties</code> of this <code>Engine</code>.
-     */
- /*   public EngineProperties getEngineProperties() {
-        return engineProperties;
-    }*/
 
     /**
      * Gets the current operating properties and mode of
@@ -542,29 +452,34 @@ public abstract class BaseEngine implements Engine {
      * Sets the current operating properties and mode of
      * this <code>Engine</code>.
      *
-     * @param desc the new operating mode of this <code>Engine</code>
+     * @param mode the new operating mode of this <code>Engine</code>
      */
-    protected void setEngineMode(EngineMode engineMode) {
-        this.engineMode = engineMode;
+    protected void setEngineMode(final EngineMode mode) {
+        engineMode = mode;
     }
 
     /**
-     * Sets the SpeechEventExecutor used to fire events for this engine.
-     *
-     * @return SpeechEventExecutor
+     * {@inheritDoc}
      */
     public SpeechEventExecutor getSpeechEventExecutor() {
         return speechEventExecutor;
     }
 
-    public void setSpeechEventExecutor(SpeechEventExecutor speechEventExecutor) {
-        if (speechEventExecutor == null) {
-            this.speechEventExecutor = new BaseSpeechEventExecutor();
+    /**
+     * {@inheritDoc}
+     */
+    public void setSpeechEventExecutor(
+            final SpeechEventExecutor executor) {
+        if (executor == null) {
+            speechEventExecutor = new BaseSpeechEventExecutor();
         } else {
-            if (this.speechEventExecutor instanceof BaseSpeechEventExecutor) {
-                ((BaseSpeechEventExecutor)this.speechEventExecutor).terminate();
+            // Terminate a previously running executor.
+            if (speechEventExecutor instanceof BaseSpeechEventExecutor) {
+                final BaseSpeechEventExecutor baseExecutor =
+                    (BaseSpeechEventExecutor) this.speechEventExecutor;
+                baseExecutor.terminate();
             }
-            this.speechEventExecutor = speechEventExecutor;
+            speechEventExecutor = executor;
         }
     }
 
@@ -574,7 +489,7 @@ public abstract class BaseEngine implements Engine {
      *
      * @param listener the listener to add.
      */
-    public void addEngineListener(EngineListener listener) {
+    protected void addEngineListener(final EngineListener listener) {
         synchronized (engineListeners) {
             if (!engineListeners.contains(listener)) {
                 engineListeners.add(listener);
@@ -588,16 +503,22 @@ public abstract class BaseEngine implements Engine {
      *
      * @param listener the listener to remove.
      */
-    public void removeEngineListener(EngineListener listener) {
+    protected void removeEngineListener(final EngineListener listener) {
         synchronized (engineListeners) {
             engineListeners.remove(listener);
         }
     }
 
-    public void setEngineMask(int mask) {
+    /**
+     * {@inheritDoc}
+     */
+    public void setEngineMask(final int mask) {
         engineMask = mask;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getEngineMask() {
         return engineMask;
     }
@@ -618,13 +539,6 @@ public abstract class BaseEngine implements Engine {
         }
     }
 
-    /**
-     * Factory constructor for EngineProperties object.
-     *
-     * @return a <code>BaseEngineProperties</code> object specific to
-     *   a subclass.
-     */
-   // abstract protected BaseEngineProperties createEngineProperties();
 
     /**
      * Convenience method that throws an <code>EngineStateException</code>
@@ -633,14 +547,11 @@ public abstract class BaseEngine implements Engine {
      *
      * @param state the <code>Engine</code> state to check
      *
-     * @throws EngineStateException if any of the bits in the passed state
-     *   are set in the <code>state</code>
      */
-    protected void checkEngineState(long state) throws EngineStateException {
+    protected void checkEngineState(final long state) {
         long currentState = getEngineState();
         if ((currentState & state) != 0) {
-            throw new EngineStateException
-                    ("Invalid EngineState: expected=("
+            throw new EngineStateException("Invalid EngineState: expected=("
                      + stateToString(state) + ") current state=("
                      + stateToString(currentState) + ")");
         }
@@ -656,7 +567,7 @@ public abstract class BaseEngine implements Engine {
      * @return a <code>String</code> containing the names of all the
      *   states set in <code>state</code>
      */
-    protected String stateToString(long state) {
+    protected String stateToString(final long state) {
         StringBuffer buf = new StringBuffer();
         if ((state & Engine.DEALLOCATED) != 0) {
             buf.append("DEALLOCATED");
@@ -776,7 +687,8 @@ public abstract class BaseEngine implements Engine {
     protected abstract boolean baseResume();
 
     /**
-     * Notifies all listeners about the given event.
+     * Notifies all listeners about the given event. This method is
+     * being called using the currently configured {@link SpeechEventExecutor}.
      * @param event the event
      */
     protected abstract void fireEvent(final EngineEvent event);

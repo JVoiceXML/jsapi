@@ -57,6 +57,7 @@ import javax.speech.EngineEvent;
 import javax.speech.EngineException;
 import javax.speech.EngineListener;
 import javax.speech.EngineStateException;
+import javax.speech.SpeechEventExecutor;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarEvent;
 import javax.speech.recognition.GrammarManager;
@@ -321,8 +322,9 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
     protected void postResultEvent(final ResultEvent event) {
+        final SpeechEventExecutor executor = getSpeechEventExecutor();
         try {
-            speechEventExecutor.execute(new Runnable() {
+            executor.execute(new Runnable() {
                 public void run() {
                     if (LOGGER.isLoggable(Level.FINE)) {
                         LOGGER.fine("notifying event " + event);
@@ -334,7 +336,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             LOGGER.warning(e.getLocalizedMessage());
         }
         final BaseResult base = (BaseResult) event.getSource();
-        base.postResultEvent(speechEventExecutor, event);
+        base.postResultEvent(executor, event);
     }
 
     public void fireResultEvent(final ResultEvent event) {
@@ -440,14 +442,16 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         if (existChanges) {
             if (setGrammarsResult) {
                 postEngineEvent(PAUSED, RESUMED, RecognizerEvent.CHANGES_COMMITTED);
+                final SpeechEventExecutor executor = getSpeechEventExecutor();
                 for (int i = 0; i < grammars.length; i++) {
-                    ((BaseGrammar) grammars[i]).postGrammarEvent(speechEventExecutor,
+                    ((BaseGrammar) grammars[i]).postGrammarEvent(executor,
                             new
                             GrammarEvent(grammars[i], GrammarEvent.GRAMMAR_CHANGES_COMMITTED, false, false, null));
                 }
             } else {
+                final SpeechEventExecutor executor = getSpeechEventExecutor();
                 for (int i = 0; i < grammars.length; i++) {
-                    ((BaseGrammar) grammars[i]).postGrammarEvent(speechEventExecutor,
+                    ((BaseGrammar) grammars[i]).postGrammarEvent(executor,
                             new
                             GrammarEvent(grammars[i], GrammarEvent.GRAMMAR_CHANGES_REJECTED, false, false, null));
                 }
