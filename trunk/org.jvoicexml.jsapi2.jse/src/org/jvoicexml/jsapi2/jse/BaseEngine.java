@@ -603,21 +603,18 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     * Adds an event to SpeechEventExecutor.
+     * Posts the given event using the current {@link SpeechEventExecutor}.
      *
-     * @param event EngineEvent
+     * @param event the engine event to post.
      */
     protected void postEngineEvent(final EngineEvent event) {
-        if ((getEngineMask() & event.getId()) == event.getId()) {
-            try {
-                speechEventExecutor.execute(new Runnable() {
-                    public void run() {
-                        fireEvent(event);
-                    }
-                });
-            } catch (RuntimeException ex) {
-                ex.printStackTrace();
-            }
+        final int id = event.getId();
+        if ((getEngineMask() & id) == id) {
+            speechEventExecutor.execute(new Runnable() {
+                public void run() {
+                    fireEvent(event);
+                }
+            });
         }
     }
 
@@ -732,7 +729,7 @@ public abstract class BaseEngine implements Engine {
      * @param state long
      * @return boolean
      */
-    protected boolean isReachable(long state) {
+    protected boolean isReachable(final long state) {
         if ((state & ERROR_OCCURRED) == ERROR_OCCURRED) {
             return false;
         }
@@ -756,7 +753,7 @@ public abstract class BaseEngine implements Engine {
      *
      * @throws EngineException if problems are encountered
      */
-    abstract protected boolean baseAllocate()
+    protected abstract boolean baseAllocate()
         throws EngineStateException, EngineException, AudioException;
 
     /**
@@ -766,20 +763,25 @@ public abstract class BaseEngine implements Engine {
      * @throws EngineException if this <code>Engine</code> cannot be
      *   deallocated.
      */
-    abstract protected boolean baseDeallocate() throws EngineStateException, EngineException, AudioException;
+    protected abstract boolean baseDeallocate() throws EngineStateException, EngineException, AudioException;
 
     /**
      * Called from the <code>pause</code> method.  Override this in subclasses.
      */
-    abstract protected boolean basePause();
+    protected abstract boolean basePause();
 
     /**
      * Called from the <code>resume</code> method.  Override in subclasses.
      */
-    abstract protected boolean baseResume();
+    protected abstract boolean baseResume();
 
-    abstract protected void fireEvent(EngineEvent event);
+    /**
+     * Notifies all listeners about the given event.
+     * @param event the event
+     */
+    protected abstract void fireEvent(final EngineEvent event);
 
-    abstract protected void postEngineEvent(long oldState, long newState, int eventType);
+    abstract protected void postEngineEvent(long oldState, long newState,
+            int eventType);
 
 }

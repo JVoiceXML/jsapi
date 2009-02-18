@@ -33,6 +33,19 @@ public class BaseAudioSegment extends AudioSegment {
     private final InputStream is;
 
     /**
+     * Constructs a new audio segment without an input stream and without
+     * a media locator. This means that the data can not be retrieved from
+     * the locator.
+     * The locator is assigned a value of <code>http://localhost/dummy</code>
+     * since it must not be null.
+     * @param markupText the alternate markup text
+     * @param in the input stream for the audio data.
+     */
+    public BaseAudioSegment(final String markupText, final InputStream in) {
+        this("http://localhost/dummy", markupText, in);
+    }
+
+    /**
      * Constructs a new object without an input stream. This means that
      * there is no associated audio data.
      * @param locator a non-null media locator description.

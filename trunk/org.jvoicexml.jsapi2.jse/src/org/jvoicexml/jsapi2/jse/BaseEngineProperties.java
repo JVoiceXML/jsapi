@@ -46,6 +46,7 @@
 package org.jvoicexml.jsapi2.jse;
 
 import javax.speech.EngineProperties;
+import javax.speech.SpeechEventExecutor;
 
 import java.util.Enumeration;
 import java.util.Vector;
@@ -57,6 +58,8 @@ import javax.speech.Engine;
 /**
  * Supports the JSAPI 2.0 <code>EngineProperties</code>
  * interface.
+ * @author Renato Cassaca
+ * @author Dirk Schnelle-Walka
  */
 public abstract class BaseEngineProperties implements EngineProperties {
     /**
@@ -65,17 +68,33 @@ public abstract class BaseEngineProperties implements EngineProperties {
      */
     protected Vector propertyChangeListeners;
 
-    protected Engine engine;
-
-    protected String baseUri;
-    protected int priority;
+    /** The engine for which these properties apply. */
+    private final Engine engine;
 
     /**
-     * Class constructor.
+     * The base location to resolve relative URLs against for this Engine
+     * instance.
      */
-    protected BaseEngineProperties(Engine engine) {
+    private String baseUri;
+
+    /** The priority for this engine instance. */
+    private int priority;
+
+    /**
+     * Constructs a new object.
+     * @param eng the engine for which these properties apply.
+     */
+    protected BaseEngineProperties(final Engine eng) {
         propertyChangeListeners = new Vector();
-        this.engine = engine;
+        engine = eng;
+    }
+
+    /**
+     * Retrieves the engine.
+     * @return the engine
+     */
+    protected Engine getEngine() {
+        return engine;
     }
 
     /**
@@ -89,49 +108,61 @@ public abstract class BaseEngineProperties implements EngineProperties {
         setBase("");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
-        postPropertyChangeEvent("priority", new Integer(this.priority), new Integer(priority));
-        this.priority = priority;
+    /**
+     * {@inheritDoc}
+     */
+    public void setPriority(final int prio) {
+        postPropertyChangeEvent("priority",
+                new Integer(this.priority), new Integer(prio));
+        priority = prio;
     }
 
-    public void setBase(String uri) {
-        postPropertyChangeEvent("base", new Integer(this.priority), new Integer(priority));
+    /**
+     * {@inheritDoc}
+     */
+    public void setBase(final String uri) {
+        postPropertyChangeEvent("base",
+                new Integer(this.priority), new Integer(priority));
         baseUri = uri;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getBase() {
         return baseUri;
     }
 
     /**
-     * Adds a <code>PropertyChangeListener</code> to the listener list.
-     *
-     * @param listener the <code>PropertyChangeListener</code> to add
+     * {@inheritDoc}
      */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public void addPropertyChangeListener(
+            final PropertyChangeListener listener) {
         if (!propertyChangeListeners.contains(listener)) {
             propertyChangeListeners.addElement(listener);
         }
     }
 
     /**
-     * Removes a <code>PropertyChangeListener</code> from the listener
-     * list.
-     *
-     * @param listener the <code>PropertyChangeListener</code> to remove
+     * {@inheritDoc}
      */
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    public void removePropertyChangeListener(
+            final PropertyChangeListener listener) {
         propertyChangeListeners.removeElement(listener);
     }
 
     /**
      * Generates a
      * <code>PropertyChangeEvent</code> for an <code>Object</code> value
-     * and posts it to the event queue.
+     * and posts it to the event queue using the configured
+     * {@link SpeechEventExecutor}.
      *
      * @param propName the name of the property
      * @param oldValue the old value
@@ -140,11 +171,13 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * @see #firePropertyChangeEvent
      * @see #dispatchSpeechEvent
      */
-    protected void postPropertyChangeEvent(String propName,
-                                           Object oldValue,
-                                           Object newValue) {
+    protected void postPropertyChangeEvent(final String propName,
+                                           final Object oldValue,
+                                           final Object newValue) {
 
-        if (propertyChangeListeners.size() < 1) return;
+        if (propertyChangeListeners.size() < 1) {
+            return;
+        }
 
         final PropertyChangeEvent event = new PropertyChangeEvent(this,
                 propName,
@@ -152,19 +185,14 @@ public abstract class BaseEngineProperties implements EngineProperties {
                 newValue);
 
 
-        Runnable r = new Runnable() {
+        final Runnable runnable = new Runnable() {
             public void run() {
                 firePropertyChangeEvent(event);
             }
         };
 
-        try {
-            engine.getSpeechEventExecutor().execute(r);
-        } catch (NullPointerException ex) {
-            ex.printStackTrace();
-        } catch (RuntimeException ex) {
-            ex.printStackTrace();
-        }
+        final SpeechEventExecutor executor = engine.getSpeechEventExecutor();
+        executor.execute(runnable);
     }
 
     /**
@@ -177,13 +205,12 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * @see #firePropertyChangeEvent
      * @see #dispatchSpeechEvent
      */
-    public void firePropertyChangeEvent(PropertyChangeEvent event) {
+    public void firePropertyChangeEvent(final PropertyChangeEvent event) {
         Enumeration e = propertyChangeListeners.elements();
         while (e.hasMoreElements()) {
-            PropertyChangeListener pcl = (PropertyChangeListener) e.nextElement();
-            pcl.propertyChange(event);
+            PropertyChangeListener listener =
+                (PropertyChangeListener) e.nextElement();
+            listener.propertyChange(event);
         }
     }
-
-
 }

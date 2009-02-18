@@ -250,8 +250,9 @@ public class QueueManager implements Runnable {
                 while (true) {
                     final AudioSegment segment = item.getAudioSegment();
                     if ((segment == null) || !segment.isGettable()) {
-                        // TODO How to handle this?
-                        break;
+                        throw new SecurityException(
+                            "The platform does not allow to access the input "
+                                + "stream!");
                     }
                     final InputStream inputStream = segment.openInputStream();
                     bytesRead = inputStream.read(buffer);
@@ -401,13 +402,10 @@ public class QueueManager implements Runnable {
      * Gets the next item from the queue and outputs it.
      */
     public void run() {
-        QueueItem item;
-
         long lastFocusEvent = Synthesizer.DEFOCUSED;
-        long lastQueueEvent = Synthesizer.QUEUE_EMPTY;
 
         while (!done) {
-            item = getQueueItem();
+            final QueueItem item = getQueueItem();
             if (item != null) {
                 if (lastFocusEvent == Synthesizer.DEFOCUSED) {
                     long[] states = synthesizer.setEngineState(
@@ -417,21 +415,21 @@ public class QueueManager implements Runnable {
                     lastFocusEvent = Synthesizer.FOCUSED;
                 }
 
-                // transfer item from queue to playqueue
-                QueueItem qi = item;
+                // transfer item from the queue to the play queue
                 removeQueueItem(item);
 
                 synchronized (playQueue) {
-                    playQueue.add(qi);
+                    playQueue.add(item);
                     playQueue.notifyAll();
                 }
 
                 // Synthesize item
-                ((BaseSynthesizerProperties) synthesizer
-                        .getSynthesizerProperties())
-                        .commitPropertiesChanges();
+                final BaseSynthesizerProperties properties =
+                    (BaseSynthesizerProperties)
+                        synthesizer.synthesizerProperties;
+                properties.commitPropertiesChanges();
 
-                Object itemSource = item.getSource();
+                final Object itemSource = item.getSource();
                 if (itemSource instanceof String) {
                     synthesizer.handleSpeak(item.getId(),
                             (String) itemSource);
@@ -661,13 +659,13 @@ public class QueueManager implements Runnable {
     }
 
     /**
-     * removes the given item, posting the appropriate events. The item may have
+     * Removes the given item, posting the appropriate events. The item may have
      * already been removed (due to a cancel).
      *
      * @param item
      *                the item to remove
      */
-    protected void removeQueueItem(QueueItem item) {
+    protected void removeQueueItem(final QueueItem item) {
         synchronized (queue) {
             boolean found = queue.removeElement(item);
             if (found) {
@@ -691,11 +689,17 @@ public class QueueManager implements Runnable {
          */
     }
 
-    public void setAudioSegment(int id, AudioSegment audioSegment) {
+    /**
+     * Utility method to associate the given audio segment with the
+     * queued item with the given id.
+     * @param id id of the queue item
+     * @param audioSegment the new audio segment
+     */
+    public void setAudioSegment(final int id, final AudioSegment audioSegment) {
         synchronized (playQueue) {
-            for (QueueItem q : playQueue) {
-                if (q.getId() == id) {
-                    q.setAudioSegment(audioSegment);
+            for (QueueItem item : playQueue) {
+                if (item.getId() == id) {
+                    item.setAudioSegment(audioSegment);
                     break;
                 }
             }
@@ -706,9 +710,9 @@ public class QueueManager implements Runnable {
 
     public void setWords(int itemId, String[] words) {
         synchronized (playQueue) {
-            for (QueueItem q : playQueue) {
-                if (q.getId() == itemId) {
-                    q.setWords(words);
+            for (QueueItem item : playQueue) {
+                if (item.getId() == itemId) {
+                    item.setWords(words);
                     break;
                 }
             }

@@ -261,11 +261,16 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
 
-    public void fireEvent(EngineEvent event) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void fireEvent(final EngineEvent event) {
         synchronized (engineListeners) {
+            final RecognizerEvent recognizerEvent =
+                (RecognizerEvent) event;
             for (EngineListener el : engineListeners) {
-                ((RecognizerListener) el).recognizerUpdate((RecognizerEvent)
-                        event);
+                ((RecognizerListener) el).recognizerUpdate(recognizerEvent);
             }
         }
     }
