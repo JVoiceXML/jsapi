@@ -1,6 +1,15 @@
-/**
- * 
+/*
+ * File:    $HeadURL$
+ * Version: $LastChangedRevision$
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy$
+ *
+ * JSAPI - An base implementation for JSR 113.
+ *
+ * Copyright (C) 2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
  */
+
 package org.jvoicexml.jsapi2.demo.inputdemo;
 
 import java.io.InputStream;

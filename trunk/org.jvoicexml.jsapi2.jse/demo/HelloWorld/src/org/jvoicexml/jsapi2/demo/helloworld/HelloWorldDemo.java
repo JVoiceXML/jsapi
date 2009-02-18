@@ -1,6 +1,15 @@
-/**
- * 
+/*
+ * File:    $HeadURL$
+ * Version: $LastChangedRevision$
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy$
+ *
+ * JSAPI - An base implementation for JSR 113.
+ *
+ * Copyright (C) 2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
  */
+
 package org.jvoicexml.jsapi2.demo.helloworld;
 
 import java.util.logging.ConsoleHandler;
@@ -54,7 +63,7 @@ public final class HelloWorldDemo {
             // Speak the "hello world" string
             System.out.println("Speaking 'Hello, world!'...");
             synth.speak("Hello, world!", null);
-            synth.speakMarkup("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            synth.speakMarkup("<?xml version=\"1.0\"?>"
                     + "<speak>Goodbye!</speak>", null);
             synth.waitEngineState(Synthesizer.QUEUE_EMPTY);
             System.out.println("done.");
