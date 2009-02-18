@@ -12,7 +12,7 @@ import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.SynthesizerProperties;
 import javax.speech.synthesis.Voice;
 
-import org.jvoicexml.jsapi2.jse.BaseEngineProperties;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
 
 /**
  * <p>Title: JSAPI 2.0</p>

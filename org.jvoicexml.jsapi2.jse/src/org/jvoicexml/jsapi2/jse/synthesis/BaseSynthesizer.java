@@ -11,6 +11,7 @@ import javax.speech.EngineEvent;
 import javax.speech.EngineException;
 import javax.speech.EngineListener;
 import javax.speech.EngineStateException;
+import javax.speech.SpeechEventExecutor;
 import javax.speech.synthesis.PhoneInfo;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableEvent;
@@ -122,7 +123,8 @@ public abstract class BaseSynthesizer extends BaseEngine
             final SpeakableListener extraSpeakableListener) {
         if ((getSpeakableMask() & event.getId()) == event.getId()) {
             try {
-                speechEventExecutor.execute(new Runnable() {
+                final SpeechEventExecutor executor = getSpeechEventExecutor();
+                executor.execute(new Runnable() {
                     public void run() {
                         fireSpeakableEvent(event, extraSpeakableListener);
                     }
@@ -168,12 +170,20 @@ public abstract class BaseSynthesizer extends BaseEngine
         speakableListeners.removeElement(listener);
     }
 
-    public void addSynthesizerListener(SynthesizerListener listener) {
-        super.addEngineListener(listener);
+    /**
+     * {@inheritDoc}
+     */
+    public void addSynthesizerListener(
+            final SynthesizerListener listener) {
+        addEngineListener(listener);
     }
 
-    public void removeSynthesizerListener(SynthesizerListener listener) {
-        super.removeEngineListener(listener);
+    /**
+     * {@inheritDoc}
+     */
+    public void removeSynthesizerListener(
+            final SynthesizerListener listener) {
+        removeEngineListener(listener);
     }
 
     public boolean cancel() throws EngineStateException {

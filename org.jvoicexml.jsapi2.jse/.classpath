@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="3rdparty/jsapi2/lib/jsapi2.jar"/>
 	<classpathentry kind="lib" path="3rdparty/jsapi2/lib/ri-j2se.jar"/>
 	<classpathentry kind="lib" path="3rdparty/jsapi2/lib/ri.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.jvoicexml.jsapi2"/>
 	<classpathentry kind="output" path="eclipse-compiled"/>
 </classpath>
