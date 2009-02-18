@@ -1,8 +1,8 @@
 /*
- * File:    $HeadURL$
- * Version: $LastChangedRevision$
+ * File:    $HeadURL: https://jsapi.svn.sourceforge.net/svnroot/jsapi/trunk/org.jvoicexml.jsapi2.jse/unittests/org/jvoicexml/jsapi2/jse/BaseSpeechEventExecutorTest.java $
+ * Version: $LastChangedRevision: 266 $
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy$
+ * Author:  $LastChangedBy: schnelle $
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
@@ -10,7 +10,7 @@
  *
  */
 
-package org.jvoicexml.jsapi2.jse;
+package org.jvoicexml.jsapi2;
 
 import java.util.Collection;
 import java.util.Iterator;
