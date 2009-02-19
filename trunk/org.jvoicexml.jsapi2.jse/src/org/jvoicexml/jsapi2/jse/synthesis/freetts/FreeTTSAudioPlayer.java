@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 
+import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 
 import com.sun.speech.freetts.audio.AudioPlayer;
@@ -185,7 +186,9 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
             res = buffer.toByteArray();
             buffer.reset();
         }
-        final InputStream bais = baseAudioManager.getConvertedAudio(res);
+        final AudioFormatConverter converter =
+            baseAudioManager.getAudioFormatConverter();
+        final InputStream bais = converter.getConvertedAudio(res);
         res = new byte[bais.available()];
         bais.read(res);
 

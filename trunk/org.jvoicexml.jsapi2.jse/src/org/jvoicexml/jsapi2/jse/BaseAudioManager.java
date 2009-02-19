@@ -92,6 +92,14 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
+     * Retrieves the audio format converter.
+     * @return the audio format converter.
+     */
+    public AudioFormatConverter getAudioFormatConverter() {
+        return formatConverter;
+    }
+
+    /**
      * Requests notification of <code>AudioEvents</code> from the
      * <code>AudioManager</code>.
      *
