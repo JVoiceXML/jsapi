@@ -53,9 +53,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.speech.AudioException;
+import javax.speech.AudioManager;
 import javax.speech.EngineEvent;
 import javax.speech.EngineException;
-import javax.speech.EngineListener;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.recognition.Grammar;
@@ -71,7 +71,8 @@ import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.SpeakerManager;
 
-import org.jvoicexml.jsapi2.jse.BaseEngine;
+import org.jvoicexml.jsapi2.BaseEngine;
+import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizerProperties;
 
 
@@ -81,6 +82,7 @@ import org.jvoicexml.jsapi2.recognition.BaseRecognizerProperties;
  * This class is useful by itself for debugging, e.g. you
  * can load grammars and simulate a recognizer recognizing
  * some text, etc.
+ *
  * <P>
  *
  * Actual JSAPI recognizer implementations might want to extend or
@@ -123,9 +125,13 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
     /**
      * Create a new Recognizer in the DEALLOCATED state.
+     * @param mode the recognizer mode
      */
-    public BaseRecognizer(RecognizerMode mode) {
+    public BaseRecognizer(final RecognizerMode mode) {
         super(mode, new BaseRecognizerAudioManager());
+        final BaseAudioManager audioManager =
+            (BaseAudioManager) getAudioManager();
+        audioManager.setEngine(this);
         resultListeners = new Vector();
         speakerManager = new BaseSpeakerManager();
         recognizerProperties = new BaseRecognizerProperties(this);
@@ -271,8 +277,11 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         synchronized (engineListeners) {
             final RecognizerEvent recognizerEvent =
                 (RecognizerEvent) event;
-            for (EngineListener el : engineListeners) {
-                ((RecognizerListener) el).recognizerUpdate(recognizerEvent);
+            Enumeration enumeration = engineListeners.elements();
+            while (enumeration.hasMoreElements()) {
+                final RecognizerListener listener =
+                    (RecognizerListener) enumeration.nextElement();
+                listener.recognizerUpdate(recognizerEvent);
             }
         }
     }
@@ -499,12 +508,13 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected boolean baseAllocate() throws EngineStateException,
             EngineException, AudioException {
 
+        final AudioManager audioManager = getAudioManager();
         audioManager.audioStart();
 
         //Procceed to real engine allocation
         boolean status = handleAllocate();
-        if (status == true) {
-            long states[] = setEngineState(CLEAR_ALL_STATE,
+        if (status) {
+            long[] states = setEngineState(CLEAR_ALL_STATE,
                                            ALLOCATED | PAUSED | DEFOCUSED |
                                            NOT_BUFFERING);
             postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
@@ -525,17 +535,18 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
         //Procceed to real engine deallocation
         boolean status = handleDeallocate();
-        if (status == true) {
-          //Stops AudioManager
-          audioManager.audioStop();
+        if (status) {
+            //Stops AudioManager
+            final AudioManager audioManager = getAudioManager();
+            audioManager.audioStop();
 
-          long states[] = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
-          postEngineEvent(states[0], states[1],
-                            EngineEvent.ENGINE_DEALLOCATED);
-        }
-        else {
-          //Stops AudioManager
-          audioManager.audioStop();
+            long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
+            postEngineEvent(states[0], states[1],
+                    EngineEvent.ENGINE_DEALLOCATED);
+        } else {
+            //Stops AudioManager
+            final AudioManager audioManager = getAudioManager();
+            audioManager.audioStop();
         }
 
 

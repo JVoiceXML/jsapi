@@ -1,8 +1,8 @@
 /*
- * File:    $HeadURL: $
- * Version: $LastChangedRevision: $
+ * File:    $HeadURL$
+ * Version: $LastChangedRevision$
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: lyncher $
+ * Author:  $LastChangedBy$
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
@@ -43,10 +43,9 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-package org.jvoicexml.jsapi2.jse;
+package org.jvoicexml.jsapi2;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Vector;
 
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
@@ -58,8 +57,6 @@ import javax.speech.EngineMode;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
-
-import org.jvoicexml.jsapi2.BaseSpeechEventExecutor;
 
 /**
  * Supports the JSAPI 2.0 <code>Engine</code> interface.
@@ -83,18 +80,23 @@ public abstract class BaseEngine implements Engine {
     /**
      * List of <code>EngineListeners</code> registered for
      * <code>EngineEvents</code> on this <code>Engine</code>.
+     * <p>
+     * For a synthesizer this will contain only
+     * {@link javax.speech.synthesis.SynthesizerListener}s
+     * and for a recognizer only
+     * {@link javax.speech.recognition.RecognizerListener}s.
      */
-    protected final List<EngineListener> engineListeners;
+    protected final Vector engineListeners;
 
     /**
      * The <code>AudioManager</code> for this <code>Engine</code>.
      */
-    protected AudioManager audioManager;
+    private AudioManager audioManager;
 
     /**
      * The <code>EngineModeDesc</code> for this <code>Engine</code>.
      */
-    protected EngineMode engineMode;
+    private EngineMode engineMode;
 
     /** The current speech event executor. */
     private SpeechEventExecutor speechEventExecutor;
@@ -102,10 +104,10 @@ public abstract class BaseEngine implements Engine {
     /**
      * Utility state for clearing the <code>engineState</code>.
      */
-    protected final static long CLEAR_ALL_STATE = ~(0L);
+    protected static final long CLEAR_ALL_STATE = ~(0L);
 
     /** The engine mask. */
-    protected int engineMask = EngineEvent.DEFAULT_MASK;
+    private int engineMask = EngineEvent.DEFAULT_MASK;
 
     /**
      * Creates a new <code>Engine</code> in the
@@ -122,16 +124,13 @@ public abstract class BaseEngine implements Engine {
      * @param mode the operating mode of this <code>Engine</code>
      * @param manager the audio manager
      */
-    public BaseEngine(final EngineMode mode,
-            final BaseAudioManager manager) {
+    public BaseEngine(final EngineMode mode, final AudioManager manager) {
         engineMode = mode;
-        engineListeners = new ArrayList<EngineListener>();
+        engineListeners = new Vector();
         engineState = DEALLOCATED;
         engineStateLock = new Object();
-        //engineProperties = createEngineProperties();
-        setSpeechEventExecutor(null);
-        manager.setEngine(this);
         audioManager = manager;
+        speechEventExecutor = new BaseSpeechEventExecutor();
     }
 
     /**
@@ -161,31 +160,10 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     * Blocks the calling thread until this <code>Engine</code>
-     * is in a specified state.
-     *
-     * <p>All state bits specified in the <code>state</code> parameter
-     * must be set in order for the method to return, as defined
-     * for the <code>testEngineState</code> method.  If the <code>state</code>
-     * parameter defines an unreachable state
-     * (e.g. <code>PAUSED | RESUMED</code>) an exception is thrown.
-     *
-     * <p>The <code>waitEngineState</code> method can be called successfully
-     * in any <code>Engine</code> state.
-     *
-     * @param state a bitmask of the state to wait for
-     *
-     * @see #testEngineState
-     * @see #getEngineState
-     *
-     * @throws InterruptedException
-     *   if another thread has interrupted this thread.
-     * @throws IllegalArgumentException
-     *   if the specified state is unreachable
+     * {@inheritDoc}
      */
     public long waitEngineState(final long state, final long timeout)
-        throws InterruptedException, IllegalArgumentException,
-            IllegalStateException {
+        throws InterruptedException {
         synchronized (engineStateLock) {
             if (!isValid(state)) {
                 throw new IllegalArgumentException(
@@ -234,18 +212,9 @@ public abstract class BaseEngine implements Engine {
      *      if ((engine.getEngineState() & state) == state)
      * </PRE>
      *
-     * <p>The <code>testEngineState</code> method can be called
-     * successfully in any <code>Engine</code> state.
-     *
-     * @param state a bitmask of the states to test for
-     *
-     * @return <code>true</code> if this <code>Engine</code> matches
-     *   <code>state</code>; otherwise <code>false</code>
-     * @throws IllegalArgumentException
-     *   if the specified state is unreachable
+     * {@inheritDoc}
      */
-    public boolean testEngineState(final long state)
-        throws IllegalArgumentException {
+    public boolean testEngineState(final long state) {
         return (getEngineState() & state) == state;
     }
 
@@ -492,7 +461,7 @@ public abstract class BaseEngine implements Engine {
     protected void addEngineListener(final EngineListener listener) {
         synchronized (engineListeners) {
             if (!engineListeners.contains(listener)) {
-                engineListeners.add(listener);
+                engineListeners.addElement(listener);
             }
         }
     }
@@ -505,7 +474,7 @@ public abstract class BaseEngine implements Engine {
      */
     protected void removeEngineListener(final EngineListener listener) {
         synchronized (engineListeners) {
-            engineListeners.remove(listener);
+            engineListeners.removeElement(listener);
         }
     }
 
@@ -621,7 +590,7 @@ public abstract class BaseEngine implements Engine {
      * @param state long
      * @return boolean
      */
-    protected boolean isValid(long state) {
+    protected boolean isValid(final long state) {
         if (testEngineState(PAUSED | RESUMED)) {
             return false;
         }
@@ -689,11 +658,15 @@ public abstract class BaseEngine implements Engine {
     /**
      * Notifies all listeners about the given event. This method is
      * being called using the currently configured {@link SpeechEventExecutor}.
+     * <p>
+     * This is needed since the event listeners for the synthesizer and
+     * the recognizer have different notification signatures.
+     * </p>
      * @param event the event
      */
     protected abstract void fireEvent(final EngineEvent event);
 
-    abstract protected void postEngineEvent(long oldState, long newState,
+    protected abstract void postEngineEvent(long oldState, long newState,
             int eventType);
 
 }

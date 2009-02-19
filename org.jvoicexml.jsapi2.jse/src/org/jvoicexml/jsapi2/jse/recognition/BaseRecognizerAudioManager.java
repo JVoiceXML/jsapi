@@ -18,7 +18,6 @@ import java.net.URLConnection;
 
 import javax.speech.AudioEvent;
 import javax.speech.AudioException;
-import javax.speech.Engine;
 import javax.speech.EngineStateException;
 
 import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
@@ -43,8 +42,8 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
      */
     public void audioStart() throws SecurityException, AudioException,
             EngineStateException {
-
-        if ((mediaLocator != null) && !isSupportsAudioManagement()) {
+        final String locator = getMediaLocator();
+        if ((locator != null) && !isSupportsAudioManagement()) {
             throw new SecurityException(
                     "AudioManager has no permission to access audio resources");
         }
@@ -53,7 +52,7 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
 
         // Open URL described in locator
         final InputStream is;
-        if (mediaLocator == null) {
+        if (locator == null) {
             is = new LineInputStream(this);
         } else {
             final URLConnection urlConnection;
@@ -72,7 +71,14 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
         }
 
         // Configure audio conversions
-        inputStream = formatConverter.getConvertedStream(is, targetAudioFormat,
+        final AudioFormatConverter converter;
+        try {
+            converter = openAudioFormatConverter(targetAudioFormat,
+                    engineAudioFormat);
+        } catch (IOException e) {
+            throw new AudioException(e.getMessage());
+        }
+        inputStream = converter.getConvertedStream(is, targetAudioFormat,
                 engineAudioFormat);
         postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
     }
@@ -96,33 +102,15 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
                 ex.printStackTrace();
             }
         }
-
-        if (formatConverter != null) {
-            formatConverter.close();
-            formatConverter = null;
-        }
+        closeAudioFormatConverter();
 
         postAudioEvent(AudioEvent.AUDIO_STOPPED, AudioEvent.AUDIO_LEVEL_MIN);
-
     }
 
-    public void setMediaLocator(String locator, InputStream stream)
-            throws AudioException, EngineStateException,
-            IllegalArgumentException, SecurityException {
-
-        if (!isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
-        // Insure that engine is DEALLOCATED
-        if (!engine.testEngineState(Engine.DEALLOCATED)) {
-            throw new EngineStateException(
-                    "Engine is not DEALLOCATED. Cannot setMediaLocator");
-        }
-
-        mediaLocator = locator;
-        this.inputStream = stream;
+    public void setMediaLocator(final String locator, final InputStream stream)
+            throws AudioException {
+        super.setMediaLocator(locator);
+        inputStream = stream;
     }
 
     /**
