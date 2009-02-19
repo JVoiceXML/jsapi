@@ -64,7 +64,7 @@ This file builds the JSR 113.jar.
 
 	<target name="rebuild" depends="clean,compile"/>
 
-	<target name="jar" depends="compile" 
+	<target name="-jar" depends="compile" 
 	  description="Pack all compiled files into jar files">
 		<jar jarfile="${dist.jsr113.jar}" compress="false">
 			<fileset dir="${build}">
@@ -81,6 +81,13 @@ This file builds the JSR 113.jar.
 			</manifest>
 		</jar>
 	</target>
+
+    <target name="-components" depends="-jar">
+      <ant dir="../org.jvoicexml.jsapi2.jse" antfile="build.xml"
+        inheritall="false"/>
+    </target>
+  
+    <target name="jar" depends="-jar,-components" />
 
     <target name="distribution" description="Build the distribution files"
         depends="jar">
