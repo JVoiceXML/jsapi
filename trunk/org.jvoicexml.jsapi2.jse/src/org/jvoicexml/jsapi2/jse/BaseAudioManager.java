@@ -12,11 +12,9 @@
 
 package org.jvoicexml.jsapi2.jse;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.SequenceInputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,6 +32,7 @@ import javax.speech.AudioListener;
 import javax.speech.AudioManager;
 import javax.speech.Engine;
 import javax.speech.EngineStateException;
+import javax.speech.SpeechEventExecutor;
 
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code>
@@ -49,9 +48,9 @@ public abstract class BaseAudioManager implements AudioManager {
 
     protected int audioMask;
 
-    protected String mediaLocator;
+    private String mediaLocator;
 
-    protected BaseEngine engine;
+    protected Engine engine;
 
     protected AudioInputStream ais;
 
@@ -65,7 +64,7 @@ public abstract class BaseAudioManager implements AudioManager {
     protected AudioFormat targetAudioFormat;
 
     /** Converter from the source (synthesizer) to the target format. */
-    protected AudioFormatConverter formatConverter;
+    private AudioFormatConverter formatConverter;
 
     /**
      * Class constructor.
@@ -85,10 +84,10 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * Sets the engine.
-     * @param engine the engine.
+     * @param value the engine.
      */
-    public void setEngine(final BaseEngine engine) {
-        this.engine = engine;
+    public void setEngine(final Engine value) {
+        engine = value;
     }
 
     /**
@@ -119,17 +118,23 @@ public abstract class BaseAudioManager implements AudioManager {
      *
      * @param listener the listener to remove
      */
-    public void removeAudioListener(AudioListener listener) {
+    public void removeAudioListener(final AudioListener listener) {
         synchronized (audioListeners) {
             audioListeners.remove(listener);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getAudioMask() {
         return audioMask;
     }
 
-    public void setAudioMask(int mask) {
+    /**
+     * {@inheritDoc}
+     */
+    public void setAudioMask(final int mask) {
         audioMask = mask;
     }
 
@@ -139,6 +144,12 @@ public abstract class BaseAudioManager implements AudioManager {
     public abstract void audioStart() throws SecurityException,
             AudioException, EngineStateException;
 
+    /**
+     * Opens the connection to the configured media locator.
+     * @return opened connection
+     * @throws IOException
+     *         error opening the connection.
+     */
     protected URLConnection openURLConnection() throws IOException {
         if (mediaLocator == null) {
             return null;
@@ -152,9 +163,41 @@ public abstract class BaseAudioManager implements AudioManager {
         }
 
         //Open a connection to URL
-        URLConnection connection = url.openConnection();
+        final URLConnection connection = url.openConnection();
         connection.connect();
         return connection;
+    }
+
+    /**
+     * Opens the audio format converter to convert from the given source
+     * format into the given target format.
+     * <p>
+     * This method must be called in the {@link #audioStart()} method.
+     * </p>
+     * @param source the source audio format
+     * @param target the target audio format.
+     * @return the audio format converter.
+     * @throws IOException
+     *         error opening the format converter
+     */
+    protected AudioFormatConverter openAudioFormatConverter(
+            final AudioFormat source, final AudioFormat target)
+        throws IOException {
+        formatConverter = new AudioFormatConverter(this, source, target);
+        return formatConverter;
+    }
+
+    /**
+     * Closes the audio format converter.
+     * <p>
+     * This method must be called in {@link #audioStop()}.
+     * </p>
+     */
+    protected void closeAudioFormatConverter() {
+        if (formatConverter != null) {
+            formatConverter.close();
+            formatConverter = null;
+        }
     }
 
     /**
@@ -163,7 +206,10 @@ public abstract class BaseAudioManager implements AudioManager {
     public abstract void audioStop() throws SecurityException,
             AudioException, EngineStateException;
 
-    public void setMediaLocator(String locator) throws AudioException,
+    /**
+     * {@inheritDoc}
+     */
+    public void setMediaLocator(final String locator) throws AudioException,
             AudioException, EngineStateException, IllegalArgumentException,
             SecurityException {
 
@@ -186,6 +232,9 @@ public abstract class BaseAudioManager implements AudioManager {
         mediaLocator = locator;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getMediaLocator() {
         return mediaLocator;
     }
@@ -205,7 +254,7 @@ public abstract class BaseAudioManager implements AudioManager {
     public boolean isSupportedMediaLocator(String mediaLocator) throws
             IllegalArgumentException {
 
-        String[] supportedMediaLocators = getSupportedMediaLocators(
+        final String[] supportedMediaLocators = getSupportedMediaLocators(
                 mediaLocator);
 
         return supportedMediaLocators == null ? false : true;
@@ -216,7 +265,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * @return <code>true</code> if audio management is supported.
      */
     protected boolean isSupportsAudioManagement() {
-        String management =
+        final String management =
             System.getProperty("javax.speech.supports.audio.management");
         return Boolean.valueOf(management).equals(Boolean.TRUE);
     }
@@ -227,11 +276,17 @@ public abstract class BaseAudioManager implements AudioManager {
      * @param audioManager AudioManager
      * @return boolean
      */
-    public boolean isSameChannel(AudioManager audioManager) {
+    public boolean isSameChannel(final AudioManager audioManager) {
         return (audioManager.getMediaLocator() == mediaLocator);
     }
 
-    protected void postAudioEvent(int eventId, int audioLevel) {
+    /**
+     * Notifies all listeners about the audio event using the configures
+     * {@link SpeechEventExecutor}.
+     * @param eventId
+     * @param audioLevel
+     */
+    protected void postAudioEvent(final int eventId, final int audioLevel) {
         if ((getAudioMask() & eventId) == eventId) {
             final AudioEvent event = new AudioEvent(engine, eventId);
 
@@ -271,7 +326,7 @@ public abstract class BaseAudioManager implements AudioManager {
     public abstract InputStream getInputStream();
 
     /**
-     * Given URI parameters, constructs an AudioFormat
+     * Given URI parameters, constructs an AudioFormat.
      *
      * @return AudioFormat
      */
@@ -361,14 +416,26 @@ public abstract class BaseAudioManager implements AudioManager {
                                sampleRate, endian);
     }
 
-    public void setEngineAudioFormat(AudioFormat audioFormat) {
+    /**
+     * Sets the audio format that is being used by this engine.
+     * @param audioFormat new audio format.
+     */
+    public void setEngineAudioFormat(final AudioFormat audioFormat) {
         engineAudioFormat = audioFormat;
     }
 
+    /**
+     * Retrieves the audio format that is used by this engine.
+     * @return audio format used by this engine.
+     */
     public AudioFormat getEngineAudioFormat() {
         return engineAudioFormat;
     }
 
+    /**
+     * Retrieves the target audio format.
+     * @return target audio format.
+     */
     public AudioFormat getTargetAudioFormat() {
         return targetAudioFormat;
     }

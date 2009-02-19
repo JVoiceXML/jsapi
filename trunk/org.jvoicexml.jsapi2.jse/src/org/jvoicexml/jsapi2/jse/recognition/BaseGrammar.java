@@ -26,7 +26,7 @@ import javax.speech.recognition.GrammarManager;
  */
 public class BaseGrammar implements Grammar {
 
-    public    transient BaseRecognizer myRec;
+    public    transient BaseRecognizer recognizer;
     protected transient Vector grammarListeners;
     protected transient Vector resultListeners;
     protected String    myName;
@@ -37,13 +37,13 @@ public class BaseGrammar implements Grammar {
 
     /**
      * Creates a new BaseGrammar.
-     * @param recognizer the BaseRecognizer for this Grammar.
+     * @param rec the BaseRecognizer for this Grammar.
      * @param name the name of this Grammar.
      */
-    public BaseGrammar(final BaseRecognizer recognizer, final String name) {
+    public BaseGrammar(final BaseRecognizer rec, final String name) {
         grammarListeners = new Vector();
         resultListeners = new Vector();
-        myRec = recognizer;
+        recognizer = rec;
         myName = name;
         grammarActive = false;
         activatable = false;
@@ -58,7 +58,7 @@ public class BaseGrammar implements Grammar {
      * From javax.speech.recognition.Grammar.
      */
     public Recognizer getRecognizer() {
-        return myRec;
+        return recognizer;
     }
 
     /**
@@ -116,7 +116,7 @@ public class BaseGrammar implements Grammar {
      * From javax.speech.recognition.Grammar.
      */
     public boolean isActive() {
-        return myRec.isActive(this);
+        return recognizer.isActive(this);
     }
 
     /**
@@ -125,7 +125,7 @@ public class BaseGrammar implements Grammar {
      * @return GrammarManager
      */
     public GrammarManager getGrammarManager() {
-        return myRec.getGrammarManager();
+        return recognizer.getGrammarManager();
     }
 
     /**

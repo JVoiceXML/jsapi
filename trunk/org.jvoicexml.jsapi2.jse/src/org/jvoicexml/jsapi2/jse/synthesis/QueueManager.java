@@ -33,6 +33,7 @@ import java.util.Vector;
 
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioSegment;
+import javax.speech.Engine;
 import javax.speech.EngineMode;
 import javax.speech.synthesis.PhoneInfo;
 import javax.speech.synthesis.Speakable;
@@ -42,7 +43,6 @@ import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerEvent;
 
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
-import org.jvoicexml.jsapi2.jse.BaseEngine;
 
 /**
  * The {@link QueueManager} basically accepts the speech segments to 
@@ -220,7 +220,7 @@ public class QueueManager implements Runnable {
                                 item.getListener());
 
                 try {
-                    synthesizer.waitEngineState(BaseEngine.RESUMED);
+                    synthesizer.waitEngineState(Engine.RESUMED);
                     synthesizer.postSpeakableEvent(new SpeakableEvent(source,
                             SpeakableEvent.SPEAKABLE_RESUMED,
                             id), item.getListener());
@@ -276,7 +276,7 @@ public class QueueManager implements Runnable {
                                 .getSource(), SpeakableEvent.SPEAKABLE_PAUSED,
                                 item.getId()), item.getListener());
                         try {
-                            synthesizer.waitEngineState(BaseEngine.RESUMED);
+                            synthesizer.waitEngineState(Engine.RESUMED);
                             synthesizer.postSpeakableEvent(new SpeakableEvent(
                                     item.getSource(),
                                     SpeakableEvent.SPEAKABLE_RESUMED, item

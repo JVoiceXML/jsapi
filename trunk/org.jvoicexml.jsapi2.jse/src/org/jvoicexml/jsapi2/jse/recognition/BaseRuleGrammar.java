@@ -678,7 +678,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     /*    if (ruleName != null) {
             ruleName = stripRuleName(ruleName);
         }*/
-        return RuleParser.parse(text, myRec.getGrammarManager(), getReference(), ruleName);
+        return RuleParser.parse(text, recognizer.getGrammarManager(), getReference(), ruleName);
     }
 
     /**
@@ -694,7 +694,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      /*   if (ruleName != null) {
             ruleName = stripRuleName(ruleName);
         }*/
-        return RuleParser.parse(tokens, myRec.getGrammarManager(), getReference(), ruleName);
+        return RuleParser.parse(tokens, recognizer.getGrammarManager(), getReference(), ruleName);
     }
 
     /**

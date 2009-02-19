@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.speech.AudioException;
+import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
 import javax.speech.EngineEvent;
 import javax.speech.EngineException;
@@ -23,7 +24,8 @@ import javax.speech.synthesis.SynthesizerListener;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.SynthesizerProperties;
 
-import org.jvoicexml.jsapi2.jse.BaseEngine;
+import org.jvoicexml.jsapi2.BaseEngine;
+import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 
 /**
  * <p>
@@ -62,6 +64,9 @@ public abstract class BaseSynthesizer extends BaseEngine
 
     public BaseSynthesizer(SynthesizerMode engineMode) {
         super(engineMode, new BaseSynthesizerAudioManager());
+        final BaseAudioManager audioManager =
+            (BaseAudioManager) getAudioManager();
+        audioManager.setEngine(this);
         speakableListeners = new Vector();
         synthesizerProperties = new BaseSynthesizerProperties(this);
         speakableMask = SpeakableEvent.DEFAULT_MASK;
@@ -77,8 +82,11 @@ public abstract class BaseSynthesizer extends BaseEngine
         synchronized (engineListeners) {
             final SynthesizerEvent synthesizerEvent =
                 (SynthesizerEvent) event;
-            for (EngineListener el : engineListeners) {
-                ((SynthesizerListener) el).synthesizerUpdate(synthesizerEvent);
+            Enumeration enumeration = engineListeners.elements();
+            while (enumeration.hasMoreElements()) {
+                final SynthesizerListener listener =
+                    (SynthesizerListener) enumeration.nextElement();
+                listener.synthesizerUpdate(synthesizerEvent);
             }
         }
     }
@@ -324,12 +332,13 @@ public abstract class BaseSynthesizer extends BaseEngine
             EngineException, AudioException {
 
         // Starts AudioManager
+        final AudioManager audioManager = getAudioManager();
         audioManager.audioStart();
 
         // Procceed to real engine allocation
         boolean status = handleAllocate();
-        if (status == true) {
-            long states[] = setEngineState(CLEAR_ALL_STATE, ALLOCATED | RESUMED
+        if (status) {
+            long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED | RESUMED
                     | DEFOCUSED);
             postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
         }
@@ -348,11 +357,12 @@ public abstract class BaseSynthesizer extends BaseEngine
             EngineException, AudioException {
 
         // Stops AudioManager
+        final AudioManager audioManager = getAudioManager();
         audioManager.audioStop();
 
         // Procceed to real engine deallocation
         boolean status = handleDeallocate();
-        if (status == true) {
+        if (status) {
             long states[] = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
             postEngineEvent(states[0], states[1],
                     EngineEvent.ENGINE_DEALLOCATED);
