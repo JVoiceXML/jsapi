@@ -15,10 +15,13 @@ package org.jvoicexml.jsapi2.jse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
 /**
  * Utility to convert audio from a source format to another format.
@@ -50,7 +53,7 @@ public class AudioFormatConverter {
         pipedInputStream = new PipedInputStream(pipeSize);
         pipedOutputStream = new PipedOutputStream(pipedInputStream);
 
-        convertedInputStream = manager.getConvertedStream(pipedInputStream,
+        convertedInputStream = getConvertedStream(pipedInputStream,
                 sourceFormat, targetFormat);
 
     }
@@ -125,7 +128,7 @@ public class AudioFormatConverter {
             //Realloc array?
             int availableSize = convertedArray.length - offset;
             if (availableSize < bytesPerRead) {
-                convertedArray = (byte[]) BaseAudioManager.resizeArray(
+                convertedArray = (byte[]) resizeArray(
                         convertedArray, convertedArray.length * 2);
             }
 
@@ -174,5 +177,192 @@ public class AudioFormatConverter {
         bps *= audioFormat.getSampleRate();
         bps *= (audioFormat.getSampleSizeInBits() / 8);
         return bps;
+    }
+
+    /**
+     * @todo Insure that this is robust...
+     *
+     * @param is InputStream
+     * @param sourceFormat AudioFormat
+     * @param targetFormat AudioFormat
+     * @return InputStream
+     */
+    public InputStream getConvertedStream(InputStream is,
+                                           AudioFormat sourceFormat,
+                                           AudioFormat targetFormat) {
+        /** @todo Compare more precisely AudioFormat (not using AudioFormat.matches()) */
+        if (sourceFormat.matches(targetFormat)) {
+            return is;
+        }
+
+        //Describe source stream as an AudioFormat
+        AudioInputStream sourceStream = new AudioInputStream(is, sourceFormat,
+                AudioSystem.NOT_SPECIFIED);
+
+        //Convert number of channels
+        sourceStream = convertChannels(sourceStream, targetFormat);
+
+
+        try{
+            //Convert sample rate
+            sourceStream = convertSampleRate(sourceStream, targetFormat);
+
+            //Convert encoding
+            sourceStream = convertEncoding(sourceStream, targetFormat);
+        }catch(Exception e) {
+            //Convert encoding
+            sourceStream = convertEncoding(sourceStream, targetFormat);
+
+            sourceStream = convertSampleRate(sourceStream, targetFormat);
+        }
+
+        //Convert sample size
+        sourceStream = convertSampleSize(sourceStream, targetFormat);
+
+        //Convert endianess
+        sourceStream = convertEndianess(sourceStream, targetFormat);
+
+        return sourceStream;
+    }
+
+    /**
+     * @todo Insure that this is robust...
+     *
+     * @param os OutputStream
+     * @param engineAudioFormat AudioFormat
+     * @param audioFormat AudioFormat
+     * @return OutputStream
+     */
+    public OutputStream getConvertedStream(final OutputStream os,
+                                            AudioFormat engineAudioFormat,
+                                            AudioFormat targetFormat) {
+        /** @todo Compare more preciselly AudioFormat (not using AudioFormat.matches()) */
+        if (engineAudioFormat.matches(targetFormat)) {
+            return os;
+        }
+
+        try {
+            //Basic Conversion support
+            PipedInputStream pis = new PipedInputStream(16000000);
+            PipedOutputStream pos = new PipedOutputStream(pis);
+
+            //Describe source audio
+            getConvertedStream(pis, engineAudioFormat, targetFormat);
+
+            return pos;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        /** @todo Should never reach this point */
+        return os;
+    }
+
+
+    private AudioInputStream convertEndianess(AudioInputStream ais,
+                                              AudioFormat targetFormat) {
+        if (ais.getFormat().isBigEndian() == targetFormat.isBigEndian()) {
+            return ais;
+        }
+
+        AudioFormat newFormat = new AudioFormat(ais.getFormat().getEncoding(),
+                                                ais.getFormat().getSampleRate(),
+                                                ais.getFormat().
+                                                getSampleSizeInBits(),
+                                                ais.getFormat().getChannels(),
+                                                ais.getFormat().getFrameSize(),
+                                                ais.getFormat().getFrameRate(),
+                                                targetFormat.isBigEndian());
+
+        return AudioSystem.getAudioInputStream(newFormat, ais);
+    }
+
+    private AudioInputStream convertChannels(AudioInputStream ais,
+                                             AudioFormat targetFormat) {
+        if (ais.getFormat().getChannels() == targetFormat.getChannels()) {
+            return ais;
+        }
+        AudioFormat newFormat = new AudioFormat(ais.getFormat().getEncoding(),
+                                                ais.getFormat().getSampleRate(),
+                                                ais.getFormat().
+                                                getSampleSizeInBits(),
+                                                targetFormat.getChannels(),
+                                                ais.getFormat().getFrameSize(),
+                                                ais.getFormat().getFrameRate(),
+                                                ais.getFormat().isBigEndian());
+
+        return AudioSystem.getAudioInputStream(newFormat, ais);
+
+    }
+
+    private AudioInputStream convertSampleRate(AudioInputStream ais,
+                                               AudioFormat targetFormat) {
+        if (ais.getFormat().getSampleRate() == targetFormat.getSampleRate()) {
+            return ais;
+        }
+        AudioFormat newFormat = new AudioFormat(ais.getFormat().getEncoding(),
+                                                targetFormat.getSampleRate(),
+                                                ais.getFormat().
+                                                getSampleSizeInBits(),
+                                                ais.getFormat().getChannels(),
+                                                ais.getFormat().getFrameSize(),
+                                                targetFormat.getFrameRate(),
+                                                ais.getFormat().isBigEndian());
+
+        return AudioSystem.getAudioInputStream(newFormat, ais);
+    }
+
+    private AudioInputStream convertEncoding(AudioInputStream ais,
+                                             AudioFormat targetFormat) {
+        if (ais.getFormat().getEncoding() == targetFormat.getEncoding()) {
+            return ais;
+        }
+        AudioFormat newFormat = new AudioFormat(targetFormat.getEncoding(),
+                                                ais.getFormat().getSampleRate(),
+                                                targetFormat.
+                                                getSampleSizeInBits(),
+                                                ais.getFormat().getChannels(),
+                                                targetFormat.getFrameSize(),
+                                                ais.getFormat().getFrameRate(),
+                                                ais.getFormat().isBigEndian());
+
+        return AudioSystem.getAudioInputStream(newFormat, ais);
+    }
+
+
+    private AudioInputStream convertSampleSize(AudioInputStream ais,
+                                               AudioFormat targetFormat) {
+        if (ais.getFormat().getSampleSizeInBits() ==
+            targetFormat.getSampleSizeInBits()) {
+            return ais;
+        }
+        AudioFormat newFormat = new AudioFormat(ais.getFormat().getEncoding(),
+                                                ais.getFormat().getSampleRate(),
+                                                targetFormat.
+                                                getSampleSizeInBits(),
+                                                ais.getFormat().getChannels(),
+                                                ais.getFormat().getFrameSize(),
+                                                ais.getFormat().getFrameRate(),
+                                                ais.getFormat().isBigEndian());
+
+        return AudioSystem.getAudioInputStream(newFormat, ais);
+    }
+
+    /**
+     * Reallocates an array with a new size, and copies the contents
+     * of the old array to the new array.
+     * @param oldArray  the old array, to be reallocated.
+     * @param newSize   the new array size.
+     * @return          A new array with the same contents.
+     */
+    static Object resizeArray (Object oldArray, int newSize) {
+        int oldSize = java.lang.reflect.Array.getLength(oldArray);
+        Class elementType = oldArray.getClass().getComponentType();
+        Object newArray = java.lang.reflect.Array.newInstance(
+            elementType,newSize);
+        int preserveLength = Math.min(oldSize,newSize);
+        if (preserveLength > 0)
+            System.arraycopy (oldArray,0,newArray,0,preserveLength);
+        return newArray;
     }
 }
