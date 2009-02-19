@@ -21,6 +21,7 @@ import javax.speech.AudioException;
 import javax.speech.Engine;
 import javax.speech.EngineStateException;
 
+import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 
 /**
@@ -71,7 +72,7 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
         }
 
         // Configure audio conversions
-        inputStream = getConvertedStream(is, targetAudioFormat,
+        inputStream = formatConverter.getConvertedStream(is, targetAudioFormat,
                 engineAudioFormat);
         postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
     }

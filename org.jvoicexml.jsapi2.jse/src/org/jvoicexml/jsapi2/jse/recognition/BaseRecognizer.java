@@ -72,6 +72,7 @@ import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.SpeakerManager;
 
 import org.jvoicexml.jsapi2.jse.BaseEngine;
+import org.jvoicexml.jsapi2.recognition.BaseRecognizerProperties;
 
 
 /**

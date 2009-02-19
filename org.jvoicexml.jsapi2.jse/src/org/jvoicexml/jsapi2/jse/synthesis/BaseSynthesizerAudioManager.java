@@ -141,8 +141,8 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
             PipedOutputStream pos = new PipedOutputStream(pis);
 
             // Describe source audio
-            final InputStream is = getConvertedStream(pis, engineAudioFormat,
-                    targetFormat);
+            final InputStream is = formatConverter.getConvertedStream(pis,
+                    engineAudioFormat, targetFormat);
 
             return pos;
             /*
