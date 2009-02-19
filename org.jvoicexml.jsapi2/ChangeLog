@@ -1,0 +1,10 @@
+Version 0.1
+===========
+
+- First release.
+
+Version 0.2
+============
+
+- new RTP demo
+- started separation of the core classes into a common CLDC jar

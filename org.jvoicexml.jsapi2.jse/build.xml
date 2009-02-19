@@ -16,8 +16,8 @@ This file builds the JSR 113.jar.
   <property name="dist" value="${base-project}/dist" />
   
   <!-- distribution files -->
-  <property name="dist.jsr113-jsebase.jar" value="${dist}/jsr113-jsebase.jar" />
-  <property name="dist.jsr113-jsebase-impl.jar" value="${dist}/jsr113-jsebase-impl.jar" />
+  <property name="dist.jsr113-jsebase.jar" value="${dist}/jsr113-base-jse.jar" />
+  <property name="dist.jsr113-jsebase-impl.jar" value="${dist}/jsr113-base-jse-impl.jar" />
   <property name="dist.zip" value="${dist}/jsr113-base-${version}.zip" />
   <property name="dist.src.zip" value="${dist}/jsr113-base-${version}-src.zip" />
 
