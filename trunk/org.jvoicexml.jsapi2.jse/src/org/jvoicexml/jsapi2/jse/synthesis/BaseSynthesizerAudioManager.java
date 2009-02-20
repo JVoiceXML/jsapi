@@ -16,11 +16,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLConnection;
 
-import javax.speech.AudioEvent;
 import javax.speech.AudioException;
 import javax.speech.EngineStateException;
 
-import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 
 /**
@@ -40,14 +38,8 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
     /**
      * {@inheritDoc}
      */
-    public void audioStart() throws SecurityException, AudioException,
-            EngineStateException {
+    public void handleAudioStart() throws AudioException {
         final String locator = getMediaLocator();
-        if ((locator != null) && !isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
         if (locator == null) {
             outputStream = new ClipOutputStream(this);
         } else {
@@ -75,31 +67,19 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
         } catch (IOException e) {
             throw new AudioException(e.getMessage());
         }
-        postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
-
     }
 
     /**
      * {@inheritDoc}
      */
-    public void audioStop() throws SecurityException, AudioException,
-            EngineStateException {
-
-        if (!isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
+    public void handleAudioStop() throws AudioException {
         if (outputStream != null) {
             try {
                 outputStream.close();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                throw new AudioException(ex.getMessage());
             }
         }
-        closeAudioFormatConverter();
-
-        postAudioEvent(AudioEvent.AUDIO_STOPPED, AudioEvent.AUDIO_LEVEL_MIN);
     }
 
     /**
@@ -111,6 +91,9 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     public void setMediaLocator(final String locator, final OutputStream stream)
             throws AudioException {
         super.setMediaLocator(locator);
@@ -119,6 +102,9 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
 
     /**
      * {@inheritDoc}
+     *
+     * Throws an {@link IllegalArgumentException} since output streams are not
+     * supported.
      */
     public void setMediaLocator(String locator, InputStream stream)
             throws AudioException, EngineStateException,
