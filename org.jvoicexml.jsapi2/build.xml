@@ -91,9 +91,25 @@ This file builds the JSR 113.jar.
 
     <target name="distribution" description="Build the distribution files"
         depends="jar">
-        <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
-        	<include name="${dist.jsr113.jar}"/>
-            <fileset refid="dist.files.additional"/>
-        </zip>
+      <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
+        <include name="*.jar" />
+        <fileset refid="dist.files.additional" />
+      </zip>
+      <zip basedir="." destfile="${dist.src.zip}" compress="true">
+        <include name="*src/**/*.java" />
+        <include name="build.xml" />
+        <include name="config-props/**" />
+        <include name="etc/**" />
+        <fileset refid="dist.files.additional" />
+      </zip>
+      <zip basedir="../org.jvoicexml.jsapi2.jse" destfile="${dist.src.zip}"
+        compress="true" update="true">
+        <include name="*src/**/*.java" />
+        <include name="*src/**/*.xsl" />
+        <include name="demo/**/*.java" />
+        <include name="build.xml" />
+        <include name="config-props/**" />
+        <include name="etc/**" />
+      </zip>
     </target>
 </project>

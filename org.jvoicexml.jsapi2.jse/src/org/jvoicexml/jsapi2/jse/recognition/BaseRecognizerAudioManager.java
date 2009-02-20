@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
 package org.jvoicexml.jsapi2.jse.recognition;
@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLConnection;
 
-import javax.speech.AudioEvent;
 import javax.speech.AudioException;
 import javax.speech.EngineStateException;
 
@@ -29,7 +28,7 @@ import org.jvoicexml.jsapi2.jse.BaseAudioManager;
  */
 public class BaseRecognizerAudioManager extends BaseAudioManager {
     /** The input stream for the recognizer. */
-    protected InputStream inputStream;
+    private InputStream inputStream;
 
     /**
      * Class constructor.
@@ -40,13 +39,8 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
     /**
      * {@inheritDoc}
      */
-    public void audioStart() throws SecurityException, AudioException,
-            EngineStateException {
+    public void handleAudioStart() throws AudioException {
         final String locator = getMediaLocator();
-        if ((locator != null) && !isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
 
         targetAudioFormat = getAudioFormat();
 
@@ -80,33 +74,25 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
         }
         inputStream = converter.getConvertedStream(is, targetAudioFormat,
                 engineAudioFormat);
-        postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void audioStop() throws SecurityException, AudioException,
-            EngineStateException {
-
-        if (!isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
+    public void handleAudioStop() throws AudioException {
         // Release IO
         if (inputStream != null) {
             try {
                 inputStream.close();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                throw new AudioException(ex.getMessage());
             }
         }
-        closeAudioFormatConverter();
-
-        postAudioEvent(AudioEvent.AUDIO_STOPPED, AudioEvent.AUDIO_LEVEL_MIN);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setMediaLocator(final String locator, final InputStream stream)
             throws AudioException {
         super.setMediaLocator(locator);
@@ -115,6 +101,9 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
 
     /**
      * {@inheritDoc}
+     *
+     * Throws an {@link IllegalArgumentException} since output streams are not
+     * supported.
      */
     public void setMediaLocator(String locator, OutputStream stream)
             throws AudioException, EngineStateException,

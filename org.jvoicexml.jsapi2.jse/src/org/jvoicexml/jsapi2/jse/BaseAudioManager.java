@@ -32,7 +32,8 @@ import javax.speech.AudioListener;
 import javax.speech.AudioManager;
 import javax.speech.Engine;
 import javax.speech.EngineStateException;
-import javax.speech.SpeechEventExecutor;
+
+import org.jvoicexml.jsapi2.jse.recognition.LineInputStream;
 
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code>
@@ -55,12 +56,11 @@ public abstract class BaseAudioManager implements AudioManager {
     protected AudioInputStream ais;
 
     /**
-     * Audio format of the audio natively produced
-     * by the engine.
+     * Audio format of the audio natively produced by the engine.
      */
     protected AudioFormat engineAudioFormat;
 
-    /** Audio format to be delivered. */
+    /** Audio format of that is being received or that is being delivered. */
     protected AudioFormat targetAudioFormat;
 
     /** Converter from the source (synthesizer) to the target format. */
@@ -141,8 +141,26 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public abstract void audioStart() throws SecurityException,
-            AudioException, EngineStateException;
+    public void audioStart() throws SecurityException,
+            AudioException, EngineStateException {
+        final String locator = getMediaLocator();
+        if ((locator != null) && !isSupportsAudioManagement()) {
+            throw new SecurityException(
+                    "AudioManager has no permission to access audio resources");
+        }
+
+        handleAudioStart();
+
+        postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
+    }
+
+    /**
+     * Handles further processing if the audio output has to be started by
+     * a call to {@link #audioStart()}.
+     * @throws AudioException
+     *         error stopping
+     */
+    protected abstract void handleAudioStart() throws AudioException;
 
     /**
      * Opens the connection to the configured media locator.
@@ -188,23 +206,33 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
-     * Closes the audio format converter.
-     * <p>
-     * This method must be called in {@link #audioStop()}.
-     * </p>
+     * {@inheritDoc}
      */
-    protected void closeAudioFormatConverter() {
+    public void audioStop() throws SecurityException,
+            AudioException, EngineStateException {
+        if (!isSupportsAudioManagement()) {
+            throw new SecurityException(
+                    "AudioManager has no permission to access audio resources");
+        }
+
+        handleAudioStop();
+
         if (formatConverter != null) {
             formatConverter.close();
             formatConverter = null;
         }
+
+        postAudioEvent(AudioEvent.AUDIO_STOPPED, AudioEvent.AUDIO_LEVEL_MIN);
+
     }
 
     /**
-     * {@inheritDoc}
+     * Handles further processing if the audio output has to be stopped by
+     * a call to {@link #audioStop()}.
+     * @throws AudioException
+     *         error stopping
      */
-    public abstract void audioStop() throws SecurityException,
-            AudioException, EngineStateException;
+    protected abstract void handleAudioStop() throws AudioException;
 
     /**
      * {@inheritDoc}
@@ -271,18 +299,24 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
-     * @todo Initial implementation
+     * {@inheritDoc}
      *
-     * @param audioManager AudioManager
-     * @return boolean
+     * This implementation checks only for equal media locators.
      */
     public boolean isSameChannel(final AudioManager audioManager) {
-        return (audioManager.getMediaLocator() == mediaLocator);
+        if (audioManager == null) {
+            return false;
+        }
+        final String otherLocator = audioManager.getMediaLocator();
+        if (otherLocator == null) {
+            return mediaLocator == null;
+        }
+        return mediaLocator.equalsIgnoreCase(otherLocator);
     }
 
     /**
      * Notifies all listeners about the audio event using the configures
-     * {@link SpeechEventExecutor}.
+     * {@link javax.speech.SpeechEventExecutor}.
      * @param eventId
      * @param audioLevel
      */
@@ -326,7 +360,8 @@ public abstract class BaseAudioManager implements AudioManager {
     public abstract InputStream getInputStream();
 
     /**
-     * Given URI parameters, constructs an AudioFormat.
+     * Given URI parameters, constructs an {@link AudioFormat} from the
+     * parameters specified in the URI.
      *
      * @return AudioFormat
      */
