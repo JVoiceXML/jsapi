@@ -43,9 +43,10 @@ import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerEvent;
 
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
 
 /**
- * The {@link QueueManager} basically accepts the speech segments to 
+ * The {@link QueueManager} basically accepts the speech segments to
  * synthesized, appends them to a corresponding queue and hands them to the
  * synthesizer to convert those pieces into audio chunks. These chunks are added
  * to the play queue to be delivered via the configured media locator.
@@ -54,7 +55,7 @@ import org.jvoicexml.jsapi2.jse.BaseAudioManager;
  * @version 1.0
  */
 public class QueueManager implements Runnable {
-
+    /** Reference to the synthesizer. */
     private BaseSynthesizer synthesizer;
     private Thread synthThread;
     private Thread playThread;

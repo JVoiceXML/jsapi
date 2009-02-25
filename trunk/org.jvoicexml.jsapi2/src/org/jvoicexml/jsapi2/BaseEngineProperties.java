@@ -58,6 +58,12 @@ import javax.speech.Engine;
 /**
  * Supports the JSAPI 2.0 <code>EngineProperties</code>
  * interface.
+ *
+ * <p>
+ * Actual JSAPI 2 implementations may want to override this class to apply
+ * the settings to the synthesizer.
+ * </p>
+ *
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
  */
@@ -160,9 +166,14 @@ public abstract class BaseEngineProperties implements EngineProperties {
 
     /**
      * Generates a
-     * <code>PropertyChangeEvent</code> for an <code>Object</code> value
+     * {@link PropertyChangeEvent} for an <code>Object</code> value
      * and posts it to the event queue using the configured
      * {@link SpeechEventExecutor}.
+     *
+     * <p>
+     * Registered listeners are notified using the
+     * {@link #firePropertyChangeEvent(PropertyChangeEvent)} method.
+     * </p>
      *
      * @param propName the name of the property
      * @param oldValue the old value
@@ -196,9 +207,13 @@ public abstract class BaseEngineProperties implements EngineProperties {
     }
 
     /**
-     * Sends a <code>PropertyChangeEvent</code>
+     * Sends a {@link PropertyChangeEvent}
      * to all <code>PropertyChangeListeners</code> registered with
      * this object.
+     *
+     * <p>
+     * This method runs within the configured {@link SpeechEventExecutor}.
+     * </p>
      *
      * @param event the <code>PropertyChangeEvent</code> to send
      *

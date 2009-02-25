@@ -15,6 +15,8 @@ This file builds the JSR 113.jar.
 	
     <!-- distribution files -->
 	<property name="dist.jsr113.jar" value="${dist}/jsr113-base.jar" />
+    <property name="dist.src.zip" value="${dist}/jsr113-base-${version}-src.zip" />
+  <property name="dist.src.libs.zip" value="${dist}/jsr113-base-${version}-src-withlibs.zip" />
     <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
 	
   <path id="classpath">
@@ -95,21 +97,23 @@ This file builds the JSR 113.jar.
         <include name="*.jar" />
         <fileset refid="dist.files.additional" />
       </zip>
-      <zip basedir="." destfile="${dist.src.zip}" compress="true">
-        <include name="*src/**/*.java" />
-        <include name="build.xml" />
-        <include name="config-props/**" />
-        <include name="etc/**" />
+      <zip basedir=".." destfile="${dist.src.zip}" compress="true">
+        <include name="org.jvoicexml.jsapi2*/src/**/*.java" />
+        <include name="org.jvoicexml.jsapi2*/demo/**" />
+        <include name="org.jvoicexml.jsapi2*/build.xml" />
+        <include name="org.jvoicexml.jsapi2/config-props/**" />
+        <include name="org.jvoicexml.jsapi2*/etc/**" />
         <fileset refid="dist.files.additional" />
       </zip>
-      <zip basedir="../org.jvoicexml.jsapi2.jse" destfile="${dist.src.zip}"
-        compress="true" update="true">
-        <include name="*src/**/*.java" />
-        <include name="*src/**/*.xsl" />
-        <include name="demo/**/*.java" />
-        <include name="build.xml" />
-        <include name="config-props/**" />
-        <include name="etc/**" />
+      <zip basedir=".." destfile="${dist.src.libs.zip}" compress="true">
+        <include name="org.jvoicexml.jsapi2*/src/**/*.java" />
+        <include name="org.jvoicexml.jsapi2*/3rdparty/**" />
+        <exclude name="org.jvoicexml.jsapi2/3rdparty/jsapi2/lib/*.jar" />
+        <include name="org.jvoicexml.jsapi2*/demo/**" />
+        <include name="org.jvoicexml.jsapi2*/build.xml" />
+        <include name="org.jvoicexml.jsapi2/config-props/**" />
+        <include name="org.jvoicexml.jsapi2*/etc/**" />
+        <fileset refid="dist.files.additional" />
       </zip>
     </target>
 </project>
