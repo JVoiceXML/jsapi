@@ -3,7 +3,7 @@ package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.Voice;
 
-import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizerProperties;
+import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
 
 
 /**

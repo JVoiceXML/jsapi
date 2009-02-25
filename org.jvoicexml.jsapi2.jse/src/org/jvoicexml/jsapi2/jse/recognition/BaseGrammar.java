@@ -25,188 +25,171 @@ import javax.speech.recognition.GrammarManager;
  *
  */
 public class BaseGrammar implements Grammar {
-
+    /** Reference to the recognizer. */
     public    transient BaseRecognizer recognizer;
-    protected transient Vector grammarListeners;
-    protected transient Vector resultListeners;
-    protected String    myName;
 
-    protected boolean grammarActive;  // only changed by commit and rec focus
+    /** Registered listeners for grammar changes. */
+    protected transient Vector grammarListeners;
+
+    /** Registered listeners for result events. */
+    protected transient Vector resultListeners;
+
+    /** Name of this grammar. */
+    protected String    name;
+
+    /**
+     * <code>true</code> if this grammar is active.
+     * only changed by commit and rec focus.
+     */
+    protected boolean grammarActive;
+
+    /** The activation mode of this grammar. */
     protected int     activationMode;
+
+    /** <code>true</code> if this grammar can be activated. */
     protected boolean activatable;
 
     /**
      * Creates a new BaseGrammar.
      * @param rec the BaseRecognizer for this Grammar.
-     * @param name the name of this Grammar.
+     * @param grammarName the name of this Grammar.
      */
-    public BaseGrammar(final BaseRecognizer rec, final String name) {
+    public BaseGrammar(final BaseRecognizer rec, final String grammarName) {
         grammarListeners = new Vector();
         resultListeners = new Vector();
         recognizer = rec;
-        myName = name;
+        name = grammarName;
         grammarActive = false;
         activatable = false;
         activationMode = ACTIVATION_FOCUS;
     }
 
-//////////////////////
-// Begin Grammar Methods
-//////////////////////
     /**
-     * Return a reference to the recognizer that owns this Grammar.
-     * From javax.speech.recognition.Grammar.
+     * {@inheritDoc}
      */
     public Recognizer getRecognizer() {
         return recognizer;
     }
 
     /**
-     * Get the reference of the Grammar.
-     * From javax.speech.recognition.Grammar.
+     * {@inheritDoc}
      */
     public String getReference() {
-        return myName;
+        return name;
     }
 
     /**
-     * Set the enabled property of the Grammar.
-     * @param activatable the new desired state of the activatable property.
+     * {@inheritDoc}
      */
-    public void setActivatable(boolean activatable) {
-        this.activatable = activatable;
+    public void setActivatable(final boolean value) {
+        activatable = value;
     }
 
-	/**
-     * Determine if this Grammar is activatable or not.
+    /**
+     * {@inheritDoc}
      */
     public boolean isActivatable() {
         return activatable;
     }
 
     /**
-     * Set the activation mode of this Grammar.
-     * From javax.speech.recognition.Grammar
-     *
-     * @param mode the new activation mode.
+     * {@inheritDoc}
      */
-    public void setActivationMode(int mode) throws IllegalArgumentException {
+    public void setActivationMode(final int mode)
+        throws IllegalArgumentException {
         if ((mode != ACTIVATION_GLOBAL)
             && (mode != ACTIVATION_MODAL)
             && (mode != ACTIVATION_FOCUS)
             && (mode != ACTIVATION_INDIRECT)) {
             throw new IllegalArgumentException("Invalid ActivationMode");
         } else if (mode != activationMode) {
-	  //sjagrammarChanged=true;
             activationMode = mode;
         }
     }
 
     /**
-     * Get the activation mode of this Grammar.
-     * From javax.speech.recognition.Grammar
+     * {@inheritDoc}
      */
     public int getActivationMode() {
         return activationMode;
     }
 
     /**
-     * Determine if the Grammar is active or not.  This is a combination
-     * of the enabled state and activation conditions of the Grammar.
-     * From javax.speech.recognition.Grammar.
+     * {@inheritDoc}
      */
     public boolean isActive() {
         return recognizer.isActive(this);
     }
 
     /**
-     * Returns the GrammarManager that manages this Grammar.
-     *
-     * @return GrammarManager
+     * {@inheritDoc}
      */
     public GrammarManager getGrammarManager() {
         return recognizer.getGrammarManager();
     }
 
     /**
-     * Add a new GrammarListener to the listener list if it is not
-     * already in the list.
-     * From javax.speech.recognition.Grammar.
-     * @param listener the listener to add.
+     * {@inheritDoc}
      */
-    public void addGrammarListener(GrammarListener listener) {
+    public void addGrammarListener(final GrammarListener listener) {
         if (!grammarListeners.contains(listener)) {
             grammarListeners.addElement(listener);
         }
     }
 
     /**
-     * Remove a GrammarListener from the listener list.
-     * From javax.speech.recognition.Grammar.
-     * @param listener the listener to remove.
+     * {@inheritDoc}
      */
-    public void removeGrammarListener(GrammarListener listener) {
+    public void removeGrammarListener(final GrammarListener listener) {
         grammarListeners.removeElement(listener);
     }
 
     /**
-     * Add a new ResultListener to the listener list if it is not
-     * already in the list.
-     * From javax.speech.recognition.Grammar.
-     * @param listener the listener to add.
+     * {@inheritDoc}
      */
-    public void addResultListener(ResultListener listener) {
+    public void addResultListener(final ResultListener listener) {
         if (!resultListeners.contains(listener)) {
             resultListeners.addElement(listener);
         }
     }
 
     /**
-     * Remove a ResultListener from the listener list.
-     * From javax.speech.recognition.Grammar.
-     * @param listener the listener to remove.
+     * {@inheritDoc}
      */
-    public void removeResultListener(ResultListener listener) {
+    public void removeResultListener(final ResultListener listener) {
         resultListeners.removeElement(listener);
     }
-//////////////////////
-// End Grammar Methods
-//////////////////////
-
-//////////////////////
-// Begin utility methods for sending GrammarEvents
-//////////////////////
     /**
-         * Utility function to generate grammar event and post it to the event queue.
-         * @param speechEventExecutor SpeechEventExecutor
-         * @param event ResultEvent
-         */
-         public void postGrammarEvent(SpeechEventExecutor speechEventExecutor, final GrammarEvent event){
-          try {
-              speechEventExecutor.execute(new Runnable() {
-                  public void run() {
-                      fireGrammarEvent(event);
-                  }
-              });
-          } catch (RuntimeException ex) {
-              ex.printStackTrace();
-          }
-      }
+     * Utility function to generate grammar event and post it to the event queue.
+     * @param speechEventExecutor SpeechEventExecutor
+     * @param event ResultEvent
+     */
+    public void postGrammarEvent(SpeechEventExecutor speechEventExecutor, final GrammarEvent event){
+        try {
+            speechEventExecutor.execute(new Runnable() {
+                public void run() {
+                    fireGrammarEvent(event);
+                }
+            });
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+        }
+    }
 
-      /**
-       * Utility function to send a grammar event to all grammar
-       * listeners.
-       */
-      public void fireGrammarEvent(GrammarEvent event) {
-          Enumeration E;
-          if (resultListeners != null) {
-              E = resultListeners.elements();
-              while (E.hasMoreElements()) {
-                  GrammarListener rl = (GrammarListener) E.nextElement();
-                  rl.grammarUpdate(event);
-              }
-          }
-      }
+    /**
+     * Utility function to send a grammar event to all grammar
+     * listeners.
+     */
+    public void fireGrammarEvent(GrammarEvent event) {
+        Enumeration E;
+        if (resultListeners != null) {
+            E = resultListeners.elements();
+            while (E.hasMoreElements()) {
+                GrammarListener rl = (GrammarListener) E.nextElement();
+                rl.grammarUpdate(event);
+            }
+        }
+    }
 
 
 
@@ -216,7 +199,7 @@ public class BaseGrammar implements Grammar {
      * by dispatchSpeechEvent as a result of this action.
      */
     public void postGrammarActivated() {
-       /* SpeechEventUtilities.postSpeechEvent(
+        /* SpeechEventUtilities.postSpeechEvent(
             this,
             new GrammarEvent(this, GrammarEvent.GRAMMAR_ACTIVATED));*/
     }
@@ -226,7 +209,7 @@ public class BaseGrammar implements Grammar {
      * listeners.
      */
     protected void fireGrammarActivated(GrammarEvent event) {
-	/*if (grammarListeners == null) {
+        /*if (grammarListeners == null) {
 	    return;
         }
         Enumeration E = grammarListeners.elements();
@@ -242,7 +225,7 @@ public class BaseGrammar implements Grammar {
      * called by dispatchSpeechEvent as a result of this action.
      */
     public void postGrammarChangesCommitted() {
-     /*   SpeechEventUtilities.postSpeechEvent(
+        /*   SpeechEventUtilities.postSpeechEvent(
             this,
             new GrammarEvent(this, GrammarEvent.GRAMMAR_CHANGES_COMMITTED));*/
     }
@@ -252,7 +235,7 @@ public class BaseGrammar implements Grammar {
      * listeners.
      */
     protected void fireGrammarChangesCommitted(GrammarEvent event) {
-	/*if (grammarListeners == null) {
+        /*if (grammarListeners == null) {
 	    return;
         }
         Enumeration E = grammarListeners.elements();
@@ -268,7 +251,7 @@ public class BaseGrammar implements Grammar {
      * by dispatchSpeechEvent as a result of this action.
      */
     public void postGrammarDeactivated() {
-     /*  SpeechEventUtilities.postSpeechEvent(
+        /*  SpeechEventUtilities.postSpeechEvent(
             this,
             new GrammarEvent(this, GrammarEvent.GRAMMAR_DEACTIVATED));*/
     }
@@ -278,7 +261,7 @@ public class BaseGrammar implements Grammar {
      * listeners.
      */
     protected void fireGrammarDeactivated(GrammarEvent event) {
-	/*if (grammarListeners == null) {
+        /*if (grammarListeners == null) {
 	    return;
         }
         Enumeration E = grammarListeners.elements();
@@ -287,20 +270,20 @@ public class BaseGrammar implements Grammar {
             gl.grammarDeactivated(event);
         }*/
     }
-//////////////////////
-// End utility methods for sending GrammarEvents
-//////////////////////
+    //////////////////////
+    // End utility methods for sending GrammarEvents
+    //////////////////////
 
-//////////////////////
-// Begin utility methods for sending ResultEvents
-//////////////////////
+    //////////////////////
+    // Begin utility methods for sending ResultEvents
+    //////////////////////
     /**
      * Utility function to generate AUDIO_RELEASED event and post it
      * to the event queue.  Eventually fireAudioReleased will be called
      * by dispatchSpeechEvent as a result of this action.
      */
     public void postAudioReleased(Result result) {
-       /* SpeechEventUtilities.postSpeechEvent(
+        /* SpeechEventUtilities.postSpeechEvent(
             this,
             new ResultEvent(result, ResultEvent.AUDIO_RELEASED));*/
     }
@@ -310,7 +293,7 @@ public class BaseGrammar implements Grammar {
      * listeners.
      */
     public void fireAudioReleased(ResultEvent event) {
-     /*   Enumeration E;
+        /*   Enumeration E;
 	if (resultListeners != null) {
             E = resultListeners.elements();
             while (E.hasMoreElements()) {
@@ -326,7 +309,7 @@ public class BaseGrammar implements Grammar {
      * by dispatchSpeechEvent as a result of this action.
      */
     public void postGrammarFinalized(Result result) {
-      /*  SpeechEventUtilities.postSpeechEvent(
+        /*  SpeechEventUtilities.postSpeechEvent(
             this,
             new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED));*/
     }
@@ -336,7 +319,7 @@ public class BaseGrammar implements Grammar {
      * listeners.
      */
     public void fireGrammarFinalized(ResultEvent event) {
-     /*   Enumeration E;
+        /*   Enumeration E;
 	if (resultListeners != null) {
             E = resultListeners.elements();
             while (E.hasMoreElements()) {
@@ -352,7 +335,7 @@ public class BaseGrammar implements Grammar {
      * by dispatchSpeechEvent as a result of this action.
      */
     public void postResultAccepted(Result result) {
-       /* SpeechEventUtilities.postSpeechEvent(
+        /* SpeechEventUtilities.postSpeechEvent(
             this,
             new ResultEvent(result, ResultEvent.RESULT_ACCEPTED));*/
     }
@@ -362,7 +345,7 @@ public class BaseGrammar implements Grammar {
      * listeners.
      */
     public void fireResultAccepted(ResultEvent event) {
-      /*  Enumeration E;
+        /*  Enumeration E;
 	if (resultListeners != null) {
             E = resultListeners.elements();
             while (E.hasMoreElements()) {
@@ -378,7 +361,7 @@ public class BaseGrammar implements Grammar {
      * by dispatchSpeechEvent as a result of this action.
      */
     public void postResultCreated(Result result) {
-    /*    SpeechEventUtilities.postSpeechEvent(
+        /*    SpeechEventUtilities.postSpeechEvent(
             this,
             new ResultEvent(result, ResultEvent.RESULT_CREATED));*/
     }
@@ -388,7 +371,7 @@ public class BaseGrammar implements Grammar {
      * listeners.
      */
     public void fireResultCreated(ResultEvent event) {
-    /*    Enumeration E;
+        /*    Enumeration E;
 	if (resultListeners != null) {
             E = resultListeners.elements();
             while (E.hasMoreElements()) {
@@ -404,7 +387,7 @@ public class BaseGrammar implements Grammar {
      * by dispatchSpeechEvent as a result of this action.
      */
     public void postResultRejected(Result result) {
-     /*   SpeechEventUtilities.postSpeechEvent(
+        /*   SpeechEventUtilities.postSpeechEvent(
             this,
             new ResultEvent(result, ResultEvent.RESULT_REJECTED));*/
     }
@@ -414,7 +397,7 @@ public class BaseGrammar implements Grammar {
      * listeners.
      */
     public void fireResultRejected(ResultEvent event) {
-     /*   Enumeration E;
+        /*   Enumeration E;
 	if (resultListeners != null) {
             E = resultListeners.elements();
             while (E.hasMoreElements()) {
@@ -430,7 +413,7 @@ public class BaseGrammar implements Grammar {
      * by dispatchSpeechEvent as a result of this action.
      */
     public void postResultUpdated(Result result) {
-     /*   SpeechEventUtilities.postSpeechEvent(
+        /*   SpeechEventUtilities.postSpeechEvent(
             this,
             new ResultEvent(result, ResultEvent.RESULT_UPDATED));*/
     }
@@ -440,7 +423,7 @@ public class BaseGrammar implements Grammar {
      * listeners.
      */
     public void fireResultUpdated(ResultEvent event) {
-      /*  Enumeration E;
+        /*  Enumeration E;
 	if (resultListeners != null) {
             E = resultListeners.elements();
             while (E.hasMoreElements()) {
@@ -456,7 +439,7 @@ public class BaseGrammar implements Grammar {
      * by dispatchSpeechEvent as a result of this action.
      */
     public void postTrainingInfoReleased(Result result) {
-       /* SpeechEventUtilities.postSpeechEvent(
+        /* SpeechEventUtilities.postSpeechEvent(
             this,
             new ResultEvent(result, ResultEvent.TRAINING_INFO_RELEASED));*/
     }
@@ -466,7 +449,7 @@ public class BaseGrammar implements Grammar {
      * listeners.
      */
     public void fireTrainingInfoReleased(ResultEvent event) {
-     /*   Enumeration E;
+        /*   Enumeration E;
 	if (resultListeners != null) {
             E = resultListeners.elements();
             while (E.hasMoreElements()) {
@@ -475,19 +458,5 @@ public class BaseGrammar implements Grammar {
             }
         }*/
     }
-//////////////////////
-// End utility methods for sending ResultEvents
-//////////////////////
-
-//////////////////////
-// NON-JSAPI METHODS
-//////////////////////
-    /**
-     * Set the name of this Grammar.
-     */
-    /*public void setName(String name) {
-        myName = name;
-    }*/
-
 }
 

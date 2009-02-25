@@ -10,7 +10,6 @@ import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
 import javax.speech.EngineEvent;
 import javax.speech.EngineException;
-import javax.speech.EngineListener;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.synthesis.PhoneInfo;
@@ -26,6 +25,7 @@ import javax.speech.synthesis.SynthesizerProperties;
 
 import org.jvoicexml.jsapi2.BaseEngine;
 import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
 
 /**
  * <p>

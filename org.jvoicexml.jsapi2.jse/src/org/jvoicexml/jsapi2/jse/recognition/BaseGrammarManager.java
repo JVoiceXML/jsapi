@@ -26,13 +26,7 @@ import javax.speech.recognition.Rule;
 import javax.speech.recognition.GrammarEvent;
 
 /**
- * <p>Title: JSAPI2</p>
- *
- * <p>Description JSAPI2 wrapper</p>
- *
- * <p>Copyright: Copyright (c) 2008</p>
- *
- * <p>Company: VoiceInteraction</p>
+ * A base implementation of a {@link GrammarManager}.
  *
  * @author Renato Cassaca
  * @version 1.0
@@ -52,12 +46,12 @@ public class BaseGrammarManager implements GrammarManager {
     private final BaseRecognizer recognizer;
 
     /**
-     * Constructor that associates a Recognizer
+     * Constructor that associates a Recognizer.
      * with a GrammarManager
      *
      * @param recognizer BaseRecognizer
      */
-    public BaseGrammarManager(BaseRecognizer recognizer) {
+    public BaseGrammarManager(final BaseRecognizer recognizer) {
         grammarListeners = new ArrayList<GrammarListener>();
         grammars = new HashMap<String, Grammar>();
         grammarMask = GrammarEvent.DEFAULT_MASK;
@@ -66,7 +60,7 @@ public class BaseGrammarManager implements GrammarManager {
 
     /**
      * Constructor that allows to use a GrammarManager in
-     * standalone mode
+     * standalone mode.
      */
     public BaseGrammarManager() {
         this(null);

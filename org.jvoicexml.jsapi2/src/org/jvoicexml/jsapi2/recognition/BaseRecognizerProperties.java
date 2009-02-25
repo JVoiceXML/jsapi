@@ -19,7 +19,14 @@ import org.jvoicexml.jsapi2.BaseEngineProperties;
 
 /**
  * Base implementation of {@link RecognizerProperties}.
- * @author lyncher
+ *
+ * <p>
+ * Actual JSAPI2 implementations may want to override this class to
+ * apply the settings to the recognizer.
+ * </p>
+
+ * @author Renato Cassaca
+ * @author Dirk Schnelle-Walka
  * @version 1.0
  */
 public class BaseRecognizerProperties
