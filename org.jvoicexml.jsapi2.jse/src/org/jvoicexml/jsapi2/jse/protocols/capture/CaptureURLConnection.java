@@ -21,7 +21,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.UnknownServiceException;
-import java.util.Map;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -49,9 +48,11 @@ public class CaptureURLConnection extends URLConnection {
     /** The audio format to use. */
     private AudioFormat audioFormat;
 
-    /** Mapping between deviceNames and lines opened. */
-    private static Map<String, TargetDataLine> openLines
-        = new java.util.Hashtable<String, TargetDataLine>();
+    /** The current line. */
+    private TargetDataLine line;
+
+    /** The audio input stream. */
+    private AudioInputStream inputStream;
 
     /**
      * Constructs a new object.
@@ -72,6 +73,27 @@ public class CaptureURLConnection extends URLConnection {
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * Closes any open line.
+     */
+    protected void finalize() throws Throwable {
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException ignore) {
+            }
+            inputStream = null;
+        }
+        if (line != null) {
+            if (line.isOpen()) {
+                line.close();
+            }
+            line = null;
+        }
+    }
+
+    /**
      * Opens a communications link to the resource referenced by this URL, if
      * such a connection has not already been established.
      *
@@ -80,32 +102,25 @@ public class CaptureURLConnection extends URLConnection {
      * @todo Implement this java.net.URLConnection method
      */
     public synchronized void connect() throws IOException {
+        if (connected) {
+            return;
+        }
 
-        // Checks if line has already been opened
-        TargetDataLine line = openLines.get(deviceName);
+        // Get the mixer info associated with the device name
+        line = getLine();
         if (line == null) {
+            throw new IOException("Cannot open line with required format: "
+                    + getAudioFormat());
+        }
 
-            // Get the mixer info associated with the device name
-            line = getLine();
-            if (line == null) {
-                throw new IOException("Cannot open line with required format: "
-                        + getAudioFormat());
-            }
+        // Obtain, open and start the line.
+        try {
+            line.open(audioFormat, AudioSystem.NOT_SPECIFIED);
 
-            // Obtain, open and start the line.
-            try {
-                line.open(audioFormat, AudioSystem.NOT_SPECIFIED);
-
-                // Starts the line
-                line.start();
-            } catch (LineUnavailableException ex) {
-                throw new IOException("Line is unavailable");
-            }
-
-            // Place opened line in hashtable
-            openLines.put(deviceName, line);
-        } else {
-            line.flush();
+            // Starts the line
+            line.start();
+        } catch (LineUnavailableException ex) {
+            throw new IOException("Line is unavailable");
         }
 
         // Marks this URLConnection as connected
@@ -121,8 +136,6 @@ public class CaptureURLConnection extends URLConnection {
      *            error obtaining the line.
      */
     private TargetDataLine getLine() throws IOException {
-
-        TargetDataLine line = null;
 
         if (deviceName.equals("audio")) {
             try {
@@ -208,13 +221,15 @@ public class CaptureURLConnection extends URLConnection {
      */
     public InputStream getInputStream() throws IOException {
         // Get line associated with connection
-        TargetDataLine line = openLines.get(deviceName);
         if (line == null) {
             throw new IOException("Not connected to line");
         }
 
         // Setup the input stream
-        return new AudioInputStream(line);
+        if (inputStream == null) {
+            inputStream = new AudioInputStream(line);
+        }
+        return inputStream;
     }
 
     /**
