@@ -37,13 +37,24 @@ import org.jvoicexml.jsapi2.jse.synthesis.freetts.FreeTTSEngineListFactory;
  * @author Dirk Schnelle-Walka
  *
  */
-public class InputDemo implements ResultListener {
+public final class InputDemo implements ResultListener {
     /** The synthesizer to use. */
     private Synthesizer synthesizer;
 
     /** The recognizer to use. */
     private Recognizer recognizer;
 
+    /** Locking mechanism. */
+    private final Object lock = new Object();
+
+    /** The recognition result. */
+    private Result result;
+
+    /**
+     * Working method for the demo.
+     * @throws Exception
+     *         error running the demo
+     */
     public void run() throws Exception {
         // Create a synthesizer for the default Locale.
         synthesizer = (Synthesizer)
@@ -70,12 +81,22 @@ public class InputDemo implements ResultListener {
         // Speak the intro string
         synthesizer.speak("Please say something", null);
         System.out.println("Please say something...");
+        synchronized (lock) {
+            lock.wait();
+        }
+        ResultToken[] tokens = result.getBestTokens();
+
+        for (int i = 0; i < tokens.length; i++) {
+            System.out.print(tokens[i].getText() + " ");
+        }
+        System.out.println();
     }
 
     /**
-     * @param args
+     * Starts this demo.
+     * @param args command line arguments.
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         InputDemo demo = new InputDemo();
 
         // Enable logging at all levels.
@@ -110,13 +131,10 @@ public class InputDemo implements ResultListener {
     public void resultUpdate(final ResultEvent event) {
         System.out.println(event);
         if (event.getId() == ResultEvent.RESULT_ACCEPTED) {
-            Result result = (Result) (event.getSource());
-            ResultToken tokens[] = result.getBestTokens();
-
-            for (int i = 0; i < tokens.length; i++) {
-                System.out.print(tokens[i].getText() + " ");
+            result = (Result) (event.getSource());
+            synchronized (lock) {
+                lock.notifyAll();
             }
-            System.out.println();
         } else {
 //            synthesizer.speak("I did not understand what you said", null);
         }
