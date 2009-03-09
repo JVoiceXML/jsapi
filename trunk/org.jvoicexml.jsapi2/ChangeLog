@@ -10,3 +10,4 @@ Version 0.2
 - started separation of the core classes into a common CLDC jar
 - some code cleanup
 - enhanced javadoc
+- added protocol handlers for playback and capture
