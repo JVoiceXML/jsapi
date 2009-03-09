@@ -33,8 +33,6 @@ import javax.speech.AudioManager;
 import javax.speech.Engine;
 import javax.speech.EngineStateException;
 
-import org.jvoicexml.jsapi2.jse.recognition.LineInputStream;
-
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code>
  * interface.  Actual JSAPI implementations might want to extend
