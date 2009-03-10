@@ -29,14 +29,10 @@ import com.sun.speech.freetts.VoiceManager;
  */
 
 public class FreeTTSEngineListFactory implements EngineListFactory {
-    private static final String engineName = "FreeTTS Synthesizer";
-
     /**
-     * Creates a FreeTTSEngineCentral
+     * Creates a FreeTTSEngineCentral.
      */
-    public FreeTTSEngineListFactory() throws Exception {
-        // Note that the JSAPI layer currently is silent
-        // about any exceptions thrown from here, so we are noisy here
+    public FreeTTSEngineListFactory() {
     }
 
     /**
@@ -71,12 +67,12 @@ public class FreeTTSEngineListFactory implements EngineListFactory {
      * </ul>
      *
      * @param require  an engine mode that describes the desired
-     * 			synthesizer
+     *          synthesizer
      *
      * @return an engineList containing matching engines, or null if
-     *		no matching engines are found
+     *          no matching engines are found
      */
-    public EngineList createEngineList(EngineMode require) {
+    public EngineList createEngineList(final EngineMode require) {
         // Must be a synthesizer.
         if (!(require instanceof SynthesizerMode)) {
             return null;
@@ -100,15 +96,17 @@ public class FreeTTSEngineListFactory implements EngineListFactory {
             dlentry.addVoice(voices[i]);
         }
 
-        //SynthesizerModes that will be create from combinig domain/locale with voice names
-        Vector<FreeTTSSynthesizerMode> synthesizerModes = new Vector<FreeTTSSynthesizerMode>();
+        // SynthesizerModes that will be create from combinig domain/locale with
+        // voice names
+        Vector<FreeTTSSynthesizerMode> synthesizerModes =
+            new Vector<FreeTTSSynthesizerMode>();
 
         // build list of SynthesizerModeDesc's for each domain/locale
         // combination
         for (int i = 0; i < domainLocaleVector.size(); i++) {
             DomainLocale dl = (DomainLocale) domainLocaleVector.get(i);
 
-            Vector<FreeTTSVoice> modeVoices = new Vector<FreeTTSVoice> ();
+            Vector<FreeTTSVoice> modeVoices = new Vector<FreeTTSVoice>();
 
             // iterate through the voices in a different order
             voices = dl.getVoices();
@@ -130,8 +128,7 @@ public class FreeTTSEngineListFactory implements EngineListFactory {
         final EngineList el;
         if (synthesizerModes.size() == 0) {
             el = null;
-        }
-        else {
+        } else {
             el = new EngineList(synthesizerModes.toArray(new EngineMode[]{}));
         }
         return el;
@@ -146,7 +143,7 @@ public class FreeTTSEngineListFactory implements EngineListFactory {
      *
      * @return the item if it exists in the vector, else null
      */
-    private Object getItem(Vector vector, Object o) {
+    private Object getItem(final Vector vector, final Object o) {
         for (int i = 0; i < vector.size(); i++) {
             if (vector.get(i).equals(o)) {
                 return vector.get(i);
@@ -156,79 +153,3 @@ public class FreeTTSEngineListFactory implements EngineListFactory {
     }
 }
 
-
-/**
- * Used to be able to generate a list of voices based on unique
- * combinations of domain/locale pairs.
- */
-class DomainLocale {
-    private String domain;
-    private Locale locale;
-    private Vector voices;
-
-    /**
-     * Constructor
-     *
-     * @param domain the domain to use
-     * @param locale the locale to use
-     */
-    public DomainLocale(String domain, Locale locale) {
-        this.domain = domain;
-        this.locale = locale;
-        this.voices = new Vector();
-    }
-
-    /**
-     * See if two DomainLocale objects are equal.
-     * The voices are NOT compared.
-     *
-     * @param o, the object to compare to
-     *
-     * @return true if the domain and locale are both equal, else
-     * false
-     */
-    public boolean equals(Object o) {
-        if (! (o instanceof DomainLocale)) {
-            return false;
-        }
-        return (domain.equals(((DomainLocale) o).getDomain())
-                && locale.equals(((DomainLocale) o).getLocale()));
-    }
-
-    /**
-     * Gets the domain.
-     * @return the domain
-     */
-    public String getDomain() {
-        return domain;
-    }
-
-    /**
-     * Gets the locale.
-     * @return the locale
-     */
-    public Locale getLocale() {
-        return locale;
-    }
-
-    /**
-     * Adds a voice to this instance.
-     *
-     * @param voice the voice to add
-     */
-    public void addVoice(com.sun.speech.freetts.Voice voice) {
-        voices.add(voice);
-    }
-
-    /**
-     * Gets the voices of this instance.
-     *
-     * @return all of the voices that have been added to this
-     * instance.
-     */
-    public com.sun.speech.freetts.Voice[] getVoices() {
-        com.sun.speech.freetts.Voice[] voiceArray =
-            new com.sun.speech.freetts.Voice[voices.size()];
-        return (com.sun.speech.freetts.Voice[]) voices.toArray(voiceArray);
-    }
-}

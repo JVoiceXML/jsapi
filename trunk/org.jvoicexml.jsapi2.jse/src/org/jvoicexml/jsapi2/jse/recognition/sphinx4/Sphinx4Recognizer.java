@@ -43,7 +43,7 @@ import javax.speech.recognition.RuleGrammar;
 
 import javax.sound.sampled.AudioFormat;
 
-import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.jse.recognition.GrammarDefinition;
 
@@ -128,7 +128,7 @@ final class Sphinx4Recognizer extends BaseRecognizer {
             ex.printStackTrace();
         }
 
-        ((BaseAudioManager)getAudioManager()).setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, true));
+        ((JseBaseAudioManager)getAudioManager()).setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, true));
         resultListener = new Sphinx4ResultListener(this);
     }
 
@@ -200,7 +200,7 @@ final class Sphinx4Recognizer extends BaseRecognizer {
 
 
             //Get and set input
-            InputStream inputStream = ((BaseAudioManager)getAudioManager()).getInputStream();
+            InputStream inputStream = ((JseBaseAudioManager)getAudioManager()).getInputStream();
 
             ((SphinxInputDataProcessor)dataProcessor).setInputStream(inputStream);
 

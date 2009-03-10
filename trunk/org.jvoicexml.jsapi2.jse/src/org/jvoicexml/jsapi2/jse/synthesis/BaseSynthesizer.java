@@ -23,8 +23,8 @@ import javax.speech.synthesis.SynthesizerListener;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.SynthesizerProperties;
 
+import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
-import org.jvoicexml.jsapi2.jse.BaseAudioManager;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
 
 /**

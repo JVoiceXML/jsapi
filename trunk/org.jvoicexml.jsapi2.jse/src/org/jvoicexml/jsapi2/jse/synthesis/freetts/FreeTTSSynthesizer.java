@@ -12,7 +12,7 @@ import javax.speech.EngineException;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SynthesizerMode;
 
-import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
 import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer;
 
@@ -67,7 +67,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
         audioPlayer = null;
         super.setSynthesizerProperties(new FreeTTSEngineProperties(this));
 
-        ((BaseAudioManager) getAudioManager()).setEngineAudioFormat(new
+        ((JseBaseAudioManager) getAudioManager()).setEngineAudioFormat(new
                 AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000, 16, 1, 2,
                             8000, true));
     }
@@ -87,7 +87,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
         }
 
         if (ok) {
-            BaseAudioManager manager = (BaseAudioManager) getAudioManager();
+            JseBaseAudioManager manager = (JseBaseAudioManager) getAudioManager();
             audioPlayer = new FreeTTSAudioPlayer(manager);
 
             synchronized (engineStateLock) {
