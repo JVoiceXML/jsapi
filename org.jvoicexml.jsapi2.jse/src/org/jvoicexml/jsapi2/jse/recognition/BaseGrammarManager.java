@@ -1,29 +1,28 @@
 package org.jvoicexml.jsapi2.jse.recognition;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
-import javax.speech.recognition.GrammarManager;
-import javax.speech.recognition.GrammarListener;
-import javax.speech.recognition.RuleGrammar;
-import javax.speech.recognition.Grammar;
 import javax.speech.EngineException;
+import javax.speech.EngineMode;
 import javax.speech.EngineStateException;
-import javax.speech.recognition.GrammarException;
-import javax.speech.recognition.Rule;
+import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarEvent;
+import javax.speech.recognition.GrammarException;
+import javax.speech.recognition.GrammarListener;
+import javax.speech.recognition.GrammarManager;
+import javax.speech.recognition.Rule;
+import javax.speech.recognition.RuleGrammar;
 
 /**
  * A base implementation of a {@link GrammarManager}.
@@ -33,16 +32,16 @@ import javax.speech.recognition.GrammarEvent;
  */
 public class BaseGrammarManager implements GrammarManager {
 
-    //The listeners of grammar events
+    /** The listeners of grammar events. */
     protected final List<GrammarListener> grammarListeners;
 
-    //Storage of created grammars
+    /** Storage of created grammars. */
     protected final HashMap<String, Grammar> grammars;
 
-    //Mask that filter events
+    /** Mask that filter events. */
     private int grammarMask;
 
-    //Recognizer which the GrammarManager belongs
+    /** Recognizer which the GrammarManager belongs. */
     private final BaseRecognizer recognizer;
 
     /**
@@ -67,18 +66,16 @@ public class BaseGrammarManager implements GrammarManager {
     }
 
     /**
-     * Adds a new grammar listener
-     * @param listener GrammarListener
+     * {@inheritDoc}
      */
-    public void addGrammarListener(GrammarListener listener) {
+    public void addGrammarListener(final GrammarListener listener) {
         grammarListeners.add(listener);
     }
 
     /**
-     * Removes a grammar listener
-     * @param listener GrammarListener
+     * {@inheritDoc}
      */
-    public void removeGrammarListener(GrammarListener listener) {
+    public void removeGrammarListener(final GrammarListener listener) {
         grammarListeners.remove(listener);
     }
 
@@ -238,7 +235,8 @@ public class BaseGrammarManager implements GrammarManager {
 
         //Make sure that recognizer supports markup
         if (recognizer != null) {
-            if (recognizer.getEngineMode().getSupportsMarkup() == false) {
+            final EngineMode mode = recognizer.getEngineMode();
+            if (!mode.getSupportsMarkup()) {
                 throw new EngineException("Engine doesn't support markup");
             }
         }
@@ -250,7 +248,8 @@ public class BaseGrammarManager implements GrammarManager {
         Rule[] rules = srgsParser.load(grammarStream);
         if (rules != null) {
             //Initialize rule grammar
-            BaseRuleGrammar brg = new BaseRuleGrammar(recognizer, grammarReference);
+            BaseRuleGrammar brg = new BaseRuleGrammar(recognizer,
+                    grammarReference);
             brg.addRules(rules);
             brg.setAttributes(srgsParser.getAttributes());
 

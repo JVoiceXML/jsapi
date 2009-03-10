@@ -7,28 +7,29 @@
  */
 package org.jvoicexml.jsapi2.jse.recognition;
 
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
 import java.util.Vector;
 
 import javax.speech.recognition.GrammarException;
+import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleAlternatives;
+import javax.speech.recognition.RuleComponent;
 import javax.speech.recognition.RuleCount;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
+import javax.speech.recognition.RuleReference;
 import javax.speech.recognition.RuleSequence;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
 
-import javax.speech.recognition.RuleReference;
-import javax.speech.recognition.RuleComponent;
-
-import java.util.Locale;
-import java.util.Iterator;
-import java.io.StringReader;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.Comparator;
+import org.jvoicexml.jsapi2.recognition.BaseGrammar;
 
 /**
  * Implementation of javax.speech.recognition.RuleGrammar.
@@ -185,8 +186,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
             this.status = status;
         }
         public void execute() throws GrammarException {
+            final boolean activatable = isActivatable();
             if (status != activatable) {
-                activatable = status;
+                setActivatable(status);
             }
         }
     }
@@ -678,7 +680,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     /*    if (ruleName != null) {
             ruleName = stripRuleName(ruleName);
         }*/
-        return RuleParser.parse(text, recognizer.getGrammarManager(), getReference(), ruleName);
+        final Recognizer recognizer = getRecognizer();
+        return RuleParser.parse(text, recognizer.getGrammarManager(),
+                getReference(), ruleName);
     }
 
     /**
@@ -694,7 +698,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      /*   if (ruleName != null) {
             ruleName = stripRuleName(ruleName);
         }*/
-        return RuleParser.parse(tokens, recognizer.getGrammarManager(), getReference(), ruleName);
+        final Recognizer recognizer = getRecognizer();
+        return RuleParser.parse(tokens, recognizer.getGrammarManager(),
+                getReference(), ruleName);
     }
 
     /**

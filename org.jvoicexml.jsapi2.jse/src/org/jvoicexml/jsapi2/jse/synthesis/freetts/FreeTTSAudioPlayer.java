@@ -4,12 +4,11 @@ package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 
 import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
-import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 
 import com.sun.speech.freetts.audio.AudioPlayer;
 
@@ -21,15 +20,11 @@ import com.sun.speech.freetts.audio.AudioPlayer;
  * @version 1.0
  */
 public final class FreeTTSAudioPlayer implements AudioPlayer {
-    /** Logger for this class. */
-    private static final Logger LOGGER =
-            Logger.getLogger(FreeTTSAudioPlayer.class.getName());
-
     /** The collected audio data. */
     private ByteArrayOutputStream buffer;
 
     /** Reference to the audio manager. */
-    private BaseAudioManager baseAudioManager;
+    private JseBaseAudioManager baseAudioManager;
 
     /** The audio format to use. */
     private AudioFormat audioFormat;
@@ -38,7 +33,7 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
      * Constructs a new object.
      * @param manager the audio manager.
      */
-    public FreeTTSAudioPlayer(final BaseAudioManager manager) {
+    public FreeTTSAudioPlayer(final JseBaseAudioManager manager) {
         baseAudioManager = manager;
         buffer = new ByteArrayOutputStream();
         audioFormat = baseAudioManager.getEngineAudioFormat();

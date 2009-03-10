@@ -19,13 +19,13 @@ import java.net.URLConnection;
 import javax.speech.AudioException;
 import javax.speech.EngineStateException;
 
-import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code> interface. Actual JSAPI
  * implementations might want to extend or modify this implementation.
  */
-public class BaseSynthesizerAudioManager extends BaseAudioManager {
+public class BaseSynthesizerAudioManager extends JseBaseAudioManager {
     /** The output stream from the synthesizer. */
     private OutputStream outputStream;
 

@@ -20,37 +20,21 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
-import javax.speech.AudioEvent;
 import javax.speech.AudioException;
-import javax.speech.AudioListener;
 import javax.speech.AudioManager;
-import javax.speech.Engine;
-import javax.speech.EngineStateException;
+
+import org.jvoicexml.jsapi2.BaseAudioManager;
 
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code>
  * interface.  Actual JSAPI implementations might want to extend
  * or modify this implementation.
  */
-public abstract class BaseAudioManager implements AudioManager {
-    /**
-     * List of <code>AudioListeners</code> registered for
-     * <code>AudioEvents</code> on this object.
-     */
-    protected List<AudioListener> audioListeners;
-
-    protected int audioMask;
-
-    private String mediaLocator;
-
-    protected Engine engine;
-
+public abstract class JseBaseAudioManager extends BaseAudioManager implements AudioManager {
     protected AudioInputStream ais;
 
     /**
@@ -67,9 +51,7 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * Class constructor.
      */
-    public BaseAudioManager() {
-        audioListeners = new ArrayList<AudioListener>();
-        audioMask = AudioEvent.DEFAULT_MASK;
+    public JseBaseAudioManager() {
         engineAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
                                             8000,
                                             16,
@@ -81,14 +63,6 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
-     * Sets the engine.
-     * @param value the engine.
-     */
-    public void setEngine(final Engine value) {
-        engine = value;
-    }
-
-    /**
      * Retrieves the audio format converter.
      * @return the audio format converter.
      */
@@ -97,83 +71,20 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
-     * Requests notification of <code>AudioEvents</code> from the
-     * <code>AudioManager</code>.
-     *
-     * @param listener the listener to add
-     */
-    public void addAudioListener(final AudioListener listener) {
-        synchronized (audioListeners) {
-            if (!audioListeners.contains(listener)) {
-                audioListeners.add(listener);
-            }
-        }
-    }
-
-    /**
-     * Removes an <code>AudioListener</code> from the list of
-     * <code>AudioListeners</code>.
-     *
-     * @param listener the listener to remove
-     */
-    public void removeAudioListener(final AudioListener listener) {
-        synchronized (audioListeners) {
-            audioListeners.remove(listener);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getAudioMask() {
-        return audioMask;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setAudioMask(final int mask) {
-        audioMask = mask;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void audioStart() throws SecurityException,
-            AudioException, EngineStateException {
-        final String locator = getMediaLocator();
-        if ((locator != null) && !isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
-        handleAudioStart();
-
-        postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
-    }
-
-    /**
-     * Handles further processing if the audio output has to be started by
-     * a call to {@link #audioStart()}.
-     * @throws AudioException
-     *         error stopping
-     */
-    protected abstract void handleAudioStart() throws AudioException;
-
-    /**
      * Opens the connection to the configured media locator.
      * @return opened connection
      * @throws IOException
      *         error opening the connection.
      */
     protected URLConnection openURLConnection() throws IOException {
-        if (mediaLocator == null) {
+        final String locator = getMediaLocator();
+        if (locator == null) {
             return null;
         }
 
         final URL url;
         try {
-            url = new URL(mediaLocator);
+            url = new URL(locator);
         } catch (MalformedURLException ex) {
             throw new IllegalArgumentException(ex);
         }
@@ -204,148 +115,6 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public void audioStop() throws SecurityException,
-            AudioException, EngineStateException {
-        if (!isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
-        handleAudioStop();
-
-        if (formatConverter != null) {
-            formatConverter.close();
-            formatConverter = null;
-        }
-
-        postAudioEvent(AudioEvent.AUDIO_STOPPED, AudioEvent.AUDIO_LEVEL_MIN);
-
-    }
-
-    /**
-     * Handles further processing if the audio output has to be stopped by
-     * a call to {@link #audioStop()}.
-     * @throws AudioException
-     *         error stopping
-     */
-    protected abstract void handleAudioStop() throws AudioException;
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setMediaLocator(final String locator) throws AudioException,
-            AudioException, EngineStateException, IllegalArgumentException,
-            SecurityException {
-
-        //Insure that engine is DEALLOCATED
-        if (!engine.testEngineState(Engine.DEALLOCATED)) {
-            throw new EngineStateException(
-                    "Engine is not DEALLOCATED. Cannot setMediaLocator");
-        }
-
-        if (!isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
-        }
-
-        //Insure that media locator is supported
-        if (!isSupportedMediaLocator(locator)) {
-            throw new AudioException("Unsupported locator: " + locator);
-        }
-
-        mediaLocator = locator;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getMediaLocator() {
-        return mediaLocator;
-    }
-
-    /**
-     * @todo THis is just a dummy implementation
-     *
-     * @param mediaLocator String
-     * @return String[]
-     * @throws IllegalArgumentException
-     */
-    public String[] getSupportedMediaLocators(String mediaLocator) throws
-            IllegalArgumentException {
-        return new String[] {mediaLocator};
-    }
-
-    public boolean isSupportedMediaLocator(String mediaLocator) throws
-            IllegalArgumentException {
-
-        final String[] supportedMediaLocators = getSupportedMediaLocators(
-                mediaLocator);
-
-        return supportedMediaLocators == null ? false : true;
-    }
-
-    /**
-     * Checks if audio management is supported.
-     * @return <code>true</code> if audio management is supported.
-     */
-    protected boolean isSupportsAudioManagement() {
-        final String management =
-            System.getProperty("javax.speech.supports.audio.management");
-        return Boolean.valueOf(management).equals(Boolean.TRUE);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * This implementation checks only for equal media locators.
-     */
-    public boolean isSameChannel(final AudioManager audioManager) {
-        if (audioManager == null) {
-            return false;
-        }
-        final String otherLocator = audioManager.getMediaLocator();
-        if (otherLocator == null) {
-            return mediaLocator == null;
-        }
-        return mediaLocator.equalsIgnoreCase(otherLocator);
-    }
-
-    /**
-     * Notifies all listeners about the audio event using the configures
-     * {@link javax.speech.SpeechEventExecutor}.
-     * @param eventId
-     * @param audioLevel
-     */
-    protected void postAudioEvent(final int eventId, final int audioLevel) {
-        if ((getAudioMask() & eventId) == eventId) {
-            final AudioEvent event = new AudioEvent(engine, eventId);
-
-            Runnable r = new Runnable() {
-                public void run() {
-                    fireAudioEvent(event);
-                }
-            };
-
-            try {
-                engine.getSpeechEventExecutor().execute(r);
-            } catch (RuntimeException ex) {
-                //Ignore exception
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    public void fireAudioEvent(AudioEvent event) {
-        synchronized (audioListeners) {
-            for (AudioListener listener : audioListeners) {
-                listener.audioUpdate(event);
-            }
-        }
-    }
-
-    /**
      * Retrieves the output stream associated with the given media locator.
      * @return output stream.
      */
@@ -367,11 +136,12 @@ public abstract class BaseAudioManager implements AudioManager {
         //Initialize parameters
         Map<String, String> parameters =
             new java.util.HashMap<String, String>();
-        if (mediaLocator != null) {
+        final String locator = getMediaLocator();
+        if (locator != null) {
             //Get matching URI to extract query parameters
             URI uri = null;
             try {
-                uri = new URI(mediaLocator);
+                uri = new URI(locator);
             } catch (URISyntaxException ex) {
                 ex.printStackTrace();
                 //Continue and give back a default AudioFormat
@@ -471,6 +241,19 @@ public abstract class BaseAudioManager implements AudioManager {
      */
     public AudioFormat getTargetAudioFormat() {
         return targetAudioFormat;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Closes the format converter. May be overridden to handle further cleanup.
+     */
+    @Override
+    protected void handleAudioStop() throws AudioException {
+        if (formatConverter != null) {
+            formatConverter.close();
+            formatConverter = null;
+        }
     }
 }
 

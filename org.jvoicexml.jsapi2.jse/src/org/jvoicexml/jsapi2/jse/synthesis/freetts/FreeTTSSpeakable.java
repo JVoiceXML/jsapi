@@ -1,33 +1,40 @@
+/*
+ * File:    $HeadURL$
+ * Version: $LastChangedRevision$
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy$
+ *
+ * JSAPI - An base implementation for JSR 113.
+ *
+ * Copyright (C) 2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ */
+
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
 import javax.speech.synthesis.Speakable;
 
 /**
- * <p>Title: JSAPI2Engines</p>
- *
- * <p>Description: JSAPI 2.0 Engines implementations</p>
- *
- * <p>Copyright: Copyright (c) 2007</p>
- *
- * <p>Company: INESC-ID L2F</p>
+ * A {@link Speakable} as it is used in FreeTTS.
  *
  * @author Renato Cassaca
  * @version 1.0
  */
 public class FreeTTSSpeakable implements Speakable {
-
+    /** The markup. */
     private String markup;
 
 
-    public FreeTTSSpeakable(String text) {
+    /**
+     * Constructs a new object.
+     * @param text the markup.
+     */
+    public FreeTTSSpeakable(final String text) {
         markup = text;
     }
 
     /**
-     * getMarkupText
-     *
-     * @return String
-     * @todo Implement this javax.speech.synthesis.Speakable method
+     * {@inheritDoc}
      */
     public String getMarkupText() {
         return markup;

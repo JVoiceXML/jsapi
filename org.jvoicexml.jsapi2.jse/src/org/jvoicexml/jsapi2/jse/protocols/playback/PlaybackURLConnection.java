@@ -19,6 +19,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownServiceException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -35,8 +37,11 @@ import org.jvoicexml.jsapi2.jse.protocols.JavaSoundParser;
  * @version 1.0
  */
 public class PlaybackURLConnection extends URLConnection {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(PlaybackURLConnection.class.getName());
 
-    /** Microfone access point. */
+    /** Microphone access point. */
     private SourceDataLine line;
 
     /** Write point given to clients. */
@@ -71,7 +76,10 @@ public class PlaybackURLConnection extends URLConnection {
         if (outputStream != null) {
             try {
                 outputStream.close();
-            } catch (IOException ignore) {
+            } catch (IOException e) {
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine(e.getMessage());
+                }
             }
             outputStream = null;
         }

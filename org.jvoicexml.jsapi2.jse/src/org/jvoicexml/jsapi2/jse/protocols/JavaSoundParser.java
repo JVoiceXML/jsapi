@@ -27,6 +27,12 @@ import javax.sound.sampled.AudioFormat;
  *
  */
 public final class JavaSoundParser {
+    /** The default sample rate. */
+    public static final int DEFAULT_SAMPLE_RATE = 8000;
+
+    /** Number of bits per byte. */
+    private static final int BITS_PER_BYTE = 8;
+
     /**
      * Prevent construction from outside.
      */
@@ -55,8 +61,8 @@ public final class JavaSoundParser {
 
         // Default values for AudioFormat parameters
         AudioFormat.Encoding encoding = AudioFormat.Encoding.ULAW;
-        float sampleRate = 8000;
-        int bits = 8;
+        float sampleRate = DEFAULT_SAMPLE_RATE;
+        int bits = BITS_PER_BYTE;
         int channels = 1;
         boolean endian = true;
         boolean signed = true;
@@ -70,8 +76,11 @@ public final class JavaSoundParser {
         final String encodingStr = parameters.get("encoding");
         if (encodingStr != null) {
             if (encodingStr.equals("pcm")) {
-                encoding = (signed == true ? AudioFormat.Encoding.PCM_SIGNED
-                        : AudioFormat.Encoding.PCM_UNSIGNED);
+                if (signed) {
+                    encoding = AudioFormat.Encoding.PCM_SIGNED;
+                } else {
+                    encoding = AudioFormat.Encoding.PCM_UNSIGNED;
+                }
             } else if (encodingStr.equals("alaw")) {
                 encoding = AudioFormat.Encoding.ALAW;
             } else if (encodingStr.equals("ulaw")) {
@@ -108,6 +117,6 @@ public final class JavaSoundParser {
 
         // Construct the AudioFormat
         return new AudioFormat(encoding, sampleRate,
-                bits, channels, bits / 8, sampleRate, endian);
+                bits, channels, bits / BITS_PER_BYTE, sampleRate, endian);
     }
 }

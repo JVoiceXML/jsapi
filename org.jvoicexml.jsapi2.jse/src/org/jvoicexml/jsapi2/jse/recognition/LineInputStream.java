@@ -14,7 +14,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
-import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 
 /**
  * An {@link InputStream} that reads the d^^ata from the microphone.
@@ -30,13 +30,13 @@ public final class LineInputStream extends InputStream {
     private TargetDataLine line;
 
     /** The audio manager to use. */
-    private final BaseAudioManager manager;
+    private final JseBaseAudioManager manager;
 
     /**
      * Constructs a new object.
      * @param audioManager the audio manger
      */
-    public LineInputStream(final BaseAudioManager audioManager) {
+    public LineInputStream(final JseBaseAudioManager audioManager) {
         manager = audioManager;
     }
 

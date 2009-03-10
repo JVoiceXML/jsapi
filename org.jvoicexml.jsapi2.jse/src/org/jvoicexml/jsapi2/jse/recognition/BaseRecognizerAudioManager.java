@@ -20,13 +20,13 @@ import javax.speech.AudioException;
 import javax.speech.EngineStateException;
 
 import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
-import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code> interface. Actual JSAPI
  * implementations might want to extend or modify this implementation.
  */
-public class BaseRecognizerAudioManager extends BaseAudioManager {
+public class BaseRecognizerAudioManager extends JseBaseAudioManager {
     /** The input stream for the recognizer. */
     private InputStream inputStream;
 

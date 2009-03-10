@@ -42,7 +42,7 @@ import javax.speech.synthesis.SpeakableListener;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerEvent;
 
-import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
 
 /**
@@ -204,8 +204,8 @@ public class QueueManager implements Runnable {
             item = getQueueItemToPlay();
 
             //Update audio descriptor
-            final BaseAudioManager manager =
-                (BaseAudioManager) synthesizer.getAudioManager();
+            final JseBaseAudioManager manager =
+                (JseBaseAudioManager) synthesizer.getAudioManager();
             audioFormat = manager.getTargetAudioFormat();
             sampleRate = audioFormat.getSampleRate();
 

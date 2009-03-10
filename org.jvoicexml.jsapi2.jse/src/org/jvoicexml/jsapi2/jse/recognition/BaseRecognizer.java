@@ -71,8 +71,9 @@ import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.SpeakerManager;
 
+import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
-import org.jvoicexml.jsapi2.jse.BaseAudioManager;
+import org.jvoicexml.jsapi2.recognition.BaseGrammar;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizerProperties;
 
 
@@ -159,8 +160,9 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         }
 
         // Do nothing if the state is already OK
-        if (testEngineState(FOCUSED))
+        if (testEngineState(FOCUSED)) {
             return;
+        }
 
         long[] states = setEngineState(DEFOCUSED, FOCUSED);
         postEngineEvent(states[0], states[1], EngineEvent.ENGINE_FOCUSED);
@@ -182,8 +184,9 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             }
         }
 
-        if (testEngineState(DEFOCUSED))
+        if (testEngineState(DEFOCUSED)) {
             return;
+        }
 
         long[] states = setEngineState(FOCUSED, DEFOCUSED);
         postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEFOCUSED);
@@ -223,27 +226,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
         }
 
-    }
-
-    /**
-     * Determine if the given Grammar is active.  This is a combination
-     * of the enabled state and activation modes of the Grammar as well
-     * as the current focus state of the recognizer.  NOT JSAPI.
-     */
-    protected boolean isActive(Grammar grammar) {
-        //[[[WDW - check engineState?]]]
-        if (!grammar.isActivatable()) {
-            return false;
-        } else if (grammar.getActivationMode() == Grammar.ACTIVATION_GLOBAL) {
-            return true;
-        } else if (testEngineState(FOCUSED)) {
-            if (grammar.getActivationMode() == Grammar.ACTIVATION_MODAL) {
-                return true;
-            } else if (!hasModalGrammars) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -326,7 +308,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
                     null,
                     audioPosition);
             postEngineEvent(event);
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.warning(e.getLocalizedMessage());
         }
     }
@@ -451,19 +433,16 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         //Raise proper events
         if (existChanges) {
             if (setGrammarsResult) {
-                postEngineEvent(PAUSED, RESUMED, RecognizerEvent.CHANGES_COMMITTED);
-                final SpeechEventExecutor executor = getSpeechEventExecutor();
+                postEngineEvent(PAUSED, RESUMED,
+                        RecognizerEvent.CHANGES_COMMITTED);
                 for (int i = 0; i < grammars.length; i++) {
-                    ((BaseGrammar) grammars[i]).postGrammarEvent(executor,
-                            new
-                            GrammarEvent(grammars[i], GrammarEvent.GRAMMAR_CHANGES_COMMITTED, false, false, null));
+                    final BaseGrammar baseGrammar = (BaseGrammar) grammars[i];
+                    baseGrammar.postGrammarChangesCommitted();
                 }
             } else {
-                final SpeechEventExecutor executor = getSpeechEventExecutor();
                 for (int i = 0; i < grammars.length; i++) {
-                    ((BaseGrammar) grammars[i]).postGrammarEvent(executor,
-                            new
-                            GrammarEvent(grammars[i], GrammarEvent.GRAMMAR_CHANGES_REJECTED, false, false, null));
+                    final BaseGrammar baseGrammar = (BaseGrammar) grammars[i];
+                    baseGrammar.postGrammarChangesRejected();
                 }
             }
         }

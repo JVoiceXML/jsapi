@@ -1,3 +1,15 @@
+/*
+ * File:    $HeadURL$
+ * Version: $LastChangedRevision$
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy$
+ *
+ * JSAPI - An base implementation for JSR 113.
+ *
+ * Copyright (C) 2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ */
+
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
 /**
@@ -20,8 +32,6 @@ public class FreeTTSVoice extends javax.speech.synthesis.Voice {
      * 
      * @param freettsVoice
      *                the freetts voice
-     * @param validatorName
-     *                the classname of the validator to use
      */
     public FreeTTSVoice(com.sun.speech.freetts.Voice voice) {
         super(voice.getLocale(), voice.getName(),
