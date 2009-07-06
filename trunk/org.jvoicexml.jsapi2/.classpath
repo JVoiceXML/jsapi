@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="unittests"/>
-	<classpathentry kind="con" path="J2MELIB"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/javax.speech"/>
-	<classpathentry exported="true" kind="lib" path="3rdparty/jsapi2/lib/jsapi2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="con" path="org.elipse.mtj.JavaMEContainer/Sun Java(TM) Wireless Toolkit 2.5.2_01 for CLDC/MediaControlSkin"/>
+	<classpathentry kind="lib" path="3rdparty/jsapi2/lib/jsr113.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

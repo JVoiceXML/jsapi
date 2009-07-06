@@ -154,7 +154,7 @@ public abstract class BaseAudioManager implements AudioManager {
             AudioException, EngineStateException, IllegalArgumentException,
             SecurityException {
 
-        //Insure that engine is DEALLOCATED
+        // Ensure that engine is DEALLOCATED
         if (!engine.testEngineState(Engine.DEALLOCATED)) {
             throw new EngineStateException(
                     "Engine is not DEALLOCATED. Cannot setMediaLocator");
@@ -165,7 +165,7 @@ public abstract class BaseAudioManager implements AudioManager {
                     "AudioManager has no permission to access audio resources");
         }
 
-        //Insure that media locator is supported
+        // Ensure that media locator is supported
         if (!isSupportedMediaLocator(locator)) {
             throw new AudioException("Unsupported locator: " + locator);
         }
