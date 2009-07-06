@@ -45,15 +45,14 @@
  */
 package org.jvoicexml.jsapi2;
 
-import javax.speech.EngineProperties;
-import javax.speech.SpeechEventExecutor;
-
 import java.util.Enumeration;
 import java.util.Vector;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import javax.speech.Engine;
+import javax.speech.EngineProperties;
+import javax.speech.EnginePropertyEvent;
+import javax.speech.EnginePropertyListener;
+import javax.speech.SpeechEventExecutor;
 
 /**
  * Supports the JSAPI 2.0 <code>EngineProperties</code>
@@ -149,8 +148,8 @@ public abstract class BaseEngineProperties implements EngineProperties {
     /**
      * {@inheritDoc}
      */
-    public void addPropertyChangeListener(
-            final PropertyChangeListener listener) {
+    public void addEnginePropertyListener(
+            final EnginePropertyListener listener) {
         if (!propertyChangeListeners.contains(listener)) {
             propertyChangeListeners.addElement(listener);
         }
@@ -159,8 +158,8 @@ public abstract class BaseEngineProperties implements EngineProperties {
     /**
      * {@inheritDoc}
      */
-    public void removePropertyChangeListener(
-            final PropertyChangeListener listener) {
+    public void removeEnginePropertyListener(
+            final EnginePropertyListener listener) {
         propertyChangeListeners.removeElement(listener);
     }
 
@@ -190,7 +189,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
             return;
         }
 
-        final PropertyChangeEvent event = new PropertyChangeEvent(this,
+        final EnginePropertyEvent event = new EnginePropertyEvent(this,
                 propName,
                 oldValue,
                 newValue);
@@ -220,12 +219,12 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * @see #firePropertyChangeEvent
      * @see #dispatchSpeechEvent
      */
-    public void firePropertyChangeEvent(final PropertyChangeEvent event) {
-        Enumeration e = propertyChangeListeners.elements();
+    public void firePropertyChangeEvent(final EnginePropertyEvent event) {
+        final Enumeration e = propertyChangeListeners.elements();
         while (e.hasMoreElements()) {
-            PropertyChangeListener listener =
-                (PropertyChangeListener) e.nextElement();
-            listener.propertyChange(event);
+            final EnginePropertyListener listener =
+                (EnginePropertyListener) e.nextElement();
+            listener.propertyUpdate(event);
         }
     }
 }
