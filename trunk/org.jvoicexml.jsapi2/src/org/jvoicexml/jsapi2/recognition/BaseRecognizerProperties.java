@@ -327,4 +327,12 @@ public class BaseRecognizerProperties
                                 new Boolean(value));
         trainingProvided = value;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean setProperty(String propName, Object value) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
