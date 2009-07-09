@@ -248,4 +248,9 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
         }
     }
 
+    protected boolean setProperty(String propName, Object value) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
