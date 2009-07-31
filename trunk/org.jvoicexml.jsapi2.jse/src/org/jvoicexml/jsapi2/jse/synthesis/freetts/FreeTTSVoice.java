@@ -12,6 +12,10 @@
 
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
+import java.util.Locale;
+
+import javax.speech.SpeechLocale;
+
 /**
  * Copyright 2003 Sun Microsystems, Inc.
  *
@@ -34,13 +38,28 @@ public class FreeTTSVoice extends javax.speech.synthesis.Voice {
      *                the freetts voice
      */
     public FreeTTSVoice(com.sun.speech.freetts.Voice voice) {
-        super(voice.getLocale(), voice.getName(),
+        super(toSpeechLocale(voice.getLocale()), voice.getName(),
                 genderToInt(voice.getGender()), ageToInt(voice
                         .getAge()), VARIANT_DONT_CARE);
 
         freettsVoice = voice;
 
         // voiceId = freettsVoice.getName()+Math.random();
+    }
+
+    /**
+     * Converts the given {@link Locale} to a {@link SpeechLocale}.
+     * @param locale the locale to convert
+     * @return the converted speech locale
+     */
+    private static SpeechLocale toSpeechLocale(Locale locale) {
+        if (locale == null) {
+            return null;
+        }
+        final String language = locale.getLanguage();
+        final String country = locale.getCountry();
+        final String variant = locale.getVariant();
+        return new SpeechLocale(language, country, variant);
     }
 
     /**

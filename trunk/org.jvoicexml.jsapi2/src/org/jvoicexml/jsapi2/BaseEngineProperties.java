@@ -6,42 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007 JVoiceXML group - http://jvoicexml.sourceforge.net
- *
- * This class is based on work by SUN Microsystems and
- * Carnegie Mellon University
- *
- * Copyright 1998-2003 Sun Microsystems, Inc.
- *
- * Portions Copyright 2001-2004 Sun Microsystems, Inc.
- * Portions Copyright 1999-2001 Language Technologies Institute,
- * Carnegie Mellon University.
- * All Rights Reserved.  Use is subject to license terms.
- *
- * Permission is hereby granted, free of charge, to use and distribute
- * this software and its documentation without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of this work, and to
- * permit persons to whom this work is furnished to do so, subject to
- * the following conditions:
- *
- * 1. The code must retain the above copyright notice, this list of
- *    conditions and the following disclaimer.
- * 2. Any modifications must be clearly marked as such.
- * 3. Original authors' names are not deleted.
- * 4. The authors' names are not used to endorse or promote products
- *    derived from this software without specific prior written
- *   permission.
- *
- * SUN MICROSYSTEMS, INC., CARNEGIE MELLON UNIVERSITY AND THE
- * CONTRIBUTORS TO THIS WORK DISCLAIM ALL WARRANTIES WITH REGARD TO THIS
- * SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS, IN NO EVENT SHALL SUN MICROSYSTEMS, INC., CARNEGIE MELLON
- * UNIVERSITY NOR THE CONTRIBUTORS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
- * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
- * USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
  */
 
 package org.jvoicexml.jsapi2;
@@ -62,9 +27,25 @@ import javax.speech.SpeechEventExecutor;
  * Actual JSAPI 2 implementations may want to override this class to apply the
  * settings to the engine.
  * </p>
- * 
+ *
+ * <p>
+ * Engines are requested to implement the
+ * {@link EnginePropertyChangeRequestListener} interface and register
+ * to this object via the
+ * {@link #addEnginePropertyChangeRequestListener(EnginePropertyChangeRequestListener)}
+ * method to get notifications about change requests-
+ * Properties are not set directly. Instead the
+ * {@link EnginePropertyChangeRequestListener} is notified about a change
+ * request.
+ * Once a requested property
+ * is changed the engine must call the callback method
+ * {@link #commitPropertyChange(String, Object, Object)} to have all
+ * registered {@link EnginePropertyListener}s notified about the change.
+ * </p>
+ *
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
+ * @version $Revision$
  */
 public abstract class BaseEngineProperties implements EngineProperties {
     /** Name of the base property in events. */
@@ -77,13 +58,13 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * List of <code>PropertyChangeListeners</code> registered for
      * <code>PropertyChangeEvents</code> on this object.
      */
-    protected Vector propertyChangeListeners;
+    private final Vector propertyChangeListeners;
 
     /**
      * List of {@link EnginePropertyChangeRequestListener} registered for
      * {@link EnginePropertyChangeRequestEvent} on this object.
      */
-    private Vector propertyChangeRequestListeners;
+    private final Vector propertyChangeRequestListeners;
 
     /** The engine for which these properties apply. */
     private final Engine engine;
@@ -105,7 +86,10 @@ public abstract class BaseEngineProperties implements EngineProperties {
      */
     protected BaseEngineProperties(final Engine eng) {
         propertyChangeListeners = new Vector();
+        propertyChangeRequestListeners = new Vector();
         engine = eng;
+        priority = EngineProperties.NORM_TRUSTED_PRIORITY;
+        base = "";
     }
 
     /**
@@ -113,7 +97,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * 
      * @return the engine
      */
-    protected Engine getEngine() {
+    protected final Engine getEngine() {
         return engine;
     }
 
@@ -160,7 +144,8 @@ public abstract class BaseEngineProperties implements EngineProperties {
     /**
      * {@inheritDoc}
      */
-    public void addEnginePropertyListener(final EnginePropertyListener listener) {
+    public void addEnginePropertyListener(
+            final EnginePropertyListener listener) {
         if (!propertyChangeListeners.contains(listener)) {
             propertyChangeListeners.addElement(listener);
         }
@@ -227,8 +212,8 @@ public abstract class BaseEngineProperties implements EngineProperties {
     }
 
     /**
-     * Must be overwritten to set engine specific properties after the values
-     * are applied to the engine.
+     * Must be overwritten to set engine specific properties which are not
+     * covered by the standard after the values are applied to the engine.
      * @param propName name of the property
      * @param value value to set
      * @return <code>true</code> if the value has been set.
@@ -247,14 +232,15 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * @param newValue
      *            requested value of the property
      */
-    private void postPropertyChangeRequestEvent(final String propName,
+    protected void postPropertyChangeRequestEvent(final String propName,
             final Object oldValue, final Object newValue) {
-        final EnginePropertyChangeRequestEvent event = new EnginePropertyChangeRequestEvent(
+        final EnginePropertyChangeRequestEvent event =
+            new EnginePropertyChangeRequestEvent(
                 this, propName, oldValue, newValue);
         final Enumeration e = propertyChangeRequestListeners.elements();
         while (e.hasMoreElements()) {
-            final EnginePropertyChangeRequestListener listener = (EnginePropertyChangeRequestListener) e
-                    .nextElement();
+            final EnginePropertyChangeRequestListener listener
+                = (EnginePropertyChangeRequestListener) e.nextElement();
             listener.propertyChangeRequest(event);
         }
     }

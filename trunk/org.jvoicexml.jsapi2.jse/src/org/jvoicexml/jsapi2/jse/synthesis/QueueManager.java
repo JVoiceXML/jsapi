@@ -428,7 +428,7 @@ public class QueueManager implements Runnable {
                 final BaseSynthesizerProperties properties =
                     (BaseSynthesizerProperties)
                         synthesizer.synthesizerProperties;
-                properties.commitPropertiesChanges();
+//                properties.commitPropertiesChanges();
 
                 final Object itemSource = item.getSource();
                 if (itemSource instanceof String) {

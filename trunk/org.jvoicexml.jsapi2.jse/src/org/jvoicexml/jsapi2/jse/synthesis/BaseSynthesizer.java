@@ -148,15 +148,15 @@ public abstract class BaseSynthesizer extends BaseEngine
      */
     public void fireSpeakableEvent(SpeakableEvent event,
             SpeakableListener extraSpeakableListener) {
-        Enumeration E;
-
-        if (extraSpeakableListener != null)
+        if (extraSpeakableListener != null) {
             extraSpeakableListener.speakableUpdate(event);
+        }
 
         if (speakableListeners != null) {
-            E = speakableListeners.elements();
-            while (E.hasMoreElements()) {
-                SpeakableListener sl = (SpeakableListener) E.nextElement();
+            final Enumeration e = speakableListeners.elements();
+            while (e.hasMoreElements()) {
+                final SpeakableListener sl =
+                    (SpeakableListener) e.nextElement();
                 sl.speakableUpdate(event);
             }
         }
@@ -170,8 +170,9 @@ public abstract class BaseSynthesizer extends BaseEngine
     }
 
     public void addSpeakableListener(SpeakableListener listener) {
-        if (!speakableListeners.contains(listener))
+        if (!speakableListeners.contains(listener)) {
             speakableListeners.addElement(listener);
+        }
     }
 
     public void removeSpeakableListener(SpeakableListener listener) {

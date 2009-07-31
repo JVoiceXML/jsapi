@@ -19,13 +19,13 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
- * Test cases for {@link BaseSpeechEventExecutor}.
+ * Test cases for {@link ThreadSpeechEventExecutor}.
  * @author Dirk Schnelle-Walka
  *
  */
-public class BaseSpeechEventExecutorTest extends TestCase {
+public final class ThreadSpeechEventExecutorTest extends TestCase {
     /** The test object. */
-    private BaseSpeechEventExecutor executor;
+    private ThreadSpeechEventExecutor executor;
 
     /**
      * Setup the test environment.
@@ -33,7 +33,7 @@ public class BaseSpeechEventExecutorTest extends TestCase {
      *         setup failed
      */
     public void setUp() throws Exception {
-        executor = new BaseSpeechEventExecutor();
+        executor = new ThreadSpeechEventExecutor();
     }
 
     /**
@@ -46,7 +46,7 @@ public class BaseSpeechEventExecutorTest extends TestCase {
     }
 
     /**
-     * Test method for {@link org.jvoicexml.jsapi2.jse.BaseSpeechEventExecutor#execute(java.lang.Runnable)}.
+     * Test method for {@link org.jvoicexml.jsapi2.ThreadSpeechEventExecutor.BaseSpeechEventExecutor#execute(java.lang.Runnable)}.
      * @exception Exception
      *            test failed
      */

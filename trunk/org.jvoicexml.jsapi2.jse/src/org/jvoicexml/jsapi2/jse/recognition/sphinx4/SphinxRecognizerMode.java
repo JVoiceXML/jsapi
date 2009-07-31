@@ -2,10 +2,9 @@ package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
 import javax.speech.Engine;
 import javax.speech.EngineException;
+import javax.speech.SpeechLocale;
 import javax.speech.recognition.RecognizerMode;
 import javax.speech.spi.EngineFactory;
-
-import java.util.Locale;
 
 /**
  * <p>Title: JSAPI 2.0</p>
@@ -21,7 +20,8 @@ import java.util.Locale;
  */
 public class SphinxRecognizerMode extends RecognizerMode implements EngineFactory {
     public SphinxRecognizerMode() {
-        super("sphinx4", null, true, false, true, 10000, new Locale[] {new Locale("en_US")}, null);
+        super("sphinx4", null, true, false, true, 10000,
+                new SpeechLocale[] {new SpeechLocale("en_US")}, null);
     }
 
     /**

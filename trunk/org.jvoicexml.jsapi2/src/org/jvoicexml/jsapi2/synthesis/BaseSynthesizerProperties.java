@@ -12,9 +12,6 @@
 
 package org.jvoicexml.jsapi2.synthesis;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
-
 import javax.speech.Engine;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
@@ -33,15 +30,39 @@ import org.jvoicexml.jsapi2.BaseEngineProperties;
  *
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
- * @version 1.0
+ * @version $Revision$
  */
 public class BaseSynthesizerProperties extends BaseEngineProperties
     implements SynthesizerProperties {
-    /** Properties that have not been committed. */
-    private Hashtable uncommitedProperties;
+    /** Name of the interruptibility property in events. */
+    public static final String INTERRUPTIBILITY = "interruptibility";
 
-    /** Current properties. */
-    private Hashtable properties;
+    /** Name of the pitch property in events. */
+    public static final String PITCH = "pitch";
+
+    /** Name of the pitch range property in events. */
+    public static final String PITCH_RANGE = "pitchRange";
+
+    /** Name of the speaking rate property in events. */
+    public static final String SPEAKING_RATE = "speakingRate";
+
+    /** Name of the speaking rate property in events. */
+    public static final String VOICE = "voice";
+
+    /** Name of the volume property in events. */
+    public static final String VOLUME = "volume";
+
+    private int interruptibility;
+
+    private int pitch;
+
+    private int pitchRange;
+
+    private int speakingRate;
+
+    private Voice voice;
+
+    private int volume;
 
     /**
      * Constructs a new Object.
@@ -49,34 +70,24 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
      */
     public BaseSynthesizerProperties(final Synthesizer synthesizer) {
         super(synthesizer);
-        properties = new Hashtable();
-        uncommitedProperties = new Hashtable();
-        reset();
-    }
 
-    /**
-     * Convenience method to retrieve an integer property.
-     * @param name name of the property.
-     * @return value of the property.
-     */
-    private int getIntProperty(final String name) {
-        synchronized (properties) {
-            Integer value = (Integer) properties.get(name);
-            if (value == null) {
-                return 0;
+        interruptibility = OBJECT_LEVEL;
+        pitch = 160;
+        pitchRange = (int)(160 * 0.60);
+        speakingRate = DEFAULT_RATE;
+        volume = MEDIUM_VOLUME;
+        //Set default voice
+        final Engine engine = getEngine();
+        final SynthesizerMode mode = (SynthesizerMode) engine.getEngineMode();
+        if (mode == null) {
+            voice = null;
+        } else {
+            Voice[] voices = mode.getVoices();
+            if ((voices != null) && (voices.length > 0)) {
+                voice = voices[0];
+            } else {
+                voice = null;
             }
-            return value.intValue();
-        }
-    }
-
-    /**
-     * Sets the value without committing them.
-     * @param name name of the property.
-     * @param value new value of the property.
-     */
-    private void setUncommittedIntProperty(final String name, final int value) {
-        synchronized (uncommitedProperties) {
-            uncommitedProperties.put(name, new Integer(value));
         }
     }
 
@@ -84,7 +95,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
      * {@inheritDoc}
      */
     public int getInterruptibility() {
-        return getIntProperty("interruptibility");
+        return interruptibility;
     }
 
     /**
@@ -96,14 +107,16 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
             throw new IllegalArgumentException("Invalid interruptibiliy level :"
                     + level);
         }
-        setUncommittedIntProperty("interruptibility", level);
+        postPropertyChangeRequestEvent(INTERRUPTIBILITY,
+                new Integer(this.interruptibility),
+                new Integer(level));
     }
 
     /**
      * {@inheritDoc}
      */
     public int getPitch() {
-        return getIntProperty("pitch");
+        return pitch;
     }
 
     /**
@@ -114,14 +127,15 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
             throw new IllegalArgumentException(
                     "Pitch is not a positive integer:"  + hertz);
         }
-        setUncommittedIntProperty("pitch", hertz);
+        postPropertyChangeRequestEvent(PITCH,
+                new Integer(this.pitch), new Integer(hertz));
     }
 
     /**
      * {@inheritDoc}
      */
     public int getPitchRange() {
-        return getIntProperty("pitchRange");
+        return pitchRange;
     }
 
     /**
@@ -132,14 +146,15 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
             throw new IllegalArgumentException(
                     "Pitch is a negative integer:"  + hertz);
         }
-        setUncommittedIntProperty("pitchRange", hertz);
+        postPropertyChangeRequestEvent(PITCH_RANGE,
+                new Integer(this.pitchRange), new Integer(hertz));
     }
 
     /**
      * {@inheritDoc}
      */
     public int getSpeakingRate() {
-        return getIntProperty("speakingRate");
+        return speakingRate;
     }
 
     /**
@@ -150,16 +165,15 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
             throw new IllegalArgumentException(
                     "Speaking rate is not a postivie integer:"  + wpm);
         }
-        setUncommittedIntProperty("speakingRate", wpm);
+        postPropertyChangeRequestEvent(SPEAKING_RATE,
+                new Integer(this.speakingRate), new Integer(wpm));
     }
 
     /**
      * {@inheritDoc}
      */
     public Voice getVoice() {
-        synchronized (properties) {
-            return (Voice) properties.get("voice");
-        }
+        return voice;
     }
 
     /**
@@ -169,13 +183,15 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
         final Engine synthesizer = getEngine();
         final SynthesizerMode mode =
             (SynthesizerMode) synthesizer.getEngineMode();
+        if (mode == null) {
+            return;
+        }
         final Voice[] voices = mode.getVoices();
         for (int i = 0; i < voices.length; i++) {
             final Voice current = voices[i];
             if (current.match(voice)) {
-                synchronized (uncommitedProperties) {
-                    uncommitedProperties.put("voice", voice);
-                }
+                postPropertyChangeRequestEvent(VOICE,
+                        this.voice, voice);
                 return;
             }
         }
@@ -185,7 +201,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
      * {@inheritDoc}
      */
     public int getVolume() {
-        return getIntProperty("volume");
+        return volume;
     }
 
 
@@ -197,32 +213,30 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
             throw new IllegalArgumentException("Volume is out of range: "
                     + volume);
         }
-        setUncommittedIntProperty("volume", volume);
+        postPropertyChangeRequestEvent(VOLUME,
+                new Integer(this.volume), new Integer(volume));
     }
 
     /**
      * {@inheritDoc}
      */
     public void reset() {
-        synchronized (properties) {
-            properties.put("interruptibility", new Integer(OBJECT_LEVEL));
-            properties.put("pitch", new Integer(160));
-            properties.put("pitchRange", new Integer((int)(160 * 0.60)));
-            properties.put("speakingRate", new Integer(DEFAULT_RATE));
-            properties.put("volume", new Integer(MEDIUM_VOLUME));
-
-            //Set default voice
-            final Engine engine = getEngine();
-            SynthesizerMode mode = (SynthesizerMode) engine.getEngineMode();
-            if (mode == null) {
-                properties.put("voice", null);
+        setInterruptibility(OBJECT_LEVEL);
+        setPitch(160);
+        setPitchRange((int)(160 * 0.60));
+        setSpeakingRate(DEFAULT_RATE);
+        setVolume(MEDIUM_VOLUME);
+        //Set default voice
+        final Engine engine = getEngine();
+        final SynthesizerMode mode = (SynthesizerMode) engine.getEngineMode();
+        if (mode == null) {
+            setVoice(null);
+        } else {
+            Voice[] voices = mode.getVoices();
+            if ((voices != null) && (voices.length > 0)) {
+                setVoice(voices[0]);
             } else {
-                Voice[] voices = mode.getVoices();
-                if ((voices != null) && (voices.length > 0)) {
-                    properties.put("voice", voices[0]);
-                } else {
-                    properties.put("voice", null);
-                }
+                setVoice(null);
             }
         }
 
@@ -230,26 +244,33 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
     }
 
     /**
-     * Applies all uncommitted properties.
+     * {@inheritDoc}
      */
-    public void commitPropertiesChanges() {
-        synchronized (uncommitedProperties) {
-            synchronized (properties) {
-                final Enumeration enumeration = uncommitedProperties.keys();
-                while (enumeration.hasMoreElements()) {
-                    final String name = (String) enumeration.nextElement();
-                    final Object oldValue = properties.get(name);
-                    final Object newValue = uncommitedProperties.get(name);
-                    properties.put(name, newValue);
-                    postPropertyChangeEvent(name, oldValue, newValue);
-                    uncommitedProperties.remove(name);
-                }
-            }
-        }
-    }
-
     protected boolean setProperty(String propName, Object value) {
-        // TODO Auto-generated method stub
+        if (propName.equals(INTERRUPTIBILITY)) {
+            final Integer intVal = (Integer) value;
+            interruptibility = intVal.intValue();
+            return true;
+        } else if (propName.equals(PITCH)) {
+            final Integer intVal = (Integer) value;
+            pitch = intVal.intValue();
+            return true;
+        } else if (propName.equals(PITCH_RANGE)) {
+            final Integer intVal = (Integer) value;
+            pitchRange = intVal.intValue();
+            return true;
+        } else if (propName.equals(SPEAKING_RATE)) {
+            final Integer intVal = (Integer) value;
+            speakingRate = intVal.intValue();
+            return true;
+        } else if (propName.equals(VOICE)) {
+            voice = (Voice) value;
+            return true;
+        } else if (propName.equals(VOLUME)) {
+            final Integer intVal = (Integer) value;
+            volume = intVal.intValue();
+            return true;
+        }
         return false;
     }
 
