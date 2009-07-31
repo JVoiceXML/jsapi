@@ -16,6 +16,7 @@ import java.util.Vector;
 import javax.speech.EngineException;
 import javax.speech.EngineMode;
 import javax.speech.EngineStateException;
+import javax.speech.SpeechLocale;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarEvent;
 import javax.speech.recognition.GrammarException;
@@ -378,6 +379,14 @@ public class BaseGrammarManager implements GrammarManager {
                 }
             }
         }
+    }
+
+    public RuleGrammar createRuleGrammar(String grammarReference,
+            String rootName, SpeechLocale locale)
+            throws IllegalArgumentException, EngineStateException,
+            EngineException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

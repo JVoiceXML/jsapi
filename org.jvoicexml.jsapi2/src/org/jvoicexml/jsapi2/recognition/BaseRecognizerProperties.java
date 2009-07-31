@@ -27,10 +27,40 @@ import org.jvoicexml.jsapi2.BaseEngineProperties;
 
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
- * @version 1.0
+ * @version $Revision: $
  */
 public class BaseRecognizerProperties
     extends BaseEngineProperties implements RecognizerProperties {
+    /** Name of the training provided property in events. */
+    public static final String TRAINING_PROVIDED = "trainingProvided";
+
+    /** Name of the result audio provided property in events. */
+    public static final String RESULT_AUDIO_PROVIDED = "resultAudioProvided";
+
+    /** Name of the speed vs. accuracy property in events. */
+    public static final String SPEED_VS_ACCURACY = "speedVsAccuracy";
+
+    /** Name of the sensitivity property in events. */
+    public static final String SENSITIVITY = "sensitivity";
+
+    /** Name of the num result alternatives property in events. */
+    public static final String NUM_RESULT_ALTERNATIVES =
+        "numResultAlternatives";
+
+    /** Name of the incomplete timeout property in events. */
+    public static final String INCOMPLETE_TIMEOUT = "incompleteTimeout";
+
+    /** Name of the endpoint style property in events. */
+    public static final String ENDPOINT_STYLE = "endpointStyle";
+
+    /** Name of the confidence threshold property in events. */
+    public static final String CONFIDENCE_THRESHOLD = "confidenceThreshold";
+
+    /** Name of the complete timeout property in events. */
+    public static final String COMPLETE_TIMEOUT = "completeTimeout";
+
+    /** Name of the adaptation property in events. */
+    public static final String ADAPTATION = "adaptation";
 
     /**
      * Value used to control adaptation behavior. This value determines when a
@@ -105,7 +135,16 @@ public class BaseRecognizerProperties
      */
     public BaseRecognizerProperties(final Recognizer recognizer) {
         super(recognizer);
-        reset();
+        adaptation = ADAPT_PAUSED | ADAPT_RESUMED;
+        completeTimeout = 500;
+        confidenceThreshold = NORM_CONFIDENCE;
+        endpointStyle = ENDPOINT_SPEECH_DETECTION;
+        incompleteTimeout = 1000;
+        numResultAlternatives = 1;
+        sensitivity = NORM_ACCURACY;
+        speedVsAccuracy = NORM_ACCURACY;
+        resultAudioProvided = false;
+        trainingProvided = false;
     }
 
     /**
@@ -200,9 +239,8 @@ public class BaseRecognizerProperties
      * {@inheritDoc}
      */
     public void setAdaptation(final int adapt) {
-        postPropertyChangeEvent("adaptation", new Integer(this.adaptation),
+        postPropertyChangeEvent(ADAPTATION, new Integer(this.adaptation),
                                 new Integer(adapt));
-        adaptation = adapt;
     }
 
     /**
@@ -214,10 +252,9 @@ public class BaseRecognizerProperties
                     "Invalid completeTimeout: " + value);
         }
 
-        postPropertyChangeEvent("completeTimeout",
+        postPropertyChangeEvent(COMPLETE_TIMEOUT,
                                 new Integer(completeTimeout),
                                 new Integer(value));
-        completeTimeout = value;
     }
 
     /**
@@ -229,10 +266,9 @@ public class BaseRecognizerProperties
             throw new IllegalArgumentException("Invalid confidenceThreshold: "
                                                + threshold);
         }
-        postPropertyChangeEvent("confidenceThreshold",
+        postPropertyChangeEvent(CONFIDENCE_THRESHOLD,
                                 new Integer(confidenceThreshold),
                                 new Integer(threshold));
-        confidenceThreshold = threshold;
     }
 
     /**
@@ -245,10 +281,9 @@ public class BaseRecognizerProperties
             throw new IllegalArgumentException("Invalid endpointStyle: "
                                                + style);
         }
-        postPropertyChangeEvent("endpointStyle",
+        postPropertyChangeEvent(ENDPOINT_STYLE,
                                 new Integer(endpointStyle),
                                 new Integer(style));
-        endpointStyle = style;
     }
 
     /**
@@ -259,20 +294,18 @@ public class BaseRecognizerProperties
             throw new IllegalArgumentException("Invalid incompleteTimeout: "
                                                + timeout);
         }
-        postPropertyChangeEvent("incompleteTimeout",
+        postPropertyChangeEvent(INCOMPLETE_TIMEOUT,
                                 new Integer(incompleteTimeout),
                                 new Integer(timeout));
-        incompleteTimeout = timeout;
     }
 
     /**
      * {@inheritDoc}
      */
     public void setNumResultAlternatives(final int num) {
-        postPropertyChangeEvent("numResultAlternatives",
+        postPropertyChangeEvent(NUM_RESULT_ALTERNATIVES,
                                 new Integer(this.numResultAlternatives),
                                 new Integer(num));
-        numResultAlternatives = num;
     }
 
     /**
@@ -285,10 +318,9 @@ public class BaseRecognizerProperties
                                                + value);
         }
 
-        postPropertyChangeEvent("sensitivity",
+        postPropertyChangeEvent(SENSITIVITY,
                                 new Integer(sensitivity),
                                 new Integer(value));
-        sensitivity = value;
     }
 
 
@@ -302,37 +334,74 @@ public class BaseRecognizerProperties
             throw new IllegalArgumentException("Invalid speedVsAccuracy: "
                                                + value);
         }
-        postPropertyChangeEvent("speedVsAccuracy",
+        postPropertyChangeEvent(SPEED_VS_ACCURACY,
                                 new Integer(speedVsAccuracy),
                                 new Integer(value));
-        speedVsAccuracy = value;
     }
 
     /**
      * {@inheritDoc}
      */
     public void setResultAudioProvided(final boolean value) {
-        postPropertyChangeEvent("resultAudioProvided",
+        postPropertyChangeEvent(RESULT_AUDIO_PROVIDED,
                                 new Boolean(resultAudioProvided),
                                 new Boolean(value));
-        resultAudioProvided = value;
     }
 
     /**
      * {@inheritDoc}
      */
     public void setTrainingProvided(final boolean value) {
-        postPropertyChangeEvent("trainingProvided",
+        postPropertyChangeEvent(TRAINING_PROVIDED,
                                 new Boolean(trainingProvided),
                                 new Boolean(value));
-        trainingProvided = value;
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean setProperty(String propName, Object value) {
-        // TODO Auto-generated method stub
+        if (propName.equals(TRAINING_PROVIDED)) {
+            final Boolean boolVal = (Boolean) value;
+            trainingProvided = boolVal.booleanValue();
+            return true;
+        } else if (propName.equals(RESULT_AUDIO_PROVIDED)) {
+            final Boolean boolVal = (Boolean) value;
+            resultAudioProvided = boolVal.booleanValue();
+            return true;
+        } else if (propName.equals(SPEED_VS_ACCURACY)) {
+            final Integer intVal = (Integer) value;
+            speedVsAccuracy = intVal.intValue();
+            return true;
+        } else if (propName.equals(SENSITIVITY)) {
+            final Integer intVal = (Integer) value;
+            sensitivity = intVal.intValue();
+            return true;
+        } else if (propName.equals(NUM_RESULT_ALTERNATIVES)) {
+            final Integer intVal = (Integer) value;
+            numResultAlternatives = intVal.intValue();
+            return true;
+        } else if (propName.equals(INCOMPLETE_TIMEOUT)) {
+            final Integer intVal = (Integer) value;
+            incompleteTimeout = intVal.intValue();
+            return true;
+        } else if (propName.equals(ENDPOINT_STYLE)) {
+            final Integer intVal = (Integer) value;
+            endpointStyle = intVal.intValue();
+            return true;
+        } else if (propName.equals(CONFIDENCE_THRESHOLD)) {
+            final Integer intVal = (Integer) value;
+            confidenceThreshold = intVal.intValue();
+            return true;
+        } else if (propName.equals(COMPLETE_TIMEOUT)) {
+            final Integer intVal = (Integer) value;
+            completeTimeout = intVal.intValue();
+            return true;
+        } else if (propName.equals(ADAPTATION)) {
+            final Integer intVal = (Integer) value;
+            adaptation = intVal.intValue();
+            return true;
+        }
         return false;
     }
 }

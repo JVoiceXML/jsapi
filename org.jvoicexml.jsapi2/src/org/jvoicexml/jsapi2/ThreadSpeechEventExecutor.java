@@ -11,8 +11,9 @@
  */
 package org.jvoicexml.jsapi2;
 
-import javax.speech.SpeechEventExecutor;
 import java.util.Vector;
+
+import javax.speech.SpeechEventExecutor;
 
 /**
  * A speech event executor that is based on a thread.
@@ -24,7 +25,8 @@ import java.util.Vector;
  * @author Renato Cassaca
  * @version $Revision$
  */
-public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
+public final class ThreadSpeechEventExecutor
+    implements SpeechEventExecutor, Runnable {
     /** Number of msec to wait before inspecting the command queue. */
     private static final int COMMAND_POLL_INTERVALL = 1000;
 
@@ -40,7 +42,7 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
     /**
      * Constructs a new object.
      */
-    public BaseSpeechEventExecutor() {
+    public ThreadSpeechEventExecutor() {
         commands = new Vector();
         thread = new Thread(this, "BaseSpeechEventExecutor");
         shouldRun = true;
@@ -90,7 +92,7 @@ public class BaseSpeechEventExecutor implements SpeechEventExecutor, Runnable {
      */
     public void run() {
         while (shouldRun) {
-            while ((commands.size() < 1) && (shouldRun)) {
+            while ((commands.isEmpty()) && (shouldRun)) {
                 synchronized (commands) {
                     try {
                         commands.wait(COMMAND_POLL_INTERVALL);

@@ -59,9 +59,14 @@ import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
 
 /**
- * Supports the JSAPI 2.0 <code>Engine</code> interface.
+ * Supports the JSAPI 2.0 {@link Engine} interface.
+ * <p>
  * Actual JSAPI implementations might want to extend or modify this
  * implementation.
+ * </p>
+ * @author Renato Cassaca
+ * @author Dirk Schnelle-Walka
+ * @version $Revision$
  */
 public abstract class BaseEngine implements Engine {
 
@@ -130,7 +135,7 @@ public abstract class BaseEngine implements Engine {
         engineState = DEALLOCATED;
         engineStateLock = new Object();
         audioManager = manager;
-        speechEventExecutor = new BaseSpeechEventExecutor();
+        speechEventExecutor = new ThreadSpeechEventExecutor();
     }
 
     /**
@@ -148,21 +153,22 @@ public abstract class BaseEngine implements Engine {
      * @see #getEngineState
      * @see #waitEngineState
      */
-    public long getEngineState() {
+    public final long getEngineState() {
         return engineState;
     }
 
     /**
      * {@inheritDoc}
      */
-    public long waitEngineState(final long state) throws InterruptedException {
+    public final long waitEngineState(final long state)
+        throws InterruptedException {
         return waitEngineState(state, 0);
     }
 
     /**
      * {@inheritDoc}
      */
-    public long waitEngineState(final long state, final long timeout)
+    public final long waitEngineState(final long state, final long timeout)
         throws InterruptedException {
         synchronized (engineStateLock) {
             if (!isValid(state)) {
@@ -170,25 +176,24 @@ public abstract class BaseEngine implements Engine {
                         "Cannot wait for impossible state: "
                         + stateToString(state));
             }
-            do {
-                if (testEngineState(state)) {
-                    return state;
-                }
+            if (testEngineState(state)) {
+                return state;
+            }
 
-                if (!isReachable(state)) {
-                    throw new IllegalStateException("State is not reachable: "
-                            + stateToString(state));
-                }
+            if (!isReachable(state)) {
+                throw new IllegalStateException("State is not reachable: "
+                        + stateToString(state));
+            }
 
-                //Wait for a state change
-                if (timeout > 0) {
-                    engineStateLock.wait(timeout);
-                    return getEngineState();
-                } else {
-                    //Will wait forever to reach that state
-                    engineStateLock.wait();
-                }
-            } while (true);
+            //Wait for a state change
+            if (timeout > 0) {
+                engineStateLock.wait(timeout);
+                return getEngineState();
+            } else {
+                //Will wait forever to reach that state
+                engineStateLock.wait();
+                return getEngineState();
+            }
         }
     }
 
@@ -214,7 +219,7 @@ public abstract class BaseEngine implements Engine {
      *
      * {@inheritDoc}
      */
-    public boolean testEngineState(final long state) {
+    public final boolean testEngineState(final long state) {
         return (getEngineState() & state) == state;
     }
 
@@ -440,12 +445,12 @@ public abstract class BaseEngine implements Engine {
     public void setSpeechEventExecutor(
             final SpeechEventExecutor executor) {
         if (executor == null) {
-            speechEventExecutor = new BaseSpeechEventExecutor();
+            speechEventExecutor = new ThreadSpeechEventExecutor();
         } else {
             // Terminate a previously running executor.
-            if (speechEventExecutor instanceof BaseSpeechEventExecutor) {
-                final BaseSpeechEventExecutor baseExecutor =
-                    (BaseSpeechEventExecutor) this.speechEventExecutor;
+            if (speechEventExecutor instanceof ThreadSpeechEventExecutor) {
+                final ThreadSpeechEventExecutor baseExecutor =
+                    (ThreadSpeechEventExecutor) this.speechEventExecutor;
                 baseExecutor.terminate();
             }
             speechEventExecutor = executor;
@@ -515,9 +520,11 @@ public abstract class BaseEngine implements Engine {
      * <code>state</code>.
      *
      * @param state the <code>Engine</code> state to check
-     *
+     * @exception EngineStateException
+     *            state is not the expected state
      */
-    protected void checkEngineState(final long state) {
+    protected void checkEngineState(final long state)
+        throws EngineStateException {
         long currentState = getEngineState();
         if ((currentState & state) != 0) {
             throw new EngineStateException("Invalid EngineState: expected=("
@@ -666,7 +673,7 @@ public abstract class BaseEngine implements Engine {
      */
     protected abstract void fireEvent(final EngineEvent event);
 
-    protected abstract void postEngineEvent(long oldState, long newState,
-            int eventType);
+    protected abstract void postEngineEvent(final long oldState,
+            final long newState, final int eventType);
 
 }

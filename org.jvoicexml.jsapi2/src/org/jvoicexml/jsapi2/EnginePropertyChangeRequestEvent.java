@@ -14,10 +14,16 @@ public class EnginePropertyChangeRequestEvent {
     private final Object oldValue;
     private final Object newValue;
 
-    public EnginePropertyChangeRequestEvent(EngineProperties source,
-            String propertyName,
-            Object oldValue,
-            Object newValue) {
+    /**
+     * Constructs a new object.
+     * @param source the properties object.
+     * @param propertyName name of the property
+     * @param oldValue old value of the property
+     * @param newValue new value of the property
+     */
+    public EnginePropertyChangeRequestEvent(final EngineProperties source,
+            final String propertyName, final Object oldValue,
+            final Object newValue) {
         if (source == null) {
             throw new IllegalArgumentException("Source must not be null!");
         }
@@ -28,19 +34,19 @@ public class EnginePropertyChangeRequestEvent {
         
     }
 
-    public EngineProperties getSource() {
+    public final EngineProperties getSource() {
         return source;
     }
 
-    public String getPropertyName() {
+    public final String getPropertyName() {
         return propertyName;
     }
 
-    public Object getOldValue() {
+    public final Object getOldValue() {
         return oldValue;
     }
 
-    public Object getNewValue() {
+    public final Object getNewValue() {
         return newValue;
     }
 }

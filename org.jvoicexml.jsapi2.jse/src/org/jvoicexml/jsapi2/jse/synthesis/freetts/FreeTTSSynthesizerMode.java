@@ -1,10 +1,12 @@
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
 
-import javax.speech.synthesis.SynthesizerMode;
-import javax.speech.spi.EngineFactory;
 import java.util.Locale;
+
 import javax.speech.Engine;
 import javax.speech.EngineException;
+import javax.speech.spi.EngineFactory;
+import javax.speech.synthesis.SynthesizerMode;
+
 
 /**
  * Copyright 2003 Sun Microsystems, Inc.
