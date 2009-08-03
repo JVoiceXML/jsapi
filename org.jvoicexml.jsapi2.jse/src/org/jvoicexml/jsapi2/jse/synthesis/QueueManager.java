@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2008 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,7 +43,6 @@ import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerEvent;
 
 import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
-import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
 
 /**
  * The {@link QueueManager} basically accepts the speech segments to
@@ -52,7 +51,8 @@ import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
  * to the play queue to be delivered via the configured media locator.
  *
  * @author Renato Cassaca
- * @version 1.0
+ * @author Dirk Schnelle-Walka
+ * @version $Revision$
  */
 public class QueueManager implements Runnable {
     /** Reference to the synthesizer. */
@@ -425,11 +425,6 @@ public class QueueManager implements Runnable {
                 }
 
                 // Synthesize item
-                final BaseSynthesizerProperties properties =
-                    (BaseSynthesizerProperties)
-                        synthesizer.synthesizerProperties;
-//                properties.commitPropertiesChanges();
-
                 final Object itemSource = item.getSource();
                 if (itemSource instanceof String) {
                     synthesizer.handleSpeak(item.getId(),

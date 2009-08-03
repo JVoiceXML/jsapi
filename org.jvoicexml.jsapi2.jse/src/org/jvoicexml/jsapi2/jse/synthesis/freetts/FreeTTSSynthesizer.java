@@ -12,8 +12,10 @@ import javax.speech.EngineException;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SynthesizerMode;
 
-import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
+import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
+import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
+import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer;
 
 import com.sun.speech.freetts.FreeTTSSpeakableImpl;
@@ -32,7 +34,8 @@ import com.sun.speech.freetts.audio.AudioPlayer;
  * Provides partial support for a JSAPI 2.0 synthesizer for the FreeTTS speech
  * synthesis system.
  */
-public class FreeTTSSynthesizer extends BaseSynthesizer {
+public class FreeTTSSynthesizer extends BaseSynthesizer
+    implements EnginePropertyChangeRequestListener {
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(FreeTTSSynthesizer.class.getName());
@@ -338,5 +341,21 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
 
     protected boolean handleCancel() {
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void propertyChangeRequest(
+            final EnginePropertyChangeRequestEvent event) {
     }
 }

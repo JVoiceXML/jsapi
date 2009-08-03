@@ -109,7 +109,7 @@ public class FreeTTSVoice extends javax.speech.synthesis.Voice {
         } else if (age == com.sun.speech.freetts.Age.DONT_CARE) {
             return javax.speech.synthesis.Voice.AGE_DONT_CARE;
         } else {
-            throw new Error("jaspi does not have an equivalent to age "
+            throw new Error("jsapi does not have an equivalent to age "
                     + age.toString());
         }
     }

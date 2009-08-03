@@ -59,7 +59,6 @@ import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.recognition.Grammar;
-import javax.speech.recognition.GrammarEvent;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerEvent;
@@ -73,6 +72,7 @@ import javax.speech.recognition.SpeakerManager;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.recognition.BaseGrammar;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizerProperties;
 
@@ -135,7 +135,9 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         audioManager.setEngine(this);
         resultListeners = new Vector();
         speakerManager = new BaseSpeakerManager();
-        recognizerProperties = new BaseRecognizerProperties(this);
+        final RecognizerProperties props =
+            new BaseRecognizerProperties(this);
+        setRecognizerProperties(props);
         grammarManager = new BaseGrammarManager(this);
         resultMask = ResultEvent.DEFAULT_MASK;
         setEngineMask(getEngineMask() | RecognizerEvent.DEFAULT_MASK);
@@ -380,6 +382,11 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     public void setRecognizerProperties(RecognizerProperties
                                         recognizerProperties) {
         this.recognizerProperties = recognizerProperties;
+        if (recognizerProperties instanceof BaseEngineProperties) {
+            final BaseEngineProperties props =
+                (BaseEngineProperties) recognizerProperties;
+            addEnginePropertyChangeRequestListener(props);
+        }
     }
 
     /**

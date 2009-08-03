@@ -27,22 +27,23 @@
 
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.EngineException;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.RecognizerEvent;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.RuleGrammar;
 
-import javax.sound.sampled.AudioFormat;
-
+import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
+import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.jse.recognition.GrammarDefinition;
@@ -71,7 +72,8 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
  * http://jvoicexml.sourceforge.net/</a>
  * </p>
  */
-final class Sphinx4Recognizer extends BaseRecognizer {
+final class Sphinx4Recognizer extends BaseRecognizer
+    implements EnginePropertyChangeRequestListener {
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(Sphinx4Recognizer.class.getName());
@@ -393,6 +395,23 @@ final class Sphinx4Recognizer extends BaseRecognizer {
      */
     public void postResultEvent(final ResultEvent resultEvent){
         super.postResultEvent(resultEvent);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void propertyChangeRequest(EnginePropertyChangeRequestEvent event) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

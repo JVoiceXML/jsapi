@@ -25,6 +25,7 @@ import javax.speech.synthesis.SynthesizerProperties;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
 
 /**
@@ -45,7 +46,8 @@ import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
  * </p>
  *
  * @author Renato Cassaca
- * @version 1.0
+ * @author Dirk Schnelle-Walka
+ * @version $Revision: $
  */
 public abstract class BaseSynthesizer extends BaseEngine
     implements Synthesizer {
@@ -68,7 +70,9 @@ public abstract class BaseSynthesizer extends BaseEngine
             (BaseAudioManager) getAudioManager();
         audioManager.setEngine(this);
         speakableListeners = new Vector();
-        synthesizerProperties = new BaseSynthesizerProperties(this);
+        final SynthesizerProperties props =
+            new BaseSynthesizerProperties(this);
+        setSynthesizerProperties(props);
         speakableMask = SpeakableEvent.DEFAULT_MASK;
         setEngineMask(getEngineMask() | SynthesizerEvent.DEFAULT_MASK);
         queueManager = new QueueManager(this);
@@ -249,6 +253,11 @@ public abstract class BaseSynthesizer extends BaseEngine
     public void setSynthesizerProperties(
             SynthesizerProperties synthesizerProperties) {
         this.synthesizerProperties = synthesizerProperties;
+        if (synthesizerProperties instanceof BaseEngineProperties) {
+            final BaseEngineProperties props =
+                (BaseEngineProperties) synthesizerProperties;
+            addEnginePropertyChangeRequestListener(props);
+        }
     }
 
     public void setSpeakableMask(int mask) {
