@@ -1,6 +1,7 @@
 package org.jvoicexml.jsapi2.jse.test.synthesis;
 import javax.speech.synthesis.Speakable;
 
+import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer;
 
 /**
@@ -101,6 +102,11 @@ public class DummySynthesizer extends BaseSynthesizer {
     protected void handleSpeak(int id, Speakable item) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
+        return null;
     }
 
 }
