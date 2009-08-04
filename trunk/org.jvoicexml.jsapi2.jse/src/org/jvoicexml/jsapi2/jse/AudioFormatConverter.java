@@ -93,7 +93,6 @@ public class AudioFormatConverter {
         boolean noMoreInput = false;
         boolean insertedSilence = false;
         do {
-
             //Inject new audio in pipeline
             if (writeOffset < in.length) {
                 writeSize = pipeSize - pipedInputStream.available();

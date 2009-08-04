@@ -71,8 +71,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer
         super.setSynthesizerProperties(new FreeTTSEngineProperties(this));
 
         ((JseBaseAudioManager) getAudioManager()).setEngineAudioFormat(new
-                AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 8000, 16, 1, 2,
-                            8000, true));
+                AudioFormat(8000f, 16, 1, true, true));
     }
 
     /**

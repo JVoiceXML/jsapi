@@ -197,7 +197,6 @@ public abstract class BaseAudioManager implements AudioManager {
 
         final String[] supportedMediaLocators = getSupportedMediaLocators(
                 locator);
-
         if (supportedMediaLocators == null) {
             return false;
         }
@@ -243,7 +242,7 @@ public abstract class BaseAudioManager implements AudioManager {
         if ((getAudioMask() & eventId) == eventId) {
             final AudioEvent event = new AudioEvent(engine, eventId);
 
-            Runnable runnable = new Runnable() {
+            final Runnable runnable = new Runnable() {
                 public void run() {
                     fireAudioEvent(event);
                 }

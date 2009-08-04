@@ -26,6 +26,7 @@ import org.jvoicexml.jsapi2.jse.synthesis.freetts.FreeTTSEngineListFactory;
 /**
  * A demo to output a synthesized text to the speaker.
  * @author Dirk Schnelle-Walka
+ * @version $Revision$
  */
 public final class HelloWorldDemo {
     /**
