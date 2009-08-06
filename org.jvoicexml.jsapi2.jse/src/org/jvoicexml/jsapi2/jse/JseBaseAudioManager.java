@@ -52,13 +52,7 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
      * Class constructor.
      */
     public JseBaseAudioManager() {
-        engineAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-                                            8000,
-                                            16,
-                                            1,
-                                            2,
-                                            8000,
-                                            false);
+        engineAudioFormat = new AudioFormat(8000f, 16, 1, true, true);
         targetAudioFormat = engineAudioFormat;
     }
 

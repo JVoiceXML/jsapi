@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.UnknownServiceException;
 
+import javax.sound.sampled.AudioSystem;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,8 +49,9 @@ public class PlaybackURLConnectionTest {
      */
     @Test
     public void testGetOutputStream() throws Exception {
+        System.out.println(AudioSystem.getClip().getFormat());
         final URL url =
-            new URL("playback://audio?rate=8000&channels=1&encoding=pcm");
+            new URL("playback://audio?rate=44100&channels=2&encoding=pcm&bits=16");
         final PlaybackURLConnection connection = new PlaybackURLConnection(url);
         connection.connect();
         final OutputStream output = connection.getOutputStream();

@@ -28,9 +28,6 @@ public class ClipOutputStream extends OutputStream implements LineListener {
     /** The audio buffer. */
     private ByteArrayOutputStream buffer;
 
-    /** The clip to use to play back the audio. */
-    private Clip clip;
-
     /** Synchronization of start and end play back. */
     private final Semaphore sem;
 
@@ -79,9 +76,9 @@ public class ClipOutputStream extends OutputStream implements LineListener {
     @Override
     public void flush() throws IOException {
         final AudioFormat format = manager.getTargetAudioFormat();
+        final Clip clip;
         try {
             final DataLine.Info info = new DataLine.Info(Clip.class, format);
-
             try {
                 sem.acquire();
             } catch (InterruptedException e) {
@@ -89,7 +86,6 @@ public class ClipOutputStream extends OutputStream implements LineListener {
             }
             clip = (Clip) AudioSystem.getLine(info);
             byte[] bytes = buffer.toByteArray();
-            buffer.reset();
             clip.open(format, bytes, 0, bytes.length);
             clip.addLineListener(this);
             clip.start();
@@ -100,6 +96,8 @@ public class ClipOutputStream extends OutputStream implements LineListener {
         // Wait until all data has been played back.
         try {
             sem.acquire();
+            buffer.reset();
+            clip.close();
             sem.release();
         } catch (InterruptedException e) {
             throw new IOException(e.getMessage(), e);
