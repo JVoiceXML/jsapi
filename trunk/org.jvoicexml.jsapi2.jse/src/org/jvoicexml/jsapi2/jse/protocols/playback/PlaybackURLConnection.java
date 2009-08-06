@@ -119,7 +119,8 @@ public class PlaybackURLConnection extends URLConnection {
             // Starts the line
             line.start();
         } catch (LineUnavailableException ex) {
-            throw new IOException("Line is unavailable");
+            throw new IOException("Line is unavailable: "
+                    + ex.getMessage(), ex);
         }
 
         // Marks this URLConnection as connected
