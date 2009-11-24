@@ -26,8 +26,8 @@ This file builds the JSR 113.jar.
   </path>
   
 	<path id="midp.lib">
-		<pathelement location="${midp.home}/cldcapi11.jar"/>
-        <pathelement location="${midp.home}/midpapi10.jar"/>
+        <pathelement location="${midp.home}/lib/${cldcapi.jar}"/>
+        <pathelement location="${midp.home}/lib/${midpapi.jar}"/>
 	</path>
 	
 	<property name="debug" value="on"/>
