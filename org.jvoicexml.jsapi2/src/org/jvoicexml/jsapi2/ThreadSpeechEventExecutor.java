@@ -44,7 +44,7 @@ public final class ThreadSpeechEventExecutor
      */
     public ThreadSpeechEventExecutor() {
         commands = new Vector();
-        thread = new Thread(this, "BaseSpeechEventExecutor");
+        thread = new Thread(this);
         shouldRun = true;
         thread.start();
     }
