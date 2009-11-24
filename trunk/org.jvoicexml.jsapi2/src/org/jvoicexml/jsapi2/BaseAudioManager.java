@@ -213,7 +213,7 @@ public abstract class BaseAudioManager implements AudioManager {
         if (management == null) {
             return false;
         }
-        return management.equalsIgnoreCase("true");
+        return management.equals("true");
     }
 
     /**
@@ -229,7 +229,7 @@ public abstract class BaseAudioManager implements AudioManager {
         if (otherLocator == null) {
             return mediaLocator == null;
         }
-        return mediaLocator.equalsIgnoreCase(otherLocator);
+        return mediaLocator.equals(otherLocator);
     }
 
     /**

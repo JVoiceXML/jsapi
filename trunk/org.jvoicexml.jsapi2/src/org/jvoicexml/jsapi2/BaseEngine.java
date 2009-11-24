@@ -318,7 +318,7 @@ public abstract class BaseEngine implements Engine {
                     }
                 }
             };
-            new Thread(runnable, "Asynchronous allocate").start();
+            (new Thread(runnable)).start();
         } else {
             allocate();
         }
@@ -361,7 +361,7 @@ public abstract class BaseEngine implements Engine {
                         ex.printStackTrace();
                     }
                 }
-            }, "Asynchronous deallocate").start();
+            }).start();
         } else {
             deallocate();
         }
