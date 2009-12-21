@@ -25,9 +25,6 @@ import javax.speech.synthesis.SynthesizerMode;
  */
 public class FreeTTSSynthesizerMode extends SynthesizerMode implements
         EngineFactory {
-
-    //   private Vector<FreeTTSVoice> allVoices;
-
     /**
      * Constructs a new object.
      */

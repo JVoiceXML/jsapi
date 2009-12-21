@@ -16,11 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Map;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -28,6 +26,7 @@ import javax.speech.AudioException;
 import javax.speech.AudioManager;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
+import org.jvoicexml.jsapi2.jse.protocols.JavaSoundParser;
 
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code>
@@ -127,90 +126,22 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
      * @return AudioFormat
      */
     protected AudioFormat getAudioFormat() {
-        //Initialize parameters
-        Map<String, String> parameters =
-            new java.util.HashMap<String, String>();
         final String locator = getMediaLocator();
         if (locator != null) {
             //Get matching URI to extract query parameters
-            URI uri = null;
+            URL url = null;
             try {
-                uri = new URI(locator);
-            } catch (URISyntaxException ex) {
+                url = new URL(locator);
+                return JavaSoundParser.parse(url);
+            } catch (MalformedURLException ex) {
                 ex.printStackTrace();
                 //Continue and give back a default AudioFormat
-            }
-
-            if (uri.getQuery() != null) {
-                String[] parametersString = uri.getQuery().split("\\&");
-                for (String part : parametersString) {
-                    String[] queryElement = part.split("\\=");
-                    parameters.put(queryElement[0], queryElement[1]);
-                }
+            } catch (URISyntaxException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
-
-        //Default values for AudioFormat parameters
-        AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
-        float sampleRate = 16000;
-        int bits = 16;
-        int channels = 1;
-        boolean endian = false;
-        boolean signed = true;
-
-        //Change default values as specified
-        String signedStr = parameters.get("signed");
-        if (signedStr != null) {
-            signed = Boolean.valueOf(signedStr);
-        }
-
-        String encodingStr = parameters.get("encoding");
-        if (encodingStr != null) {
-            if (encodingStr.equals("pcm")) {
-                encoding = (signed ? AudioFormat.Encoding.PCM_SIGNED :
-                            AudioFormat.Encoding.PCM_UNSIGNED);
-            } else if (encodingStr.equals("alaw")) {
-                encoding = AudioFormat.Encoding.ALAW;
-                endian = false;
-            } else if (encodingStr.equals("ulaw")) {
-                encoding = AudioFormat.Encoding.ULAW;
-                endian = false;
-            } else if (encodingStr.equals("gsm")) {
-                /** @todo GSM not supported by AudioFormat */
-                System.err.println("GSM not supported by AudioFormat... review");
-            }
-        }
-
-        String rateStr = parameters.get("rate");
-        if (rateStr != null) {
-            sampleRate = Float.valueOf(rateStr);
-        }
-
-        String bitsStr = parameters.get("bits");
-        if (bitsStr != null) {
-            bits = Integer.valueOf(bitsStr);
-            if (bits == 8) {
-                endian = false;
-            }
-        }
-
-        String channelsStr = parameters.get("channels");
-        if (channelsStr != null) {
-            channels = Integer.valueOf(channelsStr);
-        }
-
-        String endianStr = parameters.get("endian");
-        if (endianStr != null) {
-            if (endianStr.equals("little")) {
-                endian = false;
-            } else if (endianStr.equals("big")) {
-                endian = true;
-            }
-        }
-
-        //Constructs the AudioFormat
-        return new AudioFormat(encoding, sampleRate, bits, channels, bits / 8,
-                               sampleRate, endian);
+        return null;
     }
 
     /**
