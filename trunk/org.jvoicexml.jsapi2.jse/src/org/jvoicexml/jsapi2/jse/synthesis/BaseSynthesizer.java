@@ -411,6 +411,11 @@ public abstract class BaseSynthesizer extends BaseEngine
     /** @todo Is it really needed? */
     protected abstract Speakable getSpeakable(String text);
 
+    /**
+     * Speak the item with the given id.
+     * @param id id of the text to speak
+     * @param item the text to speak
+     */
     protected abstract void handleSpeak(int id, String item);
 
     protected abstract void handleSpeak(int id, Speakable item);
