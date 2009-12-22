@@ -1,4 +1,5 @@
 package org.jvoicexml.jsapi2.jse.test.synthesis;
+import javax.speech.AudioManager;
 import javax.speech.synthesis.Speakable;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
@@ -18,7 +19,7 @@ public class DummySynthesizer extends BaseSynthesizer {
      * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#getSpeakable(java.lang.String)
      */
     @Override
-    protected Speakable getSpeakable(String text) {
+    public Speakable getSpeakable(String text) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -27,7 +28,7 @@ public class DummySynthesizer extends BaseSynthesizer {
      * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleAllocate()
      */
     @Override
-    protected boolean handleAllocate() {
+    public boolean handleAllocate() {
         // TODO Auto-generated method stub
         return false;
     }
@@ -36,7 +37,7 @@ public class DummySynthesizer extends BaseSynthesizer {
      * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleCancel()
      */
     @Override
-    protected boolean handleCancel() {
+    public boolean handleCancel() {
         // TODO Auto-generated method stub
         return false;
     }
@@ -45,7 +46,7 @@ public class DummySynthesizer extends BaseSynthesizer {
      * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleCancel(int)
      */
     @Override
-    protected boolean handleCancel(int id) {
+    public boolean handleCancel(int id) {
         // TODO Auto-generated method stub
         return false;
     }
@@ -54,7 +55,7 @@ public class DummySynthesizer extends BaseSynthesizer {
      * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleCancelAll()
      */
     @Override
-    protected boolean handleCancelAll() {
+    public boolean handleCancelAll() {
         // TODO Auto-generated method stub
         return false;
     }
@@ -63,7 +64,7 @@ public class DummySynthesizer extends BaseSynthesizer {
      * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleDeallocate()
      */
     @Override
-    protected boolean handleDeallocate() {
+    public boolean handleDeallocate() {
         // TODO Auto-generated method stub
         return false;
     }
@@ -72,7 +73,7 @@ public class DummySynthesizer extends BaseSynthesizer {
      * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handlePause()
      */
     @Override
-    protected boolean handlePause() {
+    public boolean handlePause() {
         // TODO Auto-generated method stub
         return false;
     }
@@ -81,7 +82,7 @@ public class DummySynthesizer extends BaseSynthesizer {
      * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleResume()
      */
     @Override
-    protected boolean handleResume() {
+    public boolean handleResume() {
         // TODO Auto-generated method stub
         return false;
     }
@@ -90,7 +91,7 @@ public class DummySynthesizer extends BaseSynthesizer {
      * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleSpeak(int, java.lang.String)
      */
     @Override
-    protected void handleSpeak(int id, String item) {
+    public void handleSpeak(int id, String item) {
         // TODO Auto-generated method stub
 
     }
@@ -99,13 +100,19 @@ public class DummySynthesizer extends BaseSynthesizer {
      * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleSpeak(int, javax.speech.synthesis.Speakable)
      */
     @Override
-    protected void handleSpeak(int id, Speakable item) {
+    public void handleSpeak(int id, Speakable item) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
     protected EnginePropertyChangeRequestListener getChangeRequestListener() {
+        return null;
+    }
+
+    @Override
+    protected AudioManager createAudioManager() {
+        // TODO Auto-generated method stub
         return null;
     }
 

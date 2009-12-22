@@ -13,8 +13,6 @@
 package org.jvoicexml.jsapi2.jse;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -108,31 +106,25 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
     }
 
     /**
-     * Retrieves the output stream associated with the given media locator.
-     * @return output stream.
-     */
-    public abstract OutputStream getOutputStream();
-
-    /**
-     * Retrieves the input stream associated with the given media locator.
-     * @return input stream.
-     */
-    public abstract InputStream getInputStream();
-
-    /**
      * Given URI parameters, constructs an {@link AudioFormat} from the
      * parameters specified in the URI.
      *
      * @return AudioFormat
      */
-    protected AudioFormat getAudioFormat() {
+    public org.jvoicexml.jsapi2.AudioFormat getAudioFormat() {
         final String locator = getMediaLocator();
         if (locator != null) {
             //Get matching URI to extract query parameters
             URL url = null;
             try {
                 url = new URL(locator);
-                return JavaSoundParser.parse(url);
+                AudioFormat format =
+                    JavaSoundParser.parse(url);
+                return new org.jvoicexml.jsapi2.AudioFormat(
+                        format.getEncoding().toString(),
+                        format.getSampleRate(), format.getSampleSizeInBits(),
+                        format.getChannels(), format.getFrameSize(),
+                        format.getFrameRate(), format.isBigEndian());
             } catch (MalformedURLException ex) {
                 ex.printStackTrace();
                 //Continue and give back a default AudioFormat
@@ -141,7 +133,11 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
                 e.printStackTrace();
             }
         }
-        return null;
+        return new org.jvoicexml.jsapi2.AudioFormat(
+                engineAudioFormat.getEncoding().toString(),
+                engineAudioFormat.getSampleRate(), engineAudioFormat.getSampleSizeInBits(),
+                engineAudioFormat.getChannels(), engineAudioFormat.getFrameSize(),
+                engineAudioFormat.getFrameRate(), engineAudioFormat.isBigEndian());
     }
 
     /**

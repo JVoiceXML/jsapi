@@ -10,7 +10,7 @@
  *
  */
 
-package org.jvoicexml.jsapi2.jse.synthesis;
+package org.jvoicexml.jsapi2.synthesis;
 
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableListener;

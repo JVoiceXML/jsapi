@@ -16,7 +16,7 @@ This file builds the JSR 113.jar.
     <!-- distribution files -->
 	<property name="dist.jsr113.jar" value="${dist}/jsr113-base.jar" />
     <property name="dist.src.zip" value="${dist}/jsr113-base-${version}-src.zip" />
-  <property name="dist.src.libs.zip" value="${dist}/jsr113-base-${version}-src-withlibs.zip" />
+    <property name="dist.src.libs.zip" value="${dist}/jsr113-base-${version}-src-withlibs.zip" />
     <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
 	
   <path id="classpath">
