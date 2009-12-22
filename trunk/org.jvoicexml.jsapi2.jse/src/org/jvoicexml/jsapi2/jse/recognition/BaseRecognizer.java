@@ -129,7 +129,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * @param mode the recognizer mode
      */
     public BaseRecognizer(final RecognizerMode mode) {
-        super(mode, new BaseRecognizerAudioManager());
+        super(mode);
         final BaseAudioManager audioManager =
             (BaseAudioManager) getAudioManager();
         audioManager.setEngine(this);
@@ -141,6 +141,14 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         grammarManager = new BaseGrammarManager(this);
         resultMask = ResultEvent.DEFAULT_MASK;
         setEngineMask(getEngineMask() | RecognizerEvent.DEFAULT_MASK);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected AudioManager createAudioManager() {
+        return new BaseRecognizerAudioManager();
     }
 
     public GrammarManager getGrammarManager() {

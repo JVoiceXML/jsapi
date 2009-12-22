@@ -120,7 +120,7 @@ public abstract class BaseEngine implements Engine {
      * <code>DEALLOCATED</code> state.
      */
     public BaseEngine() {
-        this(null, null);
+        this(null);
     }
 
     /**
@@ -130,12 +130,11 @@ public abstract class BaseEngine implements Engine {
      * @param mode the operating mode of this <code>Engine</code>
      * @param manager the audio manager
      */
-    public BaseEngine(final EngineMode mode, final AudioManager manager) {
+    public BaseEngine(final EngineMode mode) {
         engineMode = mode;
         engineListeners = new Vector();
         engineState = DEALLOCATED;
         engineStateLock = new Object();
-        audioManager = manager;
         speechEventExecutor = new ThreadSpeechEventExecutor();
     }
 
@@ -260,7 +259,7 @@ public abstract class BaseEngine implements Engine {
      * @param set the flags to set
      * @return a length-2 array with old and new state values.
      */
-    protected long[] setEngineState(final long clear, final long set) {
+    public long[] setEngineState(final long clear, final long set) {
         long[] states = new long[2];
         synchronized (engineStateLock) {
             states[0] = engineState;
@@ -431,8 +430,17 @@ public abstract class BaseEngine implements Engine {
      * {@inheritDoc}
      */
     public AudioManager getAudioManager() {
+        if (audioManager == null) {
+            audioManager = createAudioManager();
+        }
         return audioManager;
     }
+
+    /**
+     * Creates a new audio manager for this engine.
+     * @return new audio manager for this engine.
+     */
+    protected abstract AudioManager createAudioManager();
 
     /**
      * {@inheritDoc}

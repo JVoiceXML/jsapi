@@ -16,7 +16,7 @@ import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
 import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
-import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer;
+import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 import com.sun.speech.freetts.FreeTTSSpeakableImpl;
 import com.sun.speech.freetts.audio.AudioPlayer;
@@ -34,7 +34,7 @@ import com.sun.speech.freetts.audio.AudioPlayer;
  * Provides partial support for a JSAPI 2.0 synthesizer for the FreeTTS speech
  * synthesis system.
  */
-public class FreeTTSSynthesizer extends BaseSynthesizer
+public class FreeTTSSynthesizer extends JseBaseSynthesizer
     implements EnginePropertyChangeRequestListener {
     /** Logger for this class. */
     private static final Logger LOGGER =
@@ -278,7 +278,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer
      * defaultVoice.getVolume()); }
      */
 
-    protected Speakable getSpeakable(String text) {
+    public Speakable getSpeakable(String text) {
         return new FreeTTSSpeakable(text);
     }
 
@@ -322,23 +322,23 @@ public class FreeTTSSynthesizer extends BaseSynthesizer
         }
     }
 
-    protected void handleSpeak(int id, Speakable item) {
+    public void handleSpeak(int id, Speakable item) {
         handleSpeak(id, new FreeTTSSpeakableImpl(transformer.transform(item.getMarkupText())));
     }
 
-    protected void handleSpeak(int id, String text) {
+    public void handleSpeak(int id, String text) {
         handleSpeak(id, new FreeTTSSpeakableImpl(text));
     }
 
-    protected boolean handleCancelAll() {
+    public boolean handleCancelAll() {
         return false;
     }
 
-    protected boolean handleCancel(int id) {
+    public boolean handleCancel(int id) {
         return false;
     }
 
-    protected boolean handleCancel() {
+    public boolean handleCancel() {
         return false;
     }
 

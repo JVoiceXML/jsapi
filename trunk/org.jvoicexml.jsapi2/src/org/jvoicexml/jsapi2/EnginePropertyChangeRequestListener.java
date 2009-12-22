@@ -1,10 +1,7 @@
 package org.jvoicexml.jsapi2;
 
-import javax.speech.EngineProperties;
-
-
 /**
- * Listener to change requests in the {@link EngineProperties}.
+ * Listener to change requests in the {@link javax.speech.EngineProperties}.
  * @author Dirk Schnelle-Walka
  *
  */

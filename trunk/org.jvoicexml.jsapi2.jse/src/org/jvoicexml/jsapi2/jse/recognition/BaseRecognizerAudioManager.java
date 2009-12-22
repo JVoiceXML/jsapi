@@ -14,6 +14,9 @@ package org.jvoicexml.jsapi2.jse.recognition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLConnection;
 
 import javax.speech.AudioException;
@@ -21,6 +24,7 @@ import javax.speech.EngineStateException;
 
 import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
 import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
+import org.jvoicexml.jsapi2.jse.protocols.JavaSoundParser;
 
 /**
  * Supports the JSAPI 2.0 <code>AudioManager</code> interface. Actual JSAPI
@@ -42,7 +46,14 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
     public void handleAudioStart() throws AudioException {
         final String locator = getMediaLocator();
 
-        targetAudioFormat = getAudioFormat();
+        try {
+            final URL url = new URL(locator);
+            targetAudioFormat = JavaSoundParser.parse(url);
+        } catch (MalformedURLException e) {
+            throw new AudioException(e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new AudioException(e.getMessage());
+        }
 
         // Open URL described in locator
         final InputStream is;

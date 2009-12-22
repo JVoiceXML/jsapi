@@ -12,6 +12,8 @@
 
 package org.jvoicexml.jsapi2;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -35,6 +37,7 @@ public abstract class BaseAudioManager implements AudioManager {
      */
     private Vector audioListeners;
 
+    /**  Mask to filter events. */ 
     protected int audioMask;
 
     /** The media locator. */
@@ -264,7 +267,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * This method runs within the configured {@link SpeechEventExecutor}.
      * @param event the event.
      */
-    public void fireAudioEvent(final AudioEvent event) {
+    private void fireAudioEvent(final AudioEvent event) {
         synchronized (audioListeners) {
             final Enumeration enumeration = audioListeners.elements();
             while (enumeration.hasMoreElements()) {
@@ -274,5 +277,23 @@ public abstract class BaseAudioManager implements AudioManager {
             }
         }
     }
+
+    /**
+     * Retrieves the output stream associated with the given media locator.
+     * @return output stream.
+     */
+    public abstract OutputStream getOutputStream();
+
+    /**
+     * Retrieves the input stream associated with the given media locator.
+     * @return input stream.
+     */
+    public abstract InputStream getInputStream();
+
+    /**
+     * Retrieves the used audio format.
+     * @return the used audio format
+     */
+    public abstract AudioFormat getAudioFormat();
 }
 
