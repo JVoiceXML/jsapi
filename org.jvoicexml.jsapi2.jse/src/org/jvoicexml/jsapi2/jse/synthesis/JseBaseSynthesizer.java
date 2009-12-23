@@ -3,9 +3,13 @@ package org.jvoicexml.jsapi2.jse.synthesis;
 import java.util.logging.Logger;
 
 import javax.speech.AudioManager;
+import javax.speech.SpeechEventExecutor;
+import javax.speech.VocabularyManager;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
 
+import org.jvoicexml.jsapi2.BaseVocabularyManager;
+import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
 
 
@@ -36,12 +40,27 @@ public abstract class JseBaseSynthesizer extends BaseSynthesizer
     private static final Logger LOGGER =
             Logger.getLogger(JseBaseSynthesizer.class.getName());
 
+    /**
+     * Constructs a new object.
+     */
     public JseBaseSynthesizer() {
         this(null);
     }
 
-    public JseBaseSynthesizer(SynthesizerMode engineMode) {
+    /**
+     * Constructs a new object.
+     * @param engineMode the engine mode
+     */
+    public JseBaseSynthesizer(final SynthesizerMode engineMode) {
         super(engineMode);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected SpeechEventExecutor createSpeechEventExecutor() {
+        return new ThreadSpeechEventExecutor();
     }
 
     /**
@@ -53,5 +72,13 @@ public abstract class JseBaseSynthesizer extends BaseSynthesizer
             new BaseSynthesizerAudioManager();
         manager.setEngine(this);
         return manager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected VocabularyManager createVocabularyManager() {
+        return new BaseVocabularyManager();
     }
 }

@@ -47,32 +47,32 @@ public final class AudioFormat {
     /**
      * Constructs an <code>AudioFormat</code> with the given parameters.
      * 
-     * @param encoding
+     * @param enc
      *            the audio encoding technique
-     * @param sampleRate
+     * @param smpRate
      *            the number of samples per second
-     * @param sampleSizeInBits
+     * @param smpSize
      *            the number of bits in each sample
-     * @param channels
+     * @param chan
      *            the number of channels (1 for mono, 2 for stereo, and so on)
-     * @param frameSize
+     * @param frmSize
      *            the number of bytes in each frame
-     * @param frameRate
+     * @param frmRate
      *            the number of frames per second
-     * @param bigEndian
+     * @param bigend
      *            indicates whether the data for a single sample is stored in
      *            big-endian byte order (<code>false</code> means little-endian)
      */
-    public AudioFormat(String encoding, float sampleRate,
-            int sampleSizeInBits, int channels, int frameSize, float frameRate,
-            boolean bigEndian) {
-        this.encoding = encoding;
-        this.sampleRate = sampleRate;
-        this.sampleSizeInBits = sampleSizeInBits;
-        this.channels = channels;
-        this.frameSize = frameSize;
-        this.frameRate = frameRate;
-        this.bigEndian = bigEndian;
+    public AudioFormat(final String enc, final float smpRate,
+            final int smpSize, final int chan, final int frmSize,
+            final float frmRate, final boolean bigend) {
+        encoding = enc;
+        sampleRate = smpRate;
+        sampleSizeInBits = smpSize;
+        channels = chan;
+        frameSize = frmSize;
+        frameRate = frmRate;
+        bigEndian = bigend;
     }
 
     /**

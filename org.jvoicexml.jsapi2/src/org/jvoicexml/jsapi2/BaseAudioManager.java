@@ -38,7 +38,7 @@ public abstract class BaseAudioManager implements AudioManager {
     private Vector audioListeners;
 
     /**  Mask to filter events. */ 
-    protected int audioMask;
+    private int audioMask;
 
     /** The media locator. */
     private String mediaLocator;
@@ -58,7 +58,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * Sets the engine.
      * @param value the engine.
      */
-    public void setEngine(final Engine value) {
+    public final void setEngine(final Engine value) {
         engine = value;
     }
 
@@ -68,7 +68,7 @@ public abstract class BaseAudioManager implements AudioManager {
      *
      * @param listener the listener to add
      */
-    public void addAudioListener(final AudioListener listener) {
+    public final void addAudioListener(final AudioListener listener) {
         synchronized (audioListeners) {
             if (!audioListeners.contains(listener)) {
                 audioListeners.addElement(listener);
@@ -82,7 +82,7 @@ public abstract class BaseAudioManager implements AudioManager {
      *
      * @param listener the listener to remove
      */
-    public void removeAudioListener(final AudioListener listener) {
+    public final void removeAudioListener(final AudioListener listener) {
         synchronized (audioListeners) {
             audioListeners.removeElement(listener);
         }
@@ -91,21 +91,21 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public int getAudioMask() {
+    public final int getAudioMask() {
         return audioMask;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setAudioMask(final int mask) {
+    public final void setAudioMask(final int mask) {
         audioMask = mask;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void audioStart() throws SecurityException,
+    public final void audioStart() throws SecurityException,
             AudioException, EngineStateException {
         final String locator = getMediaLocator();
         if ((locator != null) && !isSupportsAudioManagement()) {
@@ -129,7 +129,7 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public void audioStop() throws SecurityException,
+    public final void audioStop() throws SecurityException,
             AudioException, EngineStateException {
         if (!isSupportsAudioManagement()) {
             throw new SecurityException(
@@ -153,10 +153,9 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public void setMediaLocator(final String locator) throws AudioException,
+    public final void setMediaLocator(final String locator) throws AudioException,
             AudioException, EngineStateException, IllegalArgumentException,
             SecurityException {
-
         // Ensure that engine is DEALLOCATED
         if (!engine.testEngineState(Engine.DEALLOCATED)) {
             throw new EngineStateException(
@@ -179,7 +178,7 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public String getMediaLocator() {
+    public final String getMediaLocator() {
         return mediaLocator;
     }
 
@@ -195,22 +194,18 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public boolean isSupportedMediaLocator(final String locator)
+    public final boolean isSupportedMediaLocator(final String locator)
         throws IllegalArgumentException {
-
         final String[] supportedMediaLocators = getSupportedMediaLocators(
                 locator);
-        if (supportedMediaLocators == null) {
-            return false;
-        }
-        return true;
+        return supportedMediaLocators != null;
     }
 
     /**
      * Checks if audio management is supported.
      * @return <code>true</code> if audio management is supported.
      */
-    protected boolean isSupportsAudioManagement() {
+    protected final boolean isSupportsAudioManagement() {
         final String management =
             System.getProperty("javax.speech.supports.audio.management");
         if (management == null) {
@@ -239,11 +234,13 @@ public abstract class BaseAudioManager implements AudioManager {
      * Notifies all listeners about the audio event using the configures
      * {@link javax.speech.SpeechEventExecutor}.
      * @param eventId id of the audio event.
-     * @param audioLevel
+     * @param audioLevel the audio level
      */
-    protected void postAudioEvent(final int eventId, final int audioLevel) {
+    protected final void postAudioEvent(final int eventId,
+            final int audioLevel) {
         if ((getAudioMask() & eventId) == eventId) {
-            final AudioEvent event = new AudioEvent(engine, eventId);
+            final AudioEvent event = new AudioEvent(engine, eventId,
+                    audioLevel);
 
             final Runnable runnable = new Runnable() {
                 public void run() {
@@ -280,13 +277,13 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * Retrieves the output stream associated with the given media locator.
-     * @return output stream.
+     * @return output stream, <code>null</code> if streaming is not supported.
      */
     public abstract OutputStream getOutputStream();
 
     /**
      * Retrieves the input stream associated with the given media locator.
-     * @return input stream.
+     * @return input stream, <code>null</code> if streaming is not supported.
      */
     public abstract InputStream getInputStream();
 
