@@ -328,23 +328,35 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
-    protected boolean baseAllocate() throws EngineStateException,
-            EngineException, AudioException {
+    protected final void baseAllocate() throws EngineStateException,
+            EngineException, AudioException, SecurityException {
 
         // Starts AudioManager
         final AudioManager audioManager = getAudioManager();
         audioManager.audioStart();
 
         // Procceed to real engine allocation
-        boolean status = handleAllocate();
-        if (status) {
-            long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED | RESUMED
-                    | DEFOCUSED);
-            postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
-        }
-
-        return status;
+        handleAllocate();
+        long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED | RESUMED
+                | DEFOCUSED);
+        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
     }
+
+    /**
+     * Perform the real allocation of the synthesizer.
+     * @throws AudioException
+     *          if any audio request fails 
+     * @throws EngineException
+     *          if an allocation error occurred or the Engine is not
+     *          operational. 
+     * @throws EngineStateException
+     *          if called for an Engine in the DEALLOCATING_RESOURCES state 
+     * @throws SecurityException
+     *          if the application does not have permission for this Engine
+     */
+    protected abstract void handleAllocate() throws EngineStateException,
+        EngineException, AudioException, SecurityException;
+
 
     /**
      * Called from the <code>deallocate</code> method. Override this in
@@ -383,8 +395,6 @@ public abstract class BaseSynthesizer extends BaseEngine
     protected boolean baseResume() {
         return handleResume();
     }
-
-    abstract protected boolean handleAllocate();
 
     abstract protected boolean handleDeallocate();
 

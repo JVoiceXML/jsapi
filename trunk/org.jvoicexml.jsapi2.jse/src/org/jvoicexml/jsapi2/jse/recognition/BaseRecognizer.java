@@ -58,6 +58,7 @@ import javax.speech.EngineEvent;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
+import javax.speech.VocabularyManager;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
@@ -73,6 +74,8 @@ import javax.speech.recognition.SpeakerManager;
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
 import org.jvoicexml.jsapi2.BaseEngineProperties;
+import org.jvoicexml.jsapi2.BaseVocabularyManager;
+import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.recognition.BaseGrammar;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizerProperties;
 
@@ -147,8 +150,24 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * {@inheritDoc}
      */
     @Override
+    protected SpeechEventExecutor createSpeechEventExecutor() {
+        return new ThreadSpeechEventExecutor();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected AudioManager createAudioManager() {
         return new BaseRecognizerAudioManager();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected VocabularyManager createVocabularyManager() {
+        return new BaseVocabularyManager();
     }
 
     public GrammarManager getGrammarManager() {
@@ -492,30 +511,48 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
 
     /**
-     * Called from the <code>allocate</code> method.  Override this in
-     * subclasses.
+     * Called from the <code>allocate</code> method.
      *
      * @see #allocate
      *
-     * @throws EngineException if problems are encountered
+     * @throws AudioException
+     *          if any audio request fails 
+     * @throws EngineException
+     *          if an allocation error occurred or the Engine is not
+     *          operational. 
+     * @throws EngineStateException
+     *          if called for an Engine in the DEALLOCATING_RESOURCES state 
+     * @throws SecurityException
+     *          if the application does not have permission for this Engine
      */
-    protected boolean baseAllocate() throws EngineStateException,
-            EngineException, AudioException {
-
+    protected final void baseAllocate() throws EngineStateException,
+            EngineException, AudioException, SecurityException {
         final AudioManager audioManager = getAudioManager();
         audioManager.audioStart();
 
         //Procceed to real engine allocation
-        boolean status = handleAllocate();
-        if (status) {
-            long[] states = setEngineState(CLEAR_ALL_STATE,
-                                           ALLOCATED | PAUSED | DEFOCUSED |
-                                           NOT_BUFFERING);
-            postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
-        }
-
-        return status;
+        handleAllocate();
+        long[] states = setEngineState(CLEAR_ALL_STATE,
+                ALLOCATED | PAUSED | DEFOCUSED |
+                NOT_BUFFERING);
+        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
     }
+
+    /**
+     * Perform the real allocation of the recognizer.
+     * @throws AudioException
+     *          if any audio request fails 
+     * @throws EngineException
+     *          if an allocation error occurred or the Engine is not
+     *          operational. 
+     * @throws EngineStateException
+     *          if called for an Engine in the DEALLOCATING_RESOURCES state 
+     * @throws SecurityException
+     *          if the application does not have permission for this Engine
+     */
+    abstract protected void handleAllocate() throws EngineStateException,
+        EngineException, AudioException, SecurityException;
+
 
     /**
      * Called from the <code>deallocate</code> method.  Override this in
@@ -596,8 +633,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         return status;
     }
 
-
-    abstract protected boolean handleAllocate();
 
     abstract protected boolean handleDeallocate();
 

@@ -36,7 +36,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
+import javax.speech.AudioException;
 import javax.speech.EngineException;
+import javax.speech.EngineStateException;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.RecognizerEvent;
 import javax.speech.recognition.ResultEvent;
@@ -188,10 +190,11 @@ final class Sphinx4Recognizer extends BaseRecognizer
      *
      * @throws EngineException if problems are encountered
      */
-    public boolean handleAllocate() {
+    public void handleAllocate() throws AudioException, EngineException,
+        EngineStateException, SecurityException {
         if (recognizer == null) {
-            LOGGER.warning("cannot allocate: no recognizer created!");
-            return false;
+            throw new EngineException(
+                    "cannot allocate: no recognizer configured!");
         }
 
         if (LOGGER.isLoggable(Level.FINE)) {
@@ -216,7 +219,7 @@ final class Sphinx4Recognizer extends BaseRecognizer
             recognizer.addResultListener(resultListener);
 
         } catch (java.io.IOException ioe) {
-           ioe.printStackTrace();
+           throw new AudioException(ioe.getMessage());
         }
 
         if (LOGGER.isLoggable(Level.FINE)) {
@@ -225,8 +228,6 @@ final class Sphinx4Recognizer extends BaseRecognizer
         }
 
         setEngineState(CLEAR_ALL_STATE, ALLOCATED);
-
-        return true;
     }
 
     /**

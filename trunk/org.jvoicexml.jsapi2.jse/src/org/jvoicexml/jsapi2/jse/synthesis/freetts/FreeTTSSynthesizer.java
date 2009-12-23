@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
+import javax.speech.AudioException;
 import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
 import javax.speech.EngineException;
+import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SynthesizerMode;
 
@@ -65,8 +67,6 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
      */
     public FreeTTSSynthesizer(final FreeTTSSynthesizerMode desc) {
         super(desc);
-        // /////////////////////////////////// outputHandler = new
-        // OutputHandler();
         audioPlayer = null;
         super.setSynthesizerProperties(new FreeTTSEngineProperties(this));
 
@@ -78,7 +78,8 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
      * {@inheritDoc}
      */
     @Override
-    public boolean handleAllocate() {
+    public void handleAllocate()  throws EngineStateException,
+        EngineException, AudioException, SecurityException {
         boolean ok = false;
         SynthesizerMode synthesizerMode = (SynthesizerMode) getEngineMode();
 
@@ -99,11 +100,8 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
                 setEngineState(CLEAR_ALL_STATE, newState);
             }
         } else {
-            LOGGER.warning("Can't allocate FreeTTS synthesizer");
-            return false;
+            throw new AudioException("Can't allocate FreeTTS synthesizer");
         }
-
-        return true;
     }
 
     /**

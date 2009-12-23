@@ -13,8 +13,6 @@ package org.jvoicexml.jsapi2;
 
 import java.util.Vector;
 
-import javax.speech.SpeechEventExecutor;
-
 /**
  * A speech event executor that is based on a thread.
  *
@@ -26,7 +24,7 @@ import javax.speech.SpeechEventExecutor;
  * @version $Revision$
  */
 public final class ThreadSpeechEventExecutor
-    implements SpeechEventExecutor, Runnable {
+    implements TerminatableSpeechEventExecutor, Runnable {
     /** Number of msec to wait before inspecting the command queue. */
     private static final int COMMAND_POLL_INTERVALL = 1000;
 
