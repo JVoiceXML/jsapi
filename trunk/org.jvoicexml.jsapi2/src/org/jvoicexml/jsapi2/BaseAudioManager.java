@@ -115,7 +115,9 @@ public abstract class BaseAudioManager implements AudioManager {
 
         handleAudioStart();
 
-        postAudioEvent(AudioEvent.AUDIO_STARTED, AudioEvent.AUDIO_LEVEL_MIN);
+        final AudioEvent event = new AudioEvent(engine,
+                AudioEvent.AUDIO_STARTED);
+        postAudioEvent(event);
     }
 
     /**
@@ -138,8 +140,9 @@ public abstract class BaseAudioManager implements AudioManager {
 
         handleAudioStop();
 
-        postAudioEvent(AudioEvent.AUDIO_STOPPED, AudioEvent.AUDIO_LEVEL_MIN);
-
+        final AudioEvent event = new AudioEvent(engine,
+                AudioEvent.AUDIO_STARTED);
+        postAudioEvent(event);
     }
 
     /**
@@ -230,21 +233,27 @@ public abstract class BaseAudioManager implements AudioManager {
         return mediaLocator.equals(otherLocator);
     }
 
+    
     /**
-     * Notifies all listeners about the audio event using the configures
+     * Notifies all listeners about the audio event using the configured
      * {@link javax.speech.SpeechEventExecutor}.
-     * @param eventId id of the audio event.
-     * @param audioLevel the audio level
+     * @param event the event to notify.
      */
-    protected final void postAudioEvent(final int eventId,
-            final int audioLevel) {
+    protected final void postAudioEvent(final AudioEvent event) {
+        final int eventId = event.getId();
         if ((getAudioMask() & eventId) == eventId) {
-            final AudioEvent event = new AudioEvent(engine, eventId,
-                    audioLevel);
 
             final Runnable runnable = new Runnable() {
                 public void run() {
-                    fireAudioEvent(event);
+                    synchronized (audioListeners) {
+                        final Enumeration enumeration =
+                            audioListeners.elements();
+                        while (enumeration.hasMoreElements()) {
+                            final AudioListener listener =
+                                (AudioListener) enumeration.nextElement();
+                            listener.audioUpdate(event);
+                        }
+                    }
                 }
             };
 
@@ -255,22 +264,6 @@ public abstract class BaseAudioManager implements AudioManager {
             } catch (RuntimeException ex) {
                 //Ignore exception
                 ex.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Notifies all {@link AudioListener}s about the given event.
-     * This method runs within the configured {@link SpeechEventExecutor}.
-     * @param event the event.
-     */
-    private void fireAudioEvent(final AudioEvent event) {
-        synchronized (audioListeners) {
-            final Enumeration enumeration = audioListeners.elements();
-            while (enumeration.hasMoreElements()) {
-                final AudioListener listener =
-                    (AudioListener) enumeration.nextElement();
-                listener.audioUpdate(event);
             }
         }
     }
