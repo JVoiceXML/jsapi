@@ -1,5 +1,6 @@
-#Mon Feb 09 13:48:04 CET 2009
+#Mon Dec 21 17:05:20 CET 2009
 eclipse.preferences.version=1
 pkg_use_project=true
 preverify_config_location=specified
-preverify_config_value=CLDC-1.0
+preverify_config_value=CLDC
+preverify_type=default_preverifier

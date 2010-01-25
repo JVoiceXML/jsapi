@@ -67,8 +67,8 @@ This file builds the JSR 113.jar.
     </javac>
     <copy todir="${build}">
       <fileset dir="${src}">
-        <include/>
-     </fileset>
+        <include name="**/*.xsl" />
+      </fileset>
     </copy>
   </target>
 
@@ -76,7 +76,6 @@ This file builds the JSR 113.jar.
     <jar jarfile="${dist.jsr113-jsebase.jar}" compress="false">
       <fileset dir="${build}">
         <include name="org/jvoicexml/**/*.class" />
-        <include name="org/jvoicexml/**/*.xsl" />
         <exclude name="org/jvoicexml/jsapi2/jse/recognition/sphinx4/**" />
         <exclude name="org/jvoicexml/jsapi2/jse/synthesis/freetts/**" />
       </fileset>
