@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="unittests"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/javax.speech"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="con" path="org.elipse.mtj.JavaMEContainer/Sun Java(TM) Wireless Toolkit 2.5.2_01 for CLDC/MediaControlSkin"/>
-	<classpathentry kind="lib" path="3rdparty/jsapi2/lib/jsr113.jar" sourcepath="/javax.speech"/>
+	<classpathentry kind="con" path="org.elipse.mtj.JavaMEContainer/Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone1"/>
+	<classpathentry kind="lib" path="3rdparty/jsapi2/lib/jsr113.jar" sourcepath="/javax.speech">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/org.jvoicexml.jsapi2/3rdparty/jsapi2/jsapi2-api.zip!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
