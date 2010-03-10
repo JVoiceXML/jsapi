@@ -55,12 +55,14 @@ public class BaseSynthesizerAudioManager extends JseBaseAudioManager {
                 throw new AudioException(e.getMessage());
             }
 
-            // Gets IO from that connection
-            try {
-                outputStream = urlConnection.getOutputStream();
-            } catch (IOException ex) {
-                throw new AudioException("Cannot get OutputStream from URL: "
-                        + ex.getMessage());
+            // Gets IO from that connection if not already present
+            if (outputStream == null) {
+                try {
+                    outputStream = urlConnection.getOutputStream();
+                } catch (IOException ex) {
+                    throw new AudioException("Cannot get OutputStream from URL: "
+                            + ex.getMessage());
+                }
             }
 
             try {
@@ -89,6 +91,8 @@ public class BaseSynthesizerAudioManager extends JseBaseAudioManager {
                 outputStream.close();
             } catch (IOException ex) {
                 throw new AudioException(ex.getMessage());
+            } finally {
+                outputStream = null;
             }
         }
     }
