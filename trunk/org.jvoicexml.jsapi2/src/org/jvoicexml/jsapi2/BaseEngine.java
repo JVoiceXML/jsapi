@@ -223,7 +223,9 @@ public abstract class BaseEngine implements Engine {
                 return getEngineState();
             } else {
                 //Will wait forever to reach that state
-                engineStateLock.wait();
+//                while (!testEngineState(state)) {
+                    engineStateLock.wait();
+//                }
                 return getEngineState();
             }
         }

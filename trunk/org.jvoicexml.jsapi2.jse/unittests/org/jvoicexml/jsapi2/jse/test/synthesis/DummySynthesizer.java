@@ -1,119 +1,87 @@
 package org.jvoicexml.jsapi2.jse.test.synthesis;
+import javax.speech.AudioException;
 import javax.speech.AudioManager;
+import javax.speech.EngineException;
+import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
-import org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer;
+import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 /**
  * 
  */
 
 /**
- * @author DS01191
+ * @author Dirk Schnelle-Walka
  *
  */
-public class DummySynthesizer extends BaseSynthesizer {
+public class DummySynthesizer extends JseBaseSynthesizer {
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#getSpeakable(java.lang.String)
-     */
     @Override
-    public Speakable getSpeakable(String text) {
+    protected Speakable getSpeakable(String text) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleAllocate()
-     */
     @Override
-    public boolean handleAllocate() {
+    protected void handleAllocate() throws EngineStateException,
+            EngineException, AudioException, SecurityException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected boolean handleCancel() {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleCancel()
-     */
     @Override
-    public boolean handleCancel() {
+    protected boolean handleCancel(int id) {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleCancel(int)
-     */
     @Override
-    public boolean handleCancel(int id) {
+    protected boolean handleCancelAll() {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleCancelAll()
-     */
     @Override
-    public boolean handleCancelAll() {
+    protected boolean handleDeallocate() {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleDeallocate()
-     */
     @Override
-    public boolean handleDeallocate() {
+    protected boolean handlePause() {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handlePause()
-     */
     @Override
-    public boolean handlePause() {
+    protected boolean handleResume() {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleResume()
-     */
     @Override
-    public boolean handleResume() {
+    protected void handleSpeak(int id, String item) {
         // TODO Auto-generated method stub
-        return false;
+        
     }
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleSpeak(int, java.lang.String)
-     */
     @Override
-    public void handleSpeak(int id, String item) {
+    protected void handleSpeak(int id, Speakable item) {
         // TODO Auto-generated method stub
-
-    }
-
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.synthesis.BaseSynthesizer#handleSpeak(int, javax.speech.synthesis.Speakable)
-     */
-    @Override
-    public void handleSpeak(int id, Speakable item) {
-        // TODO Auto-generated method stub
-
+        
     }
 
     @Override
     protected EnginePropertyChangeRequestListener getChangeRequestListener() {
-        return null;
-    }
-
-    @Override
-    protected AudioManager createAudioManager() {
         // TODO Auto-generated method stub
         return null;
     }
-
 }
