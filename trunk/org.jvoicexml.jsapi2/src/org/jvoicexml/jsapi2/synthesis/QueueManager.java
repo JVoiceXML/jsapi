@@ -62,24 +62,17 @@ public class QueueManager implements Runnable {
     private PlayThread playThread;
     private boolean done;
     private Vector queue;
-    private int queueID;
+    private int queueId;
     private boolean cancelFirstItem;
     private final Object cancelLock;
 
     public QueueManager(BaseSynthesizer synthesizer) {
         this.synthesizer = synthesizer;
         queue = new Vector();
-        queueID = 0;
+        queueId = 0;
         cancelFirstItem = false;
         cancelLock = new Object();
 
-        final String name;
-        final EngineMode mode = synthesizer.getEngineMode();
-        if (mode == null) {
-            name = "unnamed";
-        } else {
-            name = mode.getEngineName();
-        }
         synthThread = new Thread(this);
         playThread = new PlayThread();
 
@@ -104,8 +97,8 @@ public class QueueManager implements Runnable {
     public int appendItem(Speakable speakable, SpeakableListener listener) {
         boolean topOfQueueChanged;
         synchronized (queue) {
-            queueID += 1;
-            QueueItem item = new QueueItem(queueID, speakable, listener);
+            queueId += 1;
+            QueueItem item = new QueueItem(queueId, speakable, listener);
 
             topOfQueueChanged = isQueueEmpty();
             queue.addElement(item);
@@ -119,7 +112,7 @@ public class QueueManager implements Runnable {
         synthesizer.postSynthesizerEvent(states[0], states[1],
                 SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
 
-        return queueID;
+        return queueId;
     }
 
     /**
@@ -131,8 +124,8 @@ public class QueueManager implements Runnable {
             String text) {
         boolean topOfQueueChanged;
         synchronized (queue) {
-            queueID += 1;
-            QueueItem item = new QueueItem(queueID, speakable, listener, text);
+            queueId += 1;
+            QueueItem item = new QueueItem(queueId, speakable, listener, text);
 
             topOfQueueChanged = isQueueEmpty();
             queue.addElement(item);
@@ -146,7 +139,7 @@ public class QueueManager implements Runnable {
         synthesizer.postSynthesizerEvent(states[0], states[1],
                 SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
 
-        return queueID;
+        return queueId;
     }
 
     /**
@@ -159,8 +152,8 @@ public class QueueManager implements Runnable {
     public int appendItem(AudioSegment audioSegment, SpeakableListener listener) {
         boolean topOfQueueChanged;
         synchronized (queue) {
-            ++queueID;
-            final QueueItem item = new QueueItem(queueID, audioSegment, listener);
+            ++queueId;
+            final QueueItem item = new QueueItem(queueId, audioSegment, listener);
 
             topOfQueueChanged = isQueueEmpty();
             queue.addElement(item);
@@ -174,7 +167,7 @@ public class QueueManager implements Runnable {
         synthesizer.postSynthesizerEvent(states[0], states[1],
                 SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
 
-        return queueID;
+        return queueId;
     }
 
     /**
