@@ -49,13 +49,13 @@ public class BaseGrammarManager implements GrammarManager {
      * Constructor that associates a Recognizer.
      * with a GrammarManager
      *
-     * @param recognizer BaseRecognizer
+     * @param reco BaseRecognizer
      */
-    public BaseGrammarManager(final BaseRecognizer recognizer) {
+    public BaseGrammarManager(final BaseRecognizer reco) {
         grammarListeners = new ArrayList<GrammarListener>();
         grammars = new HashMap<String, Grammar>();
         grammarMask = GrammarEvent.DEFAULT_MASK;
-        this.recognizer = recognizer;
+        recognizer = reco;
     }
 
     /**
@@ -162,7 +162,7 @@ public class BaseGrammarManager implements GrammarManager {
         // List of all grammars
         ArrayList<Grammar> allGrammars = new ArrayList<Grammar> ();
 
-        // Get engine built-in grammrs
+        // Get engine built-in grammars
         if (recognizer != null) {
             List<Grammar> builtInGrammars = recognizer.getBuiltInGrammars();
             if (builtInGrammars != null) {

@@ -39,7 +39,7 @@ import javax.speech.recognition.ResultToken;
 import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
-import org.jvoicexml.jsapi2.jse.recognition.BaseResultToken;
+import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 
 
 /**
