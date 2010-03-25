@@ -46,15 +46,20 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
     public void handleAudioStart() throws AudioException {
         final String locator = getMediaLocator();
 
-        try {
-            final URL url = new URL(locator);
-            targetAudioFormat = JavaSoundParser.parse(url);
-        } catch (MalformedURLException e) {
-            throw new AudioException(e.getMessage());
-        } catch (URISyntaxException e) {
-            throw new AudioException(e.getMessage());
+        if (locator == null) {
+            targetAudioFormat = getEngineAudioFormat();
+        } else {
+            try {
+                final URL url = new URL(locator);
+                targetAudioFormat = JavaSoundParser.parse(url);
+            } catch (MalformedURLException e) {
+                throw new AudioException(e.getMessage());
+            } catch (URISyntaxException e) {
+                throw new AudioException(e.getMessage());
+            }
         }
 
+        
         // Open URL described in locator
         final InputStream is;
         if (locator == null) {
