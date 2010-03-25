@@ -78,6 +78,7 @@ import org.jvoicexml.jsapi2.BaseVocabularyManager;
 import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.recognition.BaseGrammar;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizerProperties;
+import org.jvoicexml.jsapi2.recognition.BaseSpeakerManager;
 
 
 /**
