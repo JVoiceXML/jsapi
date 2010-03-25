@@ -428,7 +428,7 @@ public abstract class BaseEngine implements Engine {
     /**
      * {@inheritDoc}
      */
-    public final boolean resume() {
+    public final boolean resume() throws EngineStateException {
         //Validate current state
         if (testEngineState(RESUMED)) {
             return true;
@@ -735,7 +735,7 @@ public abstract class BaseEngine implements Engine {
     /**
      * Called from the <code>resume</code> method.  Override in subclasses.
      */
-    protected abstract boolean baseResume();
+    protected abstract boolean baseResume() throws EngineStateException;
 
     /**
      * Notifies all listeners about the given event. This method is
