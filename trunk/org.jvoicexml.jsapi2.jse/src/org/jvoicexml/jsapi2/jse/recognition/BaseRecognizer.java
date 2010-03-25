@@ -613,7 +613,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      *
      * @todo Handle grammar updates
      */
-    protected boolean baseResume() {
+    protected boolean baseResume() throws EngineStateException {
 
         //Process grammars
         try {
