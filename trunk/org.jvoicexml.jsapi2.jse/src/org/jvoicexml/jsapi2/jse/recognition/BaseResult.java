@@ -45,6 +45,8 @@ import javax.speech.recognition.RuleSequence;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
 
+import org.jvoicexml.jsapi2.recognition.BaseResultToken;
+
 public class BaseResult implements Result, FinalResult, FinalRuleResult, Serializable, Cloneable {
     /** Logger for this class. */
     private static final Logger LOGGER =
@@ -76,11 +78,13 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 
     /**
      * Create a result with a result string
+     * @param gram the grammar
+     * @param result the result string
      */
-    public BaseResult(Grammar G, String S) {
+    public BaseResult(Grammar gram, String result) {
         resultListeners = new Vector();
-        grammar = G;
-        tryTokens(G, S);
+        grammar = gram;
+        tryTokens(gram, result);
     }
 
     /**
@@ -729,31 +733,30 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
         }
     }
 
-
-
     /**
      * Set the grammar that goes with this Result.  NOT JSAPI.
+     * @param gram the grammar
      */
-    public void setGrammar(Grammar g) {
-        grammar = g;
+    public void setGrammar(Grammar gram) {
+        grammar = gram;
     }
 
     /**
      * Try to set the Grammar and tokens of this result.  NOT JSAPI.
      */
-    public boolean tryTokens(Grammar G, String S) {
-        if ((S == null) || (G == null)) {
+    public boolean tryTokens(Grammar gram, String result) {
+        if ((result == null) || (gram == null)) {
             return false;
         }
 
-        if (G instanceof RuleGrammar) {
+        if (gram instanceof RuleGrammar) {
             try {
-                RuleParse rp = ((RuleGrammar) G).parse(S, null);
+                RuleParse rp = ((RuleGrammar) gram).parse(result, null);
                 if (rp != null) {
-                    grammar = G;
+                    grammar = gram;
                     tags = (String[])rp.getTags();   /** @todo Danger. RRR */
                     ruleName = rp.getRuleReference().getRuleName();
-                    StringTokenizer st = new StringTokenizer(S);
+                    StringTokenizer st = new StringTokenizer(result);
                     nTokens = st.countTokens();
                     int i = 0;
                     tokens = new ResultToken[nTokens];
@@ -767,9 +770,6 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
         }
         return false;
     }
-
-
-
 
 /** @todo Implement the following methods */
 
