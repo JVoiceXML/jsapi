@@ -156,22 +156,24 @@ public class BaseGrammarManager implements GrammarManager {
      */
     public Grammar[] listGrammars() throws EngineStateException {
 
-        //Validate current state
+        // Validate current state
         insureValidEngineState();
 
-        //List of all grammars
+        // List of all grammars
         ArrayList<Grammar> allGrammars = new ArrayList<Grammar> ();
 
-        //Get engine built-in grammrs
+        // Get engine built-in grammrs
         if (recognizer != null) {
-            List<Grammar> builInGrammars = recognizer.getBuiltInGrammars();
-            allGrammars.addAll(builInGrammars);
+            List<Grammar> builtInGrammars = recognizer.getBuiltInGrammars();
+            if (builtInGrammars != null) {
+                allGrammars.addAll(builtInGrammars);
+            }
         }
 
-        //Add local managed grammars
+        // Add local managed grammars
         allGrammars.addAll(grammars.values());
 
-        //Return an array with al know grammars
+        // Return an array with all know grammars
         return (Grammar[]) allGrammars.toArray(new Grammar[allGrammars.size()]);
     }
 
