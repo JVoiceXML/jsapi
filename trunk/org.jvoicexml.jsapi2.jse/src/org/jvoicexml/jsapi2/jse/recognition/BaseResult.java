@@ -53,14 +53,14 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
             Logger.getLogger(BaseResult.class.getName());
 
     private Vector resultListeners;
-    ResultToken tokens[] = null;
-    int nTokens = 0;
-    transient Grammar grammar = null;
-    int state = Result.UNFINALIZED;
-    int confidenceLevel = RecognizerProperties.UNKNOWN_CONFIDENCE;
+    ResultToken tokens[];
+    int nTokens;
+    transient Grammar grammar;
+    int state;
+    int confidenceLevel;
 
-    String[] tags = null;
-    String   ruleName = null;
+    String[] tags;
+    String   ruleName;
 
     /**
      * Create an empty result.
@@ -71,9 +71,10 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 
     /**
      * Create an empty result.
+     * @param gram the grammar
      */
-    public BaseResult(Grammar g) {
-        this(g, null);
+    public BaseResult(final Grammar gram) {
+        this(gram, null);
     }
 
     /**
@@ -84,6 +85,8 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     public BaseResult(Grammar gram, String result) {
         resultListeners = new Vector();
         grammar = gram;
+        state = Result.UNFINALIZED;
+        confidenceLevel = RecognizerProperties.UNKNOWN_CONFIDENCE;
         tryTokens(gram, result);
     }
 
@@ -751,12 +754,13 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 
         if (gram instanceof RuleGrammar) {
             try {
-                RuleParse rp = ((RuleGrammar) gram).parse(result, null);
+                final RuleGrammar rule = (RuleGrammar) gram;
+                final RuleParse rp = rule.parse(result, null);
                 if (rp != null) {
                     grammar = gram;
                     tags = (String[])rp.getTags();   /** @todo Danger. RRR */
                     ruleName = rp.getRuleReference().getRuleName();
-                    StringTokenizer st = new StringTokenizer(result);
+                    final StringTokenizer st = new StringTokenizer(result);
                     nTokens = st.countTokens();
                     int i = 0;
                     tokens = new ResultToken[nTokens];
@@ -777,8 +781,8 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 
     public RuleParse parse(int nBest) throws IllegalArgumentException,
             ResultStateException {
-         ResultToken[] rt = getAlternativeTokens(0);
-         String tokens[] = new String[rt.length];
+         final ResultToken[] rt = getAlternativeTokens(0);
+         final String tokens[] = new String[rt.length];
          for (int i = 0; i < rt.length; ++i) {
              tokens[i] = rt[i].getText();
          }

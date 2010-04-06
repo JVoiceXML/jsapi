@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Vector;
 
 import javax.speech.EngineException;
@@ -29,7 +28,7 @@ import javax.speech.recognition.RuleGrammar;
  * A base implementation of a {@link GrammarManager}.
  *
  * @author Renato Cassaca
- * @version 1.0
+ * @author Dirk Schnelle-Walka
  */
 public class BaseGrammarManager implements GrammarManager {
 
@@ -81,18 +80,13 @@ public class BaseGrammarManager implements GrammarManager {
     }
 
     /**
-     *
-     * @param grammarReference String
-     * @param rootName String
-     * @return RuleGrammar
-     * @throws IllegalArgumentException
-     * @throws EngineStateException
-     * @throws EngineException
+     * {@inheritDoc}
      */
     public RuleGrammar createRuleGrammar(String grammarReference,
                                          String rootName) throws
             IllegalArgumentException, EngineStateException, EngineException {
-        return createRuleGrammar(grammarReference, rootName, Locale.getDefault());
+        final SpeechLocale locale = SpeechLocale.getDefault();
+        return createRuleGrammar(grammarReference, rootName, locale);
     }
 
     /**
@@ -106,7 +100,7 @@ public class BaseGrammarManager implements GrammarManager {
      */
     public RuleGrammar createRuleGrammar(String grammarReference,
                                          String rootName,
-                                         Locale locale) throws
+                                         SpeechLocale locale) throws
             IllegalArgumentException, EngineStateException, EngineException {
 
         //Validate current state
@@ -118,9 +112,9 @@ public class BaseGrammarManager implements GrammarManager {
         }
 
         //Create grammar
-        BaseRuleGrammar brg = new BaseRuleGrammar(recognizer, grammarReference);
+        final BaseRuleGrammar brg =
+            new BaseRuleGrammar(recognizer, grammarReference);
         brg.setAttribute("xml:lang", locale.toString());
-        brg.setRoot(rootName);
 
         //Register it
         grammars.put(grammarReference, brg);
@@ -382,13 +376,4 @@ public class BaseGrammarManager implements GrammarManager {
             }
         }
     }
-
-    public RuleGrammar createRuleGrammar(String grammarReference,
-            String rootName, SpeechLocale locale)
-            throws IllegalArgumentException, EngineStateException,
-            EngineException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }
