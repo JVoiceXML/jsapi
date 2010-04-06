@@ -34,6 +34,7 @@ import edu.cmu.sphinx.result.Result;
 
 import java.util.StringTokenizer;
 
+import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultToken;
 import javax.speech.recognition.RuleGrammar;
@@ -116,7 +117,12 @@ class Sphinx4ResultListener implements ResultListener {
         }
 
         final RuleGrammar grammar = recognizer.getRuleGrammar();
-        currentResult = new BaseResult(grammar);
+        try {
+            currentResult = new BaseResult(grammar);
+        } catch (GrammarException e) {
+            LOGGER.warning(e.getMessage());
+            return;
+        }
 
         final ResultEvent created = new ResultEvent(currentResult,
                 ResultEvent.RESULT_CREATED, false, false);

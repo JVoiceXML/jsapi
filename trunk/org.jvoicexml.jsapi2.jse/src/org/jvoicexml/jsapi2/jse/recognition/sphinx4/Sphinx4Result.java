@@ -28,6 +28,7 @@
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
 import javax.speech.recognition.Grammar;
+import javax.speech.recognition.GrammarException;
 
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 
@@ -54,9 +55,10 @@ class Sphinx4Result
      * Constructs a new object.
      * @param grammar The current grammar.
      * @param result The result, returned by the sohinx4 recognizer.
+     * @exception GrammarException if the grammar could not be evaluated
      */
     public Sphinx4Result(final Grammar grammar,
-                         final Result result) {
+                         final Result result) throws GrammarException {
         super(grammar);
     /////////////////////////////////    super(grammar, result.getBestFinalResultNoFiller());
     }
