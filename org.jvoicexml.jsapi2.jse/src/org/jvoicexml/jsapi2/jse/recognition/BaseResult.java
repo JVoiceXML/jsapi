@@ -814,7 +814,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
            throw new ResultStateException();
 
        if (nBest<0 || nBest>=getNumberAlternatives())
-           throw new IllegalArgumentException();
+           throw new IllegalArgumentException("nBest out of valid range!");
 
        return confidenceLevel;
     }
@@ -825,7 +825,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      *
      * @param result String
      */
-    public void setResult(String result) throws Exception {
+    public void setResult(final String result) throws Exception {
         throw new Exception("Method temporally commented. Try use setTokens()!!");
         /*StringTokenizer st = new StringTokenizer(result);
         nTokens = st.countTokens();

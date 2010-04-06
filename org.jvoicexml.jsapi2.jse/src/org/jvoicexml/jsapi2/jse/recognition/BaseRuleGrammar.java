@@ -42,7 +42,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     protected Vector<RuleGrammarOperation> uncommitedChanges =
         new Vector<RuleGrammarOperation>();
 
-    //Atributes of the rule grammar
+    //Attributes of the rule grammar
     protected String root;
     protected String version;
     protected String xmlns;
@@ -744,38 +744,37 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * @param displayDisabledRules
      */
     public String toString(boolean displayDisabledRules) {
-        String res = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?> \n"+
-                     "<!DOCTYPE grammar PUBLIC \"-//W3C//DTD GRAMMAR 1.0//EN\" "+
-                     "               \"http://www.w3.org/TR/speech-grammar/grammar.dtd\"> \n";
-
-
-        res += "<grammar ";
-
-        res += " version=\"" + version + "\"";
-        res += " mode=\"" + mode + "\"";
-        res += " root=\"" + getRoot() + "\"";
-
-        res += ">\n";
+        final StringBuffer str = new StringBuffer();
+        str.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?> \n"
+                  + "<!DOCTYPE grammar PUBLIC \"-//W3C//DTD GRAMMAR 1.0//EN\""
+                  + " \"http://www.w3.org/TR/speech-grammar/grammar.dtd\"> \n");
+        str.append("<grammar version=\"");
+        str.append(version);
+        str.append("\" mode=\"");
+        str.append(mode);
+        str.append("\" root=\"");
+        str.append(getRoot());
+        str.append("\">\n");
 
         Iterator it = rules.keySet().iterator();
-        ArrayList<InternalRule> v = new ArrayList<InternalRule>();
+        Vector v = new Vector();
         while(it.hasNext()){
             InternalRule r = (InternalRule) rules.get(it.next());
-            v.add(r);
+            v.addElement(r);
         }
 
         Collections.sort(v,new InternalRuleIdComparator());
-
-        for (int i=0; i<v.size(); ++i){
-            if (displayDisabledRules==true || v.get(i).isActivable())
-                res += v.get(i).toString() + "\n";
+        for (int i = 0; i < v.size(); ++i) {
+            final InternalRule internalRule = (InternalRule) v.get(i);
+            if (displayDisabledRules || internalRule.isActivable()) {
+                str.append(internalRule);
+                str.append('\n');
+            }
         }
 
-        res +="</grammar>";
+        str.append("</grammar>");
 
-        return res;
-        /*throw new RuntimeException(
-            "toString not yet implemented.");*/
+        return str.toString();
     }
 
     public String toString(){

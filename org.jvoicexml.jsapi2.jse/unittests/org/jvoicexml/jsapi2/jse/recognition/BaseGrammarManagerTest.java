@@ -3,6 +3,7 @@
  */
 package org.jvoicexml.jsapi2.jse.recognition;
 
+import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.Rule;
@@ -39,13 +40,18 @@ public class BaseGrammarManagerTest extends TestCase {
      * @exception Exception test failed
      */
     public void testCreateRuleGrammarStringString() throws Exception {
+        final String name = "test";
         final RuleGrammar grammar =
-            manager.createRuleGrammar("test", "test");
+            manager.createRuleGrammar(name, name);
         final RuleToken token = new RuleToken("hello world");
         final Rule rule = new Rule("test", token, Rule.PUBLIC);
         grammar.addRule(rule);
         recognizer.processGrammars();
         System.out.println(grammar);
+        final Grammar retrievedGrammar = manager.getGrammar(name);
+        assertNotNull(retrievedGrammar);
+        assertEquals(grammar.toString(), retrievedGrammar.toString());
+        
     }
 
 }
