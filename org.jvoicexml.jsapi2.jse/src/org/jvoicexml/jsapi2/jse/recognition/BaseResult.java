@@ -64,16 +64,18 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 
     /**
      * Create an empty result.
+     * @exception GrammarException error evaluating the grammar
      */
-    public BaseResult() {
+    public BaseResult() throws GrammarException {
         this(null);
     }
 
     /**
      * Create an empty result.
      * @param gram the grammar
+     * @exception GrammarException error evaluating the grammar
      */
-    public BaseResult(final Grammar gram) {
+    public BaseResult(final Grammar gram) throws GrammarException {
         this(gram, null);
     }
 
@@ -81,8 +83,9 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * Create a result with a result string
      * @param gram the grammar
      * @param result the result string
+     * @exception GrammarException error evaluating the grammar
      */
-    public BaseResult(Grammar gram, String result) {
+    public BaseResult(Grammar gram, String result) throws GrammarException {
         resultListeners = new Vector();
         grammar = gram;
         state = Result.UNFINALIZED;
@@ -94,22 +97,25 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * Copy a result. If the result to be copied is a BaseResult
      * then clone it otherwise create a BaseResult and copy the
      * tokens onto it.
+     * @param result the result to copy to
+     * @return copied result
+     * @exception GrammarException if the related grammar could not be evaluated
      */
-    static BaseResult copyResult(Result R) {
+    static BaseResult copyResult(Result result) throws GrammarException {
         BaseResult copy = null;
-        if (R instanceof BaseResult) {
+        if (result instanceof BaseResult) {
             try {
-                copy = (BaseResult) ((BaseResult)R).clone();
+                copy = (BaseResult) ((BaseResult)result).clone();
             } catch (CloneNotSupportedException e) {
                 LOGGER.warning("ERROR: " + e);
             }
             return copy;
         } else {
-            copy = new BaseResult(R.getGrammar());
-            copy.nTokens = R.getNumTokens();
+            copy = new BaseResult(result.getGrammar());
+            copy.nTokens = result.getNumTokens();
             copy.tokens = new ResultToken[copy.nTokens];
-            for (int i = 0; i < R.getNumTokens(); i++) {
-                ResultToken sourceToken = R.getBestToken(i);
+            for (int i = 0; i < result.getNumTokens(); i++) {
+                ResultToken sourceToken = result.getBestToken(i);
                 BaseResultToken destinationToken = new BaseResultToken(copy, sourceToken.getText());
 
                 destinationToken.setConfidenceLevel(sourceToken.getConfidenceLevel());
@@ -745,9 +751,13 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     }
 
     /**
-     * Try to set the Grammar and tokens of this result.  NOT JSAPI.
+     * Try to set the Grammar and tokens of this result.
+     * @param gram the related grammar
+     * @param result the retrieved recognition result
+     * @return <code>true</code> if the grammar matches the tokens.
      */
-    public boolean tryTokens(Grammar gram, String result) {
+    public boolean tryTokens(final Grammar gram, final String result)
+        throws GrammarException {
         if ((result == null) || (gram == null)) {
             return false;
         }
