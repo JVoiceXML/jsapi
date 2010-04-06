@@ -75,19 +75,17 @@ public class Rule {
     public String toString() {
         StringBuffer str = new StringBuffer();
 
-        str.append(getClass().getName());
-        str.append("[");
+        str.append("<rule id=\"");
         str.append(ruleName);
-        str.append(",");
-        str.append(ruleComponent);
-        str.append(",");
+        str.append("\" scope=\"");
         if (scope == PRIVATE) {
-            str.append("PRIVATE");
+            str.append("private");
         } else {
-            str.append("PUBLIC");
+            str.append("public");
         }
-        str.append("]");
-
+        str.append("\">");
+        str.append(ruleComponent);
+        str.append("</rule>");
         return str.toString();
     }
 }
