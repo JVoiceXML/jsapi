@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import javax.speech.EngineStateException;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarManager;
+import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleAlternatives;
 import javax.speech.recognition.RuleComponent;
 import javax.speech.recognition.RuleCount;
@@ -131,13 +132,13 @@ public class RuleParser {
                                      final GrammarManager grammarManager,
                                      final String grammarReference,
                                      final String ruleName) {
-        RuleParser rp = new RuleParser(grammarManager, 0);
+        final RuleParser rp = new RuleParser(grammarManager, 0);
         String[] rNames;
         RuleComponent startRule = null;
-        Grammar g = grammarManager.getGrammar(grammarReference);
-        RuleGrammar grammar;
-        if (g instanceof RuleGrammar) {
-            grammar = (RuleGrammar) g;
+        final Grammar gram = grammarManager.getGrammar(grammarReference);
+        final RuleGrammar grammar;
+        if (gram instanceof RuleGrammar) {
+            grammar = (RuleGrammar) gram;
         } else {
             return null;
         }
@@ -147,32 +148,31 @@ public class RuleParser {
         } else {
             rNames = grammar.listRuleNames();
         }
-        Vector p = null;
-        Vector<RuleParse> t = new Vector<RuleParse>();
+        Vector parsed = new Vector();
         for (int j = 0; j < rNames.length; j++) {
             if ((ruleName == null) && !(grammar.isActivatable(rNames[j]))) {
                 continue;
             }
-            startRule = grammar.getRule(rNames[j]).getRuleComponent();
+            final Rule currentRule = grammar.getRule(rNames[j]);
+            startRule = currentRule.getRuleComponent();
             if (startRule == null) {
                 LOGGER.warning("BAD RULENAME " + rNames[j]);
                 continue;
             }
-            p = new Vector();
-
-            GrammarGraph grammarGraph = rp.buildGrammarGraph(grammar,
+            final GrammarGraph grammarGraph = rp.buildGrammarGraph(grammar,
                     rNames[j]);
-
-            if (rp.parse(grammarGraph.getStartNode(), inputTokens)) {
-                p.add(rp.grammarElements.pop());
+            final GrammarNode node = grammarGraph.getStartNode();
+            if (rp.parse(node, inputTokens)) {
+                final Object element = rp.grammarElements.pop();
+                parsed.add(element);
             }
         }
-        if (p.size() == 0) {
+        if (parsed.size() == 0) {
             //No parse is available
             return null;
         }
-        RuleParse[] rpa = new RuleParse[p.size()];
-        p.copyInto(rpa);
+        final RuleParse[] rpa = new RuleParse[parsed.size()];
+        parsed.copyInto(rpa);
         return rpa;
     }
 

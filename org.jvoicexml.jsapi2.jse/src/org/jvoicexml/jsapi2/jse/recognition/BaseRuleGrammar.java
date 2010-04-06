@@ -13,10 +13,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Vector;
 
+import javax.speech.SpeechLocale;
 import javax.speech.recognition.GrammarException;
+import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleAlternatives;
@@ -38,7 +39,8 @@ import org.jvoicexml.jsapi2.recognition.BaseGrammar;
 public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 {
     protected HashMap<String, InternalRule> rules;
-    protected Vector<RuleGrammarOperation> uncommitedChanges = new Vector<RuleGrammarOperation>();
+    protected Vector<RuleGrammarOperation> uncommitedChanges =
+        new Vector<RuleGrammarOperation>();
 
     //Atributes of the rule grammar
     protected String root;
@@ -59,18 +61,19 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 
     /**
      * Create a new BaseRuleGrammar
-     * @param R the BaseRecognizer for this Grammar.
+     * @param recognizer the BaseRecognizer for this Grammar.
      * @param name the name of this Grammar.
      */
-    public BaseRuleGrammar(BaseRecognizer recognizer, String name) {
+    public BaseRuleGrammar(final BaseRecognizer recognizer,
+            final String name) {
         super(recognizer, name);
         rules = new HashMap<String, InternalRule>();
 
-        //Initialize rule grammar atributes
+        //Initialize rule grammar attributes
         root = null;
         version = "1.0";
         xmlns = "";
-        xmlLang = Locale.getDefault().toString();
+        xmlLang = SpeechLocale.getDefault().toString();
         xmlBase = "";
         mode = "voice";
         tagFormat = "";
@@ -236,7 +239,12 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
                 updateRootRule();
             }
             else {
-                if (getRule(rootRuleName).getScope() == Rule.PRIVATE) {
+                final Rule rule = getRule(rootRuleName);
+                if (rule == null) {
+                    throw new GrammarException("Root rule '" + rootRuleName
+                            + "' not found");
+                }
+                if (rule.getScope() == Rule.PRIVATE) {
                     throw new GrammarException("Cannot set a PRIVATE_SCOPE rule as root");
                 }
 
@@ -270,7 +278,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * @param rule the definition of the rule.
      */
     public void addRule(Rule rule) {
-        InternalRule iRule = new InternalRule(rule, ruleId);
+        final InternalRule iRule = new InternalRule(rule, ruleId);
         AddRuleOperation aro = new AddRuleOperation(iRule);
         uncommitedChanges.add(aro);
         ruleId++;
@@ -432,8 +440,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * @param ruleName the name of the rule.
      */
     public Rule getRule(String ruleName) {
-        InternalRule iRule = rules.get(ruleName);
-        return (iRule != null ?  iRule.getRule() : null);
+        final InternalRule iRule = rules.get(ruleName);
+        return iRule != null ?  iRule.getRule() : null;
     }
 
     /**
@@ -681,8 +689,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
             ruleName = stripRuleName(ruleName);
         }*/
         final Recognizer recognizer = getRecognizer();
-        return RuleParser.parse(text, recognizer.getGrammarManager(),
-                getReference(), ruleName);
+        final GrammarManager manager = recognizer.getGrammarManager();
+        final String reference = getReference();
+        return RuleParser.parse(text, manager, reference, ruleName);
     }
 
     /**
@@ -879,19 +888,17 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     }
 
     /**
-     * @todo Throw GrammarException when there's no root rule defined
+     * Commits the grammar changes.
+     * @exception GrammarException
+     *            if there is an error in the grammar
      */
-    public boolean commitChanges(){
+    public boolean commitChanges() throws GrammarException {
         boolean existChanges = uncommitedChanges.size() > 0;
 
         while (uncommitedChanges.size() > 0) {
-            RuleGrammarOperation ruleGrammarOperation = uncommitedChanges.
-                    remove(0);
-            try {
-                ruleGrammarOperation.execute();
-            } catch (GrammarException ex) {
-                ex.printStackTrace();
-            }
+            final RuleGrammarOperation ruleGrammarOperation =
+                uncommitedChanges.remove(0);
+            ruleGrammarOperation.execute();
         }
 
         return existChanges;

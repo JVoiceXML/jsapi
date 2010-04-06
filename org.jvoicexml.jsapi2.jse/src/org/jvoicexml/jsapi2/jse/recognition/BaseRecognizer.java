@@ -60,6 +60,7 @@ import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
 import javax.speech.recognition.Grammar;
+import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerEvent;
@@ -449,10 +450,17 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         //Commit all grammars pending changes
         Grammar[] grammars = grammarManager.listGrammars();
         for (int i = 0; i < grammars.length; i++) {
-            if (grammars[i] instanceof BaseRuleGrammar) {
-                BaseRuleGrammar baseRuleGrammar = ((BaseRuleGrammar) grammars[i]);
+            final Grammar grammar = grammars[i];
+            if (grammar instanceof BaseRuleGrammar) {
+                BaseRuleGrammar baseRuleGrammar = (BaseRuleGrammar) grammar;
                 //Flag that indicates if this baserulegrammar were changed
-                boolean grammarUpdated = baseRuleGrammar.commitChanges();
+                boolean grammarUpdated = false;
+                try {
+                    grammarUpdated = baseRuleGrammar.commitChanges();
+                } catch (GrammarException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 //Update "modified-flag"
                 existChanges = existChanges || grammarUpdated;
                 if (baseRuleGrammar.isActivatable())
