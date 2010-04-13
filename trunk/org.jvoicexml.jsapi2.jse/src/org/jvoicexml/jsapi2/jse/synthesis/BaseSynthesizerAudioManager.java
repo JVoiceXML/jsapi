@@ -47,17 +47,12 @@ public class BaseSynthesizerAudioManager extends JseBaseAudioManager {
         if (locator == null) {
             outputStream = new ClipOutputStream(this);
         } else {
-            // Open URL described in locator
-            final URLConnection urlConnection;
-            try {
-                urlConnection = openURLConnection();
-            } catch (IOException e) {
-                throw new AudioException(e.getMessage());
-            }
-
             // Gets IO from that connection if not already present
             if (outputStream == null) {
+                // Open URL described in locator
+                final URLConnection urlConnection;
                 try {
+                    urlConnection = openURLConnection();
                     outputStream = urlConnection.getOutputStream();
                 } catch (IOException ex) {
                     throw new AudioException("Cannot get OutputStream from URL: "
