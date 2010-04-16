@@ -20,9 +20,7 @@ This file builds the JSR 113.jar.
     <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
 	
   <path id="classpath">
-    <fileset dir="3rdparty/jsapi2/lib">
-      <include name="*.jar" />
-    </fileset>
+    <pathelement location="../javax.speech/classes"/>
   </path>
   
 	<path id="midp.lib">

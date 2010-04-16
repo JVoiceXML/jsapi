@@ -4,10 +4,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/javax.speech"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="con" path="org.elipse.mtj.JavaMEContainer/Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone2"/>
-	<classpathentry kind="lib" path="3rdparty/jsapi2/lib/jsr113.jar" sourcepath="/javax.speech">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/org.jvoicexml.jsapi2/3rdparty/jsapi2/jsapi2-api.zip!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
