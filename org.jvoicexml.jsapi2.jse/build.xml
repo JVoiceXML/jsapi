@@ -36,9 +36,7 @@ This file builds the JSR 113.jar.
   </target>
 
   <path id="classpath">
-    <fileset dir="../org.jvoicexml.jsapi2/3rdparty/jsapi2/lib">
-      <include name="*.jar" />
-    </fileset>
+    <pathelement location="../javax.speech/classes"/>
     <fileset dir="3rdparty\freetts1.2\lib">
       <include name="cmulex.jar" />
       <include name="cmu_us_kal.jar" />
