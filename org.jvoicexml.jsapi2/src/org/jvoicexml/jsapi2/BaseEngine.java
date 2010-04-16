@@ -217,15 +217,15 @@ public abstract class BaseEngine implements Engine {
                         + stateToString(state));
             }
 
-            //Wait for a state change
+            // Wait for a state change
             if (timeout > 0) {
                 engineStateLock.wait(timeout);
                 return getEngineState();
             } else {
-                //Will wait forever to reach that state
-//                while (!testEngineState(state)) {
+                // Will wait forever to reach that state
+                while (!testEngineState(state)) {
                     engineStateLock.wait();
-//                }
+                }
                 return getEngineState();
             }
         }
@@ -281,7 +281,7 @@ public abstract class BaseEngine implements Engine {
      */
     public final void allocate() throws AudioException, EngineException,
         EngineStateException, SecurityException {
-        //Validate current state
+        // Validate current state
         if (testEngineState(ALLOCATED)
                 || testEngineState(ALLOCATING_RESOURCES)) {
             return;
@@ -289,15 +289,15 @@ public abstract class BaseEngine implements Engine {
 
         checkEngineState(DEALLOCATING_RESOURCES);
 
-        //Update current state
+        // Update current state
         long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATING_RESOURCES);
         postEngineEvent(states[0], states[1],
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES);
 
-        //Handle engine allocation
+        // Handle engine allocation
         boolean success = false;
         try {
-            //Handle allocate
+            // Handle allocate
             baseAllocate();
             success = true;
         } finally {
@@ -346,7 +346,7 @@ public abstract class BaseEngine implements Engine {
             };
             final Thread thread = new Thread(runnable);
             thread.start();
-        } else if (mode == 0){
+        } else if (mode == 0) {
             allocate();
         } else {
             throw new IllegalArgumentException("Unsupported mode: " + mode);
@@ -416,12 +416,12 @@ public abstract class BaseEngine implements Engine {
             }
         }
 
-        //Handle pause
-        boolean status = basePause();
-        if (status) {
-            long[] states = setEngineState(RESUMED, PAUSED);
-            postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
-        }
+        // Handle pause
+        basePause();
+
+        // Adapt the state
+        long[] states = setEngineState(RESUMED, PAUSED);
+        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
     }
 
 
@@ -724,16 +724,28 @@ public abstract class BaseEngine implements Engine {
      *
      * @throws EngineException if this <code>Engine</code> cannot be
      *   deallocated.
+     * @throws EngineStateException if called for an {@link Engine} in the
+     *   {@link Engine#DEALLOCATING_RESOURCES} state 
+     * @throws AudioException if an audio request fails
      */
-    protected abstract boolean baseDeallocate() throws EngineStateException, EngineException, AudioException;
+    protected abstract void baseDeallocate()
+        throws EngineStateException, EngineException, AudioException;
 
     /**
      * Called from the <code>pause</code> method.  Override this in subclasses.
+     * @exception EngineStateException
+     *                  when not in the standard conditions for Operation
      */
-    protected abstract boolean basePause();
+    protected abstract void basePause() throws EngineStateException;
 
     /**
      * Called from the <code>resume</code> method.  Override in subclasses.
+     * @return <code>true</code> if the {@link Engine} is in or is about to
+     *  enter the {@link Engine#RESUMED} state; or <code>false</code> if it
+     *  will remain {@link Engine#PAUSED} due to nested calls to pause.
+     * 
+     * @exception EngineStateException
+     *                  when not in the standard conditions for Operation
      */
     protected abstract boolean baseResume() throws EngineStateException;
 

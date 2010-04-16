@@ -163,10 +163,10 @@ final class Sphinx4Recognizer extends BaseRecognizer
     /**
      * Called from the <code>pause</code> method.
      */
-    public boolean handlePause() {
+    public void handlePause() {
         if (recognitionThread == null) {
-            LOGGER.warning("cannot pause, no decoder started");
-            return false;
+            throw new EngineStateException(
+                    "Cannot pause, no decoder started");
         }
 
         stopRecognitionThread();
@@ -174,15 +174,13 @@ final class Sphinx4Recognizer extends BaseRecognizer
             final Microphone microphone = (Microphone) dataProcessor;
             microphone.stopRecording();
         }
-
-        return true;
     }
 
     /**
      * @todo Correctly implement this
      */
-     public boolean handlePause(int flags) {
-         return handlePause();
+     public void handlePause(int flags) {
+         handlePause();
      }
 
     /**
@@ -237,7 +235,7 @@ final class Sphinx4Recognizer extends BaseRecognizer
      *   deallocated.
      * @todo Implement this com.sun.speech.engine.BaseEngine method
      */
-    public boolean handleDeallocate() {
+    public void handleDeallocate() {
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("deallocating recognizer...");
@@ -262,8 +260,6 @@ final class Sphinx4Recognizer extends BaseRecognizer
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("...deallocated");
         }
-
-        return true;
     }
 
     /**

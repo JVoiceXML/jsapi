@@ -250,13 +250,10 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             }
         }
 
-        //Handle pause
-        boolean status = basePause(flags);
-        if (status) {
-            long[] states = setEngineState(RESUMED, PAUSED);
-            postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
-        }
-
+        // Handle pause
+        basePause(flags);
+        long[] states = setEngineState(RESUMED, PAUSED);
+        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
     }
 
     /**
@@ -570,50 +567,39 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * @throws EngineException if this <code>Engine</code> cannot be
      *   deallocated.
      */
-    protected boolean baseDeallocate() throws EngineStateException,
+    protected void baseDeallocate() throws EngineStateException,
             EngineException, AudioException {
 
-        //Procceed to real engine deallocation
-        boolean status = handleDeallocate();
-        if (status) {
-            //Stops AudioManager
-            final AudioManager audioManager = getAudioManager();
-            audioManager.audioStop();
-
-            long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
-            postEngineEvent(states[0], states[1],
-                    EngineEvent.ENGINE_DEALLOCATED);
-        } else {
-            //Stops AudioManager
+        // Procceed to real engine deallocation
+        try {
+            handleDeallocate();
+        } finally {
+            // Stops AudioManager
             final AudioManager audioManager = getAudioManager();
             audioManager.audioStop();
         }
-
-
-        return status;
+        long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
+        postEngineEvent(states[0], states[1],
+                EngineEvent.ENGINE_DEALLOCATED);
     }
 
-    protected boolean basePause() {
-
-        boolean status = handlePause();
-        if (status == true) {
-            setEngineState(LISTENING | PROCESSING,
-                           getEngineState() & ~LISTENING & ~PROCESSING);
-            setEngineState(BUFFERING, NOT_BUFFERING);
-        }
-
-        return status;
+    /**
+     * {@inheritDoc}
+     */
+    protected void basePause() {
+        handlePause();
+        setEngineState(LISTENING | PROCESSING,
+                       getEngineState() & ~LISTENING & ~PROCESSING);
+        setEngineState(BUFFERING, NOT_BUFFERING);
     }
 
-    protected boolean basePause(int flags) {
-
-        boolean status = handlePause(flags);
-        if (status == true) {
-            setEngineState(LISTENING | PROCESSING,
-                           getEngineState() & ~LISTENING & ~PROCESSING);
-        }
-
-        return status;
+    /**
+     * {@inheritDoc}
+     */
+    protected void basePause(int flags) {
+        handlePause(flags);
+        setEngineState(LISTENING | PROCESSING,
+                       getEngineState() & ~LISTENING & ~PROCESSING);
     }
 
 
@@ -643,11 +629,11 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
 
-    abstract protected boolean handleDeallocate();
+    abstract protected void handleDeallocate();
 
-    abstract protected boolean handlePause();
+    abstract protected void handlePause();
 
-    abstract protected boolean handlePause(int flags);
+    abstract protected void handlePause(int flags);
 
     abstract protected boolean handleResume();
 

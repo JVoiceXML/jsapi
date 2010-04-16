@@ -43,27 +43,21 @@ public class DummyRecognizer extends BaseRecognizer {
      * @see org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer#handleDeallocate()
      */
     @Override
-    protected boolean handleDeallocate() {
-        // TODO Auto-generated method stub
-        return false;
+    protected void handleDeallocate() {
     }
 
     /* (non-Javadoc)
      * @see org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer#handlePause()
      */
     @Override
-    protected boolean handlePause() {
-        // TODO Auto-generated method stub
-        return false;
+    protected void handlePause() {
     }
 
     /* (non-Javadoc)
      * @see org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer#handlePause(int)
      */
     @Override
-    protected boolean handlePause(int flags) {
-        // TODO Auto-generated method stub
-        return false;
+    protected void handlePause(int flags) {
     }
 
     /* (non-Javadoc)
