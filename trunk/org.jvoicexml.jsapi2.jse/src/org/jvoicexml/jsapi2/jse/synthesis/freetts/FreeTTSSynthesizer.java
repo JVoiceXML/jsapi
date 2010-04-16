@@ -149,7 +149,7 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
      * @throws EngineException
      *                 if a deallocation error occurs
      */
-    public boolean handleDeallocate() {
+    public void handleDeallocate() {
         long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
         getQueueManager().cancelAllItems();
         getQueueManager().terminate();
@@ -159,14 +159,6 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
         if (audioPlayer != null) {
             audioPlayer.close();
         }
-
-        // ///////////////////////////////////////////////////////////////////
-        // outputQueue.close();
-
-        // postEngineEvent(states[0], states[1],
-        // EngineEvent.ENGINE_DEALLOCATED);
-
-        return true;
     }
 
     /**
@@ -248,9 +240,8 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
     /**
      * Pauses the output.
      */
-    public boolean handlePause() {
+    public void handlePause() {
         audioPlayer.pause();
-        return true;
     }
 
     /**

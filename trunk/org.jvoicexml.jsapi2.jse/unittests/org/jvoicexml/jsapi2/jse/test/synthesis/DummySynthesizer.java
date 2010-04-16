@@ -50,15 +50,11 @@ public class DummySynthesizer extends JseBaseSynthesizer {
     }
 
     @Override
-    protected boolean handleDeallocate() {
-        // TODO Auto-generated method stub
-        return false;
+    protected void handleDeallocate() {
     }
 
     @Override
-    protected boolean handlePause() {
-        // TODO Auto-generated method stub
-        return false;
+    protected void handlePause() {
     }
 
     @Override

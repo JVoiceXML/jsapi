@@ -344,13 +344,9 @@ public abstract class BaseSynthesizer extends BaseEngine
 
 
     /**
-     * Called from the <code>deallocate</code> method. Override this in
-     * subclasses.
-     *
-     * @throws EngineException
-     *                 if this <code>Engine</code> cannot be deallocated.
+     * {@inheritDoc}
      */
-    protected boolean baseDeallocate() throws EngineStateException,
+    protected void baseDeallocate() throws EngineStateException,
             EngineException, AudioException {
 
         // Stops AudioManager
@@ -358,18 +354,19 @@ public abstract class BaseSynthesizer extends BaseEngine
         audioManager.audioStop();
 
         // Procceed to real engine deallocation
-        boolean status = handleDeallocate();
-        if (status) {
-            long states[] = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
-            postEngineEvent(states[0], states[1],
-                    EngineEvent.ENGINE_DEALLOCATED);
-        }
-
-        return status;
+        handleDeallocate();
+        
+        // Adapt the state
+        long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
+        postEngineEvent(states[0], states[1],
+                EngineEvent.ENGINE_DEALLOCATED);
     }
 
-    protected boolean basePause() {
-        return handlePause();
+    /**
+     * {@inheritDoc}
+     */
+    protected void basePause() {
+        handlePause();
     }
 
     /**
@@ -381,9 +378,9 @@ public abstract class BaseSynthesizer extends BaseEngine
         return handleResume();
     }
 
-    abstract protected boolean handleDeallocate();
+    abstract protected void handleDeallocate();
 
-    abstract protected boolean handlePause();
+    abstract protected void handlePause();
 
     abstract protected boolean handleResume();
 
@@ -411,10 +408,12 @@ public abstract class BaseSynthesizer extends BaseEngine
      */
     protected String stateToString(long state) {
         StringBuffer buf = new StringBuffer(super.stateToString(state));
-        if ((state & Synthesizer.QUEUE_EMPTY) != 0)
+        if ((state & Synthesizer.QUEUE_EMPTY) != 0) {
             buf.append(" QUEUE_EMPTY ");
-        if ((state & Synthesizer.QUEUE_EMPTY) != 0)
-            buf.append(" QUEUE_EMPTY ");
+        }
+        if ((state & Synthesizer.QUEUE_NOT_EMPTY) != 0) {
+            buf.append(" QUEUE_NOT_EMPTY ");
+        }
         return buf.toString();
     }
 
