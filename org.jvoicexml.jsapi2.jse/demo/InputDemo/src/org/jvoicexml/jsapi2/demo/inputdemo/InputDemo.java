@@ -84,12 +84,15 @@ public final class InputDemo implements ResultListener {
         synchronized (lock) {
             lock.wait();
         }
+        System.out.print("Recognized: ");
         ResultToken[] tokens = result.getBestTokens();
 
         for (int i = 0; i < tokens.length; i++) {
             System.out.print(tokens[i].getText() + " ");
         }
         System.out.println();
+        recognizer.deallocate();
+        synthesizer.deallocate();
     }
 
     /**
