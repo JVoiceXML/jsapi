@@ -64,7 +64,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * @param recognizer the BaseRecognizer for this Grammar.
      * @param name the name of this Grammar.
      */
-    public BaseRuleGrammar(final BaseRecognizer recognizer,
+    public BaseRuleGrammar(final JseBaseRecognizer recognizer,
             final String name) {
         super(recognizer, name);
         rules = new HashMap<String, InternalRule>();

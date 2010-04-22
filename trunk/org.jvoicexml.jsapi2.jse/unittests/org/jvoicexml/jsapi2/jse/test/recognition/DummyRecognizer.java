@@ -3,28 +3,27 @@
  */
 package org.jvoicexml.jsapi2.jse.test.recognition;
 
-import java.util.List;
+import java.util.Vector;
 
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
-import javax.speech.recognition.Grammar;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
-import org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer;
+import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 
 /**
  * Dummy implementation of a recognizer for test purposes.
  * @author Dirk Schnelle-Walka
  *
  */
-public class DummyRecognizer extends BaseRecognizer {
+public class DummyRecognizer extends JseBaseRecognizer {
 
     /* (non-Javadoc)
      * @see org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer#getBuiltInGrammars()
      */
     @Override
-    protected List<Grammar> getBuiltInGrammars() {
+    public Vector getBuiltInGrammars() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -69,14 +68,6 @@ public class DummyRecognizer extends BaseRecognizer {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer#setGrammars(java.util.List)
-     */
-    @Override
-    protected boolean setGrammars(List grammarDefinition) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
     /* (non-Javadoc)
      * @see org.jvoicexml.jsapi2.BaseEngine#getChangeRequestListener()
@@ -85,6 +76,12 @@ public class DummyRecognizer extends BaseRecognizer {
     protected EnginePropertyChangeRequestListener getChangeRequestListener() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    protected boolean setGrammars(Vector grammarDefinition) {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }
