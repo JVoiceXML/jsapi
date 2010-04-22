@@ -115,7 +115,7 @@ public abstract class JseBaseRecognizer extends BaseRecognizer {
      */
     @Override
     protected GrammarManager createGrammarManager() {
-        return new BaseGrammarManager();
+        return new BaseGrammarManager(this);
     }
 
     /**
