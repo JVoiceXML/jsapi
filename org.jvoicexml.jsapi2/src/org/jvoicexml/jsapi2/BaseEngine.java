@@ -202,33 +202,34 @@ public abstract class BaseEngine implements Engine {
      */
     public final long waitEngineState(final long state, final long timeout)
         throws InterruptedException {
-        synchronized (engineStateLock) {
-            if (!isValid(state)) {
-                throw new IllegalArgumentException(
-                        "Cannot wait for impossible state: "
-                        + stateToString(state));
-            }
-            if (testEngineState(state)) {
-                return state;
-            }
+        if (!isValid(state)) {
+            throw new IllegalArgumentException(
+                    "Cannot wait for impossible state: "
+                    + stateToString(state));
+        }
+        if (testEngineState(state)) {
+            return state;
+        }
 
-            if (!isReachable(state)) {
-                throw new IllegalStateException("State is not reachable: "
-                        + stateToString(state));
-            }
+        if (!isReachable(state)) {
+            throw new IllegalStateException("State is not reachable: "
+                    + stateToString(state));
+        }
 
-            // Wait for a state change
-            if (timeout > 0) {
+        // Wait for a state change
+        if (timeout > 0) {
+            synchronized (engineStateLock) {
                 engineStateLock.wait(timeout);
-                return getEngineState();
-            } else {
-                // Will wait forever to reach that state
-                while (!testEngineState(state)) {
+            }
+        } else {
+            // Will wait forever to reach that state
+            while (!testEngineState(state)) {
+                synchronized (engineStateLock) {
                     engineStateLock.wait();
                 }
-                return getEngineState();
             }
         }
+        return getEngineState();
     }
 
     /**
@@ -628,7 +629,7 @@ public abstract class BaseEngine implements Engine {
      * @return a <code>String</code> containing the names of all the
      *   states set in <code>state</code>
      */
-    protected String stateToString(final long state) {
+    public String stateToString(final long state) {
         StringBuffer buf = new StringBuffer();
         if ((state & Engine.DEALLOCATED) != 0) {
             buf.append("DEALLOCATED");
@@ -677,21 +678,27 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     * @todo Finish validation
+     * Retrieves the bit mask of all possible states of this engine.
+     * @return bit mask
+     */
+    protected long getEngineStates() {
+        return PAUSED | RESUMED | FOCUSED | DEFOCUSED | ALLOCATED
+                | ALLOCATING_RESOURCES | DEALLOCATED
+                | DEALLOCATING_RESOURCES;
+    }
+
+    /**
+     * Checks if the given state is a valid state.
      *
      * @param state long
      * @return boolean
      */
-    protected boolean isValid(final long state) {
-        if (testEngineState(PAUSED | RESUMED)) {
+    private boolean isValid(final long state) {
+        if (state == 0) {
             return false;
         }
-
-        if (testEngineState(FOCUSED | DEFOCUSED)) {
-            return false;
-        }
-
-        return true;
+        final long states = getEngineStates();
+        return (state | states) == states;
     }
 
 

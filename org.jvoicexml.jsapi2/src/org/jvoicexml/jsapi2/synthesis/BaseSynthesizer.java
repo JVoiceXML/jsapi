@@ -124,8 +124,8 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * Utility function to send a speakable event to all grammar listeners.
      */
-    public void fireSpeakableEvent(SpeakableEvent event,
-            SpeakableListener extraSpeakableListener) {
+    public void fireSpeakableEvent(final SpeakableEvent event,
+            final SpeakableListener extraSpeakableListener) {
         if (extraSpeakableListener != null) {
             extraSpeakableListener.speakableUpdate(event);
         }
@@ -140,27 +140,35 @@ public abstract class BaseSynthesizer extends BaseEngine
         }
     }
 
-    protected boolean isValid(long state) {
-        if (testEngineState(QUEUE_EMPTY | QUEUE_NOT_EMPTY))
-            return false;
-
-        return super.isValid(state);
+    /**
+     * {@inheritDoc}
+     */
+    protected long getEngineStates() {
+        return super.getEngineStates() | Synthesizer.QUEUE_EMPTY
+        | Synthesizer.QUEUE_NOT_EMPTY;
     }
 
-    public void addSpeakableListener(SpeakableListener listener) {
+    /**
+     * {@inheritDoc}
+     */
+    public final void addSpeakableListener(final SpeakableListener listener) {
         if (!speakableListeners.contains(listener)) {
             speakableListeners.addElement(listener);
         }
     }
 
-    public void removeSpeakableListener(SpeakableListener listener) {
+    /**
+     * {@inheritDoc}
+     */
+    public final void removeSpeakableListener(
+            final SpeakableListener listener) {
         speakableListeners.removeElement(listener);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addSynthesizerListener(
+    public final void addSynthesizerListener(
             final SynthesizerListener listener) {
         addEngineListener(listener);
     }
@@ -168,7 +176,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
-    public void removeSynthesizerListener(
+    public final void removeSynthesizerListener(
             final SynthesizerListener listener) {
         removeEngineListener(listener);
     }
@@ -180,7 +188,7 @@ public abstract class BaseSynthesizer extends BaseEngine
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
         // Wait to finalize allocation
-        while (testEngineState(ALLOCATING_RESOURCES)) {
+        if (testEngineState(ALLOCATING_RESOURCES)) {
             try {
                 waitEngineState(ALLOCATED);
             } catch (InterruptedException ex) {
@@ -190,6 +198,9 @@ public abstract class BaseSynthesizer extends BaseEngine
         return queueManager.cancelItem();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean cancel(int id) throws IllegalArgumentException,
             EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
@@ -406,7 +417,7 @@ public abstract class BaseSynthesizer extends BaseEngine
      * @return a <code>String</code> containing the names of all the states
      *         set in <code>state</code>
      */
-    protected String stateToString(long state) {
+    public String stateToString(long state) {
         StringBuffer buf = new StringBuffer(super.stateToString(state));
         if ((state & Synthesizer.QUEUE_EMPTY) != 0) {
             buf.append(" QUEUE_EMPTY ");

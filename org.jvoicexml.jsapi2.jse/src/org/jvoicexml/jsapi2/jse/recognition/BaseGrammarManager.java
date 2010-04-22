@@ -21,6 +21,7 @@ import javax.speech.recognition.GrammarEvent;
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.GrammarListener;
 import javax.speech.recognition.GrammarManager;
+import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleGrammar;
 
@@ -42,7 +43,7 @@ public class BaseGrammarManager implements GrammarManager {
     private int grammarMask;
 
     /** Recognizer which the GrammarManager belongs. */
-    private final BaseRecognizer recognizer;
+    private final JseBaseRecognizer recognizer;
 
     /**
      * Constructor that associates a Recognizer.
@@ -50,7 +51,7 @@ public class BaseGrammarManager implements GrammarManager {
      *
      * @param reco BaseRecognizer
      */
-    public BaseGrammarManager(final BaseRecognizer reco) {
+    public BaseGrammarManager(final JseBaseRecognizer reco) {
         grammarListeners = new ArrayList<GrammarListener>();
         grammars = new HashMap<String, Grammar>();
         grammarMask = GrammarEvent.DEFAULT_MASK;
@@ -158,7 +159,7 @@ public class BaseGrammarManager implements GrammarManager {
 
         // Get engine built-in grammars
         if (recognizer != null) {
-            List<Grammar> builtInGrammars = recognizer.getBuiltInGrammars();
+            Vector builtInGrammars = recognizer.getBuiltInGrammars();
             if (builtInGrammars != null) {
                 allGrammars.addAll(builtInGrammars);
             }
@@ -363,8 +364,11 @@ public class BaseGrammarManager implements GrammarManager {
     private void insureValidEngineState() throws EngineStateException {
         if (recognizer != null) {
             //Validate current state
-            if (recognizer.testEngineState(recognizer.DEALLOCATED | recognizer.DEALLOCATING_RESOURCES) == true) {
-                throw new EngineStateException("Cannot execute GrammarManager operation: invalid engine state: " + recognizer.stateToString(recognizer.getEngineState()));
+            if (recognizer.testEngineState(
+                    Recognizer.DEALLOCATED | Recognizer.DEALLOCATING_RESOURCES)) {
+                throw new EngineStateException(
+                        "Cannot execute GrammarManager operation: invalid engine state: "
+                        + recognizer.stateToString(recognizer.getEngineState()));
             }
 
             //Wait until end of allocating (if it's currently allocating)

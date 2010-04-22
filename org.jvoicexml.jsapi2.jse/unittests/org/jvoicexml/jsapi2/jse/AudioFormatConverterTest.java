@@ -4,6 +4,7 @@
 package org.jvoicexml.jsapi2.jse;
 
 import javax.sound.sampled.AudioFormat;
+import javax.speech.Engine;
 
 import junit.framework.Assert;
 

@@ -97,7 +97,8 @@ public class QueueManager {
      * @param item
      *                the item to add to the queue
      */
-    public int appendItem(Speakable speakable, SpeakableListener listener) {
+    public int appendItem(final Speakable speakable,
+            final SpeakableListener listener) {
         return synthThread.appendItem(speakable, listener);
     }
 
@@ -290,10 +291,14 @@ public class QueueManager {
                 queue.notifyAll();
             }
 
-            long[] states = synthesizer.setEngineState(
-                    topOfQueueChanged ? Synthesizer.QUEUE_EMPTY
-                            : Synthesizer.QUEUE_NOT_EMPTY,
-                    Synthesizer.QUEUE_NOT_EMPTY);
+            final long[] states;
+            if (topOfQueueChanged) {
+                states = synthesizer.setEngineState(Synthesizer.QUEUE_EMPTY,
+                        Synthesizer.QUEUE_NOT_EMPTY);
+            } else {
+                states = synthesizer.setEngineState(Synthesizer.QUEUE_NOT_EMPTY,
+                        Synthesizer.QUEUE_NOT_EMPTY);
+            }
             synthesizer.postSynthesizerEvent(states[0], states[1],
                     SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
 
@@ -310,17 +315,22 @@ public class QueueManager {
             boolean topOfQueueChanged;
             synchronized (queue) {
                 queueId += 1;
-                QueueItem item = new QueueItem(queueId, speakable, listener, text);
+                final QueueItem item = new QueueItem(queueId, speakable,
+                        listener, text);
 
                 topOfQueueChanged = isQueueEmpty();
                 queue.addElement(item);
                 queue.notifyAll();
             }
 
-            long[] states = synthesizer.setEngineState(
-                    topOfQueueChanged ? Synthesizer.QUEUE_EMPTY
-                            : Synthesizer.QUEUE_NOT_EMPTY,
-                    Synthesizer.QUEUE_NOT_EMPTY);
+            final long[] states;
+            if (topOfQueueChanged) {
+                states = synthesizer.setEngineState(Synthesizer.QUEUE_EMPTY,
+                        Synthesizer.QUEUE_NOT_EMPTY);
+            } else {
+                states = synthesizer.setEngineState(Synthesizer.QUEUE_NOT_EMPTY,
+                        Synthesizer.QUEUE_NOT_EMPTY);
+            }
             synthesizer.postSynthesizerEvent(states[0], states[1],
                     SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
 
@@ -328,27 +338,33 @@ public class QueueManager {
         }
 
         /**
-         * Add an item to be spoken to the output queue. Fires the appropriate queue
-         * events
+         * Add an item to be spoken to the output queue. Fires the appropriate
+         * queue events.
          *
          * @param item
          *                the item to add to the queue
          */
-        public int appendItem(AudioSegment audioSegment, SpeakableListener listener) {
-            boolean topOfQueueChanged;
+        public int appendItem(final AudioSegment audioSegment,
+                final SpeakableListener listener) {
+            final boolean topOfQueueChanged;
             synchronized (queue) {
                 ++queueId;
-                final QueueItem item = new QueueItem(queueId, audioSegment, listener);
+                final QueueItem item =
+                    new QueueItem(queueId, audioSegment, listener);
 
                 topOfQueueChanged = isQueueEmpty();
                 queue.addElement(item);
                 queue.notifyAll();
             }
 
-            long[] states = synthesizer.setEngineState(
-                    topOfQueueChanged ? Synthesizer.QUEUE_EMPTY
-                            : Synthesizer.QUEUE_NOT_EMPTY,
-                    Synthesizer.QUEUE_NOT_EMPTY);
+            final long[] states;
+            if (topOfQueueChanged) {
+                states = synthesizer.setEngineState(Synthesizer.QUEUE_EMPTY,
+                        Synthesizer.QUEUE_NOT_EMPTY);
+            } else {
+                states = synthesizer.setEngineState(Synthesizer.QUEUE_NOT_EMPTY,
+                        Synthesizer.QUEUE_NOT_EMPTY);
+            }
             synthesizer.postSynthesizerEvent(states[0], states[1],
                     SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
 
@@ -382,24 +398,30 @@ public class QueueManager {
             return false;
         }
 
+        /**
+         * Cancels the itme with the given id.
+         * @param id the id of the item to cancel
+         * @return <code>true</code> if the item was cancelled
+         */
         protected boolean cancelItem(final int id) {
-            boolean found = false;
             // search item in queue
             synchronized (queue) {
                 for (int i = 0; i < queue.size(); ++i) {
-                    QueueItem item = (QueueItem) queue.elementAt(i);
+                    final QueueItem item = (QueueItem) queue.elementAt(i);
                     if (item.getId() == id) {
-                        synthesizer.postSpeakableEvent(new SpeakableEvent(item
-                                .getSource(), SpeakableEvent.SPEAKABLE_CANCELLED,
-                                item.getId()), item.getListener());
+                        final Object source = item.getSource();
+                        final SpeakableListener listener = item.getListener();
+                        final SpeakableEvent event = new SpeakableEvent(
+                                source, SpeakableEvent.SPEAKABLE_CANCELLED,
+                                id);
+                        synthesizer.postSpeakableEvent(event, listener);
                         queue.removeElementAt(i);
-                        found = true;
-                        break;
+                        return true;
                     }
                 }
             }
 
-            return found;
+            return false;
         }
 
         /**
@@ -501,7 +523,6 @@ public class QueueManager {
          */
         public void run() {
 
-            QueueItem item;
             int playIndex = 0;
             int wordIndex = 0;
             int wordStart = 0;
@@ -512,7 +533,7 @@ public class QueueManager {
             final byte[] buffer = new byte[BUFFER_LENGTH];
 
             while (!done) {
-                item = getQueueItemToPlay();
+                final QueueItem item = getQueueItemToPlay();
 
                 final Object source = item.getSource();
                 final int id = item.getId();
@@ -521,16 +542,17 @@ public class QueueManager {
                         SpeakableEvent.TOP_OF_QUEUE, id), listener);
 
                 while (synthesizer.testEngineState(Synthesizer.PAUSED)) {
-                    synthesizer.postSpeakableEvent(
-                            new SpeakableEvent(
-                                    source, SpeakableEvent.SPEAKABLE_PAUSED, id),
-                                    listener);
+                    final SpeakableEvent pausedEvent = new SpeakableEvent(
+                                    source, SpeakableEvent.SPEAKABLE_PAUSED,
+                                    id);
+                    synthesizer.postSpeakableEvent(pausedEvent, listener);
 
                     try {
                         synthesizer.waitEngineState(Engine.RESUMED);
-                        synthesizer.postSpeakableEvent(new SpeakableEvent(source,
-                                SpeakableEvent.SPEAKABLE_RESUMED,
-                                id), listener);
+                        final SpeakableEvent resumedEvent =
+                            new SpeakableEvent(source,
+                                    SpeakableEvent.SPEAKABLE_RESUMED, id);
+                        synthesizer.postSpeakableEvent(resumedEvent, listener);
                     } catch (InterruptedException ex1) {
                         return;
                     }
@@ -538,8 +560,9 @@ public class QueueManager {
 
                 //long startStreaming = System.currentTimeMillis();
                 long totalBytesRead = 0;
-                synthesizer.postSpeakableEvent(new SpeakableEvent(source,
-                        SpeakableEvent.SPEAKABLE_STARTED, id), listener);
+                final SpeakableEvent startedEvent = new SpeakableEvent(source,
+                        SpeakableEvent.SPEAKABLE_STARTED, id);
+                synthesizer.postSpeakableEvent(startedEvent, listener);
 
                 playIndex = 0;
                 wordIndex = 0;
@@ -562,7 +585,8 @@ public class QueueManager {
                                 "The platform does not allow to access the input "
                                     + "stream!");
                         }
-                        final InputStream inputStream = segment.openInputStream();
+                        final InputStream inputStream =
+                            segment.openInputStream();
                         bytesRead = inputStream.read(buffer);
                         if (bytesRead < 0)  {
                             break;
@@ -571,9 +595,10 @@ public class QueueManager {
                         totalBytesRead += bytesRead;
                         synchronized (cancelLock) {
                             if (cancelFirstItem) {
-                                synthesizer.postSpeakableEvent(new SpeakableEvent(
-                                        source,
-                                        SpeakableEvent.SPEAKABLE_CANCELLED, id),
+                                final SpeakableEvent cancelledEvent =
+                                    new SpeakableEvent(source,
+                                        SpeakableEvent.SPEAKABLE_CANCELLED, id);
+                                synthesizer.postSpeakableEvent(cancelledEvent,
                                         listener);
                                 break;
                             }
@@ -638,9 +663,9 @@ public class QueueManager {
                         out.write(buffer, 0, bytesRead);
                         // update next timestamp
                         long dataTime = (long) (1000 * bytesRead / bps);
-                        long systm;
-                        if (nextTimeStamp - (systm = System.currentTimeMillis()) < -dataTime) {
-                            nextTimeStamp = systm + dataTime;
+                        final long system = System.currentTimeMillis();
+                        if (nextTimeStamp - system < -dataTime) {
+                            nextTimeStamp = system + dataTime;
                         } else {
                             nextTimeStamp += dataTime;
                         }
@@ -687,7 +712,7 @@ public class QueueManager {
 
                 if (isQueueEmpty()) {
                     long[] states = synthesizer.setEngineState(
-                            Synthesizer.QUEUE_NOT_EMPTY, Synthesizer.QUEUE_EMPTY);
+                          Synthesizer.QUEUE_NOT_EMPTY, Synthesizer.QUEUE_EMPTY);
                     synthesizer.postSynthesizerEvent(states[0], states[1],
                             SynthesizerEvent.QUEUE_EMPTIED, true);
                 } else {

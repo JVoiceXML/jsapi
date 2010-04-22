@@ -30,8 +30,8 @@ package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,8 +47,8 @@ import javax.speech.recognition.RuleGrammar;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
-import org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.jse.recognition.GrammarDefinition;
+import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.Microphone;
@@ -74,7 +74,7 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
  * http://jvoicexml.sourceforge.net/</a>
  * </p>
  */
-final class Sphinx4Recognizer extends BaseRecognizer
+final class Sphinx4Recognizer extends JseBaseRecognizer
     implements EnginePropertyChangeRequestListener {
     /** Logger for this class. */
     private static final Logger LOGGER =
@@ -348,7 +348,7 @@ final class Sphinx4Recognizer extends BaseRecognizer
      * @param newGrammars String[]
      * @return boolean
      */
-    protected boolean setGrammars(List grammarDefinition) {
+    protected boolean setGrammars(Vector grammarDefinition) {
         if (grammarDefinition.size() == 1) {
             try {
                 grammar.loadSRGS(((GrammarDefinition) grammarDefinition.get(0)).
@@ -362,9 +362,12 @@ final class Sphinx4Recognizer extends BaseRecognizer
         }
     }
 
-
-    protected List<Grammar> getBuiltInGrammars() {
-        return new ArrayList<Grammar>(0);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Vector getBuiltInGrammars() {
+        return new Vector();
     }
 
     public void postStartOfSpeechEvent(){
