@@ -71,7 +71,9 @@ public class BaseGrammar implements Grammar, ResultListener {
         grammarListeners = new Vector();
         resultListeners = new Vector();
         recognizer = rec;
-        recognizer.addResultListener(this);
+        if (rec != null) {
+            recognizer.addResultListener(this);
+        }
         name = grammarName;
         grammarActive = false;
         activatable = false;
