@@ -283,7 +283,8 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * Retrieves the used audio format.
      * @return the used audio format
+     * @throws AudioException the audio format could not be determined
      */
-    public abstract AudioFormat getAudioFormat();
+    public abstract AudioFormat getAudioFormat() throws AudioException;
 }
 

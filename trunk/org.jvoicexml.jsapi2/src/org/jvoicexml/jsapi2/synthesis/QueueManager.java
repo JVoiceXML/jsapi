@@ -32,6 +32,7 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.speech.AudioException;
 import javax.speech.AudioSegment;
 import javax.speech.Engine;
 import javax.speech.synthesis.PhoneInfo;
@@ -572,7 +573,14 @@ public class QueueManager {
                 int bytesRead = 0;
                 final BaseAudioManager manager =
                     (BaseAudioManager) synthesizer.getAudioManager();
-                final AudioFormat format = manager.getAudioFormat();
+                AudioFormat format;
+                try {
+                    format = manager.getAudioFormat();
+                } catch (AudioException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    break;
+                }
                 final float sampleRate = format.getSampleRate();
                 long bps = format.getChannels();
                 bps *= sampleRate;
