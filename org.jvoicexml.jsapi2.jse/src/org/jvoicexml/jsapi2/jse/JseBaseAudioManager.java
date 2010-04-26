@@ -106,12 +106,10 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
     }
 
     /**
-     * Given URI parameters, constructs an {@link AudioFormat} from the
-     * parameters specified in the URI.
-     *
-     * @return AudioFormat
+     * {@inheritDoc}
      */
-    public org.jvoicexml.jsapi2.AudioFormat getAudioFormat() {
+    public org.jvoicexml.jsapi2.AudioFormat getAudioFormat()
+        throws AudioException {
         final String locator = getMediaLocator();
         if (locator != null) {
             //Get matching URI to extract query parameters
@@ -126,11 +124,9 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
                         format.getChannels(), format.getFrameSize(),
                         format.getFrameRate(), format.isBigEndian());
             } catch (MalformedURLException ex) {
-                ex.printStackTrace();
-                //Continue and give back a default AudioFormat
-            } catch (URISyntaxException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new AudioException(ex.getMessage());
+            } catch (URISyntaxException ex) {
+                throw new AudioException(ex.getMessage());
             }
         }
         return new org.jvoicexml.jsapi2.AudioFormat(
