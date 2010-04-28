@@ -1,117 +1,117 @@
 <project name="JSR 113" default="jar" basedir=".">
-	<description>
+  <description>
 This file builds the JSR 113.jar.
     </description>
 
-	<!-- allow the user to override setting in an own properties file. -->
-	<property file="personal-props/ant.properties" />
-	<property file="config-props/ant.properties" />
+  <!-- allow the user to override setting in an own properties file. -->
+  <property file="personal-props/ant.properties" />
+  <property file="config-props/ant.properties" />
 
-	<!-- directory structure -->
-	<property name="src" value="src" />
-	<property name="build" value="classes" />
-	<property name="dist" value="dist" />
-	<property name="apidoc" value="doc/api" />
-	
-    <!-- distribution files -->
-	<property name="dist.jsr113.jar" value="${dist}/jsr113-base.jar" />
-    <property name="dist.src.zip" value="${dist}/jsr113-base-${version}-src.zip" />
-    <property name="dist.src.libs.zip" value="${dist}/jsr113-base-${version}-src-withlibs.zip" />
-    <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
-	
-  <path id="classpath">
-    <pathelement location="../javax.speech/classes"/>
+  <!-- directory structure -->
+  <property name="src" value="src" />
+  <property name="build" value="classes" />
+  <property name="dist" value="dist" />
+  <property name="apidoc" value="doc/api" />
+
+  <!-- distribution files -->
+  <property name="dist.jsr113.jar" value="${dist}/jsr113-base.jar" />
+  <property name="dist.src.zip" value="${dist}/jsr113-base-${version}-src.zip" />
+  <property name="dist.src.libs.zip" value="${dist}/jsr113-base-${version}-src-withlibs.zip" />
+  <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
+
+  <path id="midp.lib">
+    <pathelement location="${midp.home}/lib/${cldcapi.jar}"/>
+    <pathelement location="${midp.home}/lib/${midpapi.jar}"/>
   </path>
+
+  <property name="debug" value="on"/>
+  <property name="optimize" value="off"/>
+
+  <fileset dir="." id="dist.files.additional">
+    <include name="AUTHORS"/>
+    <include name="COPYING"/>
+    <include name="INSTALL"/>
+    <include name="README"/>
+    <include name="ChangeLog"/>
+  </fileset>
+
+  <target name="-init">
+    <mkdir dir="${build}" />
+    <mkdir dir="${dist}" />
+  </target>
+
+  <target name="clean" description="Remove all compiled and distribution files">
+    <delete dir="${build}" />
+    <delete file="${dist.jsr113.jar}" />
+    <delete file="${dist.jsr113-base.jar}" />
+  </target>
+
+  <target name="-dependentComponents">
+    <ant dir="../javax.speech" antfile="build.xml" inheritall="false"/>
+  </target>
   
-	<path id="midp.lib">
-        <pathelement location="${midp.home}/lib/${cldcapi.jar}"/>
-        <pathelement location="${midp.home}/lib/${midpapi.jar}"/>
-	</path>
-	
-	<property name="debug" value="on"/>
-	<property name="optimize" value="off"/>
+  <target name="compile" depends="-init,-dependentComponents"
+    description="Compile the JAVA sources">
+    <echo message="compiling with debug=${debug}, optimize=${optimize}" />
+    <javac bootclasspathref="midp.lib" destdir="${build}" source="1.2"
+      target="1.1" optimize="${optimize}" debug="${debug}" deprecation="on"
+      encoding="iso-8859-1">
+      <src path="${src}" />
+      <classpath>
+        <pathelement location="../javax.speech/classes"/>
+      </classpath>
+      <compilerarg value="-Xlint:unchecked" />
+    </javac>
+  </target>
 
-    <fileset dir="." id="dist.files.additional">
-        <include name="AUTHORS"/>
-        <include name="COPYING"/>
-        <include name="INSTALL"/>
-        <include name="README"/>
-        <include name="ChangeLog"/>
-    </fileset>
-  
-	<target name="-init">
-		<mkdir dir="${build}" />
-		<mkdir dir="${dist}" />
-	</target>
+  <target name="rebuild" depends="clean,compile"/>
 
-	<target name="clean" description="Remove all compiled and distribution files">
-		<delete dir="${build}" />
-		<delete file="${dist.jsr113.jar}" />
-		<delete file="${dist.jsr113-base.jar}" />
-	</target>
+  <target name="-jar" depends="compile" description="Pack all compiled files into jar files">
+    <jar jarfile="${dist.jsr113.jar}" compress="false">
+      <fileset dir="${build}">
+        <include name="**/*.class" />
+      </fileset>
+      <manifest>
+        <attribute name="Built-By" value="${user.name}" />
+        <section name="common">
+          <attribute name="Implementation-Vendor" value="JVoiceXML group" />
+          <attribute name="Implementation-Title" value="JSR 113" />
+        </section>
+      </manifest>
+    </jar>
+  </target>
 
-	<target name="compile" depends="-init" description="Compile the JAVA sources">
-		<echo message="compiling with debug=${debug}, optimize=${optimize}" />
-		<javac bootclasspathref="midp.lib" destdir="${build}" 
-			source="1.2" target="1.1"
-			optimize="${optimize}" debug="${debug}" deprecation="on"
-		  	encoding="iso-8859-1">
-			<src path="${src}" />
-		    <classpath refid="classpath"/>
-			<compilerarg value="-Xlint:unchecked" />
-		</javac>
-	</target>
-
-	<target name="rebuild" depends="clean,compile"/>
-
-	<target name="-jar" depends="compile" 
-	  description="Pack all compiled files into jar files">
-		<jar jarfile="${dist.jsr113.jar}" compress="false">
-			<fileset dir="${build}">
-				<include name="**/*.class" />
-			</fileset>
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<section name="common">
-					<attribute name="Implementation-Vendor"
-					  value="JVoiceXML group" />
-					<attribute name="Implementation-Title"
-					  value="JSR 113" />
-				</section>
-			</manifest>
-		</jar>
-	</target>
-
-    <target name="-components" depends="-jar">
-      <ant dir="../org.jvoicexml.jsapi2.jse" antfile="build.xml"
+  <target name="-components" depends="-jar">
+    <ant dir="../org.jvoicexml.jsapi2.jse" antfile="build.xml"
         inheritall="false"/>
-    </target>
-  
-    <target name="jar" depends="-jar,-components" />
+    <copy file="../javax.speech/dist/jsr113.jar" todir="${dist}" />
+  </target>
 
-    <target name="distribution" description="Build the distribution files"
+  <target name="jar" depends="-jar,-components" />
+
+  <target name="distribution" description="Build the distribution files"
         depends="jar">
-      <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
-        <include name="*.jar" />
-        <fileset refid="dist.files.additional" />
-      </zip>
-      <zip basedir=".." destfile="${dist.src.zip}" compress="true">
-        <include name="org.jvoicexml.jsapi2*/src/**/*.java" />
-        <include name="org.jvoicexml.jsapi2*/demo/**" />
-        <include name="org.jvoicexml.jsapi2*/build.xml" />
-        <include name="org.jvoicexml.jsapi2/config-props/**" />
-        <include name="org.jvoicexml.jsapi2*/etc/**" />
-        <fileset refid="dist.files.additional" />
-      </zip>
-      <zip basedir=".." destfile="${dist.src.libs.zip}" compress="true">
-        <include name="org.jvoicexml.jsapi2*/src/**/*.java" />
-        <include name="org.jvoicexml.jsapi2*/3rdparty/**" />
-        <exclude name="org.jvoicexml.jsapi2/3rdparty/jsapi2/lib/*.jar" />
-        <include name="org.jvoicexml.jsapi2*/demo/**" />
-        <include name="org.jvoicexml.jsapi2*/build.xml" />
-        <include name="org.jvoicexml.jsapi2/config-props/**" />
-        <include name="org.jvoicexml.jsapi2*/etc/**" />
-        <fileset refid="dist.files.additional" />
-      </zip>
-    </target>
+    <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
+      <include name="*.jar" />
+      <fileset refid="dist.files.additional" />
+    </zip>
+    <zip basedir=".." destfile="${dist.src.zip}" compress="true">
+      <include name="org.jvoicexml.jsapi2*/src/**/*.java" />
+      <include name="org.jvoicexml.jsapi2*/demo/**" />
+      <include name="org.jvoicexml.jsapi2*/build.xml" />
+      <include name="org.jvoicexml.jsapi2/config-props/**" />
+      <include name="org.jvoicexml.jsapi2*/etc/**" />
+      <fileset refid="dist.files.additional" />
+    </zip>
+    <zip basedir=".." destfile="${dist.src.libs.zip}" compress="true">
+      <include name="org.jvoicexml.jsapi2*/src/**/*.java" />
+      <include name="org.jvoicexml.jsapi2*/3rdparty/**" />
+      <exclude name="org.jvoicexml.jsapi2/3rdparty/jsapi2/lib/*.jar" />
+      <include name="org.jvoicexml.jsapi2*/demo/**" />
+      <include name="org.jvoicexml.jsapi2*/build.xml" />
+      <include name="org.jvoicexml.jsapi2/config-props/**" />
+      <include name="org.jvoicexml.jsapi2*/etc/**" />
+      <fileset refid="dist.files.additional" />
+    </zip>
+  </target>
 </project>

@@ -559,7 +559,6 @@ public class QueueManager {
                     }
                 }
 
-                //long startStreaming = System.currentTimeMillis();
                 long totalBytesRead = 0;
                 final SpeakableEvent startedEvent = new SpeakableEvent(source,
                         SpeakableEvent.SPEAKABLE_STARTED, id);
@@ -573,7 +572,7 @@ public class QueueManager {
                 int bytesRead = 0;
                 final BaseAudioManager manager =
                     (BaseAudioManager) synthesizer.getAudioManager();
-                AudioFormat format;
+                final AudioFormat format;
                 try {
                     format = manager.getAudioFormat();
                 } catch (AudioException e) {
