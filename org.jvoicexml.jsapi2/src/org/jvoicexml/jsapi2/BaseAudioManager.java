@@ -156,8 +156,8 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public final void setMediaLocator(final String locator) throws AudioException,
-            AudioException, EngineStateException, IllegalArgumentException,
+    public final void setMediaLocator(final String locator)
+        throws AudioException, EngineStateException, IllegalArgumentException,
             SecurityException {
         // Ensure that engine is DEALLOCATED
         if (!engine.testEngineState(Engine.DEALLOCATED)) {
@@ -229,6 +229,9 @@ public abstract class BaseAudioManager implements AudioManager {
         final String otherLocator = audioManager.getMediaLocator();
         if (otherLocator == null) {
             return mediaLocator == null;
+        }
+        if (mediaLocator == null) {
+            return false;
         }
         return mediaLocator.equals(otherLocator);
     }

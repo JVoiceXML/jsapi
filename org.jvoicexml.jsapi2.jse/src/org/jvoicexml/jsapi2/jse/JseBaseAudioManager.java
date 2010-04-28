@@ -57,7 +57,11 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
      * Retrieves the audio format converter.
      * @return the audio format converter.
      */
-    public AudioFormatConverter getAudioFormatConverter() {
+    public AudioFormatConverter getAudioFormatConverter() throws IOException {
+        if (formatConverter == null) {
+            formatConverter = openAudioFormatConverter(targetAudioFormat,
+                    targetAudioFormat);
+        }
         return formatConverter;
     }
 
@@ -80,7 +84,7 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
             throw new IllegalArgumentException(ex);
         }
 
-        //Open a connection to URL
+        // Open a connection to URL
         final URLConnection connection = url.openConnection();
         connection.connect();
         return connection;
@@ -101,8 +105,7 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
     protected AudioFormatConverter openAudioFormatConverter(
             final AudioFormat source, final AudioFormat target)
         throws IOException {
-        formatConverter = new AudioFormatConverter(this, source, target);
-        return formatConverter;
+        return new AudioFormatConverter(this, source, target);
     }
 
     /**
@@ -168,7 +171,6 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
     @Override
     protected void handleAudioStop() throws AudioException {
         if (formatConverter != null) {
-            formatConverter.close();
             formatConverter = null;
         }
     }

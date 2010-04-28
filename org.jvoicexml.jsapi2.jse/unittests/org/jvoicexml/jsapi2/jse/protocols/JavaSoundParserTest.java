@@ -47,5 +47,4 @@ public class JavaSoundParserTest {
         Assert.assertEquals(AudioFormat.Encoding.PCM_SIGNED,
                 format.getEncoding());
     }
-
 }

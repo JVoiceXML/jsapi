@@ -33,41 +33,16 @@ import org.jvoicexml.jsapi2.BaseAudioManager;
  */
 public class AudioFormatConverter {
 
-    private final PipedInputStream pipedInputStream;
-    private final PipedOutputStream pipedOutputStream;
-
-    private final InputStream convertedInputStream;
     /** The source audio format. */
     private final AudioFormat sourceFormat;
     /** The target audio format. */
     private final AudioFormat targetFormat;
-
-    private final int pipeSize;
 
     public AudioFormatConverter(BaseAudioManager manager,
             AudioFormat sourceFormat, AudioFormat targetFormat)
         throws IOException {
         this.sourceFormat = sourceFormat;
         this.targetFormat = targetFormat;
-
-        //Conversion pipeline
-        pipeSize = getAudioFormatBytesPerSecond(sourceFormat) * 40;
-        pipedInputStream = new PipedInputStream(pipeSize);
-        pipedOutputStream = new PipedOutputStream(pipedInputStream);
-
-        convertedInputStream = getConvertedStream(pipedInputStream,
-                sourceFormat, targetFormat);
-
-    }
-
-    public void close() {
-        try {
-            pipedInputStream.close();
-            pipedOutputStream.close();
-            convertedInputStream.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
 
     /**
@@ -79,96 +54,8 @@ public class AudioFormatConverter {
      */
     public InputStream getConvertedAudio(final byte[] in)
         throws IOException {
-        //Make sure that pipeline is "as clean as possible"
-        //if (convertedInputStream.available() > 0) {}
-
-        //Allocate an array for 1 second of audio in target format
-        byte[] convertedArray =
-            new byte[getAudioFormatBytesPerSecond(targetFormat)];
-        int offset = 0;
-        int br = -1;
-        final int bytesPerRead = 512;
-        int writeOffset = 0;
-        int writeSize = 0;
-        boolean noMoreInput = false;
-        boolean insertedSilence = false;
-        do {
-            //Inject new audio in pipeline
-            if (writeOffset < in.length) {
-                writeSize = pipeSize - pipedInputStream.available();
-                writeSize = Math.min(writeSize, in.length - writeOffset);
-                pipedOutputStream.write(in, writeOffset,  writeSize);
-                writeOffset += writeSize;
-                pipedOutputStream.flush();
-            } else {
-                noMoreInput = true;
-
-                if (!insertedSilence) {
-                    //Generate 100ms os silence to compensate conversion loss
-                    byte silenceSample = 0;
-                    int bps =
-                        getAudioFormatBytesPerSecond(sourceFormat);
-                    byte[] silence = new byte[bps / 10];
-                    for (int i = 0; i < silence.length; i++) {
-                        silence[i] = silenceSample;
-                    }
-                    pipedOutputStream.write(silence);
-                    insertedSilence = true;
-                }
-            }
-
-            //Realloc array?
-            int availableSize = convertedArray.length - offset;
-            if (availableSize < bytesPerRead) {
-                convertedArray = (byte[]) resizeArray(
-                        convertedArray, convertedArray.length * 2);
-            }
-
-            //Read converted data and write it in array
-            if (noMoreInput && (convertedInputStream.available()
-                    < (getAudioFormatBytesPerSecond(sourceFormat)) / 10)) {
-
-                //Read the flushed audio
-                br = convertedInputStream.read(convertedArray, offset,
-                        bytesPerRead);
-
-                //and go away
-                br = -1;
-
-                //clearing the pipeline
-                if (pipedInputStream.available() > 0) {
-                    byte[] clearBuffer =
-                        new byte[pipedInputStream.available()];
-                    pipedInputStream.read(clearBuffer);
-                }
-
-            } else {
-                br = convertedInputStream.read(convertedArray, offset,
-                        bytesPerRead);
-            }
-            if (br != -1) {
-                offset += br;
-            } else {
-                break;
-            }
-        } while (true);
-
-        //Return a new ByteArrayInputStream
-        return new ByteArrayInputStream(convertedArray, 0, offset);
-    }
-
-    /**
-     * Retrieves the number of bytes per second for the given audio
-     * format.
-     * @param audioFormat the audio format
-     * @return number of bytes per second.
-     */
-    public static int getAudioFormatBytesPerSecond(
-            final AudioFormat audioFormat) {
-        int bps = audioFormat.getChannels();
-        bps *= audioFormat.getSampleRate();
-        bps *= (audioFormat.getSampleSizeInBits() / 8);
-        return bps;
+        final ByteArrayInputStream stream = new ByteArrayInputStream(in);
+        return getConvertedStream(stream, sourceFormat, targetFormat);
     }
 
     /**
@@ -179,17 +66,16 @@ public class AudioFormatConverter {
      * @param targetFormat AudioFormat
      * @return InputStream
      */
-    public InputStream getConvertedStream(InputStream is,
-                                           AudioFormat sourceFormat,
-                                           AudioFormat targetFormat) {
+    public InputStream getConvertedStream(final InputStream is,
+            final AudioFormat sourceFormat, final AudioFormat targetFormat) {
         /** @todo Compare more precisely AudioFormat (not using AudioFormat.matches()) */
         if (sourceFormat.matches(targetFormat)) {
             return is;
         }
 
-        //Describe source stream as an AudioFormat
-        AudioInputStream sourceStream = new AudioInputStream(is, sourceFormat,
-                AudioSystem.NOT_SPECIFIED);
+        // Describe source stream as an AudioFormat
+        final AudioInputStream sourceStream = new AudioInputStream(is,
+                sourceFormat, AudioSystem.NOT_SPECIFIED);
         return AudioSystem.getAudioInputStream(targetFormat, sourceStream);
     }
 
@@ -224,23 +110,5 @@ public class AudioFormatConverter {
 
         /** @todo Should never reach this point */
         return os;
-    }
-
-    /**
-     * Reallocates an array with a new size, and copies the contents
-     * of the old array to the new array.
-     * @param oldArray  the old array, to be reallocated.
-     * @param newSize   the new array size.
-     * @return          A new array with the same contents.
-     */
-    static Object resizeArray (Object oldArray, int newSize) {
-        int oldSize = java.lang.reflect.Array.getLength(oldArray);
-        Class elementType = oldArray.getClass().getComponentType();
-        Object newArray = java.lang.reflect.Array.newInstance(
-            elementType,newSize);
-        int preserveLength = Math.min(oldSize,newSize);
-        if (preserveLength > 0)
-            System.arraycopy (oldArray,0,newArray,0,preserveLength);
-        return newArray;
     }
 }
