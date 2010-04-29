@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse.ant.import?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="org.jvoicexml.jsapi2.sapi">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../"/>
+    <property name="javax.speech.location" value="../javax.speech"/>
+    <property name="org.jvoicexml.jsapi2.location" value="../org.jvoicexml.jsapi2"/>
+    <property name="org.jvoicexml.jsapi2.jse.location" value="../org.jvoicexml.jsapi2.jse"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit4_4.5.0.v20090824/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+    </path>
+    <path id="org.elipse.mtj.JavaMEContainer/Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone2.libraryclasspath"/>
+    <path id="javax.speech.classpath">
+        <pathelement location="${javax.speech.location}/bin"/>
+        <path refid="org.elipse.mtj.JavaMEContainer/Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone2.libraryclasspath"/>
+    </path>
+    <path id="JUnit 3.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_3.8.2.v20090203-1005/junit.jar"/>
+    </path>
+    <path id="org.jvoicexml.jsapi2.classpath">
+        <pathelement location="${org.jvoicexml.jsapi2.location}/bin"/>
+        <path refid="javax.speech.classpath"/>
+        <path refid="JUnit 3.libraryclasspath"/>
+        <path refid="org.elipse.mtj.JavaMEContainer/Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone2.libraryclasspath"/>
+    </path>
+    <path id="org.jvoicexml.jsapi2.jse.classpath">
+        <pathelement location="${org.jvoicexml.jsapi2.jse.location}/eclipse-compiled"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+        <pathelement location="${org.jvoicexml.jsapi2.jse.location}/3rdparty/freetts1.2/lib/cmu_us_kal.jar"/>
+        <pathelement location="${org.jvoicexml.jsapi2.jse.location}/3rdparty/freetts1.2/lib/cmulex.jar"/>
+        <pathelement location="${org.jvoicexml.jsapi2.jse.location}/3rdparty/freetts1.2/lib/en_us.jar"/>
+        <pathelement location="${org.jvoicexml.jsapi2.jse.location}/3rdparty/freetts1.2/lib/freetts.jar"/>
+        <pathelement location="${org.jvoicexml.jsapi2.jse.location}/3rdparty/sphinx4/lib/sphinx4.jar"/>
+        <pathelement location="${org.jvoicexml.jsapi2.jse.location}/3rdparty/jlibrtp/lib/jlibrtp.jar"/>
+        <path refid="org.jvoicexml.jsapi2.classpath"/>
+        <path refid="javax.speech.classpath"/>
+    </path>
+    <path id="org.jvoicexml.jsapi2.sapi.classpath">
+        <pathelement location="bin"/>
+        <path refid="org.jvoicexml.jsapi2.jse.classpath"/>
+        <path refid="javax.speech.classpath"/>
+        <path refid="org.jvoicexml.jsapi2.classpath"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall">
+        <ant antfile="${javax.speech.location}/build.xml" dir="${javax.speech.location}" inheritAll="false" target="clean"/>
+        <ant antfile="${org.jvoicexml.jsapi2.location}/build.xml" dir="${org.jvoicexml.jsapi2.location}" inheritAll="false" target="clean"/>
+        <ant antfile="${org.jvoicexml.jsapi2.jse.location}/build.xml" dir="${org.jvoicexml.jsapi2.jse.location}" inheritAll="false" target="clean"/>
+    </target>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects">
+        <ant antfile="${javax.speech.location}/build.xml" dir="${javax.speech.location}" inheritAll="false" target="build-project">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="${org.jvoicexml.jsapi2.location}/build.xml" dir="${org.jvoicexml.jsapi2.location}" inheritAll="false" target="build-project">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="${org.jvoicexml.jsapi2.jse.location}/build.xml" dir="${org.jvoicexml.jsapi2.jse.location}" inheritAll="false" target="build-project">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+    </target>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <!--javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="org.jvoicexml.jsapi2.sapi.classpath"/>
+        </javac-->
+        <javah  destdir="${org.jvoicexml.jsapi2.location}.sapi/cpp/Jsapi2SapiBridge/" 
+        	old="no" stubs="no" verbose="yes" force="yes" 
+        	classpath="
+        	${org.jvoicexml.jsapi2.location}/bin/;
+        	${org.jvoicexml.jsapi2.jse.location}/eclipse-compiled/;
+        	${org.jvoicexml.jsapi2.location}.sapi/bin/org/jvoicexml/jsapi2/sapi/recognition/;"  >
+        	<class name="SapiRecognizer"/>
+  	
+        </javah>
+    </target>
+    <!--target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target-->
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="SapiRecognizer">
+        <java classname="org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer" failonerror="true" fork="yes">
+            <classpath refid="org.jvoicexml.jsapi2.sapi.classpath"/>
+        </java>
+    </target>
+</project>
