@@ -1,5 +1,6 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.Vector;
 
 import javax.speech.AudioException;
@@ -11,53 +12,48 @@ import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 
 public class SapiRecognizer extends JseBaseRecognizer {
 
-    @Override
-    public Vector getBuiltInGrammars() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    protected void handleAllocate() throws EngineStateException,
-            EngineException, AudioException, SecurityException {
-        // TODO Auto-generated method stub
         
+    public native Vector<?> getBuiltInGrammars();
+
+    
+        public static void main(String[] args) 
+    { 
+        SapiRecognizer spr = new SapiRecognizer();
+        spr.getBuiltInGrammars();
+   
     }
 
-    @Override
-    protected void handleDeallocate() {
-        // TODO Auto-generated method stub
-        
-    }
 
-    @Override
-    protected void handlePause() {
-        // TODO Auto-generated method stub
-        
-    }
+		@Override
+		protected native void handleAllocate() throws EngineStateException,
+				EngineException, AudioException, SecurityException;
 
-    @Override
-    protected void handlePause(int flags) {
-        // TODO Auto-generated method stub
-        
-    }
 
-    @Override
-    protected boolean handleResume() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		@Override
+		protected native void handleDeallocate();
 
-    @Override
-    protected boolean setGrammars(Vector grammarDefinition) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
-    @Override
-    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		@Override
+		protected native void handlePause();
+
+
+		@Override
+		protected native void handlePause(int flags);
+
+
+		@Override
+		protected native boolean handleResume();
+
+
+		@Override
+		protected native boolean setGrammars(Vector grammarDefinition);
+
+
+		@Override
+		protected EnginePropertyChangeRequestListener getChangeRequestListener() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	
 }
