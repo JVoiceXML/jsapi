@@ -6,10 +6,10 @@
               as the first entry and export the buildfile again. -->
 <project basedir="." default="build" name="org.jvoicexml.jsapi2.sapi">
     <property environment="env"/>
+    <property name="org.jvoicexml.jsapi2.jse.location" value="../org.jvoicexml.jsapi2.jse"/>
     <property name="ECLIPSE_HOME" value="../../"/>
     <property name="javax.speech.location" value="../javax.speech"/>
     <property name="org.jvoicexml.jsapi2.location" value="../org.jvoicexml.jsapi2"/>
-    <property name="org.jvoicexml.jsapi2.jse.location" value="../org.jvoicexml.jsapi2.jse"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
@@ -49,6 +49,7 @@
         <path refid="org.jvoicexml.jsapi2.jse.classpath"/>
         <path refid="javax.speech.classpath"/>
         <path refid="org.jvoicexml.jsapi2.classpath"/>
+        <pathelement location="${org.jvoicexml.jsapi2.jse.location}/eclipse-compiled/org/jvoicexml/jsapi2/jse/JseBaseAudioManager.class"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>

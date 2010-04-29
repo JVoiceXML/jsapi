@@ -13,7 +13,7 @@ import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 public class SapiRecognizer extends JseBaseRecognizer {
 
         
-    public native Vector<?> getBuiltInGrammars();
+    public native Vector getBuiltInGrammars();
 
     
         public static void main(String[] args) 

@@ -5,5 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jvoicexml.jsapi2.jse"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/javax.speech"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jvoicexml.jsapi2"/>
+	<classpathentry kind="lib" path="/org.jvoicexml.jsapi2.jse/eclipse-compiled/org/jvoicexml/jsapi2/jse/JseBaseAudioManager.class"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
