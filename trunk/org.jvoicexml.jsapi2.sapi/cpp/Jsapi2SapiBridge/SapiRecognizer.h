@@ -9,6 +9,62 @@ extern "C" {
 #endif
 #undef SapiRecognizer_CLEAR_ALL_STATE
 #define SapiRecognizer_CLEAR_ALL_STATE -1i64
+/*
+ * Class:     SapiRecognizer
+ * Method:    getBuiltInGrammars
+ * Signature: ()Ljava/util/Vector;
+ */
+JNIEXPORT jobject JNICALL Java_SapiRecognizer_getBuiltInGrammars
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     SapiRecognizer
+ * Method:    handleAllocate
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_SapiRecognizer_handleAllocate
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     SapiRecognizer
+ * Method:    handleDeallocate
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_SapiRecognizer_handleDeallocate
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     SapiRecognizer
+ * Method:    handlePause
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_SapiRecognizer_handlePause__
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     SapiRecognizer
+ * Method:    handlePause
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_SapiRecognizer_handlePause__I
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     SapiRecognizer
+ * Method:    handleResume
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_SapiRecognizer_handleResume
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     SapiRecognizer
+ * Method:    setGrammars
+ * Signature: (Ljava/util/Vector;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_SapiRecognizer_setGrammars
+  (JNIEnv *, jobject, jobject);
+
 #ifdef __cplusplus
 }
 #endif
