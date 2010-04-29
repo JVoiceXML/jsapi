@@ -3,6 +3,7 @@
  */
 package org.jvoicexml.jsapi2.jse.recognition;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -31,6 +32,13 @@ public final class LineInputStream extends InputStream {
 
     /** The audio manager to use. */
     private final JseBaseAudioManager manager;
+
+    /** The audio format. */
+    private AudioFormat format;
+
+    private byte[] buf;
+
+    private int bufpos;
 
     /**
      * Constructs a new object.
@@ -63,11 +71,29 @@ public final class LineInputStream extends InputStream {
     @Override
     public int read(final byte[] buffer, final int off, final int len)
         throws IOException {
+        if (buffer == null) {
+            throw new NullPointerException();
+        } else if (off < 0 || len < 0 || len > buffer.length - off) {
+            throw new IndexOutOfBoundsException();
+        } else if (len == 0) {
+            return 0;
+        }
         if (line == null) {
             getLine();
         }
-
-        return line.read(buffer, off, len);
+        if (bufpos < buf.length) {
+            return buf[bufpos++];
+        }
+        int mod = len % format.getFrameSize();
+        if (mod == 0) {
+            return line.read(buffer, off, len);
+        } else if (len > format.getFrameSize()) {
+            return line.read(buffer, off, len - mod);
+        } else {
+            line.read(buf, 0, buf.length);
+            bufpos = 1;
+            return buf[0];
+        }
     }
 
 
@@ -77,14 +103,16 @@ public final class LineInputStream extends InputStream {
      *         error opening the line.
      */
     private void getLine() throws IOException {
-        final AudioFormat format = manager.getTargetAudioFormat();
+        format = manager.getTargetAudioFormat();
+        buf = new byte[format.getFrameSize()];
+        bufpos = buf.length;
         try {
             final DataLine.Info info =
                 new DataLine.Info(TargetDataLine.class, format);
 
             line = (TargetDataLine) AudioSystem.getLine(info);
             if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("opened line " + line);
+                LOGGER.fine("opened line " + line + " with format " + format);
             }
             line.open();
             line.start();
