@@ -11,6 +11,7 @@
  */
 package org.jvoicexml.jsapi2.jse.recognition;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,10 +20,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.speech.AudioException;
 import javax.speech.EngineStateException;
 
-import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
 import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.protocols.JavaSoundParser;
 
@@ -46,25 +50,33 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
     public void handleAudioStart() throws AudioException {
         final String locator = getMediaLocator();
 
-        if (locator == null) {
-            targetAudioFormat = getEngineAudioFormat();
-        } else {
-            try {
-                final URL url = new URL(locator);
-                targetAudioFormat = JavaSoundParser.parse(url);
-            } catch (MalformedURLException e) {
-                throw new AudioException(e.getMessage());
-            } catch (URISyntaxException e) {
-                throw new AudioException(e.getMessage());
-            }
-        }
-
-        
         // Open URL described in locator
         final InputStream is;
         if (locator == null) {
-            is = new LineInputStream(this);
+            targetAudioFormat = getEngineAudioFormat();
+            final InputStream source = new LineInputStream(this);
+            is = new BufferedInputStream(source);
         } else {
+            URL url;
+            try {
+                url = new URL(locator);
+            } catch (MalformedURLException e) {
+                throw new AudioException(e.getMessage());
+            }
+            try {
+                final AudioFileFormat format =
+                    AudioSystem.getAudioFileFormat(url);
+                targetAudioFormat = format.getFormat();
+            } catch (UnsupportedAudioFileException e) {
+            } catch (IOException e) {
+            }
+            if (targetAudioFormat == null) {
+                try {
+                    targetAudioFormat = JavaSoundParser.parse(url);
+                } catch (URISyntaxException e) {
+                    throw new AudioException(e.getMessage());
+                }
+            }
             final URLConnection urlConnection;
             try {
                 urlConnection = openURLConnection();
@@ -73,23 +85,17 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
             }
 
             try {
-                is = urlConnection.getInputStream();
+                final InputStream source  = urlConnection.getInputStream();
+                is = new BufferedInputStream(source);
             } catch (IOException ex) {
                 throw new AudioException("Cannot get InputStream from URL: "
                         + ex.getMessage());
             }
         }
 
-        // Configure audio conversions
-        final AudioFormatConverter converter;
-        try {
-            converter = openAudioFormatConverter(targetAudioFormat,
-                    engineAudioFormat);
-        } catch (IOException e) {
-            throw new AudioException(e.getMessage());
-        }
-        inputStream = converter.getConvertedStream(is, targetAudioFormat,
-                engineAudioFormat);
+        final AudioInputStream ais = new AudioInputStream(is,
+                    targetAudioFormat, AudioSystem.NOT_SPECIFIED);
+        inputStream = AudioSystem.getAudioInputStream(engineAudioFormat, ais);
     }
 
     /**
