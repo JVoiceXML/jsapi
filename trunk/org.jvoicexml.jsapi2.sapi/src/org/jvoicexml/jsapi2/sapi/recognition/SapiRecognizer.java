@@ -12,12 +12,12 @@ import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 public class SapiRecognizer extends JseBaseRecognizer {
 	
 
-        public static void main(String[] args) 
-    { 
-        SapiRecognizer spr = new SapiRecognizer();
-        spr.getBuiltInGrammars();
-   
-    }
+//        public static void main(String[] args) 
+//    { 
+//        SapiRecognizer spr = new SapiRecognizer();
+//        spr.getBuiltInGrammars();
+//   
+//    }
         
         public native Vector getBuiltInGrammars();
 

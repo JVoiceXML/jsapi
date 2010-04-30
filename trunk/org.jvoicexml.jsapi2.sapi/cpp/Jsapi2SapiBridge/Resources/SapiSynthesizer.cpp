@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SapiSynthesizer.h"
 
+	ISpVoice * pVoice = NULL;
 
 JNIEXPORT jobject JNICALL Java_SapiSynthesizer_getSpeakable
 (JNIEnv *, jobject, jstring){
@@ -15,7 +16,19 @@ JNIEXPORT jobject JNICALL Java_SapiSynthesizer_getSpeakable
  */
 JNIEXPORT void JNICALL Java_SapiSynthesizer_Allocate
 (JNIEnv *, jobject){
+		
+	 HRESULT hr=::CoInitialize(NULL);
 
+	 hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&pVoice);
+    if( SUCCEEDED( hr ) )
+    {
+        hr = pVoice->Speak(L"Hello world", 0, NULL);
+        pVoice->Release();
+        pVoice = NULL;
+    }
+
+    ::CoUninitialize();
+    
 
 }
 

@@ -7,13 +7,42 @@ import javax.speech.synthesis.Speakable;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
+import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer;
 
 public class SapiSynthesizer extends JseBaseSynthesizer {
+	
 
-
-	protected native Speakable getSpeakable(String text);
-
-	protected native void Allocate() throws EngineStateException,
+		
+    public static void main(String[] args) 
+    { 
+    	String dir = System.getProperty("user.dir");
+    	System.out.println(dir);
+		
+    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\Jsapi2SapiBridge.dll");
+   	      
+        
+        try {
+        	Allocate();
+		} catch (EngineStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (EngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AudioException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+   
+    }
+    
+    
+    protected native Speakable getSpeakable(String text);
+	
+    public static  native void Allocate() throws EngineStateException,
 			EngineException, AudioException, SecurityException;
 
 	protected native boolean Cancel();
