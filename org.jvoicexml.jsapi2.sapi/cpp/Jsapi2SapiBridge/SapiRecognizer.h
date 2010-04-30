@@ -19,42 +19,42 @@ JNIEXPORT jobject JNICALL Java_SapiRecognizer_getBuiltInGrammars
 
 /*
  * Class:     SapiRecognizer
- * Method:    handleAllocate
+ * Method:    Allocate
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_SapiRecognizer_handleAllocate
+JNIEXPORT void JNICALL Java_SapiRecognizer_Allocate
   (JNIEnv *, jobject);
 
 /*
  * Class:     SapiRecognizer
- * Method:    handleDeallocate
+ * Method:    Deallocate
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_SapiRecognizer_handleDeallocate
+JNIEXPORT void JNICALL Java_SapiRecognizer_Deallocate
   (JNIEnv *, jobject);
 
 /*
  * Class:     SapiRecognizer
- * Method:    handlePause
+ * Method:    Pause
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_SapiRecognizer_handlePause__
+JNIEXPORT void JNICALL Java_SapiRecognizer_Pause__
   (JNIEnv *, jobject);
 
 /*
  * Class:     SapiRecognizer
- * Method:    handlePause
+ * Method:    Pause
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_SapiRecognizer_handlePause__I
+JNIEXPORT void JNICALL Java_SapiRecognizer_Pause__I
   (JNIEnv *, jobject, jint);
 
 /*
  * Class:     SapiRecognizer
- * Method:    handleResume
+ * Method:    Resume
  * Signature: ()Z
  */
-JNIEXPORT jboolean JNICALL Java_SapiRecognizer_handleResume
+JNIEXPORT jboolean JNICALL Java_SapiRecognizer_Resume
   (JNIEnv *, jobject);
 
 /*
