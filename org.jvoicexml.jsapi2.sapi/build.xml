@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?eclipse.ant.import?>
 <!-- WARNING: Eclipse auto-generated file.
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
@@ -76,6 +75,8 @@
         <pathelement location="${javax.speech.location}/bin"/>
         <pathelement location="${org.jvoicexml.jsapi2.location}/bin"/>
         <pathelement location="${org.jvoicexml.jsapi2.jse.location}/eclipse-compiled"/>
+    	<pathelement location="${org.jvoicexml.jsapi2.location}.sapi/bin/org/jvoicexml/jsapi2/sapi/recognition/"/>    		
+        <pathelement location="${org.jvoicexml.jsapi2.location}.sapi/bin/org/jvoicexml/jsapi2/sapi/synthesis/"/>   
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -117,16 +118,14 @@
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
             <src path="src"/>
             <classpath refid="org.jvoicexml.jsapi2.sapi.classpath"/>
-        </javac>
-		<javah  
-			destdir="${org.jvoicexml.jsapi2.location}.sapi/cpp/Jsapi2SapiBridge/" 
-    	 	verbose="yes" force="yes"     	
-			classpath="
-	    	${org.jvoicexml.jsapi2.location}/bin/;
-	    	${org.jvoicexml.jsapi2.jse.location}/eclipse-compiled/;
-	    	${org.jvoicexml.jsapi2.location}.sapi/bin/org/jvoicexml/jsapi2/sapi/recognition/;" >
-    	<class name="SapiRecognizer"/>
-    </javah>   	
+        </javac>   	
+    	<javah verbose="yes" force="yes" 
+    		destdir="${org.jvoicexml.jsapi2.location}.sapi/cpp/Jsapi2SapiBridge/" >
+    		<classpath refid="org.jvoicexml.jsapi2.sapi.classpath"/>
+    		<class name="SapiRecognizer"/>
+    		<class name="SapiSynthesizer"/>	
+    	</javah> 
+
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
@@ -142,5 +141,4 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-
 </project>
