@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?eclipse.ant.import?>
 <!-- WARNING: Eclipse auto-generated file.
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
@@ -14,37 +13,15 @@
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
+    <import file="buildJavah.xml"/>
     <path id="JUnit 4.libraryclasspath">
         <pathelement location="${ECLIPSE_HOME}/plugins/org.junit4_4.5.0.v20090824/junit.jar"/>
         <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
     </path>
-    <path id="JavaME library [Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone2].libraryclasspath">
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/cldc_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/cldc_1.1.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr082_1.1.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr120_1.1.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr135_1.1.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr172_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr177_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr179_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr180_1.1.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr184_1.1.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr205_2.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr211_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr226_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr229_1.1.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr234_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr238_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr239_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr256_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr280_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/jsr75_1.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/midp_2.0.jar"/>
-        <pathelement location="../../../../Java_ME_platform_SDK_3.0/lib/midp_2.1.jar"/>
-    </path>
+    <path id="org.elipse.mtj.JavaMEContainer/Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone2.libraryclasspath"/>
     <path id="javax.speech.classpath">
         <pathelement location="${javax.speech.location}/bin"/>
-        <path refid="JavaME library [Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone2].libraryclasspath"/>
+        <path refid="org.elipse.mtj.JavaMEContainer/Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone2.libraryclasspath"/>
     </path>
     <path id="JUnit 3.libraryclasspath">
         <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_3.8.2.v20090203-1005/junit.jar"/>
@@ -53,7 +30,7 @@
         <pathelement location="${org.jvoicexml.jsapi2.location}/bin"/>
         <path refid="javax.speech.classpath"/>
         <path refid="JUnit 3.libraryclasspath"/>
-        <path refid="JavaME library [Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone2].libraryclasspath"/>
+        <path refid="org.elipse.mtj.JavaMEContainer/Java(TM) Platform Micro Edition SDK 3.0/DefaultCldcPhone2.libraryclasspath"/>
     </path>
     <path id="org.jvoicexml.jsapi2.jse.classpath">
         <pathelement location="${org.jvoicexml.jsapi2.jse.location}/eclipse-compiled"/>
@@ -64,7 +41,6 @@
         <pathelement location="${org.jvoicexml.jsapi2.jse.location}/3rdparty/freetts1.2/lib/freetts.jar"/>
         <pathelement location="${org.jvoicexml.jsapi2.jse.location}/3rdparty/sphinx4/lib/sphinx4.jar"/>
         <pathelement location="${org.jvoicexml.jsapi2.jse.location}/3rdparty/jlibrtp/lib/jlibrtp.jar"/>
-        <pathelement location="${org.jvoicexml.jsapi2.jse.location}/3rdparty/sphinx4/lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
         <path refid="org.jvoicexml.jsapi2.classpath"/>
         <path refid="javax.speech.classpath"/>
     </path>
@@ -76,8 +52,8 @@
         <pathelement location="${javax.speech.location}/bin"/>
         <pathelement location="${org.jvoicexml.jsapi2.location}/bin"/>
         <pathelement location="${org.jvoicexml.jsapi2.jse.location}/eclipse-compiled"/>
-    	<pathelement location="${org.jvoicexml.jsapi2.location}.sapi/bin/org/jvoicexml/jsapi2/sapi/recognition/"/>    		
-        <pathelement location="${org.jvoicexml.jsapi2.location}.sapi/bin/org/jvoicexml/jsapi2/sapi/synthesis/"/>   
+    	<pathelement location="${org.jvoicexml.jsapi2.location}.sapi/bin/"/>    		
+  
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -119,14 +95,14 @@
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
             <src path="src"/>
             <classpath refid="org.jvoicexml.jsapi2.sapi.classpath"/>
-        </javac>   	
+        </javac>
     	<javah verbose="yes" force="yes" 
-    		destdir="${org.jvoicexml.jsapi2.location}.sapi/cpp/Jsapi2SapiBridge/" >
+    		destdir="${org.jvoicexml.jsapi2.location}.sapi/cpp/JSapi2Sapi/Header" >
     		<classpath refid="org.jvoicexml.jsapi2.sapi.classpath"/>
-    		<class name="SapiRecognizer"/>
-    		<class name="SapiSynthesizer"/>	
+    		<class name="org.jvoicexml.jsapi2.sapi.recognition.JNITest"/>
+    		<class name="org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer"/>
+    		<class name="org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizer"/>  		
     	</javah> 
-
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
@@ -141,5 +117,10 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
+    </target>
+    <target name="SapiRecognizer">
+        <java classname="org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer" failonerror="true" fork="yes">
+            <classpath refid="org.jvoicexml.jsapi2.sapi.classpath"/>
+        </java>
     </target>
 </project>

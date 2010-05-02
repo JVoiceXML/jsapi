@@ -41,12 +41,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\eclipse\Workspace\org.jvoicexml.jsapi2.sapi\cpp\Jsapi2SapiBridge\Header&quot;;&quot;C:\Program Files\eclipse\Workspace\org.jvoicexml.jsapi2.sapi\cpp\Jsapi2SapiBridge\Header\MS Spech SDK&quot;;&quot;C:\Program Files\Java\jdk1.6.0_18\include\win32&quot;;&quot;C:\Program Files\Java\jdk1.6.0_18\include&quot;"
+				AdditionalIncludeDirectories="&quot;D:\eclipse - Kopie\Workspace\org.jvoicexml.jsapi2.sapi\cpp\Jsapi2SapiBridge\Header&quot;;&quot;D:\eclipse - Kopie\Workspace\org.jvoicexml.jsapi2.sapi\cpp\Jsapi2SapiBridge\Header\MS Spech SDK&quot;;&quot;C:\Program Files\eclipse\Workspace\org.jvoicexml.jsapi2.sapi\cpp\Jsapi2SapiBridge\Header&quot;;&quot;C:\Program Files\eclipse\Workspace\org.jvoicexml.jsapi2.sapi\cpp\Jsapi2SapiBridge\Header\MS Spech SDK&quot;;&quot;C:\Program Files\Java\jdk1.6.0_18\include\win32&quot;;&quot;C:\Program Files\Java\jdk1.6.0_18\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;JSAPI2SAPIBRIDGE_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="1"
+				PrecompiledHeaderThrough="stdafx.h"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -62,7 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\eclipse\Workspace\org.jvoicexml.jsapi2.sapi\cpp\Jsapi2SapiBridge\Libraries&quot;"
+				AdditionalLibraryDirectories="&quot;D:\eclipse - Kopie\Workspace\org.jvoicexml.jsapi2.sapi\cpp\Jsapi2SapiBridge\Libraries&quot;;&quot;C:\Program Files\eclipse\Workspace\org.jvoicexml.jsapi2.sapi\cpp\Jsapi2SapiBridge\Libraries&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -179,15 +180,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\Header\org_jvoicexml_jsapi2_sapi_recognition_JNITest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Header\org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Header\org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Header\resource.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Header\SapiRecognizer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Header\SapiSynthesizer.h"
 				>
 			</File>
 			<File
@@ -206,6 +211,10 @@
 			>
 			<File
 				RelativePath=".\Resources\dllmain.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\JNITest.cpp"
 				>
 			</File>
 			<File

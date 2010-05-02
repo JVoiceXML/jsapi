@@ -1,5 +1,7 @@
 package org.jvoicexml.jsapi2.sapi.synthesis;
 
+import java.util.logging.Logger;
+
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
@@ -11,18 +13,25 @@ import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer;
 
 public class SapiSynthesizer extends JseBaseSynthesizer {
 	
-
+	private static final Logger LOGGER =
+        Logger.getLogger(SapiSynthesizer.class.getName());
+	
+	
+	SapiSynthesizer(){
+		
+		String dir = System.getProperty("user.dir");
+    	System.out.println(dir);		
+    	System.load(dir+"\\bin\\JSapi2Sapi.dll");				
+	}
 		
     public static void main(String[] args) 
-    { 
-    	String dir = System.getProperty("user.dir");
-    	System.out.println(dir);
-		
-    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\Jsapi2SapiBridge.dll");
-   	      
-        
+    {       
+    	SapiSynthesizer sps = new SapiSynthesizer();
+    	
+    	System.out.println( "new SapiSynthesizer: okay");
         try {
-        	Allocate();
+        	sps.handleAllocate();
+        	System.out.println( "handleAllocate: okay");
 		} catch (EngineStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,32 +45,52 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-   
+		
+		
+		System.out.println( "handleSpeak: okay");
+		sps.handleSpeak( 5, "Hello Josua");
+		sps.handleDeallocate();
+		System.out.println( "handleDellocate: okay");
+		System.exit(0);
     }
-    
-    
-    protected native Speakable getSpeakable(String text);
-	
-    public static  native void Allocate() throws EngineStateException,
+
+	@Override
+	protected native Speakable getSpeakable(String text);
+
+	@Override
+	protected native void handleAllocate() throws EngineStateException,
 			EngineException, AudioException, SecurityException;
 
-	protected native boolean Cancel();
+	@Override
+	protected native boolean handleCancel();
 
-	protected native boolean Cancel(int id);
+	@Override
+	protected native boolean handleCancel(int id);
 
-	protected native boolean CancelAll();
+	@Override
+	protected native boolean handleCancelAll();
 
-	protected native void Deallocate();
+	@Override
+	protected native void handleDeallocate();
 
-	protected native void Pause();
+	@Override
+	protected native void handlePause();
 
-	protected native boolean Resume();
+	@Override
+	protected native boolean handleResume();
 
-	protected native void Speak(int id, String item);
+	@Override
+	protected native void handleSpeak(int id, String item);
 
-	protected native void Speak(int id, Speakable item);
+	@Override
+	protected native void handleSpeak(int id, Speakable item);
 
-	protected native EnginePropertyChangeRequestListener getChangeRequestListener();
+	@Override
+	protected  EnginePropertyChangeRequestListener getChangeRequestListener(){
+		return null;
+	}
+    
+
 
 }
 
