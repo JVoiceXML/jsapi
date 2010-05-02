@@ -48,7 +48,7 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 		
 		
 		System.out.println( "handleSpeak: okay");
-		sps.handleSpeak( 5, "Hello Josua");
+		sps.handleSpeak( 5, "Hello i love Java ");
 		sps.handleDeallocate();
 		System.out.println( "handleDellocate: okay");
 		System.exit(0);
