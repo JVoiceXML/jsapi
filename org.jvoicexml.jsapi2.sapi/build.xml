@@ -52,7 +52,7 @@ This file builds the JSR 113.jar.
         <include name="**/*.xsl" />
       </fileset>
     </copy>
-    <javah destdir="cpp/Jsapi2SapiBridge">
+    <javah destdir="cpp/Jsapi2SapiBridge/include">
       <class name="${component}.recognition.SapiRecognizer"/>
       <class name="${component}.synthesis.SapiSynthesizer"/>
       <classpath refid="classpath"/>

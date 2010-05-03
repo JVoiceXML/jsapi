@@ -1,4 +1,4 @@
-package org.jvoicexml.jsapi2.sapi.recognition;
+package org.jvoicexml.jsapi2.test;
 
 public class JNITest {
 	
