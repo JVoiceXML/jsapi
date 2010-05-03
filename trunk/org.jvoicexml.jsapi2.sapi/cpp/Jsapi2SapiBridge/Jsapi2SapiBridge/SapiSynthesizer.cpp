@@ -1,10 +1,10 @@
 #include "org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer.h"
-#include <sapi.h>
+#include <stdafx.h>
 
-	//CComPtr<ISpTTSEngine> iSpTTSEngine;
-
+	//CComPtr<ISpTTSEngine>	iSpTTSEngine;
+	HRESULT					hr;
 	ISpVoice *			pVoice = NULL;
-	HRESULT				hr;
+	
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -23,9 +23,10 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
  */
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleAllocate
   (JNIEnv *, jobject){
-		     
-    //hr = iSpTTSEngine.  
-    ::CoInitialize(NULL);    
+		   
+	//hr = iSpTTSEngine.CoCreateInstance();
+    //hr = iSpTTSEngine.CoInitialize(NULL); 
+	  ::CoInitialize(NULL);
     hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&pVoice);
 	hr = pVoice->SetInterest( SPFEI_ALL_TTS_EVENTS, SPFEI_ALL_TTS_EVENTS );
 }

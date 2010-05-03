@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\..\..\cpp\Jsapi2SapiBridge\MS Spech SDK&quot;;&quot;C:\Program Files\Java\jdk1.6.0_18\include\win32&quot;;&quot;C:\Program Files\Java\jdk1.6.0_18\include&quot;;..\..\..\cpp\Jsapi2SapiBridge\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Microsoft SDKs\Windows\v7.0A\Include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_18\include\win32&quot;;&quot;C:\Program Files\Java\jdk1.6.0_18\include&quot;;..\..\..\cpp\Jsapi2SapiBridge\include"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
