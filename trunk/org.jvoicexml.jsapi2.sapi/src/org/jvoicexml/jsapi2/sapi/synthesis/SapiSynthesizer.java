@@ -9,7 +9,7 @@ import javax.speech.synthesis.Speakable;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
-import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer;
+
 
 public class SapiSynthesizer extends JseBaseSynthesizer {
 	
@@ -21,7 +21,7 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 		
 		String dir = System.getProperty("user.dir");
     	System.out.println(dir);		
-    	System.load(dir+"\\bin\\JSapi2Sapi.dll");				
+    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Jsapi2Sapi\\Debug\\JSapi2SapiBridge.dll");				
 	}
 		
     public static void main(String[] args) 
@@ -48,7 +48,7 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 		
 		
 		System.out.println( "handleSpeak: okay");
-		sps.handleSpeak( 5, "Hello i love Java ");
+		sps.handleSpeak( 5, "<?xml version=\"1.0\"?>Hallo <break time=\"1s\"/> ich liebe Java");
 		sps.handleDeallocate();
 		System.out.println( "handleDellocate: okay");
 		System.exit(0);
