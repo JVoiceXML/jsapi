@@ -21,7 +21,7 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 		
 		String dir = System.getProperty("user.dir");
     	System.out.println(dir);		
-    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Jsapi2Sapi\\Debug\\JSapi2SapiBridge.dll");				
+    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
 	}
 		
     public static void main(String[] args) 
