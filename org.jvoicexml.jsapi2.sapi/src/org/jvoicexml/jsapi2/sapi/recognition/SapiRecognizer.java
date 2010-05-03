@@ -10,61 +10,31 @@ import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 
 public class SapiRecognizer extends JseBaseRecognizer {
-	
 
-//        public static void main(String[] args) 
-//    { 
-//        SapiRecognizer spr = new SapiRecognizer();
-//        spr.getBuiltInGrammars();
-//   
-//    }
-        
-        public native Vector getBuiltInGrammars();
+	@Override
+	public native Vector getBuiltInGrammars();
 
-		protected native void Allocate() throws EngineStateException,
-				EngineException, AudioException, SecurityException;
+	@Override
+	protected native void handleAllocate() throws EngineStateException,
+			EngineException, AudioException, SecurityException;
 
-		protected native void Deallocate();
+	@Override
+	protected native void handleDeallocate();
 
-		protected native void Pause();
-		
-		protected native void Pause(int flags);
+	@Override
+	protected native void handlePause();
 
-		protected native boolean Resume();
+	@Override
+	protected native void handlePause(int flags);
 
-		protected native boolean setGrammars(Vector grammarDefinition);
+	@Override
+	protected native boolean handleResume();
 
-		protected native EnginePropertyChangeRequestListener getChangeRequestListener();
+	@Override
+	protected native boolean setGrammars(Vector grammarDefinition);
 
-        @Override
-        protected void handleAllocate() throws EngineStateException,
-                EngineException, AudioException, SecurityException {
-            // TODO Auto-generated method stub
-            
-        }
 
-        @Override
-        protected void handleDeallocate() {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        protected void handlePause() {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        protected void handlePause(int flags) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        protected boolean handleResume() {
-            // TODO Auto-generated method stub
-            return false;
-        }
+	@Override
+	protected native EnginePropertyChangeRequestListener getChangeRequestListener();
 
 }
