@@ -36,4 +36,35 @@ public class SapiRecognizer extends JseBaseRecognizer {
 
 		protected native EnginePropertyChangeRequestListener getChangeRequestListener();
 
+        @Override
+        protected void handleAllocate() throws EngineStateException,
+                EngineException, AudioException, SecurityException {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        protected void handleDeallocate() {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        protected void handlePause() {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        protected void handlePause(int flags) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        protected boolean handleResume() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
 }
