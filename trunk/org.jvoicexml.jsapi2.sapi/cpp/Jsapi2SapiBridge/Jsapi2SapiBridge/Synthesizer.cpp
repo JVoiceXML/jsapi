@@ -1,6 +1,7 @@
 #include "org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer.h"
 #include <sapi.h>
 
+
 	ISpVoice *			pVoice = NULL;
 	HRESULT				hr;
 
@@ -104,7 +105,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 
 	if( SUCCEEDED( hr ) )
     {
-        hr = pVoice->Speak( wsz, SPF_PARSE_SSML, NULL);
+        hr = pVoice->Speak( wsz, SPF_IS_XML, NULL);
     }
 	env->ReleaseStringChars(string, raw);	
 }
