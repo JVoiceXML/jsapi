@@ -33,7 +33,7 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 		
     public static void main(String[] args) throws InterruptedException 
     {       
-    	SapiSynthesizer sps = new SapiSynthesizer("LH Anna");
+    	SapiSynthesizer sps = new SapiSynthesizer("LH fgg Anna");
 //    	SapiSynthesizer sps2 = new SapiSynthesizer("LH Stefan");   // error p==0 der zeiger des dre Zweiten Instanz kann nicht Instanziert werden
     	
     	System.out.println( "new Synthesizer:\tokay");
@@ -57,13 +57,13 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 		}
 	 
 		sps.handleSpeak( 5, "Hello i love Java and i was paused and resumed now i will be cancelled please wait a moment the rest of this sentence well be Purged");//
-		sps.handleSpeak( 3, "was geht ab wir reden zu zweit ");
+//		sps.handleSpeak( 3, "was geht ab wir reden zu zweit ");
 		System.out.println( "Speak:\t\t\tokay");//<RATE SPEED= \"-5\">
 		Thread.sleep(435);
 
 		sps.handlePause();
 		System.out.println( "Pause:\t\t\tokay");
-		Thread.sleep(2000);
+		Thread.sleep(5000);
 		
 		if(sps.handleResume()){
 			System.out.println( "Resume:\t\t\tokay");
@@ -78,10 +78,10 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 			System.out.println( "Cancel:\t\t\tnot okay");
 			System.exit(0);
 		}
-		Thread.sleep(1000);
+		Thread.sleep(2000);
 		sps.handleSpeak( 5, "So now I spaek again");//
 		System.out.println( "Speak:\t\t\tokay");//<RATE SPEED= \"-5\">
-		Thread.sleep(1800);
+		Thread.sleep(2500);
 			
 		sps.handleDeallocate();
 		System.out.println( "Dellocate:\t\tokay");
