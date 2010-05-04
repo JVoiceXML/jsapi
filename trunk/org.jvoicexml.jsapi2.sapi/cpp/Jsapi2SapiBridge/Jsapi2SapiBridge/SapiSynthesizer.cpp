@@ -43,8 +43,10 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 	/*  get the engineName2 Object und cast it to jstring*/
 	/*  get the chars contained in engineName2 jsring and cast them to const wchar_t* */
 		const wchar_t* engineName= (const wchar_t*)env->GetStringChars((jstring)env->GetObjectField(object, jfid),NULL);
-
- // Avoid 64bit problems CoCreateInstance from CComPtr<ISpVoice> struct to gain access to 32bit engines
+				// Achtung überlegen wie das mit java env allocierten speicher ist, eventuell freigeben notwendig
+ 
+		
+	// Avoid 64bit problems CoCreateInstance from CComPtr<ISpVoice> struct to gain access to 32bit engines
 	::CoInitialize(NULL);
 	hr = CLSIDFromProgID(pProgID, &clsid);
 
@@ -78,7 +80,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancel__
   (JNIEnv *env, jobject object){
 	  
-	  if( SUCCEEDED(cpVoice->Speak( NULL, SPF_PURGEBEFORESPEAK, 0 ) )){
+	  if( SUCCEEDED(cpVoice->Speak( NULL, SPF_PURGEBEFORESPEAK, NULL ) )){
 		  return JNI_TRUE;
 	  }		
 	  else{
