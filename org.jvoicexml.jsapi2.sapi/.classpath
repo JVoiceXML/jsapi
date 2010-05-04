@@ -8,5 +8,7 @@
 	<classpathentry kind="lib" path="/javax.speech/bin"/>
 	<classpathentry kind="lib" path="/org.jvoicexml.jsapi2/bin"/>
 	<classpathentry kind="lib" path="/org.jvoicexml.jsapi2.jse/eclipse-compiled"/>
+	<classpathentry kind="lib" path="/org.jvoicexml.jsapi2/classes"/>
+	<classpathentry kind="lib" path="classes"/>
 	<classpathentry kind="output" path="eclipse-compiled"/>
 </classpath>
