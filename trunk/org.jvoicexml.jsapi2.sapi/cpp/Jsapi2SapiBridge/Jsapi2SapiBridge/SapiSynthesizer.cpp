@@ -4,10 +4,13 @@
 	CComPtr<ISpTTSEngine>			iSpTtsEngine;
 	CComPtr<IEnumSpObjectTokens>	cpEnum;
 	CComPtr<ISpObjectToken>			cpToken;
+	CComPtr<ISpVoice>				cpVoice;
 	HRESULT							hr;
-	ISpVoice *						ispVoice = NULL;
+	
+	//ISpVoice *						cpVoice = NULL;
 
-
+	LPCOLESTR pProgID = L"SAPI.SpVoice";
+	CLSID clsid = GUID_NULL;
 
 
 /*
@@ -26,31 +29,46 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleAllocate
-  (JNIEnv *, jobject){
-		   
-	  //hr = iSpTtsEngine.CoCreateInstance( reinterpret_cast<const IID>(CLSID_SpVoice), CLSCTX_SERVER, NULL);
-    //hr = iSpTTSEngine.CoInitialize(NULL);  //hr = m_cpVoice.CoCreateInstance( CLSID_SpVoice ); 
+  (JNIEnv *env, jobject object){
 
-		::CoInitialize(NULL);
-		hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&ispVoice);
-		
-    //if(SUCCEEDED(hr))
-    // {
-    //      hr = SpEnumTokens(SPCAT_VOICES, L"Name=Microsoft Mary", NULL, &cpEnum);  // MS Mary was not found by my system
-    // }    
+	/*  get superclass from commited object */
+	  //jclass jcls = env->GetSuperclass( env->GetObjectClass(object) );
 
-    // // cpToken is still empty, first load token from cpEnum
-    // if(SUCCEEDED(hr))
-    // {
-    //      hr = cpEnum->Next(1, &cpToken, NULL);
-    // }
+	/*  get class from commited object */
+	   jclass jcls = env->GetObjectClass(object);
 
-    // if(SUCCEEDED(hr))
-    // {    
-    //      hr = ispVoice->SetVoice(cpToken);
-    // }		
-		
-		hr = ispVoice->SetInterest( SPFEI_ALL_TTS_EVENTS, SPFEI_ALL_TTS_EVENTS );
+	/*  get jfieldID of classmember engineName2 thats type is jstring */
+		jfieldID jfid = env->GetFieldID(jcls, "engineName2","Ljava/lang/String;");
+
+	/*  get the engineName2 Object und cast it to jstring*/
+	/*  get the chars contained in engineName2 jsring and cast them to const wchar_t* */
+		const wchar_t* engineName= (const wchar_t*)env->GetStringChars((jstring)env->GetObjectField(object, jfid),NULL);
+
+ // Avoid 64bit problems CoCreateInstance from CComPtr<ISpVoice> struct to gain access to 32bit engines
+	::CoInitialize(NULL);
+	hr = CLSIDFromProgID(pProgID, &clsid);
+
+	if(SUCCEEDED(hr))
+	{	
+		hr = cpVoice.CoCreateInstance(clsid ,NULL, CLSCTX_ALL);
+	}
+	// create cpEnum that contains the information about the designated TTSEngine
+	if(SUCCEEDED(hr))
+	{	
+		hr = SpEnumTokens(SPCAT_VOICES, engineName, NULL, &cpEnum);  
+	}  
+
+	// load required cpToken from cpEnum
+	if(SUCCEEDED(hr))
+	{
+		hr = cpEnum->Next(1, &cpToken, NULL);
+	}
+	// Set the designated Voice if not possible standard System is used
+	if(SUCCEEDED(hr))
+	{    
+		hr = cpVoice->SetVoice(cpToken);
+	}
+
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -60,8 +78,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancel__
   (JNIEnv *env, jobject object){
 	  
-	  if( SUCCEEDED(ispVoice->Speak( NULL, SPF_PURGEBEFORESPEAK, 0 ) )){
-		  //SUCCEEDED( ispVoice->SetVolume(0)
+	  if( SUCCEEDED(cpVoice->Speak( NULL, SPF_PURGEBEFORESPEAK, 0 ) )){
 		  return JNI_TRUE;
 	  }		
 	  else{
@@ -75,6 +92,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancel__I
   (JNIEnv *env, jobject onbject, jint id){
+
 	return NULL;
 }
 /*
@@ -84,6 +102,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancelAll
   (JNIEnv *env, jobject object){
+
 	return NULL;
 }
 /*
@@ -96,10 +115,10 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 
 	if( SUCCEEDED( hr ) )
     {
-        ispVoice->Release();
-        ispVoice = NULL;
+        cpVoice.Release();
+        //cpVoice = NULL;
     }
-    ::CoUninitialize();	
+	//::CoUninitialize();	
 
 }
 /*
@@ -110,7 +129,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handlePause
   (JNIEnv *env, jobject object){
 
-	  hr = ispVoice->Pause();
+	  hr = cpVoice->Pause();
 	
 }
 /*
@@ -121,7 +140,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleResume
   (JNIEnv *env, jobject object){
 
-	  if( SUCCEEDED( ispVoice->Resume() ) )	{
+	  if( SUCCEEDED( cpVoice->Resume() ) )	{
 		  return JNI_TRUE;
 	  }		
 	  else{
@@ -136,19 +155,10 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleSpeak__ILjava_lang_String_2
   (JNIEnv *env, jobject object, jint id, jstring string){
 
-
-    int len = env->GetStringLength(string);
-    const jchar* raw = env->GetStringChars(string, NULL);
-
-    wchar_t* wsz = new wchar_t[len+1];
-    memcpy(wsz, raw, len*2);
-    wsz[len] = 0;
-
 	if( SUCCEEDED( hr ) )
     {
-		hr = ispVoice->Speak( wsz, SPF_ASYNC | SPF_IS_XML , NULL);
+		hr = cpVoice->Speak( (const wchar_t*)env->GetStringChars(string, NULL), SPF_ASYNC | SPF_IS_XML , NULL);
     }
-	env->ReleaseStringChars(string, raw);	
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -159,3 +169,39 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
   (JNIEnv *env, jobject object, jint id, jobject item){
 	
 }
+
+
+// SOME MISERABLE CONVERSION
+
+
+//	std::wstring JavaToWSZ(JNIEnv* env, jstring string)
+//{
+//    std::wstring value;
+//    if (string == NULL) {
+//        return value; // empty string
+//    }
+//    const jchar* raw = env->GetStringChars(string, NULL);
+//    if (raw != NULL) {
+//        jsize len = env->GetStringLength(string);
+//        value.assign(raw, len);
+//        env->ReleaseStringChars(string, raw);
+//    }
+//    return value;
+//}
+//wchar_t * JavaToWSZ(JNIEnv* env, jstring string)
+//{
+//    if (string == NULL)
+//        return NULL;
+//    int len = env->GetStringLength(string);
+//    const jchar* raw = env->GetStringChars(string, NULL);
+//    if (raw == NULL)
+//        return NULL;
+//
+//    wchar_t* wsz = new wchar_t[len+1];
+//    memcpy(wsz, raw, len*2);
+//    wsz[len] = 0;
+//
+//    env->ReleaseStringChars(string, raw);
+//
+//    return wsz;
+//}

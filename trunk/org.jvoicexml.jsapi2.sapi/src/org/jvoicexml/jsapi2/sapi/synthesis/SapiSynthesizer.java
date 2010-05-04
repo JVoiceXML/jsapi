@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import javax.speech.AudioException;
 import javax.speech.EngineException;
+import javax.speech.EngineMode;
 import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
 
@@ -12,25 +13,33 @@ import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 
 public class SapiSynthesizer extends JseBaseSynthesizer {
-	
+	    
+	static{
+    	System.load("D:\\eclipse - Kopie\\Workspace\\org.jvoicexml.jsapi2.sapi\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
+    	}
 	private static final Logger LOGGER =
         Logger.getLogger(SapiSynthesizer.class.getName());
 	
+	String engineName2 ;
 	
-	SapiSynthesizer(){
-		
+	SapiSynthesizer(String name){
+		engineName2 = "name="+name;
 		String dir = System.getProperty("user.dir");
-    	System.out.println(dir);		
-    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
-	}
+    	System.out.println(dir);
+//    	static{
+//    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
+//    	}
+    }
 		
     public static void main(String[] args) throws InterruptedException 
     {       
-    	SapiSynthesizer sps = new SapiSynthesizer();
+    	SapiSynthesizer sps = new SapiSynthesizer("LH Anna");
+//    	SapiSynthesizer sps2 = new SapiSynthesizer("LH Stefan");   // error p==0 der zeiger des dre Zweiten Instanz kann nicht Instanziert werden
     	
     	System.out.println( "new Synthesizer:\tokay");
         try {
         	sps.handleAllocate();        	
+//        	sps2.handleAllocate();
         	System.out.println( "Allocate:\t\tokay");
         	Thread.sleep(200);
 		} catch (EngineStateException e) {
@@ -48,6 +57,7 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 		}
 	 
 		sps.handleSpeak( 5, "Hello i love Java and i was paused and resumed now i will be cancelled please wait a moment the rest of this sentence well be Purged");//
+		sps.handleSpeak( 3, "was geht ab wir reden zu zweit ");
 		System.out.println( "Speak:\t\t\tokay");//<RATE SPEED= \"-5\">
 		Thread.sleep(435);
 
@@ -71,10 +81,10 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 		Thread.sleep(1000);
 		sps.handleSpeak( 5, "So now I spaek again");//
 		System.out.println( "Speak:\t\t\tokay");//<RATE SPEED= \"-5\">
-		Thread.sleep(1500);
+		Thread.sleep(1800);
 			
 		sps.handleDeallocate();
-		System.out.println( "Dellocate:\tokay");
+		System.out.println( "Dellocate:\t\tokay");
 		System.exit(0);
 		
     }
