@@ -24,14 +24,15 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
     	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
 	}
 		
-    public static void main(String[] args) 
+    public static void main(String[] args) throws InterruptedException 
     {       
     	SapiSynthesizer sps = new SapiSynthesizer();
     	
-    	System.out.println( "new SapiSynthesizer: okay");
+    	System.out.println( "new Synthesizer:\tokay");
         try {
-        	sps.handleAllocate();
-        	System.out.println( "handleAllocate: okay");
+        	sps.handleAllocate();        	
+        	System.out.println( "Allocate:\t\tokay");
+        	Thread.sleep(200);
 		} catch (EngineStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -45,47 +46,71 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	 
+		sps.handleSpeak( 5, "Hello i love Java and i was paused and resumed now i will be cancelled please wait a moment the rest of this sentence well be Purged");//
+		System.out.println( "Speak:\t\t\tokay");//<RATE SPEED= \"-5\">
+		Thread.sleep(435);
+
+		sps.handlePause();
+		System.out.println( "Pause:\t\t\tokay");
+		Thread.sleep(2000);
 		
-		
-		System.out.println( "handleSpeak: okay");
-		sps.handleSpeak( 5, "<?xml version=\"1.0\"> Hallo <break time\"2s\"/> ich liebe Java");
+		if(sps.handleResume()){
+			System.out.println( "Resume:\t\t\tokay");
+			Thread.sleep(3200);			
+		}else{
+			System.out.println( "Resume:\t\t\tnot okay");
+			System.exit(0);
+		}		
+		if(sps.handleCancel()){
+			System.out.println( "Cancel:\t\t\tokay");			
+		}else{
+			System.out.println( "Cancel:\t\t\tnot okay");
+			System.exit(0);
+		}
+		Thread.sleep(1000);
+		sps.handleSpeak( 5, "So now I spaek again");//
+		System.out.println( "Speak:\t\t\tokay");//<RATE SPEED= \"-5\">
+		Thread.sleep(1500);
+			
 		sps.handleDeallocate();
-		System.out.println( "handleDellocate: okay");
+		System.out.println( "Dellocate:\tokay");
 		System.exit(0);
+		
     }
 
-	@Override
+	
 	protected native Speakable getSpeakable(String text);
 
-	@Override
+	
 	protected native void handleAllocate() throws EngineStateException,
 			EngineException, AudioException, SecurityException;
 
-	@Override
+	
 	protected native boolean handleCancel();
 
-	@Override
+	
 	protected native boolean handleCancel(int id);
 
-	@Override
+	
 	protected native boolean handleCancelAll();
 
-	@Override
+	
 	protected native void handleDeallocate();
 
-	@Override
+
 	protected native void handlePause();
 
-	@Override
+	
 	protected native boolean handleResume();
 
-	@Override
+	
 	protected native void handleSpeak(int id, String item);
 
-	@Override
+	
 	protected native void handleSpeak(int id, Speakable item);
 
-	@Override
+	
 	protected  EnginePropertyChangeRequestListener getChangeRequestListener(){
 		return null;
 	}

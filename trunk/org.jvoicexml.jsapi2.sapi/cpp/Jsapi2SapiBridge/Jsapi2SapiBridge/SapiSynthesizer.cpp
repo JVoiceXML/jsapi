@@ -1,10 +1,14 @@
 #include "org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer.h"
 #include <stdafx.h>
 
-	//CComPtr<ISpTTSEngine>	iSpTTSEngine;
-	HRESULT					hr;
-	ISpVoice *			pVoice = NULL;
-	
+	CComPtr<ISpTTSEngine>			iSpTtsEngine;
+	CComPtr<IEnumSpObjectTokens>	cpEnum;
+	CComPtr<ISpObjectToken>			cpToken;
+	HRESULT							hr;
+	ISpVoice *						ispVoice = NULL;
+
+
+
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -24,11 +28,29 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleAllocate
   (JNIEnv *, jobject){
 		   
-	//hr = iSpTTSEngine.CoCreateInstance();
-    //hr = iSpTTSEngine.CoInitialize(NULL); 
-	  ::CoInitialize(NULL);
-    hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&pVoice);
-	hr = pVoice->SetInterest( SPFEI_ALL_TTS_EVENTS, SPFEI_ALL_TTS_EVENTS );
+	  //hr = iSpTtsEngine.CoCreateInstance( reinterpret_cast<const IID>(CLSID_SpVoice), CLSCTX_SERVER, NULL);
+    //hr = iSpTTSEngine.CoInitialize(NULL);  //hr = m_cpVoice.CoCreateInstance( CLSID_SpVoice ); 
+
+		::CoInitialize(NULL);
+		hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&ispVoice);
+		
+    //if(SUCCEEDED(hr))
+    // {
+    //      hr = SpEnumTokens(SPCAT_VOICES, L"Name=Microsoft Mary", NULL, &cpEnum);  // MS Mary was not found by my system
+    // }    
+
+    // // cpToken is still empty, first load token from cpEnum
+    // if(SUCCEEDED(hr))
+    // {
+    //      hr = cpEnum->Next(1, &cpToken, NULL);
+    // }
+
+    // if(SUCCEEDED(hr))
+    // {    
+    //      hr = ispVoice->SetVoice(cpToken);
+    // }		
+		
+		hr = ispVoice->SetInterest( SPFEI_ALL_TTS_EVENTS, SPFEI_ALL_TTS_EVENTS );
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -36,8 +58,15 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
  * Signature: ()Z
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancel__
-  (JNIEnv *, jobject){
-	return NULL;
+  (JNIEnv *env, jobject object){
+	  
+	  if( SUCCEEDED(ispVoice->Speak( NULL, SPF_PURGEBEFORESPEAK, 0 ) )){
+		  //SUCCEEDED( ispVoice->SetVolume(0)
+		  return JNI_TRUE;
+	  }		
+	  else{
+		  return JNI_FALSE;
+	  }
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -45,7 +74,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
  * Signature: (I)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancel__I
-  (JNIEnv *, jobject, jint){
+  (JNIEnv *env, jobject onbject, jint id){
 	return NULL;
 }
 /*
@@ -54,7 +83,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
  * Signature: ()Z
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancelAll
-  (JNIEnv *, jobject){
+  (JNIEnv *env, jobject object){
 	return NULL;
 }
 /*
@@ -63,12 +92,12 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleDeallocate
-  (JNIEnv *, jobject){
+  (JNIEnv *env, jobject object){
 
 	if( SUCCEEDED( hr ) )
     {
-        pVoice->Release();
-        pVoice = NULL;
+        ispVoice->Release();
+        ispVoice = NULL;
     }
     ::CoUninitialize();	
 
@@ -79,7 +108,9 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handlePause
-  (JNIEnv *, jobject){
+  (JNIEnv *env, jobject object){
+
+	  hr = ispVoice->Pause();
 	
 }
 /*
@@ -88,8 +119,14 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
  * Signature: ()Z
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleResume
-  (JNIEnv *, jobject){
-	return NULL;
+  (JNIEnv *env, jobject object){
+
+	  if( SUCCEEDED( ispVoice->Resume() ) )	{
+		  return JNI_TRUE;
+	  }		
+	  else{
+		  return JNI_FALSE;
+	  }
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -109,7 +146,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 
 	if( SUCCEEDED( hr ) )
     {
-        hr = pVoice->Speak( wsz, SPF_IS_XML, NULL);
+		hr = ispVoice->Speak( wsz, SPF_ASYNC | SPF_IS_XML , NULL);
     }
 	env->ReleaseStringChars(string, raw);	
 }
@@ -119,6 +156,6 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
  * Signature: (ILjavax/speech/synthesis/Speakable;)V
  */
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleSpeak__ILjavax_speech_synthesis_Speakable_2
-  (JNIEnv *, jobject, jint, jobject){
+  (JNIEnv *env, jobject object, jint id, jobject item){
 	
 }
