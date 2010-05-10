@@ -1,10 +1,12 @@
-package org.jvoicexml.jsapi2.sapi.synthesis;
+package org.jvoicexml.jsapi2.test;
 
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 
-public class testSsynthesizer {
+import org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizer;
+
+public class testSynthesizer {
 
     public static void main(String[] args) throws InterruptedException 
     {       
