@@ -1,17 +1,6 @@
 #include "org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer.h"
-#include <stdafx.h>
-
-	CComPtr<ISpTTSEngine>			iSpTtsEngine;
-	CComPtr<IEnumSpObjectTokens>	cpEnum;
-	CComPtr<ISpObjectToken>			cpToken;
-	CComPtr<ISpVoice>				cpVoice;
-	HRESULT							hr;
-	
-	//ISpVoice *						cpVoice = NULL;
-
-	LPCOLESTR pProgID = L"SAPI.SpVoice";
-	CLSID clsid = GUID_NULL;
-
+#include "synthesizer.h"
+#include <iostream>
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -45,32 +34,13 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 		const wchar_t* engineName= (const wchar_t*)env->GetStringChars((jstring)env->GetObjectField(object, jfid),NULL);
 				// Achtung überlegen wie das mit java env allocierten speicher ist, eventuell freigeben notwendig
  
-		
-	// Avoid 64bit problems CoCreateInstance from CComPtr<ISpVoice> struct to gain access to 32bit engines
-	::CoInitialize(NULL);
-	hr = CLSIDFromProgID(pProgID, &clsid);
+	/* create new Synthesizer class */
+		Synthesizer* synth = new Synthesizer(engineName);
+		std::cout<< synth << "\n";
 
-	if(SUCCEEDED(hr))
-	{	
-		hr = cpVoice.CoCreateInstance(clsid ,NULL, CLSCTX_ALL);
-	}
-	// create cpEnum that contains the information about the designated TTSEngine
-	if(SUCCEEDED(hr))
-	{	
-		hr = SpEnumTokens(SPCAT_VOICES, engineName, NULL, &cpEnum);  
-	}  
-
-	// load required cpToken from cpEnum
-	if(SUCCEEDED(hr))
-	{
-		hr = cpEnum->Next(1, &cpToken, NULL);
-	}
-	// Set the designated Voice if not possible standard System is used
-	if(SUCCEEDED(hr))
-	{    
-		hr = cpVoice->SetVoice(cpToken);
-	}
-
+	/* save pointer in JavaClass member sapiSynthesizerPtr as long value*/
+		env->SetLongField( object, env->GetFieldID(jcls, "sapiSynthesizerPtr","J"), (long)synth);
+	
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -79,13 +49,11 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancel__
   (JNIEnv *env, jobject object){
-	  
-	  if( SUCCEEDED(cpVoice->Speak( NULL, SPF_PURGEBEFORESPEAK, NULL ) )){
-		  return JNI_TRUE;
-	  }		
-	  else{
-		  return JNI_FALSE;
-	  }
+
+	/* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
+		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
+	
+		return synth->Cancel();
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -115,12 +83,9 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleDeallocate
   (JNIEnv *env, jobject object){
 
-	if( SUCCEEDED( hr ) )
-    {
-        cpVoice.Release();
-        //cpVoice = NULL;
-    }
-	//::CoUninitialize();	
+	/* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
+		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
+		synth->~Synthesizer();
 
 }
 /*
@@ -130,9 +95,11 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
  */
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handlePause
   (JNIEnv *env, jobject object){
-
-	  hr = cpVoice->Pause();
+	  
+	  /* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
+		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
 	
+		synth->Pause();
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -142,12 +109,11 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleResume
   (JNIEnv *env, jobject object){
 
-	  if( SUCCEEDED( cpVoice->Resume() ) )	{
-		  return JNI_TRUE;
-	  }		
-	  else{
-		  return JNI_FALSE;
-	  }
+	  /* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
+		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
+	
+		return synth->Resume();
+
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -156,11 +122,13 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
  */
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleSpeak__ILjava_lang_String_2
   (JNIEnv *env, jobject object, jint id, jstring string){
+	  	
+	/* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
+		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
 
-	if( SUCCEEDED( hr ) )
-    {
-		hr = cpVoice->Speak( (const wchar_t*)env->GetStringChars(string, NULL), SPF_ASYNC | SPF_IS_XML , NULL);
-    }
+	/* get string and cast as const wchar_t* */
+		synth->Speak( (const wchar_t*)env->GetStringChars(string, NULL) );
+
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -172,38 +140,3 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 	
 }
 
-
-// SOME MISERABLE CONVERSION
-
-
-//	std::wstring JavaToWSZ(JNIEnv* env, jstring string)
-//{
-//    std::wstring value;
-//    if (string == NULL) {
-//        return value; // empty string
-//    }
-//    const jchar* raw = env->GetStringChars(string, NULL);
-//    if (raw != NULL) {
-//        jsize len = env->GetStringLength(string);
-//        value.assign(raw, len);
-//        env->ReleaseStringChars(string, raw);
-//    }
-//    return value;
-//}
-//wchar_t * JavaToWSZ(JNIEnv* env, jstring string)
-//{
-//    if (string == NULL)
-//        return NULL;
-//    int len = env->GetStringLength(string);
-//    const jchar* raw = env->GetStringChars(string, NULL);
-//    if (raw == NULL)
-//        return NULL;
-//
-//    wchar_t* wsz = new wchar_t[len+1];
-//    memcpy(wsz, raw, len*2);
-//    wsz[len] = 0;
-//
-//    env->ReleaseStringChars(string, raw);
-//
-//    return wsz;
-//}
