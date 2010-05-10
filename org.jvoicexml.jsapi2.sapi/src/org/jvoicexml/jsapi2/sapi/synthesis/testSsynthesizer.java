@@ -8,7 +8,7 @@ public class testSsynthesizer {
 
     public static void main(String[] args) throws InterruptedException 
     {       
-    	SapiSynthesizer sps = new SapiSynthesizer("LH Anna");
+    	SapiSynthesizer sps = new SapiSynthesizer("Microsoft Anna");
     	SapiSynthesizer sps2 = new SapiSynthesizer("LH Stefan");   // error p==0 der zeiger des dre Zweiten Instanz kann nicht Instanziert werden
     	
     	System.out.println( "new Synthesizer:\tokay");
