@@ -1,5 +1,5 @@
 #include "org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer.h"
-#include "synthesizer.h"
+#include "Synthesizer.h"
 #include <iostream>
 
 /*
