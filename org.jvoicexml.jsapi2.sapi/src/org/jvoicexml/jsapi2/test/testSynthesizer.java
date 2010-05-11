@@ -8,11 +8,12 @@ import org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizer;
 
 public class testSynthesizer {
 
-    public static void main(String[] args) throws InterruptedException 
+    public static void main(String[] args) throws InterruptedException, IllegalArgumentException, EngineException, EngineStateException, AudioException, SecurityException 
     {       
+      
     	SapiSynthesizer sps = new SapiSynthesizer("Microsoft Anna");
-    	SapiSynthesizer sps2 = new SapiSynthesizer("LH Stefan");   // error p==0 der zeiger des dre Zweiten Instanz kann nicht Instanziert werden
-    	
+    	SapiSynthesizer sps2 = new SapiSynthesizer("LH Stefan");  
+
     	System.out.println( "new Synthesizer:\tokay");
         try {
         	sps.handleAllocate();        	
@@ -31,7 +32,7 @@ public class testSynthesizer {
 		} catch (AudioException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}	
 	 
 		sps.handleSpeak( 5, "Hello i love Java and i was paused and resumed now i will be cancelled please wait a moment the rest of this sentence well be Purged");//
 		sps2.handleSpeak( 3, "was geht ab wir reden zu zweit ");
@@ -62,7 +63,8 @@ public class testSynthesizer {
 			
 		sps.handleDeallocate();
 		sps2.handleDeallocate();
-		System.out.println( "Dellocate:\t\tokay");
+		System.out.println( "Deallocate:\t\tokay");	
+		
 		System.exit(0);
 		
     }

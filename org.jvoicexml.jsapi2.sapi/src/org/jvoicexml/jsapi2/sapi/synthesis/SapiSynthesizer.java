@@ -1,7 +1,5 @@
 package org.jvoicexml.jsapi2.sapi.synthesis;
 
-import java.util.logging.Logger;
-
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineMode;
@@ -18,20 +16,18 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
     	System.load("D:\\eclipse - Kopie\\Workspace\\org.jvoicexml.jsapi2.sapi\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
     	}
 	
-	private static final Logger LOGGER =
-        Logger.getLogger(SapiSynthesizer.class.getName());
 	
 	String engineName2 ;
 	public long sapiSynthesizerPtr;
 	
-	SapiSynthesizer(String name){
+	public SapiSynthesizer(String name){
+		
+		
 		engineName2 = "name="+name;
 		
 //		String dir = System.getProperty("user.dir");
 //    	System.out.println(dir);
-//    	static{
 //    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
-//    	}
 		
     }		
 
@@ -39,11 +35,11 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 	protected native Speakable getSpeakable(String text);
 
 	
-	protected native void handleAllocate() throws EngineStateException,
+	public native void handleAllocate() throws EngineStateException,
 			EngineException, AudioException, SecurityException;
 
 	
-	protected native boolean handleCancel();
+	public native boolean handleCancel();
 
 	
 	protected native boolean handleCancel(int id);
@@ -52,16 +48,16 @@ public class SapiSynthesizer extends JseBaseSynthesizer {
 	protected native boolean handleCancelAll();
 
 	
-	protected native void handleDeallocate();
+	public native void handleDeallocate();
 
 
-	protected native void handlePause();
-
-	
-	protected native boolean handleResume();
+	public native void handlePause();
 
 	
-	protected native void handleSpeak(int id, String item);
+	public native boolean handleResume();
+
+	
+	public native void handleSpeak(int id, String item);
 
 	
 	protected native void handleSpeak(int id, Speakable item);
