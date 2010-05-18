@@ -65,7 +65,7 @@ public class testSynthesizer {
 		sps2.handleDeallocate();
 		System.out.println( "Deallocate:\t\tokay");	
 		
-		System.exit(0);
+		//System.exit(0);
 		
     }
 }
