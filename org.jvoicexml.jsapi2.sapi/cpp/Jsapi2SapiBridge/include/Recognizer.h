@@ -139,7 +139,7 @@ class Recognizer{
 			hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
 			std::cout<< "\n set grammar enable:\t\t" << hr << "\n";
 
-			while (  SUCCEEDED( hr = BlockForResult(cpRecoCtxt, &cpResult) )  )
+			if (  SUCCEEDED( hr = BlockForResult(cpRecoCtxt, &cpResult) )  )
 			{		
 					
                     cpGrammar->SetGrammarState(SPGS_DISABLED);
@@ -151,11 +151,13 @@ class Recognizer{
                                                     TRUE, &dstrText, NULL)))
                     {
 						std::cout<< "I heard: " << W2A(dstrText)<<"\n";
-						cpResult.Release();
-                      
+						cpResult.Release();   						
                     }                  
                     hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
-            } 
+            }
+			else{ 
+				std::cout<< "no valid input \n";
+			}
 		}
 
 		HRESULT BlockForResult(ISpRecoContext * pRecoCtxt, ISpRecoResult ** ppResult)
@@ -170,7 +172,7 @@ class Recognizer{
 
 			while ( SUCCEEDED(hr) && SUCCEEDED(hr = event.GetFrom(pRecoCtxt)) && hr == S_FALSE  )
 			{
-				hr = pRecoCtxt->WaitForNotifyEvent(5000);
+				hr = pRecoCtxt->WaitForNotifyEvent(INFINITE);
 				std::cout<< "\n wait for event:\t\t" << hr << "\n";
 			}
 			
