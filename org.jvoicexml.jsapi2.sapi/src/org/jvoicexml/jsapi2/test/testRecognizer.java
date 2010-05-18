@@ -32,9 +32,10 @@ public class testRecognizer {
 			e.printStackTrace();
 		}
     	
+		recognizer.setGrammar("Licht.xml");
 
 		
-		Thread.sleep(800);
+		Thread.sleep(20);
 		
 		recognizer.handleDeallocate();
 		System.out.println( "Deallocate:\t\tokay");

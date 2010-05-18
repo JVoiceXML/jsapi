@@ -5,7 +5,7 @@
 class Recognizer{
 
 	private:
-
+		int							grammarCount;
 		HRESULT						hr;
 		CComPtr<ISpRecognizer>		cpRecognizer;
 		CComPtr<ISpObjectToken>     cpObjectToken;
@@ -16,26 +16,27 @@ class Recognizer{
 
 	public:
 	
-		HRESULT setGrammar( ){
+		HRESULT setGrammar( LPCWSTR grammarPath ){
 
-			hr = cpRecoCtxt->CreateGrammar( 0, &cpGrammar);
-			std::cout<< "hr:\t\t" << hr <<"\n";
+			hr = cpRecoCtxt->CreateGrammar( grammarCount++, &cpGrammar);
 
 			hr = cpGrammar->SetGrammarState(SPGS_DISABLED);			
-			std::cout<< "hr:\t\t" << hr <<"\n";
 
-			hr = cpGrammar->LoadCmdFromFile( L"C:\\Users\\J-ooloo\\Desktop\\Licht2.xml",SPLO_DYNAMIC);
-			std::cout<< "hr:\t\t" << hr <<"\n";
+			hr = cpGrammar->LoadCmdFromFile( grammarPath,SPLO_STATIC);
 
-			hr = cpGrammar->Commit(NULL);
-			std::cout<< "cpGrammar:\t" << cpGrammar <<"\n";
+			std::cout<< "Grammar loaded. hr:" << hr <<"\n";
+			fflush(stdout);
 
-			return hr;
-		
+			//hr = cpGrammar->Commit(NULL);
+			//std::cout<< "cpGrammar:\t" << cpGrammar <<"\n";
+
+			return hr;		
 		}
 
 
 		Recognizer(){
+
+			grammarCount =0;
 		
 			hr = ::CoInitialize(NULL);			
 			
@@ -44,7 +45,6 @@ class Recognizer{
 				hr = cpRecognizer.CoCreateInstance(CLSID_SpInprocRecognizer);
 
 			}
-			std::cout<< "hr:\t\t" << hr <<"\n";
 
 			//if( SUCCEEDED(hr) ){
 			//	// Get the default audio input token.
@@ -65,38 +65,34 @@ class Recognizer{
 			   // Create the default audio input object.
 			   hr = SpCreateDefaultObjectFromCategoryId(SPCAT_AUDIOIN, &cpAudio);
 			}
-			std::cout<< "hr:\t\t" << hr <<"\n";
 
-			std::cout<< "hr:\t\t" << hr <<"\n";
 			if (SUCCEEDED(hr))
 			{
 			   // Set the audio input to our object.
 			   hr = cpRecognizer->SetInput(cpAudio, TRUE);
 			}
-			std::cout<< "hr:\t\t" << hr <<"\n";
 
 
 			if( SUCCEEDED(hr) ){
 				// create a new Recognition context.
 				hr = cpRecognizer->CreateRecoContext( &cpRecoCtxt);
 			}
-			std::cout<< "hr:\t\t" << hr <<"\n";
+
 
 			if( SUCCEEDED(hr) ){
 				// Set the Notivy.
 				hr = cpRecoCtxt->SetNotifyWin32Event();
 			}
-			std::cout<< "hr:\t\t" << hr <<"\n";
+	
 
 			if( SUCCEEDED(hr) ){
 				hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION ), SPFEI(SPEI_RECOGNITION ) );
 			}
-			std::cout<< "hr:\t\t" << hr <<"\n";
+
 
 			if( SUCCEEDED(hr) ){
 				hr = cpRecoCtxt->SetAudioOptions(SPAO_RETAIN_AUDIO, NULL, NULL);
 			}	
-			std::cout<< "hr:\t\t" << hr <<"\n";
 
 			//if( SUCCEEDED(hr) ){
 			//	hr = cpRecoCtxt->CreateGrammar(0, &cpGrammar);
@@ -111,12 +107,11 @@ class Recognizer{
 			//if( SUCCEEDED(hr) ){
 			//	hr = cpGrammar->SetDictationState(SPRS_ACTIVE);
 			//}
-			std::cout<< "hr:\t\t" << hr <<"\n";
 
-			std::cout<< "cpRecognizer:\t" << cpRecognizer <<"\n";
-			std::cout<< "cpRecoCtxt:\t" << cpRecoCtxt <<"\n";
-			
+			//std::cout<< "hr:\t\t" << hr <<"\n";
 
+			//std::cout<< "cpRecognizer:\t" << cpRecognizer <<"\n";
+			//std::cout<< "cpRecoCtxt:\t" << cpRecoCtxt <<"\n";
 		}
 
 		~Recognizer(){
@@ -137,13 +132,13 @@ class Recognizer{
 			CComPtr<ISpRecoResult>		cpResult;
 
 			hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
-			std::cout<< "\n set grammar enable:\t\t" << hr << "\n";
+			std::cout<< "Please speak now \n";
+			fflush(stdout);
 
 			if (  SUCCEEDED( hr = BlockForResult(cpRecoCtxt, &cpResult) )  )
 			{		
 					
                     cpGrammar->SetGrammarState(SPGS_DISABLED);
-					std::cout<< "\n set grammar disable:\t\t" << hr << "\n";
 
                     CSpDynamicString dstrText;
 
@@ -151,6 +146,7 @@ class Recognizer{
                                                     TRUE, &dstrText, NULL)))
                     {
 						std::cout<< "I heard: " << W2A(dstrText)<<"\n";
+						fflush(stdout);
 						cpResult.Release();   						
                     }                  
                     hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
@@ -168,16 +164,14 @@ class Recognizer{
 			CSpEvent event;
 
 			hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
-			std::cout<< "\n set rule state active =\t\t" << hr << "\n";
 
 			while ( SUCCEEDED(hr) && SUCCEEDED(hr = event.GetFrom(pRecoCtxt)) && hr == S_FALSE  )
 			{
 				hr = pRecoCtxt->WaitForNotifyEvent(INFINITE);
-				std::cout<< "\n wait for event:\t\t" << hr << "\n";
+
 			}
 			
 			hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
-			std::cout<< "\n set rule state inactive =\t\t" << hr << "\n";
 
 			*ppResult = event.RecoResult();
 

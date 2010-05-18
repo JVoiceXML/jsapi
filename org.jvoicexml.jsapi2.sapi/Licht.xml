@@ -1,0 +1,27 @@
+<grammar version="1.0" xml:lang="de-DE" root = "LIGHT" 
+	xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics-ms/1.0">
+  
+  <rule id="DEVICE" scope="public">
+    <one-of>
+      <item repeat="0-1" repeat-prob="0.5" weight="0.5">licht</item>
+	 <item repeat="0-1" repeat-prob="0.5" weight="0.5">lampe</item>
+    </one-of>
+  </rule>
+ 
+  <rule id="COMMAND" scope="public">
+    <one-of>
+      <item repeat="0-1" repeat-prob="0.5" weight="0.5">ein</item>
+	 <item repeat="0-1" repeat-prob="0.5" weight="0.5">aus</item>
+    </one-of>
+  </rule>
+  
+  <rule id="LIGHT" scope="public">
+    <one-of>
+	 <item>
+	  <ruleref uri="#DEVICE" />
+	  <ruleref uri="#COMMAND" />
+	 </item>
+    </one-of>
+  </rule>
+</grammar>
+
