@@ -11,6 +11,7 @@
 // Windows-Headerdateien:
 //#include <sapi53.h>
 //#include <comip.h>
+#include <sapi53.h>
 #include <sphelper.h>
 #include "resource.h"
 
