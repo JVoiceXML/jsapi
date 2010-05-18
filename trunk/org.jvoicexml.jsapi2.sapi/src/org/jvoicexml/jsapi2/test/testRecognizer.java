@@ -13,7 +13,7 @@ public class testRecognizer {
     	SapiRecognizer recognizer = new SapiRecognizer();
     	System.out.println( "new SapiRecognizer:\tokay");
     	
-    	Thread.sleep(200);
+    	Thread.sleep(20);
     	
     	try {
 			recognizer.handleAllocate();
@@ -32,11 +32,14 @@ public class testRecognizer {
 			e.printStackTrace();
 		}
     	
-		Thread.sleep(8000);
+
+		
+		Thread.sleep(800);
 		
 		recognizer.handleDeallocate();
 		System.out.println( "Deallocate:\t\tokay");
-//		System.exit(0);
+		
+		System.exit(0);
     }
 
 }
