@@ -9,7 +9,7 @@
  * Signature: ()Ljava/util/Vector;
  */
 JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_getBuiltInGrammars
-(JNIEnv *, jobject){
+(JNIEnv *env, jobject object){
 
 	return false;
 
@@ -27,12 +27,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 		Recognizer* recognizer = new Recognizer();
 
 	/* save pointer in JavaClass member sapiRecognizerPtr as long value*/
-		env->SetLongField( object, env->GetFieldID(env->GetObjectClass(object), "sapiRecognizerPtr","J"), (long)recognizer);
-		recognizer->setGrammar();
-		recognizer->startdictation();
-
-		fflush(stdout);
-
+		env->SetLongField( object, env->GetFieldID(env->GetObjectClass(object), "sapiRecognizerPtr","J"), (long)recognizer);	
 }
 
 
@@ -90,10 +85,34 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 	/* get pointer sapiRecognizerPtr in JavaClass as long value and cast it*/
 		Recognizer* recognizer = (Recognizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiRecognizerPtr","J"));
 	
-		recognizer->setGrammar();
+		/*recognizer->setGrammar();*/
 
 	return false;
 }
+/*
+ * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
+ * Method:    setGrammar
+ * Signature: (Ljava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_setGrammar
+(JNIEnv *env, jobject object, jstring string){
+	
+	/* get pointer sapiRecognizerPtr in JavaClass as long value and cast it*/
+		Recognizer* recognizer = (Recognizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiRecognizerPtr","J"));
+	
+		HRESULT hr = recognizer->setGrammar( (const wchar_t*)env->GetStringChars(string, NULL) );
+
+		recognizer->startdictation();	
+
+		if(SUCCEEDED(hr)){
+			return true; 
+		}
+		else{
+			return false;
+		}
+	
+}
+
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer

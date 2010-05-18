@@ -40,6 +40,7 @@ public class SapiRecognizer extends JseBaseRecognizer  {
 
 	@Override
 	protected native boolean setGrammars(Vector grammarDefinition);
+	public native boolean setGrammar(String grammarPath);
 
 
 	@Override
