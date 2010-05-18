@@ -28,7 +28,10 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 
 	/* save pointer in JavaClass member sapiRecognizerPtr as long value*/
 		env->SetLongField( object, env->GetFieldID(env->GetObjectClass(object), "sapiRecognizerPtr","J"), (long)recognizer);
-		//recognizer->startdictation();
+		recognizer->setGrammar();
+		recognizer->startdictation();
+
+		fflush(stdout);
 
 }
 
