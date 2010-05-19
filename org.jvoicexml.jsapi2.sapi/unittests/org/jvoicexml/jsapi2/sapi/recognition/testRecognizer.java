@@ -1,4 +1,4 @@
-package org.jvoicexml.jsapi2.test;
+package org.jvoicexml.jsapi2.sapi.recognition;
 
 import javax.speech.AudioException;
 import javax.speech.EngineException;
