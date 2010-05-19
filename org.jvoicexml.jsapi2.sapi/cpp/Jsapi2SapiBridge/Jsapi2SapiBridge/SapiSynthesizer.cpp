@@ -1,4 +1,5 @@
-#include "org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer.h"
+#include "stdafx.h"
+#include <org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer.h>
 #include "Synthesizer.h"
 #include <iostream>
 
@@ -15,52 +16,30 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
  * Method:    handleAllocate
- * Signature: ()V
+ * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleAllocate
-  (JNIEnv *env, jobject object){
-
-	/*  get superclass from commited object */
-	  //jclass jcls = env->GetSuperclass( env->GetObjectClass(object) );
-
-	/*  get class from commited object */
-	   jclass jcls = env->GetObjectClass(object);
-
-	/*  get jfieldID of classmember engineName2 thats type is jstring */
-		jfieldID jfid = env->GetFieldID(jcls, "engineName2", "Ljava/lang/String;");
-
-	/*  get the engineName2 Object und cast it to jstring*/
-	/*  get the chars contained in engineName2 jsring and cast them to const wchar_t* */
-		const wchar_t* engineName= (const wchar_t*)env->GetStringChars((jstring)env->GetObjectField(object, jfid),NULL);
-				// Achtung überlegen wie das mit java env allocierten speicher ist, eventuell freigeben notwendig
+JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleAllocate
+  (JNIEnv* env, jobject obj, jstring string)
+{
+    const wchar_t* engineName = (const wchar_t*)env->GetStringChars(string, NULL);
  
 	/* create new Synthesizer class */
-		Synthesizer* synth = new Synthesizer(engineName);
-		
-		if (synth == NULL){
-
-			    jclass Exception = env->FindClass("java/lang/NullPointerException");
-				if (Exception == 0) /* Unable to find the new exception class, give up. */
-				return;
-				env->ThrowNew(Exception, "MS SAPI ERRORCODE: " + synth->hr);
-		}
-		if ( !SUCCEEDED( synth->hr ) ){
-
-			    jclass Exception = env->FindClass("java/lang/EngineException" );
-				if (Exception == 0) /* Unable to find the new exception class, give up. */
-				return;
-				env->ThrowNew(Exception, "MS SAPI ERRORCODE: " + synth->hr );
-		}
-
-
-		
-		//std::cout<< synth << "\n";
-
-	/* save pointer in JavaClass member sapiSynthesizerPtr as long value*/
-		env->SetLongField( object, env->GetFieldID(jcls, "sapiSynthesizerPtr","J"), (long)synth);
-
-		
-	
+	Synthesizer* synth = new Synthesizer(engineName);		
+    if (synth == NULL)
+    {
+        jclass Exception = env->FindClass("java/lang/NullPointerException");
+        if (Exception == 0) /* Unable to find the new exception class, give up. */
+            return 0;
+        env->ThrowNew(Exception, "MS SAPI ERRORCODE: " + synth->hr);
+    }
+    if ( !SUCCEEDED( synth->hr ) )
+    {
+        jclass Exception = env->FindClass("java/lang/EngineException" );
+        if (Exception == 0) /* Unable to find the new exception class, give up. */
+            return 0;
+        env->ThrowNew(Exception, "MS SAPI ERRORCODE: " + synth->hr );
+    }
+    return (jlong) synth;
 }
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -138,16 +117,15 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
  * Method:    handleSpeak
- * Signature: (ILjava/lang/String;)V
+ * Signature: (JILjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleSpeak__ILjava_lang_String_2
-  (JNIEnv *env, jobject object, jint id, jstring string){
-	  	
-	/* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
-	Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleSpeak__JILjava_lang_String_2
+  (JNIEnv * env, jobject obj, jlong handle, jint id, jstring item)
+{
+	Synthesizer* synth = (Synthesizer*) handle;
 
 	/* get string and cast as const wchar_t* */
-    const wchar_t* utterance = (const wchar_t*)env->GetStringChars(string, NULL);
+    const wchar_t* utterance = (const wchar_t*)env->GetStringChars(item, NULL);
 	synth->Speak(utterance);
 }
 

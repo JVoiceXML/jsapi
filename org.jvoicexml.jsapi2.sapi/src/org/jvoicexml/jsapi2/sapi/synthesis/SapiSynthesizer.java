@@ -20,22 +20,38 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
         System.loadLibrary("Jsapi2SapiBridge");
     }
 
-	String engineName2 ;
+    /** Name of this engine. */
+    private final String engineName;
+
 	public long sapiSynthesizerPtr;
 	
-	public SapiSynthesizer(String name){
-		
-		engineName2 = "name="+name;
-    }		
-
+    /**
+     * Constructs a new synthesizer object.
+     * @param name voice name;
+     */
+    public SapiSynthesizer(final String name) {
+        engineName = "name=" + name;
+    }
 	
 	protected native Speakable getSpeakable(String text);
 
-	
-	public native void handleAllocate() throws EngineStateException,
-			EngineException, AudioException, SecurityException;
 
-	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void handleAllocate() throws EngineStateException,
+        EngineException, AudioException, SecurityException {
+        sapiSynthesizerPtr = handleAllocate(engineName);
+    }
+
+    /**
+     * Allocates a SAPI synthesizer.
+     * @param name name of this synthesizer
+     * @return synthesizer handle
+     */
+    private native long handleAllocate(final String name);
+
 	public native boolean handleCancel();
 
 	
@@ -53,9 +69,23 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
 	
 	public native boolean handleResume();
 
-	
-	public native void handleSpeak(int id, String item);
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handleSpeak(final int id, final String item) {
+        handleSpeak(sapiSynthesizerPtr, id, item);
+    }
+
+    /**
+     * Speaks the given item.
+     * @param handle synthesizer handle
+     * @param id id of the item
+     * @param item the item to speak
+     */
+    private native void handleSpeak(final long handle, final int id,
+            final String item);
 	
 	protected native void handleSpeak(int id, Speakable item);
 
