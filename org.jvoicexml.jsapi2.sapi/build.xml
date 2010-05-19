@@ -35,7 +35,11 @@ This file builds the JSR 113.jar.
 
   <target name="clean" description="Remove all compiled and distribution files">
     <delete dir="${build}" />
-    <delete file="${dist.jsr113-j2sebase.jar}" />
+    <delete file="${dist.jar}" />
+    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}">
+      <arg value="Jsapi2SapiBridge.sln"/>
+      <arg value="/Clean"/>
+    </exec>
   </target>
 
   <target name="compile" depends="-init" description="Compile the JAVA sources">
@@ -58,6 +62,10 @@ This file builds the JSR 113.jar.
       <classpath refid="classpath"/>
       <classpath location="${build}"/>
     </javah>
+    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}">
+      <arg value="Jsapi2SapiBridge.sln"/>
+      <arg value="/Build"/>
+    </exec>
   </target>
 
   <target name="jar" depends="compile" description="Pack all compiled files into jar files">
