@@ -40,9 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-
 				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v7.0A\Include&quot;;..\3rdparty\jni\include;..\3rdparty\jni\include\win32;..\include"
-
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -171,6 +169,10 @@
 			</File>
 			<File
 				RelativePath=".\SapiSynthesizer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Synthesizer.cpp"
 				>
 			</File>
 		</Filter>
