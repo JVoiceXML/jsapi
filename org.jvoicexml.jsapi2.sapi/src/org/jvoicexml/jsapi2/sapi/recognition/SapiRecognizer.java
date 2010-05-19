@@ -10,46 +10,77 @@ import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 
 public class SapiRecognizer extends JseBaseRecognizer  {
-	
-//	static{
-//    	System.load("D:\\eclipse - Kopie\\Workspace\\org.jvoicexml.jsapi2.sapi\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
-//    	}
-//	
+		
 	public SapiRecognizer(){
 		String dir = System.getProperty("user.dir");
     	System.out.println(dir);
     	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
 	}
 	
-	long sapiRecognizerPtr;
+	public long RecognizerHandle;
 
 	@Override
-	public native Vector getBuiltInGrammars();
+	public Vector<?> getBuiltInGrammars(){
+	    return nativGetBuildInGrammars(RecognizerHandle);
+	}
+	
+	private native Vector<?> nativGetBuildInGrammars(long handle);
+
+	
+        @Override
+	public void handleAllocate()throws EngineStateException,
+			EngineException, AudioException, SecurityException
+			{
+             nativeHandleAllocate();
+        } 
+        private native void nativeHandleAllocate();
 
 	@Override
-	public
-	native void handleAllocate() throws EngineStateException,
-			EngineException, AudioException, SecurityException;
-
+	public void handleDeallocate(){
+	    nativHandleDeallocate(RecognizerHandle);
+	}
+	private native void nativHandleDeallocate(long handle);
+	
+	
 	@Override
-	public
-	native void handleDeallocate();
+	protected void handlePause(){
+	     nativHandlePause(RecognizerHandle);
+	}
+	private native void nativHandlePause(long handle);
 
+        @Override
+	protected void handlePause(int flags){
+            nativHandlePause( RecognizerHandle, flags);
+        }
+
+	private native void nativHandlePause(long handle, int flags);
+
+	
+        @Override
+	protected boolean handleResume(){
+            return nativHandleResume(RecognizerHandle);
+        }
+	private native boolean nativHandleResume(long Handle);
+	
+	
 	@Override
-	protected native void handlePause();
+	protected boolean setGrammars(Vector grammarDefinition){
+	    return false;
+	}
+	
+	
+	public boolean setGrammar(String grammarPath ){
+	    return nativSetGrammar( RecognizerHandle, grammarPath);
+	}
+	private native boolean nativSetGrammar(long handle, String grammarPath);
 
-	@Override
-	protected native void handlePause(int flags);
+        @Override
+	protected EnginePropertyChangeRequestListener getChangeRequestListener(){return null;}
 
-	@Override
-	protected native boolean handleResume();
-
-	@Override
-	protected native boolean setGrammars(Vector grammarDefinition);
-	public native boolean setGrammar(String grammarPath);
-
-
-	@Override
-	protected native EnginePropertyChangeRequestListener getChangeRequestListener();
-
+        void startRecognition(){
+            start(RecognizerHandle);           
+        }
+        private native void start(long handle);
+        
+        
 }
