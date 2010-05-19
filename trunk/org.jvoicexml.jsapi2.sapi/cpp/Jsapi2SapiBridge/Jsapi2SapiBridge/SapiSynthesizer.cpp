@@ -36,10 +36,30 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
  
 	/* create new Synthesizer class */
 		Synthesizer* synth = new Synthesizer(engineName);
-		std::cout<< synth << "\n";
+		
+		if (synth == NULL){
+
+			    jclass Exception = env->FindClass("java/lang/NullPointerException");
+				if (Exception == 0) /* Unable to find the new exception class, give up. */
+				return;
+				env->ThrowNew(Exception, "MS SAPI ERRORCODE: " + synth->hr);
+		}
+		if ( !SUCCEEDED( synth->hr ) ){
+
+			    jclass Exception = env->FindClass("java/lang/EngineException" );
+				if (Exception == 0) /* Unable to find the new exception class, give up. */
+				return;
+				env->ThrowNew(Exception, "MS SAPI ERRORCODE: " + synth->hr );
+		}
+
+
+		
+		//std::cout<< synth << "\n";
 
 	/* save pointer in JavaClass member sapiSynthesizerPtr as long value*/
 		env->SetLongField( object, env->GetFieldID(jcls, "sapiSynthesizerPtr","J"), (long)synth);
+
+		
 	
 }
 /*
@@ -140,3 +160,18 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 	
 }
 
+/*
+ * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
+ * Method:    getChangeRequestListener
+ * Signature: ()Lorg/jvoicexml/jsapi2/EnginePropertyChangeRequestListener;
+ */
+JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_getChangeRequestListener
+(JNIEnv *env, jobject object){
+
+		  /* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
+		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
+	
+		return env->NewObject( synth->getEventHandler();
+		
+
+}

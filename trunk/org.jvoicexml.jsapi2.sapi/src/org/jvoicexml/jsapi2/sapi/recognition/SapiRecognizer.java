@@ -11,9 +11,15 @@ import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 
 public class SapiRecognizer extends JseBaseRecognizer  {
 	
-	static{
-    	System.load("D:\\eclipse - Kopie\\Workspace\\org.jvoicexml.jsapi2.sapi\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
-    	}
+//	static{
+//    	System.load("D:\\eclipse - Kopie\\Workspace\\org.jvoicexml.jsapi2.sapi\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
+//    	}
+//	
+	public SapiRecognizer(){
+		String dir = System.getProperty("user.dir");
+    	System.out.println(dir);
+    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
+	}
 	
 	long sapiRecognizerPtr;
 
