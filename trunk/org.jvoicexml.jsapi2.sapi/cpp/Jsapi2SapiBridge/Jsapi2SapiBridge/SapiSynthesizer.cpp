@@ -27,7 +27,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 	   jclass jcls = env->GetObjectClass(object);
 
 	/*  get jfieldID of classmember engineName2 thats type is jstring */
-		jfieldID jfid = env->GetFieldID(jcls, "engineName2","Ljava/lang/String;");
+		jfieldID jfid = env->GetFieldID(jcls, "engineName2", "Ljava/lang/String;");
 
 	/*  get the engineName2 Object und cast it to jstring*/
 	/*  get the chars contained in engineName2 jsring and cast them to const wchar_t* */
@@ -144,12 +144,13 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
   (JNIEnv *env, jobject object, jint id, jstring string){
 	  	
 	/* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
-		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
+	Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
 
 	/* get string and cast as const wchar_t* */
-		synth->Speak( (const wchar_t*)env->GetStringChars(string, NULL) );
-
+    const wchar_t* utterance = (const wchar_t*)env->GetStringChars(string, NULL);
+	synth->Speak(utterance);
 }
+
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
  * Method:    handleSpeak
@@ -170,8 +171,8 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
 
 		  /* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
 		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
-	
-		return env->NewObject( synth->getEventHandler();
+	    return NULL;
+		//return env->NewObject(NULL, synth->getEventHandler());
 		
 
 }
