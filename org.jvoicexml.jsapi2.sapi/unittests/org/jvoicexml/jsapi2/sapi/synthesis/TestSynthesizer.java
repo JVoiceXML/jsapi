@@ -1,11 +1,36 @@
 package org.jvoicexml.jsapi2.sapi.synthesis;
 
 import javax.speech.AudioException;
+import javax.speech.Engine;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 
-public class TestSynthesizer {
+import org.junit.Test;
 
+/**
+ * Test cases for {@link SapiSynthesizer}.
+ * <p>
+ * Run this unit test with the VM option:
+ * <code>-Djava.library.path=cpp/Jsapi2SapiBridge/Debug</code>.
+ * </p>
+ * @author Dirk Schnelle-Walka
+ * @author Josua Arndt
+ *
+ */
+public final class TestSynthesizer {
+
+    /**
+     * Test case for {@link SapiSynthesizer#handleSpeak(int, String)}.
+     * @throws Exception
+     *         test failed
+     */
+    @Test
+    public void testSpeak() throws Exception {
+        SapiSynthesizer synthesizer = new SapiSynthesizer("Microsoft Anna");
+        synthesizer.allocate();
+        synthesizer.waitEngineState(Engine.ALLOCATED);
+        synthesizer.speak("this is a test", null);
+    }
 
 	public static void main(String[] args) throws InterruptedException, IllegalArgumentException, EngineException, EngineStateException, AudioException, SecurityException 
     {       
