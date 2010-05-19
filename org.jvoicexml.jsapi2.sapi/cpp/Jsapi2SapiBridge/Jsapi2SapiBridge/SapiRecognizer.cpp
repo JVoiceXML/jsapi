@@ -2,107 +2,82 @@
 #include "Recognizer.h"
 #include <iostream>
 
-
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    getBuiltInGrammars
- * Signature: ()Ljava/util/Vector;
+ * Method:    nativGetBuildInGrammars
+ * Signature: (J)Ljava/util/Vector;
  */
-JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_getBuiltInGrammars
-(JNIEnv *env, jobject object){
+JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_nativGetBuildInGrammars
+  (JNIEnv *env, jobject object, jlong recognizerHandle){
 
 	return false;
-
 }
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    handleAllocate
- * Signature: ()V
+ * Method:    nativeHandleAllocate
+ * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_handleAllocate
-(JNIEnv *env, jobject object){
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_nativeHandleAllocate
+  (JNIEnv *env, jobject object){
 
 	/* create new Recognizer class */
-		Recognizer* recognizer = new Recognizer();
-
-	/* save pointer in JavaClass member sapiRecognizerPtr as long value*/
-		env->SetLongField( object, env->GetFieldID(env->GetObjectClass(object), "sapiRecognizerPtr","J"), (long)recognizer);	
+		env->SetLongField( object, env->GetFieldID( env->GetObjectClass(object), "RecognizerHandle","J"), (long)new Recognizer() );
 }
-
-
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    handleDeallocate
- * Signature: ()V
+ * Method:    nativHandleDeallocate
+ * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_handleDeallocate
-(JNIEnv *env, jobject object){
-	
-	/* get pointer sapiRecognizerPtr in JavaClass as long value and cast it*/
-		Recognizer* recognizer = (Recognizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiRecognizerPtr","J"));
-	
-		recognizer->~Recognizer();
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_nativHandleDeallocate
+  (JNIEnv *env, jobject object, jlong recognizerHandle){
 
+	reinterpret_cast< Recognizer* >(recognizerHandle)->~Recognizer();
 }
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    handlePause
- * Signature: ()V
+ * Method:    nativHandlePause
+ * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_handlePause__
-(JNIEnv *, jobject){
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_nativHandlePause__J
+  (JNIEnv *env, jobject object, jlong recognizerHandle){
+
+	reinterpret_cast< Recognizer* >(recognizerHandle)->pause();
+
 }
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    handlePause
- * Signature: (I)V
+ * Method:    nativHandlePause
+ * Signature: (JI)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_handlePause__I
-(JNIEnv *, jobject, jint){
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_nativHandlePause__JI
+  (JNIEnv *env, jobject object, jlong recognizerHandle, jint flags){
+
+}
+/*
+ * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
+ * Method:    nativHandleResume
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_nativHandleResume
+(JNIEnv *env, jobject object, jlong recognizerHandle){
+
+	return reinterpret_cast< Recognizer* >(recognizerHandle)->resume();
 }
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    handleResume
- * Signature: ()Z
+ * Method:    nativSetGrammar
+ * Signature: (JLjava/lang/String;)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_handleResume
-(JNIEnv *, jobject){
-	return false;
-}
+JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_nativSetGrammar
+  (JNIEnv *env, jobject object, jlong recognizerHandle, jstring grammarPath){
 
-/*
- * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    setGrammars
- * Signature: (Ljava/util/Vector;)Z
- */
-JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_setGrammars
-(JNIEnv *env, jobject object, jobject grammar){
+	  	HRESULT hr = reinterpret_cast< Recognizer* >(recognizerHandle)->setGrammar( (const wchar_t*)env->GetStringChars( grammarPath, NULL) );
 
-	/* get pointer sapiRecognizerPtr in JavaClass as long value and cast it*/
-		Recognizer* recognizer = (Recognizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiRecognizerPtr","J"));
-	
-		/*recognizer->setGrammar();*/
-
-	return false;
-}
-/*
- * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    setGrammar
- * Signature: (Ljava/lang/String;)Z
- */
-JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_setGrammar
-(JNIEnv *env, jobject object, jstring string){
-	
-	/* get pointer sapiRecognizerPtr in JavaClass as long value and cast it*/
-		Recognizer* recognizer = (Recognizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiRecognizerPtr","J"));
-	
-		HRESULT hr = recognizer->setGrammar( (const wchar_t*)env->GetStringChars(string, NULL) );
-
-		recognizer->startdictation();	
+		reinterpret_cast< Recognizer* >(recognizerHandle)->startdictation();	
 
 		if(SUCCEEDED(hr)){
 			return true; 
@@ -110,9 +85,9 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 		else{
 			return false;
 		}
-	
-}
 
+	return false;
+}
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
@@ -120,6 +95,19 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
  * Signature: ()Lorg/jvoicexml/jsapi2/EnginePropertyChangeRequestListener;
  */
 JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_getChangeRequestListener
-  (JNIEnv *, jobject){
+ (JNIEnv *env, jobject object){
+
 	return false;
 }
+
+/*
+ * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
+ * Method:    start
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_start
+(JNIEnv *env, jobject object, jlong recognizerHandle){
+
+	return reinterpret_cast< Recognizer* >(recognizerHandle)->startdictation();
+}
+
