@@ -11,9 +11,9 @@ import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 public final class SapiSynthesizer extends JseBaseSynthesizer {
 	    
-	static{
-    	System.load("D:\\eclipse - Kopie\\Workspace\\org.jvoicexml.jsapi2.sapi\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
-    	}
+//	static{
+//    	System.load("D:\\eclipse - Kopie\\Workspace\\org.jvoicexml.jsapi2.sapi\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
+//    	}
 	
 	
 	String engineName2 ;
@@ -21,12 +21,11 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
 	
 	public SapiSynthesizer(String name){
 		
-		
 		engineName2 = "name="+name;
 		
-//		String dir = System.getProperty("user.dir");
-//    	System.out.println(dir);
-//    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
+		String dir = System.getProperty("user.dir");
+    	System.out.println(dir);
+    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
 		
     }		
 
@@ -62,10 +61,7 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
 	protected native void handleSpeak(int id, Speakable item);
 
 	
-	protected  EnginePropertyChangeRequestListener getChangeRequestListener(){
-		return null;
-	}
-    
+	protected native EnginePropertyChangeRequestListener getChangeRequestListener();
 
 
 }

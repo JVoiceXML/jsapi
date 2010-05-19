@@ -2,15 +2,31 @@ package org.jvoicexml.jsapi2.test;
 
 import javax.speech.AudioException;
 import javax.speech.EngineException;
+import javax.speech.EngineManager;
+import javax.speech.EngineMode;
 import javax.speech.EngineStateException;
+import javax.speech.synthesis.Synthesizer;
+import javax.speech.synthesis.SynthesizerMode;
 
 import org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizer;
 
 public class testSynthesizer {
 
-    public static void main(String[] args) throws InterruptedException, IllegalArgumentException, EngineException, EngineStateException, AudioException, SecurityException 
+
+	public static void main(String[] args) throws InterruptedException, IllegalArgumentException, EngineException, EngineStateException, AudioException, SecurityException 
     {       
-      
+//        EngineManager
+//        .registerEngineListFactory("org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizer");
+//        System.setProperty("javax.speech.supports.audio.management",
+//        Boolean.TRUE.toString());
+//        System.setProperty("javax.speech.supports.audio.capture",
+//        Boolean.TRUE.toString());
+//        // Create a synthesizer for the default Locale
+//        SapiSynthesizer synth = (SapiSynthesizer) EngineManager
+//        .createEngine(SynthesizerMode.DEFAULT);
+//
+//        System.out.println( "SynthesizerMode: " +  synth.getEngineMode().toString());
+        
     	SapiSynthesizer sps = new SapiSynthesizer("Microsoft Anna");
     	SapiSynthesizer sps2 = new SapiSynthesizer("LH Stefan");  
 
