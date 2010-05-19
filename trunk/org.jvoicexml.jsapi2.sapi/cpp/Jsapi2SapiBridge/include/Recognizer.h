@@ -33,6 +33,22 @@ class Recognizer{
 			return hr;		
 		}
 
+		void pause(){
+
+			cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE);
+			cpRecoCtxt->Pause( NULL);			
+		}
+
+		boolean resume(){			
+
+			if(  SUCCEEDED( hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE)) ){
+				if( SUCCEEDED(hr = cpRecoCtxt->Resume(NULL)) ){
+					return true;
+				}			
+				else{return false;}
+			}
+			else{return false;}	
+		}
 
 		Recognizer(){
 
@@ -135,7 +151,7 @@ class Recognizer{
 			std::cout<< "Please speak now \n";
 			fflush(stdout);
 
-			if (  SUCCEEDED( hr = BlockForResult(cpRecoCtxt, &cpResult) )  )
+			while (  SUCCEEDED( hr = BlockForResult(cpRecoCtxt, &cpResult) )  )
 			{		
 					
                     cpGrammar->SetGrammarState(SPGS_DISABLED);
@@ -151,9 +167,7 @@ class Recognizer{
                     }                  
                     hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
             }
-			else{ 
-				std::cout<< "no valid input \n";
-			}
+
 		}
 
 		HRESULT BlockForResult(ISpRecoContext * pRecoCtxt, ISpRecoResult ** ppResult)
