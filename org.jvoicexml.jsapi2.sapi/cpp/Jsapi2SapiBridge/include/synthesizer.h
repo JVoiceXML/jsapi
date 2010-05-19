@@ -4,10 +4,11 @@
 class Synthesizer{
 
 	private:					
-		HRESULT							hr;
+		
 		CComPtr<ISpVoice>				cpVoice;
 
 	public:
+		HRESULT							hr;
 
 		boolean Cancel(){
 			if(  SUCCEEDED( cpVoice->Speak(NULL, SPF_PURGEBEFORESPEAK, NULL) )  ){
@@ -38,6 +39,11 @@ class Synthesizer{
 
 		void Speak( LPCWSTR text ){
 			cpVoice->Speak( text, SPF_ASYNC | SPF_IS_XML, NULL);
+		}
+
+		HANDLE getEventHandler(){
+			
+			return cpVoice->GetNotifyEventHandle();
 		}
 
 		Synthesizer(const wchar_t* engineName){
