@@ -40,6 +40,9 @@ This file builds the JSR 113.jar.
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Clean"/>
     </exec>
+    <delete dir="cpp/Jsapi2SapiBridge/include">
+      <include name="org_jvoicexml_jsapi2*.h"/>
+    </delete>
   </target>
 
   <target name="compile" depends="-init" description="Compile the JAVA sources">
