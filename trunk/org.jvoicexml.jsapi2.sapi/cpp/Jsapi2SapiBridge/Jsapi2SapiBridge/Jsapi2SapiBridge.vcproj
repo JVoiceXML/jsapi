@@ -202,7 +202,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Synthesizer.h"
+				RelativePath=".\Synthesizer.h"
 				>
 			</File>
 			<File
