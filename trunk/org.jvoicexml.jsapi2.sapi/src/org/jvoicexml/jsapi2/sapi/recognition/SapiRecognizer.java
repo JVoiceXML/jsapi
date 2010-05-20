@@ -18,11 +18,11 @@ public class SapiRecognizer extends JseBaseRecognizer  {
     	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
 	}
 	
-	public long RecognizerHandle;
+	public long recognizerHandle;
 
 	@Override
 	public Vector<?> getBuiltInGrammars(){
-	    return sapiGetBuildInGrammars(RecognizerHandle);
+	    return sapiGetBuildInGrammars(recognizerHandle);
 	}
 	
 	private native Vector<?> sapiGetBuildInGrammars(long handle);
@@ -38,20 +38,20 @@ public class SapiRecognizer extends JseBaseRecognizer  {
 
 	@Override
 	public void handleDeallocate(){
-	    sapiDeallocate(RecognizerHandle);
+	    sapiDeallocate(recognizerHandle);
 	}
 	private native void sapiDeallocate(long handle);
 	
 	
 	@Override
 	protected void handlePause(){
-	     sapiPause(RecognizerHandle);
+	     sapiPause(recognizerHandle);
 	}
 	private native void sapiPause(long handle);
 
         @Override
 	protected void handlePause(int flags){
-            sapiPause( RecognizerHandle, flags);
+            sapiPause( recognizerHandle, flags);
         }
 
 	private native void sapiPause(long handle, int flags);
@@ -59,19 +59,21 @@ public class SapiRecognizer extends JseBaseRecognizer  {
 	
         @Override
 	protected boolean handleResume(){
-            return sapiResume(RecognizerHandle);
+            return sapiResume(recognizerHandle);
         }
 	private native boolean sapiResume(long Handle);
 	
 	
-	@Override
+	@SuppressWarnings("unchecked")
+        @Override
 	protected boolean setGrammars(Vector grammarDefinition){
+	    
 	    return false;
 	}
 	
 	
 	public boolean setGrammar(String grammarPath ){
-	    return sapiSetGrammar( RecognizerHandle, grammarPath);
+	    return sapiSetGrammar( recognizerHandle, grammarPath);
 	}
 	private native boolean sapiSetGrammar(long handle, String grammarPath);
 
@@ -79,7 +81,7 @@ public class SapiRecognizer extends JseBaseRecognizer  {
 	protected EnginePropertyChangeRequestListener getChangeRequestListener(){return null;}
         
         void startRecognition(){
-            start(RecognizerHandle);           
+            start(recognizerHandle);           
         }
         private native void start(long handle);
         
