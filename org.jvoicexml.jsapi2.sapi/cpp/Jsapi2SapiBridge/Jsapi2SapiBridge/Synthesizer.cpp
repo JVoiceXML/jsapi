@@ -6,11 +6,8 @@ Synthesizer::Synthesizer(const wchar_t* engineName)
     CComPtr<ISpObjectToken>			cpToken;
     CComPtr<IEnumSpObjectTokens>	cpEnum;
 
-    hr = ::CoInitialize(NULL);
-    if (SUCCEEDED(hr))
-    {
-        hr = cpVoice.CoCreateInstance(CLSID_SpVoice);
-    }
+    hr = cpVoice.CoCreateInstance(CLSID_SpVoice);
+
     // create cpEnum that contains the information about the designated TTSEngine
     if(SUCCEEDED(hr))
     {	
@@ -45,12 +42,27 @@ Synthesizer::Synthesizer(const wchar_t* engineName)
 Synthesizer::~Synthesizer()
 {
     cpVoice.Release();		
-    ::CoUninitialize();	
 }
 
 void Synthesizer::Speak( LPCWSTR text )
 {
-    cpVoice->Speak( text, SPF_DEFAULT, NULL);
+    hr = cpVoice->Speak( text, SPF_ASYNC, NULL);
+    if (FAILED(hr))
+    {
+        std::cout << "error: " << hr << std::endl;
+  LPSTR messageBuffer;
+  if (FormatMessageA(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS |
+		FORMAT_MESSAGE_FROM_SYSTEM,
+        NULL,
+        hr,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPSTR)&messageBuffer,
+        0,
+        NULL) > 0)
+	fprintf(stdout, "%s: %s (0x%x)\n", text, messageBuffer, hr);
+    LocalFree(messageBuffer);
+    }
 }
 
 void Synthesizer::SpeakSSML( LPCWSTR ssml )

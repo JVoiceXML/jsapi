@@ -7,6 +7,7 @@ import javax.speech.synthesis.Speakable;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
+import org.jvoicexml.jsapi2.synthesis.BaseSpeakable;
 
 /**
  * A SAPI compliant {@link javax.speech.synthesis.Synthesizer}.
@@ -23,8 +24,9 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     /** Name of this engine. */
     private final String engineName;
 
-	public long sapiSynthesizerPtr;
-	
+    /** SAPI synthesizer handle. */
+    private long synthesizerHandle;
+
     /**
      * Constructs a new synthesizer object.
      * @param name voice name;
@@ -32,8 +34,14 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     public SapiSynthesizer(final String name) {
         engineName = "name=" + name;
     }
-	
-	protected native Speakable getSpeakable(String text);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Speakable getSpeakable(final String text) {
+        return new BaseSpeakable(text);
+    }
 
 
     /**
@@ -42,7 +50,7 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     @Override
     protected void handleAllocate() throws EngineStateException,
         EngineException, AudioException, SecurityException {
-        sapiSynthesizerPtr = handleAllocate(engineName);
+        synthesizerHandle = sapiHandleAllocate(engineName);
     }
 
     /**
@@ -50,48 +58,153 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
      * @param name name of this synthesizer
      * @return synthesizer handle
      */
-    private native long handleAllocate(final String name);
+    private native long sapiHandleAllocate(final String name);
 
-	public native boolean handleCancel();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean handleCancel() {
+        return sapiHandleCancel(synthesizerHandle);
+    }
 
-	
-	protected native boolean handleCancel(int id);
+    /**
+     * Cancels the current output.
+     * @param handle the synthesizer handle
+     * @return <code>true</code> if the current output has been canceled
+     */
+    private native boolean sapiHandleCancel(final long handle);
 
-	
-	protected native boolean handleCancelAll();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean handleCancel(final int id) {
+        return sapiHandleCancel(synthesizerHandle, id);
+    }
 
-	
-	public native void handleDeallocate();
+    /**
+     * Cancels the output with the given id.
+     * @param handle the synthesizer handle
+     * @param id the item to cancel
+     * @return <code>true</code> if the output with the given id has been
+     * canceled
+     */
+    private native boolean sapiHandleCancel(final long handle, final int id);
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected boolean handleCancelAll() {
+        return sapiHandleCancelAll(synthesizerHandle);
+    }
 
-	public native void handlePause();
+    /**
+     * Cancels all outputs.
+     * 
+     * @param handle
+     *            the synthesizer handle
+     * @return <code>true</code> if at least one output has been canceled
+     */
+    private native boolean sapiHandleCancelAll(final long handle);
 
-	
-	public native boolean handleResume();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handleDeallocate() {
+        sapiHandlDeallocate(synthesizerHandle);
+        synthesizerHandle = 0;
+    }
 
+    /**
+     * Deallocates the SAPI synthesizer.
+     * @param handle
+     *            the synthesizer handle
+     */
+    private native void sapiHandlDeallocate(final long handle);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handlePause() {
+        sapiHandlPause(synthesizerHandle);
+    }
+
+    /**
+     * Pauses the synthesizer.
+     * @param handle the synthesizer handle
+     *            the synthesizer handle
+     */
+    private native void sapiHandlPause(final long handle);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean handleResume() {
+        return sapiHandlResume(synthesizerHandle);
+    }
+
+    /**
+     * Resumes the synthesizer.
+     * @param handle the synthesizer handle
+     *            the synthesizer handle
+     * @return <code>true</code> if the synthesizer is resumed
+     */
+    private native boolean sapiHandlResume(final long handle);
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void handleSpeak(final int id, final String item) {
-        handleSpeak(sapiSynthesizerPtr, id, item);
+        sapiHandleSpeak(synthesizerHandle, id, item);
     }
 
     /**
      * Speaks the given item.
-     * @param handle synthesizer handle
-     * @param id id of the item
-     * @param item the item to speak
+     * 
+     * @param handle
+     *            synthesizer handle
+     * @param id
+     *            id of the item
+     * @param item
+     *            the item to speak
      */
-    private native void handleSpeak(final long handle, final int id,
+    private native void sapiHandleSpeak(final long handle, final int id,
             final String item);
-	
-	protected native void handleSpeak(int id, Speakable item);
 
-	
-	protected native EnginePropertyChangeRequestListener getChangeRequestListener();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void handleSpeak(final int id, final Speakable item) {
+        final String markup = item.getMarkupText();
+        sapiHandleSpeakSsml(synthesizerHandle, id, markup);
+    }
 
+    /**
+     * Speaks the given item.
+     * 
+     * @param handle
+     *            synthesizer handle
+     * @param id
+     *            id of the item
+     * @param ssml
+     *            the SSML markup to speak
+     */
+    private native void sapiHandleSpeakSsml(final long handle, final int id,
+            final String ssml);
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
+        return null;
+    }
 }
 
