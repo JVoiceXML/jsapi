@@ -63,6 +63,8 @@ public class QueueManager {
     /** Synthesized play items. */
     private PlayQueue playThread;
     private boolean done;
+
+    /** Id of the last queued item. */
     private int queueId;
     private boolean cancelFirstItem;
     private final Object cancelLock;
@@ -85,31 +87,36 @@ public class QueueManager {
     }
 
     /**
-     * Terminates the queue mananger.
+     * Terminates the queue manager.
      */
     public void terminate() {
         synthThread.terminate();
     }
 
     /**
-     * Add an item to be spoken to the output queue. Fires the appropriate queue
-     * events
+     * Add a speakable item to be spoken to the output queue. Fires the
+     * appropriate queue events.
      *
-     * @param item
-     *                the item to add to the queue
+     * @param speakable the speakable item to add
+     * @param listener a listener to notify about events of this item
+     * @return queue id.
      */
     public int appendItem(final Speakable speakable,
             final SpeakableListener listener) {
-        return synthThread.appendItem(speakable, listener);
+        return synthThread.appendItem(speakable, listener, null);
     }
 
     /**
-     * Add an item to be spoken to the output queue. Fires the appropriate queue
-     * events
+     * Add a speakable item to be spoken to the output queue. Fires the
+     * appropriate queue events.
      *
+     * @param speakable the speakable item to add
+     * @param listener a listener to notify about events of this item
+     * @param text the text to be spoken
+     * @return queue id.
      */
-    public int appendItem(Speakable speakable, SpeakableListener listener,
-            String text) {
+    public int appendItem(final Speakable speakable,
+            final SpeakableListener listener, final String text) {
         return synthThread.appendItem(speakable, listener, text);
     }
 
@@ -265,7 +272,7 @@ public class QueueManager {
         }
 
         /**
-         * Terminates the queue mananger.
+         * Terminates the queue manager.
          */
         public void terminate() {
             synchronized (queue) {
@@ -275,50 +282,24 @@ public class QueueManager {
         }
 
         /**
-         * Add an item to be spoken to the output queue. Fires the appropriate queue
-         * events
+         * Add a speakable item to be spoken to the output queue. Fires the
+         * appropriate queue events.
          *
-         * @param item
-         *                the item to add to the queue
+         * @param speakable the speakable item to add
+         * @param listener a listener to notify about events of this item
+         * @param text the text to be spoken, maybe <code>null</code> if the
+         *             speakable contains markup text
+         * @return queue id.
          */
-        public int appendItem(Speakable speakable, SpeakableListener listener) {
+        public int appendItem(final Speakable speakable,
+                final SpeakableListener listener, final String text) {
             boolean topOfQueueChanged;
+            final int addedId;
             synchronized (queue) {
-                queueId += 1;
-                QueueItem item = new QueueItem(queueId, speakable, listener);
-
-                topOfQueueChanged = isQueueEmpty();
-                queue.addElement(item);
-                queue.notifyAll();
-            }
-
-            final long[] states;
-            if (topOfQueueChanged) {
-                states = synthesizer.setEngineState(Synthesizer.QUEUE_EMPTY,
-                        Synthesizer.QUEUE_NOT_EMPTY);
-            } else {
-                states = synthesizer.setEngineState(Synthesizer.QUEUE_NOT_EMPTY,
-                        Synthesizer.QUEUE_NOT_EMPTY);
-            }
-            synthesizer.postSynthesizerEvent(states[0], states[1],
-                    SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
-
-            return queueId;
-        }
-
-        /**
-         * Add an item to be spoken to the output queue. Fires the appropriate queue
-         * events
-         *
-         */
-        public int appendItem(Speakable speakable, SpeakableListener listener,
-                String text) {
-            boolean topOfQueueChanged;
-            synchronized (queue) {
-                queueId += 1;
+                queueId++;
+                addedId = queueId;
                 final QueueItem item = new QueueItem(queueId, speakable,
                         listener, text);
-
                 topOfQueueChanged = isQueueEmpty();
                 queue.addElement(item);
                 queue.notifyAll();
@@ -335,7 +316,7 @@ public class QueueManager {
             synthesizer.postSynthesizerEvent(states[0], states[1],
                     SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
 
-            return queueId;
+            return addedId;
         }
 
         /**
@@ -490,12 +471,11 @@ public class QueueManager {
 
                     // Synthesize item
                     final Object itemSource = item.getSource();
+                    final int id = item.getId();
                     if (itemSource instanceof String) {
-                        synthesizer.handleSpeak(item.getId(),
-                                (String) itemSource);
+                        synthesizer.handleSpeak(id, (String) itemSource);
                     } else if (itemSource instanceof Speakable) {
-                        synthesizer.handleSpeak(item.getId(),
-                                (Speakable) itemSource);
+                        synthesizer.handleSpeak(id, (Speakable) itemSource);
                     } else {
                         throw new RuntimeException(
                                 "WTF! It could only be text or speakable....");
@@ -511,7 +491,7 @@ public class QueueManager {
      */
     class PlayQueue extends Thread {
         /** Buffer size when reading from the audio segment input stream. */
-        final static int BUFFER_LENGTH = 1024;
+        private static final int BUFFER_LENGTH = 1024;
 
         private Vector playQueue;
 

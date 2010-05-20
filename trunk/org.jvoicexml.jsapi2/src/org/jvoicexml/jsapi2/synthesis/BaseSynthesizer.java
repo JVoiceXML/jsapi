@@ -296,7 +296,8 @@ public abstract class BaseSynthesizer extends BaseEngine
             }
         }
 
-        return queueManager.appendItem(getSpeakable(text), listener, text);
+        final Speakable speakable = getSpeakable(text);
+        return queueManager.appendItem(speakable, listener, text);
     }
 
     public int speakMarkup(final String synthesisMarkup,
