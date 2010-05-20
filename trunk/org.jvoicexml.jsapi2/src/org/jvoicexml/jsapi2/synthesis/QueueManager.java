@@ -35,6 +35,7 @@ import java.util.Vector;
 import javax.speech.AudioException;
 import javax.speech.AudioSegment;
 import javax.speech.Engine;
+import javax.speech.EngineStateException;
 import javax.speech.synthesis.PhoneInfo;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableEvent;
@@ -165,7 +166,7 @@ public class QueueManager {
     /**
      * Cancel the current item.
      */
-    protected boolean cancelItem() {
+    protected boolean cancelItem() throws EngineStateException {
         if (playThread.isQueueEmpty()) {
             return synthThread.cancelItem();
         } else {
@@ -367,6 +368,7 @@ public class QueueManager {
 
         /**
          * Cancel the current item.
+         * @return <code>true</code> if an item was removed from the queue
          */
         protected boolean cancelItem() {
             if (queue.size() != 0) {
@@ -381,7 +383,7 @@ public class QueueManager {
         }
 
         /**
-         * Cancels the itme with the given id.
+         * Cancels the item with the given id.
          * @param id the id of the item to cancel
          * @return <code>true</code> if the item was cancelled
          */
@@ -478,7 +480,8 @@ public class QueueManager {
                         synthesizer.handleSpeak(id, (Speakable) itemSource);
                     } else {
                         throw new RuntimeException(
-                                "WTF! It could only be text or speakable....");
+                                "WTF! It could only be text or speakable but was "
+                                + (itemSource == null ? "null" : item.getClass().getName()));
                     }
                 }
             }
@@ -764,8 +767,11 @@ public class QueueManager {
 
         /**
          * Cancel the current item.
+         * @return <code>true</code> if an item was canceled
+         * @exception EngineStateException
+         *            if the engine is in an invalid state
          */
-        protected boolean cancelItem() {
+        protected boolean cancelItem() throws EngineStateException {
             synchronized (playQueue) {
                 QueueItem item = (QueueItem) playQueue.elementAt(0);
                 if (item.getAudioSegment() == null) {

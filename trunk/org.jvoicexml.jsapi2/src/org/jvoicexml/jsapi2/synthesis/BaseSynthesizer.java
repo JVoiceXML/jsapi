@@ -39,11 +39,18 @@ public abstract class BaseSynthesizer extends BaseEngine
     protected int speakableMask;
     protected final QueueManager queueManager;
 
+    /**
+     * Constructs a new object.
+     */
     public BaseSynthesizer() {
         this(null);
     }
 
-    public BaseSynthesizer(SynthesizerMode engineMode) {
+    /**
+     * Constructs a new object.
+     * @param engineMode the engine mode for this synthesizer
+     */
+    public BaseSynthesizer(final SynthesizerMode engineMode) {
         super(engineMode);
         speakableListeners = new Vector();
         final SynthesizerProperties props =
@@ -429,11 +436,31 @@ public abstract class BaseSynthesizer extends BaseEngine
         return buf.toString();
     }
 
-    protected abstract boolean handleCancel();
+    /**
+     * Cancels the item that is currently being played back.
+     * @return <code>true</code> if the item was canceled
+     * @exception EngineStateException
+     *            if the engine was in an invalid state
+     */
+    protected abstract boolean handleCancel() throws EngineStateException;
 
-    protected abstract boolean handleCancelAll();
+    /**
+     * Cancels all items in the play queue.
+     * @return <code>true</code> if at least one item was canceled
+     * @exception EngineStateException
+     *            if the engine was in an invalid state
+     */
+    protected abstract boolean handleCancelAll() throws EngineStateException;
 
-    protected abstract boolean handleCancel(final int id);
+    /**
+     * Cancels the item with the given id.
+     * @param id id of the item to cancel
+     * @return <code>true</code> if the item with the given id was canceled.
+     * @exception EngineStateException
+     *            if the engine was in an invalid state
+     */
+    protected abstract boolean handleCancel(final int id)
+        throws EngineStateException;
 
     /**
      * Sets AudioSegment in a queueItem.
