@@ -6,6 +6,7 @@ import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 
+import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 
@@ -21,46 +22,46 @@ public class SapiRecognizer extends JseBaseRecognizer  {
 
 	@Override
 	public Vector<?> getBuiltInGrammars(){
-	    return nativGetBuildInGrammars(RecognizerHandle);
+	    return sapiGetBuildInGrammars(RecognizerHandle);
 	}
 	
-	private native Vector<?> nativGetBuildInGrammars(long handle);
+	private native Vector<?> sapiGetBuildInGrammars(long handle);
 
 	
         @Override
 	public void handleAllocate()throws EngineStateException,
 			EngineException, AudioException, SecurityException
 			{
-             nativeHandleAllocate();
+             sapiAllocate();
         } 
-        private native void nativeHandleAllocate();
+        private native void sapiAllocate();
 
 	@Override
 	public void handleDeallocate(){
-	    nativHandleDeallocate(RecognizerHandle);
+	    sapiDeallocate(RecognizerHandle);
 	}
-	private native void nativHandleDeallocate(long handle);
+	private native void sapiDeallocate(long handle);
 	
 	
 	@Override
 	protected void handlePause(){
-	     nativHandlePause(RecognizerHandle);
+	     sapiPause(RecognizerHandle);
 	}
-	private native void nativHandlePause(long handle);
+	private native void sapiPause(long handle);
 
         @Override
 	protected void handlePause(int flags){
-            nativHandlePause( RecognizerHandle, flags);
+            sapiPause( RecognizerHandle, flags);
         }
 
-	private native void nativHandlePause(long handle, int flags);
+	private native void sapiPause(long handle, int flags);
 
 	
         @Override
 	protected boolean handleResume(){
-            return nativHandleResume(RecognizerHandle);
+            return sapiResume(RecognizerHandle);
         }
-	private native boolean nativHandleResume(long Handle);
+	private native boolean sapiResume(long Handle);
 	
 	
 	@Override
@@ -70,17 +71,27 @@ public class SapiRecognizer extends JseBaseRecognizer  {
 	
 	
 	public boolean setGrammar(String grammarPath ){
-	    return nativSetGrammar( RecognizerHandle, grammarPath);
+	    return sapiSetGrammar( RecognizerHandle, grammarPath);
 	}
-	private native boolean nativSetGrammar(long handle, String grammarPath);
+	private native boolean sapiSetGrammar(long handle, String grammarPath);
 
         @Override
 	protected EnginePropertyChangeRequestListener getChangeRequestListener(){return null;}
-
+        
         void startRecognition(){
             start(RecognizerHandle);           
         }
         private native void start(long handle);
         
+        
+        class SapiChangeRequestListener implements EnginePropertyChangeRequestListener{
+
+            @Override
+            public void propertyChangeRequest(EnginePropertyChangeRequestEvent event) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        }
         
 }

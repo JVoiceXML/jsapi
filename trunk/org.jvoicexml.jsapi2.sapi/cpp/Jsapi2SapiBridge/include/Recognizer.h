@@ -17,37 +17,49 @@ class Recognizer{
 	public:
 	
 		HRESULT setGrammar( LPCWSTR grammarPath ){
+			
+			if( SUCCEEDED(hr) ){
+				hr = cpRecoCtxt->CreateGrammar( grammarCount++, &cpGrammar);
+			}
 
-			hr = cpRecoCtxt->CreateGrammar( grammarCount++, &cpGrammar);
+			if( SUCCEEDED(hr) ){
+				hr = cpGrammar->SetGrammarState(SPGS_DISABLED);
+			}
 
-			hr = cpGrammar->SetGrammarState(SPGS_DISABLED);			
-
-			hr = cpGrammar->LoadCmdFromFile( grammarPath,SPLO_STATIC);
-
-			std::cout<< "Grammar loaded. hr:" << hr <<"\n";
-			fflush(stdout);
-
-			//hr = cpGrammar->Commit(NULL);
-			//std::cout<< "cpGrammar:\t" << cpGrammar <<"\n";
+			if( SUCCEEDED(hr) ){
+				hr = cpGrammar->LoadCmdFromFile( grammarPath,SPLO_STATIC);
+			}
+									
+			//std::cout<< "Grammar loaded. hr:" << hr <<"\n";
+			//fflush(stdout);
 
 			return hr;		
 		}
 
-		void pause(){
+		HRESULT pause(){
 
-			cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE);
-			cpRecoCtxt->Pause( NULL);			
+			if( SUCCEEDED(hr) ){
+				cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE);
+			}
+
+			if( SUCCEEDED(hr) ){
+				cpRecoCtxt->Pause( NULL);
+			}
+
+			return hr;								
 		}
 
-		boolean resume(){			
+		HRESULT resume(){
 
-			if(  SUCCEEDED( hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE)) ){
-				if( SUCCEEDED(hr = cpRecoCtxt->Resume(NULL)) ){
-					return true;
-				}			
-				else{return false;}
+			if( SUCCEEDED(hr) ){
+				hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE);
 			}
-			else{return false;}	
+
+			if( SUCCEEDED(hr) ){
+				hr = cpRecoCtxt->Resume(NULL);
+			}
+
+			return hr;
 		}
 
 		Recognizer(){
@@ -61,19 +73,6 @@ class Recognizer{
 				hr = cpRecognizer.CoCreateInstance(CLSID_SpInprocRecognizer);
 
 			}
-
-			//if( SUCCEEDED(hr) ){
-			//	// Get the default audio input token.
-			//	hr = SpGetDefaultTokenFromCategoryId(SPCAT_AUDIOIN, &cpObjectToken);
-			//}
-			//std::cout<< "hr:\t\t" << hr <<"\n";
-
-			//if (SUCCEEDED(hr))
-			//{
-			//   // Set the audio input to our token.
-			//   hr = cpRecognizer->SetInput(cpObjectToken, TRUE);
-			//}
-			//std::cout<< "hr:\t\t" << hr <<"\n";
 
 			if (SUCCEEDED(hr))
 			{
@@ -110,34 +109,16 @@ class Recognizer{
 				hr = cpRecoCtxt->SetAudioOptions(SPAO_RETAIN_AUDIO, NULL, NULL);
 			}	
 
-			//if( SUCCEEDED(hr) ){
-			//	hr = cpRecoCtxt->CreateGrammar(0, &cpGrammar);
-			//}
-			//std::cout<< "hr:\t\t" << hr <<"\n";
-
-			//if( SUCCEEDED(hr) ){
-			//	hr = cpGrammar->LoadDictation(NULL, SPLO_STATIC);
-			//}
-			//std::cout<< "hr:\t\t" << hr <<"\n";
-
-			//if( SUCCEEDED(hr) ){
-			//	hr = cpGrammar->SetDictationState(SPRS_ACTIVE);
-			//}
-
-			//std::cout<< "hr:\t\t" << hr <<"\n";
-
-			//std::cout<< "cpRecognizer:\t" << cpRecognizer <<"\n";
-			//std::cout<< "cpRecoCtxt:\t" << cpRecoCtxt <<"\n";
 		}
 
 		~Recognizer(){
 
 			cpGrammar.Release();
 			cpRecoCtxt.Release();
-
 			cpRecognizer.Release();
 			cpObjectToken.Release();
 			cpAudio.Release();
+
 			::CoUninitialize();
 
 		}
