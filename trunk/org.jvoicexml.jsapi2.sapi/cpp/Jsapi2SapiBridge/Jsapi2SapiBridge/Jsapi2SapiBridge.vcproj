@@ -164,11 +164,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\SapiRecognizer.cpp"
+				RelativePath=".\Recognizer.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\SapiSynthesizer.cpp"
+				RelativePath=".\SapiRecognizer.cpp"
 				>
 			</File>
 			<File
