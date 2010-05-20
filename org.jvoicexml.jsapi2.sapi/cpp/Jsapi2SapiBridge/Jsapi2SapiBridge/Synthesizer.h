@@ -7,6 +7,9 @@ public:
 	Synthesizer(const wchar_t* engineName);
     virtual ~Synthesizer();
 
+	void Speak( LPCWSTR text );
+    void SpeakSSML(LPCWSTR ssml);
+
     boolean Cancel(){
 			if(  SUCCEEDED( cpVoice->Speak(NULL, SPF_PURGEBEFORESPEAK, NULL) )  ){
 				return true;
@@ -32,10 +35,6 @@ public:
 			else {
 				return false;
 			}	
-		}
-
-		void Speak( LPCWSTR text ){
-			cpVoice->Speak( text, SPF_ASYNC | SPF_IS_XML, NULL);
 		}
 
 		HANDLE getEventHandler(){
