@@ -31,7 +31,7 @@ public class TestRecognizer {
 //        recognizer.deallocate();
 //    }
 	
-    public static void main(String[] args) throws InterruptedException 
+    public static void main(String[] args) throws InterruptedException, EngineStateException, AudioException, EngineException 
     { 
     	SapiRecognizer recognizer = new SapiRecognizer();
     	System.out.println( "new SapiRecognizer:\tokay");
@@ -39,7 +39,7 @@ public class TestRecognizer {
     	Thread.sleep(20);
     	
     	try {
-			recognizer.handleAllocate();
+			recognizer.allocate();
 			System.out.println( "Allocate:\t\tokay");
 		} catch (EngineStateException e) {
 			// TODO Auto-generated catch block
@@ -71,7 +71,7 @@ public class TestRecognizer {
 		System.out.println( "resume:\t\tokay");
 		Thread.sleep(400);
 		
-		recognizer.handleDeallocate();
+		recognizer.deallocate();
 		System.out.println( "Deallocate:\t\tokay");
 		
 		System.exit(0);
