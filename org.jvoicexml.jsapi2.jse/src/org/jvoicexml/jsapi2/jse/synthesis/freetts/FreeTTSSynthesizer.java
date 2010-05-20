@@ -150,7 +150,7 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
      *                 if a deallocation error occurs
      */
     public void handleDeallocate() {
-        long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
+        setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
         getQueueManager().cancelAllItems();
         getQueueManager().terminate();
 
@@ -250,25 +250,6 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
     public boolean handleResume() {
         audioPlayer.resume();
         return true;
-    }
-
-    /**
-     * Factory constructor for EngineProperties object. Gets the default
-     * speaking voice from the SynthesizerModeDesc. Takes the default prosody
-     * values (pitch, range, volume, rate) from the default voice. Override to
-     * set engine-specific defaults.
-     */
-    /*
-     * protected BaseEngineProperties createEngineProperties() { SynthesizerMode
-     * desc = (SynthesizerMode)engineMode; FreeTTSVoice defaultVoice =
-     * (FreeTTSVoice)(desc.getVoices()[0]); return new
-     * FreeTTSSynthesizerProperties(defaultVoice, defaultVoice.getPitch(),
-     * defaultVoice.getPitchRange(), defaultVoice.getSpeakingRate(),
-     * defaultVoice.getVolume()); }
-     */
-
-    public Speakable getSpeakable(String text) {
-        return new FreeTTSSpeakable(text);
     }
 
     protected Speakable parseMarkup(String synthesisMarkup) {

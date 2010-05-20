@@ -299,8 +299,12 @@ public class QueueManager {
             synchronized (queue) {
                 queueId++;
                 addedId = queueId;
-                final QueueItem item = new QueueItem(queueId, speakable,
-                        listener, text);
+                final QueueItem item;
+                if (text == null) {
+                    item = new QueueItem(queueId, speakable, listener);
+                } else {
+                    item = new QueueItem(queueId, speakable, listener, text);
+                }
                 topOfQueueChanged = isQueueEmpty();
                 queue.addElement(item);
                 queue.notifyAll();

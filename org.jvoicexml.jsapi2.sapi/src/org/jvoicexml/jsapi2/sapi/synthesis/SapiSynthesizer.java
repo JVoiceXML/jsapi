@@ -39,15 +39,6 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
      * {@inheritDoc}
      */
     @Override
-    protected Speakable getSpeakable(final String text) {
-        return new BaseSpeakable(text);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected void handleAllocate() throws EngineStateException,
         EngineException, AudioException, SecurityException {
         synthesizerHandle = sapiHandleAllocate(engineName);
