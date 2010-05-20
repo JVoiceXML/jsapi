@@ -303,12 +303,15 @@ public abstract class BaseSynthesizer extends BaseEngine
             }
         }
 
-        final Speakable speakable = getSpeakable(text);
+        final Speakable speakable = new BaseSpeakable(text);
         return queueManager.appendItem(speakable, listener, text);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int speakMarkup(final String synthesisMarkup,
-            SpeakableListener listener) throws EngineStateException,
+            final SpeakableListener listener) throws EngineStateException,
             SpeakableException, IllegalArgumentException {
 
         // Wait to finalize allocation
@@ -320,12 +323,7 @@ public abstract class BaseSynthesizer extends BaseEngine
             }
         }
 
-        Speakable speakable = new Speakable() {
-            public String getMarkupText() {
-                return synthesisMarkup;
-            }
-        };
-
+        final Speakable speakable = new BaseSpeakable(synthesisMarkup);
         return queueManager.appendItem(speakable, listener);
     }
 
@@ -402,9 +400,6 @@ public abstract class BaseSynthesizer extends BaseEngine
     abstract protected void handlePause();
 
     abstract protected boolean handleResume();
-
-    /** @todo Is it really needed? */
-    protected abstract Speakable getSpeakable(String text);
 
     /**
      * Speak the item with the given id.

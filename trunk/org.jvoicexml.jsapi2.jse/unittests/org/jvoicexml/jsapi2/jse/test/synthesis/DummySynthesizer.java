@@ -17,13 +17,6 @@ import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
  *
  */
 public class DummySynthesizer extends JseBaseSynthesizer {
-
-    @Override
-    protected Speakable getSpeakable(String text) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     @Override
     protected void handleAllocate() throws EngineStateException,
             EngineException, AudioException, SecurityException {
