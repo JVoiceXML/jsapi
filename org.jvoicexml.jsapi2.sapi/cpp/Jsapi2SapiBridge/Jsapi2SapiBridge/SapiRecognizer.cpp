@@ -30,7 +30,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 	  }		
 
 	/* Set recognizer handle to RecognizerHandle in Class SapiRecognizer */
-		env->SetLongField( object, env->GetFieldID( env->GetObjectClass(object), "RecognizerHandle","J"), (long) recognizer);
+		env->SetLongField( object, env->GetFieldID( env->GetObjectClass(object), "recognizerHandle","J"), (long) recognizer);
 }
 
 /*

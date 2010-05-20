@@ -4,19 +4,18 @@
 
 
 HRESULT Recognizer::setGrammar( LPCWSTR grammarPath ){
-			
+	
 	if( SUCCEEDED(hr) ){
 		hr = cpRecoCtxt->CreateGrammar( grammarCount++, &cpGrammar);
 	}
 
 	if( SUCCEEDED(hr) ){
-		hr = cpGrammar->SetGrammarState(SPGS_DISABLED);
+		hr = cpGrammar->LoadCmdFromFile( grammarPath,SPLO_STATIC);
 	}
 
 	if( SUCCEEDED(hr) ){
-		hr = cpGrammar->LoadCmdFromFile( grammarPath,SPLO_STATIC);
-	}
-							
+		hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
+	}						
 	//std::cout<< "Grammar loaded. hr:" << hr <<"\n";
 	//fflush(stdout);
 
@@ -26,26 +25,16 @@ HRESULT Recognizer::setGrammar( LPCWSTR grammarPath ){
 HRESULT Recognizer::pause(){
 
 	if( SUCCEEDED(hr) ){
-		cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE);
+		hr = cpRecoCtxt->Pause( NULL);
 	}
-
-	if( SUCCEEDED(hr) ){
-		cpRecoCtxt->Pause( NULL);
-	}
-
 	return hr;								
 }
 
 HRESULT Recognizer::resume(){
 
 	if( SUCCEEDED(hr) ){
-		hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE);
-	}
-
-	if( SUCCEEDED(hr) ){
 		hr = cpRecoCtxt->Resume(NULL);
 	}
-
 	return hr;
 }
 
@@ -58,7 +47,6 @@ Recognizer::Recognizer(){
 	if( SUCCEEDED(hr) ){
 		// create a new InprocRecognizer.
 		hr = cpRecognizer.CoCreateInstance(CLSID_SpInprocRecognizer);
-
 	}
 
 	if (SUCCEEDED(hr))
@@ -74,27 +62,23 @@ Recognizer::Recognizer(){
 	   hr = cpRecognizer->SetInput(cpAudio, TRUE);
 	}
 
-
 	if( SUCCEEDED(hr) ){
 		// create a new Recognition context.
 		hr = cpRecognizer->CreateRecoContext( &cpRecoCtxt);
 	}
 
-
 	if( SUCCEEDED(hr) ){
-		// Set the Notivy.
-		hr = cpRecoCtxt->SetNotifyWin32Event();
-	}
+		hr = cpRecoCtxt->SetAudioOptions(SPAO_RETAIN_AUDIO, NULL, NULL);
+	}	
 
+	//if( SUCCEEDED(hr) ){
+	//	// Set the Notivy.
+	//	hr = cpRecoCtxt->SetNotifyWin32Event();
+	//}
 
 	if( SUCCEEDED(hr) ){
 		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION ), SPFEI(SPEI_RECOGNITION ) );
 	}
-
-
-	if( SUCCEEDED(hr) ){
-		hr = cpRecoCtxt->SetAudioOptions(SPAO_RETAIN_AUDIO, NULL, NULL);
-	}	
 
 }
 
@@ -107,7 +91,6 @@ Recognizer::~Recognizer(){
 	cpAudio.Release();
 
 	::CoUninitialize();
-
 }
 
 void Recognizer::startdictation(){
@@ -115,13 +98,11 @@ void Recognizer::startdictation(){
 	USES_CONVERSION;
 	CComPtr<ISpRecoResult>		cpResult;
 
-	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
 	std::cout<< "Please speak now \n";
 	fflush(stdout);
 
-	while (  SUCCEEDED( hr = BlockForResult(cpRecoCtxt, &cpResult) )  )
+	if (  SUCCEEDED( hr = BlockForResult(cpRecoCtxt, &cpResult) ) )
 	{		
-			
             cpGrammar->SetGrammarState(SPGS_DISABLED);
 
             CSpDynamicString dstrText;
@@ -146,10 +127,9 @@ HRESULT Recognizer::BlockForResult(ISpRecoContext * pRecoCtxt, ISpRecoResult ** 
 
 	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
 
-	while ( SUCCEEDED(hr) && SUCCEEDED(hr = event.GetFrom(pRecoCtxt)) && hr == S_FALSE  )
+	if ( SUCCEEDED(hr)&& SUCCEEDED(hr = event.GetFrom(pRecoCtxt)) && hr == S_FALSE ) //
 	{
 		hr = pRecoCtxt->WaitForNotifyEvent(INFINITE);
-
 	}
 	
 	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
