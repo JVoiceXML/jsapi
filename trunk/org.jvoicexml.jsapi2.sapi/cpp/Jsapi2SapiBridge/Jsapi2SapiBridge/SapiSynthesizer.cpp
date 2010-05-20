@@ -3,6 +3,7 @@
 #include "Synthesizer.h"
 #include <iostream>
 
+
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
  * Method:    getSpeakable
@@ -15,11 +16,11 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
- * Method:    handleAllocate
+ * Method:    sapiHandleAllocate
  * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleAllocate
-  (JNIEnv* env, jobject obj, jstring string)
+JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleAllocate
+  (JNIEnv * env, jobject obj, jstring string)
 {
     const wchar_t* engineName = (const wchar_t*)env->GetStringChars(string, NULL);
  
@@ -41,86 +42,84 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
     }
     return (jlong) synth;
 }
+
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
- * Method:    handleCancel
- * Signature: ()Z
+ * Method:    sapiHandleCancel
+ * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancel__
-  (JNIEnv *env, jobject object){
-
-	/* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
-		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
-	
-		return synth->Cancel();
+JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleCancel__J
+  (JNIEnv *env, jobject obj, jlong handle)
+{
+	Synthesizer* synth = (Synthesizer*) handle;
+	return synth->Cancel();
 }
+
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
- * Method:    handleCancel
- * Signature: (I)Z
+ * Method:    sapiHandleCancel
+ * Signature: (JI)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancel__I
-  (JNIEnv *env, jobject onbject, jint id){
-
+JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleCancel__JI
+  (JNIEnv * env, jobject obj, jlong handle, jint id)
+{
 	return NULL;
 }
+
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
- * Method:    handleCancelAll
- * Signature: ()Z
+ * Method:    sapiHandleCancelAll
+ * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleCancelAll
-  (JNIEnv *env, jobject object){
-
+JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleCancelAll
+  (JNIEnv * env, jobject obj, jlong handle)
+{
 	return NULL;
 }
+
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
- * Method:    handleDeallocate
- * Signature: ()V
+ * Method:    sapiHandlDeallocate
+ * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleDeallocate
-  (JNIEnv *env, jobject object){
-
-	/* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
-		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
-		synth->~Synthesizer();
-
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandlDeallocate
+  (JNIEnv * env, jobject obj, jlong handle)
+{
+	Synthesizer* synthesizer = (Synthesizer*) handle;
+    delete synthesizer;
 }
+
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
- * Method:    handlePause
- * Signature: ()V
+ * Method:    sapiHandlPause
+ * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handlePause
-  (JNIEnv *env, jobject object){
-	  
-	  /* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
-		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
-	
-		synth->Pause();
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandlPause
+  (JNIEnv *env, jobject obj, jlong handle)
+{
+	Synthesizer* synth = (Synthesizer*) handle;	
+	synth->Pause();
 }
+
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
- * Method:    handleResume
- * Signature: ()Z
+ * Method:    sapiHandlResume
+ * Signature: (J)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleResume
-  (JNIEnv *env, jobject object){
-
-	  /* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
-		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
-	
-		return synth->Resume();
-
+JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandlResume
+  (JNIEnv *env, jobject obj, jlong handle)
+{
+	Synthesizer* synth = (Synthesizer*) handle;	
+	return synth->Resume();
 }
+
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
- * Method:    handleSpeak
+ * Method:    sapiHandleSpeak
  * Signature: (JILjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleSpeak__JILjava_lang_String_2
-  (JNIEnv * env, jobject obj, jlong handle, jint id, jstring item)
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleSpeak
+  (JNIEnv *env, jobject obj, jlong handle, jint id, jstring item)
 {
 	Synthesizer* synth = (Synthesizer*) handle;
 
@@ -131,26 +130,15 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
- * Method:    handleSpeak
- * Signature: (ILjavax/speech/synthesis/Speakable;)V
+ * Method:    sapiHandleSpeakSsml
+ * Signature: (JILjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_handleSpeak__ILjavax_speech_synthesis_Speakable_2
-  (JNIEnv *env, jobject object, jint id, jobject item){
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleSpeakSsml
+  (JNIEnv *env, jobject obj, jlong handle, jint id, jstring markup)
+{
+	Synthesizer* synth = (Synthesizer*) handle;
 	
-}
-
-/*
- * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
- * Method:    getChangeRequestListener
- * Signature: ()Lorg/jvoicexml/jsapi2/EnginePropertyChangeRequestListener;
- */
-JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_getChangeRequestListener
-(JNIEnv *env, jobject object){
-
-		  /* get pointer sapiSynthesizerPtr in JavaClass as long value and cast it*/
-		Synthesizer* synth = (Synthesizer*)env->GetLongField(object,env->GetFieldID(env->GetObjectClass(object), "sapiSynthesizerPtr","J"));
-	    return NULL;
-		//return env->NewObject(NULL, synth->getEventHandler());
-		
-
+	/* get string and cast as const wchar_t* */
+    const wchar_t* utterance = (const wchar_t*)env->GetStringChars(markup, NULL);
+	synth->SpeakSSML(utterance);
 }

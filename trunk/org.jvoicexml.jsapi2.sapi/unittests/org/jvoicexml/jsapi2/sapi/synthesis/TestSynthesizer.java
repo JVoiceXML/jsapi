@@ -10,7 +10,7 @@ import org.junit.Test;
 /**
  * Test cases for {@link SapiSynthesizer}.
  * <p>
- * Run this unit test with the VM option:
+ * Run this unit test with the VM argument:
  * <code>-Djava.library.path=cpp/Jsapi2SapiBridge/Debug</code>.
  * </p>
  * @author Dirk Schnelle-Walka
@@ -26,10 +26,28 @@ public final class TestSynthesizer {
      */
     @Test
     public void testSpeak() throws Exception {
-        SapiSynthesizer synthesizer = new SapiSynthesizer("Microsoft Anna");
+        final SapiSynthesizer synthesizer =
+            new SapiSynthesizer("Microsoft Anna");
         synthesizer.allocate();
         synthesizer.waitEngineState(Engine.ALLOCATED);
-        synthesizer.speak("this is a test", null);
+        synthesizer.speak("this is a test output", null);
+        Thread.sleep(2000);
+    }
+
+    /**
+     * Test case for {@link SapiSynthesizer#handleSpeak(int, javax.speech.synthesis.Speakable)}.
+     * @throws Exception
+     *         test failed
+     */
+    @Test
+    public void testSpeakSsml() throws Exception {
+        final SapiSynthesizer synthesizer =
+            new SapiSynthesizer("Microsoft Anna");
+        synthesizer.allocate();
+        synthesizer.waitEngineState(Engine.ALLOCATED);
+        synthesizer.speakMarkup("<?xml version=\"1.0\"?>"
+                + "<speak>This is an SSML formatted output</speak>", null);
+        Thread.sleep(2000);
     }
 
 	public static void main(String[] args) throws InterruptedException, IllegalArgumentException, EngineException, EngineStateException, AudioException, SecurityException 
