@@ -105,6 +105,12 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
      */
     @Override
     public void handleDeallocate() {
+        // Leave some time to let all resources detach
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+           return;
+        }
         sapiHandlDeallocate(synthesizerHandle);
         synthesizerHandle = 0;
     }
