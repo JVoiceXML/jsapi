@@ -7,8 +7,8 @@ public:
 	Synthesizer(const wchar_t* engineName);
     virtual ~Synthesizer();
 
-	void Speak( LPCWSTR text );
-    void SpeakSSML(LPCWSTR ssml);
+	HRESULT Speak( LPCWSTR text );
+    HRESULT SpeakSSML(LPCWSTR ssml);
 
     boolean Cancel(){
 			if(  SUCCEEDED( cpVoice->Speak(NULL, SPF_PURGEBEFORESPEAK, NULL) )  ){

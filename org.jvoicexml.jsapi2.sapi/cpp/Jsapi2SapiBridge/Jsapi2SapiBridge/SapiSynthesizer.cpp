@@ -3,6 +3,25 @@
 #include "Synthesizer.h"
 #include <iostream>
 
+void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr) 
+{
+    if (FormatMessageA(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS |
+        FORMAT_MESSAGE_FROM_SYSTEM,
+        NULL,
+        hr,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        buffer,
+        0,
+        NULL) > 0)
+    {
+        sprintf_s(buffer, size, "%s: %s (0x%x)", text, buffer, hr);
+    }
+    else
+    {
+        sprintf_s(buffer, size, "%s: 0x%x", text, buffer, hr);
+    }
+}
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -26,19 +45,18 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
  
 	/* create new Synthesizer class */
 	Synthesizer* synth = new Synthesizer(engineName);		
-    if (synth == NULL)
+    if (FAILED(synth->hr))
     {
-        jclass Exception = env->FindClass("java/lang/NullPointerException");
-        if (Exception == 0) /* Unable to find the new exception class, give up. */
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Allocation of synthesizer failed",
+            synth->hr);
+        jclass exception = env->FindClass("java/lang/NullPointerException");
+        if (exception == 0) /* Unable to find the new exception class, give up. */
+        {
+            std::cerr << buffer << std::endl;
             return 0;
-        env->ThrowNew(Exception, "MS SAPI ERRORCODE: " + synth->hr);
-    }
-    if ( !SUCCEEDED( synth->hr ) )
-    {
-        jclass Exception = env->FindClass("java/lang/EngineException" );
-        if (Exception == 0) /* Unable to find the new exception class, give up. */
-            return 0;
-        env->ThrowNew(Exception, "MS SAPI ERRORCODE: " + synth->hr );
+        }
+        env->ThrowNew(exception, buffer);
     }
     return (jlong) synth;
 }
@@ -125,7 +143,19 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 
 	/* get string and cast as const wchar_t* */
     const wchar_t* utterance = (const wchar_t*)env->GetStringChars(item, NULL);
-	synth->Speak(utterance);
+	HRESULT hr = synth->Speak(utterance);
+    if (FAILED(hr))
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Speak failed", hr);
+        jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
+        if (exception == 0) /* Unable to find the new exception class, give up. */
+        {
+            std::cerr << buffer << std::endl;
+            return;
+        }
+        env->ThrowNew(exception, buffer);
+    }
 }
 
 /*
@@ -140,5 +170,17 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 	
 	/* get string and cast as const wchar_t* */
     const wchar_t* utterance = (const wchar_t*)env->GetStringChars(markup, NULL);
-	synth->SpeakSSML(utterance);
+	HRESULT hr = synth->SpeakSSML(utterance);
+    if (FAILED(hr))
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Speak SSML failed", hr);
+        jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
+        if (exception == 0) /* Unable to find the new exception class, give up. */
+        {
+            std::cerr << buffer << std::endl;
+            return;
+        }
+        env->ThrowNew(exception, buffer);
+    }
 }
