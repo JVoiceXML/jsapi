@@ -15,11 +15,11 @@ void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr)
         0,
         NULL) > 0)
     {
-        sprintf_s(buffer, size, "%s: %s (0x%x)", text, buffer, hr);
+        sprintf_s(buffer, size, "%s: %s (%llu)", text, buffer, hr);
     }
     else
     {
-        sprintf_s(buffer, size, "%s: 0x%x", text, buffer, hr);
+        sprintf_s(buffer, size, "%s: %llu", text, buffer, hr);
     }
 }
 
@@ -50,7 +50,7 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "Allocation of synthesizer failed",
             synth->hr);
-        jclass exception = env->FindClass("java/lang/NullPointerException");
+        jclass exception = env->FindClass("javax/speech/EngineException");
         if (exception == 0) /* Unable to find the new exception class, give up. */
         {
             std::cerr << buffer << std::endl;

@@ -2,11 +2,12 @@
 #include "Synthesizer.h"
 
 Synthesizer::Synthesizer(const wchar_t* engineName)
+:cpVoice(NULL), hr(0)
 {
     CComPtr<ISpObjectToken>			cpToken;
     CComPtr<IEnumSpObjectTokens>	cpEnum;
 
-    hr = cpVoice.CoCreateInstance(CLSID_SpVoice);
+    HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&cpVoice);
 
     // create cpEnum that contains the information about the designated TTSEngine
     if(SUCCEEDED(hr))
@@ -42,7 +43,11 @@ Synthesizer::Synthesizer(const wchar_t* engineName)
 
 Synthesizer::~Synthesizer()
 {
-    cpVoice.Release();		
+    if (cpVoice != NULL)
+    {
+        cpVoice->Release();
+        cpVoice = NULL;
+    }
 }
 
 HRESULT Synthesizer::Speak( LPCWSTR text )

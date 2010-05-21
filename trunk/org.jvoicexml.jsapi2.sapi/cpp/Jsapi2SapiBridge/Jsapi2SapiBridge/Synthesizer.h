@@ -45,6 +45,6 @@ public:
 
 private:					
 
-    CComPtr<ISpVoice> cpVoice;
+    ISpVoice* cpVoice;
 
 };

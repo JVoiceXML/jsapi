@@ -4,7 +4,10 @@ import javax.speech.AudioException;
 import javax.speech.Engine;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
+import javax.speech.synthesis.Synthesizer;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -18,6 +21,37 @@ import org.junit.Test;
  *
  */
 public final class TestSynthesizer {
+    /** The test object. */
+    private Synthesizer synthesizer;
+
+    /**
+     * Set up the test .
+     * @throws Exception
+     *         set up failed
+     */
+    @Before
+    public void setUp() throws Exception {
+        System.setProperty("javax.speech.supports.audio.management",
+                Boolean.TRUE.toString());
+        System.setProperty("javax.speech.supports.audio.capture",
+                Boolean.TRUE.toString());
+        synthesizer = new SapiSynthesizer("Microsoft Anna");
+        synthesizer.allocate();
+        synthesizer.waitEngineState(Engine.ALLOCATED);
+    }
+
+    /**
+     * Tear down the test .
+     * @throws Exception
+     *         tear down failed
+     */
+    @After
+    public void tearDown() throws Exception {
+       if (synthesizer != null) {
+           synthesizer.deallocate();
+           synthesizer.waitEngineState(Engine.DEALLOCATED);
+       }
+    }
 
     /**
      * Test case for {@link SapiSynthesizer#handleSpeak(int, String)}.
@@ -26,10 +60,6 @@ public final class TestSynthesizer {
      */
     @Test
     public void testSpeak() throws Exception {
-        final SapiSynthesizer synthesizer =
-            new SapiSynthesizer("Microsoft Anna");
-        synthesizer.allocate();
-        synthesizer.waitEngineState(Engine.ALLOCATED);
         synthesizer.speak("this is a test output", null);
         Thread.sleep(2000);
     }
@@ -41,13 +71,9 @@ public final class TestSynthesizer {
      */
     @Test
     public void testSpeakSsml() throws Exception {
-        final SapiSynthesizer synthesizer =
-            new SapiSynthesizer("Microsoft Anna");
-        synthesizer.allocate();
-        synthesizer.waitEngineState(Engine.ALLOCATED);
-        synthesizer.speakMarkup("<?xml version=\"1.0\"?>"
-                + "<speak>This is an SSML formatted output</speak>", null);
-        Thread.sleep(2000);
+        synthesizer.speakMarkup(
+                "This sounds normal <pitch middle = '+10'/> but the pitch drops half way through", null);
+        Thread.sleep(4000);
     }
 
 	public static void main(String[] args) throws InterruptedException, IllegalArgumentException, EngineException, EngineStateException, AudioException, SecurityException 
