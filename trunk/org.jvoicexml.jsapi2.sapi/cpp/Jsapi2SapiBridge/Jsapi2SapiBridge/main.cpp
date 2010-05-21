@@ -40,8 +40,8 @@ BOOL APIENTRY DllMain(HINSTANCE  hModule, DWORD  ul_reason_for_call, LPVOID lpRe
     {
         return TRUE;
     }
-	TCHAR *szWindowClass=_T("JSAPI2SapiTtsWindowClass");
-	TCHAR *szTitle=_T("JSAPI2 SAPITTS");
+	TCHAR *szWindowClass=_T("JSAPI2SapiWindowClass");
+	TCHAR *szTitle=_T("JSAPI2 SAPI");
 
 	WNDCLASS wndclass;
     wndclass.style         = CS_HREDRAW | CS_VREDRAW;
