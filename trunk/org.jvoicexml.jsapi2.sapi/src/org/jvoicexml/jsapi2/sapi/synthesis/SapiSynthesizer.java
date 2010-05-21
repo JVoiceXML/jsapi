@@ -7,7 +7,6 @@ import javax.speech.synthesis.Speakable;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
-import org.jvoicexml.jsapi2.synthesis.BaseSpeakable;
 
 /**
  * A SAPI compliant {@link javax.speech.synthesis.Synthesizer}.
@@ -22,17 +21,17 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     }
 
     /** Name of this engine. */
-    private final String engineName;
+    private final SapiSynthesizerMode mode;
 
     /** SAPI synthesizer handle. */
     private long synthesizerHandle;
 
     /**
      * Constructs a new synthesizer object.
-     * @param name voice name;
+     * @param synthesizerMode the synthesizer mode
      */
-    public SapiSynthesizer(final String name) {
-        engineName = "name=" + name;
+    SapiSynthesizer(final SapiSynthesizerMode synthesizerMode) {
+        mode = synthesizerMode;
     }
 
     /**
@@ -41,7 +40,7 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     @Override
     protected void handleAllocate() throws EngineStateException,
         EngineException, AudioException, SecurityException {
-        synthesizerHandle = sapiHandleAllocate(engineName);
+        synthesizerHandle = sapiHandleAllocate("sapi");
     }
 
     /**

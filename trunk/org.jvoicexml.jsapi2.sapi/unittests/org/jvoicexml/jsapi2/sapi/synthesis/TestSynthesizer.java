@@ -3,12 +3,16 @@ package org.jvoicexml.jsapi2.sapi.synthesis;
 import javax.speech.AudioException;
 import javax.speech.Engine;
 import javax.speech.EngineException;
+import javax.speech.EngineManager;
 import javax.speech.EngineStateException;
 import javax.speech.synthesis.Synthesizer;
+import javax.speech.synthesis.SynthesizerMode;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.jvoicexml.jsapi2.sapi.SapiEngineListFactory;
 
 /**
  * Test cases for {@link SapiSynthesizer}.
@@ -24,6 +28,15 @@ public final class TestSynthesizer {
     /** The test object. */
     private Synthesizer synthesizer;
 
+    @BeforeClass
+    public static void init() throws Exception {
+        System.setProperty("javax.speech.supports.audio.management",
+                Boolean.TRUE.toString());
+        System.setProperty("javax.speech.supports.audio.capture",
+                Boolean.TRUE.toString());
+        EngineManager.registerEngineListFactory(
+                SapiEngineListFactory.class.getCanonicalName());
+    }
     /**
      * Set up the test .
      * @throws Exception
@@ -31,11 +44,8 @@ public final class TestSynthesizer {
      */
     @Before
     public void setUp() throws Exception {
-        System.setProperty("javax.speech.supports.audio.management",
-                Boolean.TRUE.toString());
-        System.setProperty("javax.speech.supports.audio.capture",
-                Boolean.TRUE.toString());
-        synthesizer = new SapiSynthesizer("Microsoft Anna");
+        synthesizer =  (Synthesizer) EngineManager
+            .createEngine(SynthesizerMode.DEFAULT);
         synthesizer.allocate();
         synthesizer.waitEngineState(Engine.ALLOCATED);
     }
@@ -61,7 +71,7 @@ public final class TestSynthesizer {
     @Test
     public void testSpeak() throws Exception {
         synthesizer.speak("this is a test output", null);
-        Thread.sleep(2000);
+        Thread.sleep(5000);
     }
 
     /**
@@ -90,8 +100,8 @@ public final class TestSynthesizer {
 //
 //        System.out.println( "SynthesizerMode: " +  synth.getEngineMode().toString());
         
-    	SapiSynthesizer sps = new SapiSynthesizer("Microsoft Anna");
-    	SapiSynthesizer sps2 = new SapiSynthesizer("LH Stefan");  
+    	SapiSynthesizer sps = null;//new SapiSynthesizer("Microsoft Anna");
+    	SapiSynthesizer sps2 = null;//new SapiSynthesizer("LH Stefan");  
 
     	System.out.println( "new Synthesizer:\tokay");
         try {
