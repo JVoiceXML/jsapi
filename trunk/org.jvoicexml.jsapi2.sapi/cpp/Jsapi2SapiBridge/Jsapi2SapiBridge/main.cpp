@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include <iostream>
+
 
 static HWND hWnd = NULL;
 

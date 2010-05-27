@@ -1,6 +1,4 @@
 #include <stdafx.h>
-#include <iostream>
-
 
 class Recognizer{
 
@@ -10,25 +8,27 @@ class Recognizer{
 
 		virtual ~Recognizer();
 
-		HRESULT pause();
+		void pause();
 
-		HRESULT resume();
+		void resume();
 
-		HRESULT setGrammar( LPCWSTR grammarPath );
+		void setGrammar( LPCWSTR grammarPath );
 
 		void startdictation();
 
 		HRESULT BlockForResult(ISpRecoContext * pRecoCtxt, ISpRecoResult ** ppResult);
+		
+		HRESULT	hr;
 
 	private:
-		int							grammarCount;
-		HRESULT						hr;
+
+		int							grammarCount;	
+
 		CComPtr<ISpRecognizer>		cpRecognizer;
 		CComPtr<ISpObjectToken>     cpObjectToken;
 		CComPtr<ISpAudio>           cpAudio;
 
 		CComPtr<ISpRecoContext>		cpRecoCtxt;
 		CComPtr<ISpRecoGrammar>		cpGrammar;
-
 };		
 

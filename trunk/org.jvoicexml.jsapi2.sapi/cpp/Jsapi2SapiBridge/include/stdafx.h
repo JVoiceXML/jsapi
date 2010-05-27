@@ -20,3 +20,7 @@
 //#include <atlcom.h>
 
 // TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.
+
+#include <iostream>
+
+void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr);
