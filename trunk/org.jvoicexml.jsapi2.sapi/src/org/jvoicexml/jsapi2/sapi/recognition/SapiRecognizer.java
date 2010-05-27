@@ -9,17 +9,28 @@ import javax.speech.EngineStateException;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
+import org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizerMode;
 
 public class SapiRecognizer extends JseBaseRecognizer  {
 		
-	public SapiRecognizer(){
-		String dir = System.getProperty("user.dir");
-    	System.out.println(dir);
-    	System.load(dir+"\\cpp\\Jsapi2SapiBridge\\Debug\\JSapi2SapiBridge.dll");				
-	}
+        static {
+        System.loadLibrary("Jsapi2SapiBridge");
+        }
+        
+	/** Mode of this Engine **/
+	private final SapiRecognizerMode mode;
 	
+	/** SAPI recognizer Handle**/
 	public long recognizerHandle;
 
+	/**
+	 * Constructs a new recognizer object.
+	 * @param RecognizerMode the recognizer mode
+	 */
+	public SapiRecognizer(final SapiRecognizerMode recognizerMode){
+	    mode = recognizerMode;
+	}
+	
 	@Override
 	public Vector<?> getBuiltInGrammars(){
 	    return sapiGetBuildInGrammars(recognizerHandle);
@@ -32,9 +43,9 @@ public class SapiRecognizer extends JseBaseRecognizer  {
 	public void handleAllocate()throws EngineStateException,
 			EngineException, AudioException, SecurityException
 			{
-             sapiAllocate();
+             recognizerHandle = sapiAllocate();
         } 
-        private native void sapiAllocate();
+        private native long sapiAllocate();
 
 	@Override
 	public void handleDeallocate(){
