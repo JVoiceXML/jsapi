@@ -120,14 +120,12 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 	recognizer->setGrammar( (const wchar_t*)env->GetStringChars( grammarPath, NULL) );
 
 	if( SUCCEEDED(recognizer->hr) ){
-		recognizer->startdictation();	
 		return true;
 	}
 	else{
 		return false;
 	}
 
-		
 }
 
 /*
