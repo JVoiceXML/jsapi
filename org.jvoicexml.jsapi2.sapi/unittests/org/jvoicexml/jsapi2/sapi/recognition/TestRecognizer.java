@@ -3,10 +3,19 @@ package org.jvoicexml.jsapi2.sapi.recognition;
 import javax.speech.AudioException;
 import javax.speech.Engine;
 import javax.speech.EngineException;
+import javax.speech.EngineManager;
 import javax.speech.EngineStateException;
+import javax.speech.SpeechLocale;
+import javax.speech.recognition.Recognizer;
+import javax.speech.recognition.RecognizerMode;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.jvoicexml.jsapi2.sapi.SapiEngineListFactory;
 import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer;
-import org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizer;
+
 
 /**
  * Test cases for {@link SapiRecognizer}.
@@ -19,6 +28,68 @@ import org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizer;
  *
  */
 public class TestRecognizer {
+    
+    private Recognizer recognizer;
+    
+    @BeforeClass
+    public static void init() throws Exception {
+        System.setProperty("javax.speech.supports.audio.management",
+                Boolean.TRUE.toString());
+        System.setProperty("javax.speech.supports.audio.capture",
+                Boolean.TRUE.toString());
+        EngineManager.registerEngineListFactory(
+                SapiEngineListFactory.class.getCanonicalName());
+    }
+    
+    /**
+     * Set up the test .
+     * @throws Exception
+     *         set up failed
+     */
+    @Before
+    public void setUp() throws Exception {
+        recognizer = (Recognizer) EngineManager
+            .createEngine(new RecognizerMode( SpeechLocale.GERMAN ));      
+        recognizer.allocate();
+        recognizer.waitEngineState(Engine.ALLOCATED);
+    }
+    
+    /**
+     * Tear down the test .
+     * @throws Exception
+     *         tear down failed
+     */
+    @After
+    public void tearDown() throws Exception {
+        if(recognizer != null){
+           recognizer.deallocate();
+           recognizer.waitEngineState(Engine.DEALLOCATED);
+        }
+    }
+    
+    /**
+     * Test case for {@link SapiRecognizer#handlePause()}.
+     * @throws Exception
+     *         test failed
+     */  
+    @Test
+    public void testPause() throws Exception {
+            recognizer.pause();
+            Thread.sleep(5000);
+    }
+    
+    /**
+     * Test case for {@link SapiRecognizer#handleResume()}.
+     * @throws Exception
+     *         test failed
+     */
+    @Test
+    public void testResume() throws Exception {
+        recognizer.resume();
+        Thread.sleep(5000);
+}
+    
+    
     
 //    public void testRecognition() throws Exception {
 //        
@@ -33,7 +104,7 @@ public class TestRecognizer {
 	
     public static void main(String[] args) throws InterruptedException, EngineStateException, AudioException, EngineException 
     { 
-    	SapiRecognizer recognizer = new SapiRecognizer();
+    	SapiRecognizer recognizer = null;  //new SapiRecognizer();
     	System.out.println( "new SapiRecognizer:\tokay");
     	
     	Thread.sleep(20);

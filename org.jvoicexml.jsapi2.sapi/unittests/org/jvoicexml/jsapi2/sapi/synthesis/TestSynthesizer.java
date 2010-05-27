@@ -71,7 +71,29 @@ public final class TestSynthesizer {
     @Test
     public void testSpeak() throws Exception {
         synthesizer.speak("this is a test output", null);
-        Thread.sleep(5000);
+
+        Thread.sleep(50);
+    }
+    /**
+     * Test case for {@link SapiSynthesizer#handleSpause()}.
+     * @throws Exception
+     *         test failed
+     */
+    @Test
+    public void testPause() throws Exception {
+        synthesizer.pause();
+        Thread.sleep(100);
+    }
+    
+    /**
+     * Test case for {@link SapiSynthesizer#handleResume()}.
+     * @throws Exception
+     *         test failed
+     */
+    @Test
+    public void testResume() throws Exception {
+        synthesizer.resume();
+        Thread.sleep(500);
     }
 
     /**
