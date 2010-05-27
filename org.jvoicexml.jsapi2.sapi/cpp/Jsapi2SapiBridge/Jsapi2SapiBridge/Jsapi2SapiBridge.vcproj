@@ -198,7 +198,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Recognizer.h"
+				RelativePath=".\Recognizer.h"
 				>
 			</File>
 			<File
