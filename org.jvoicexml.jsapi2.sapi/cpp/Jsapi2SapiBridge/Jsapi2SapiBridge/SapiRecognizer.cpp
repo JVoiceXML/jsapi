@@ -1,6 +1,7 @@
+#include "stdafx.h"
 #include "org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer.h"
 #include "Recognizer.h"
-#include <iostream>
+
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
@@ -18,19 +19,27 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogni
  * Method:    nativeHandleAllocate
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiAllocate
+JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiAllocate
   (JNIEnv *env, jobject object){
 
 	/* create new Recognizer class */
 	  Recognizer* recognizer =new Recognizer();
 	  
 	/* check if Handle valid */
-	  if( recognizer == NULL ){
-		env->ThrowNew( env->FindClass("java/lang/IllegalArgumentException"),"MS SAPI: no Recognizer allocated" );
-	  }		
-
-	/* Set recognizer handle to RecognizerHandle in Class SapiRecognizer */
-		env->SetLongField( object, env->GetFieldID( env->GetObjectClass(object), "recognizerHandle","J"), (long) recognizer);
+	if (FAILED(recognizer->hr))
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Allocation of recognizer failed",
+            recognizer->hr);
+        jclass exception = env->FindClass("javax/speech/EngineException");
+        if (exception == 0) /* Unable to find the new exception class, give up. */
+        {
+            std::cerr << buffer << std::endl;
+            return 0;
+        }
+        env->ThrowNew(exception, buffer);
+    }
+    return (jlong) recognizer;	
 }
 
 /*
@@ -41,7 +50,8 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiDeallocate
   (JNIEnv *env, jobject object, jlong recognizerHandle){
 
-	reinterpret_cast< Recognizer* >(recognizerHandle)->~Recognizer();
+	Recognizer* recognizer = (Recognizer*)recognizerHandle;
+	delete recognizer;
 }
 
 /*
@@ -51,12 +61,23 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
  */
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiPause__J
   (JNIEnv *env, jobject object, jlong recognizerHandle){
-
-	HRESULT hr = reinterpret_cast< Recognizer* >(recognizerHandle)->pause();
+		
+	Recognizer* recognizer = (Recognizer*)recognizerHandle;
+	recognizer->pause();
 	
-	if( FAILED(hr)){
-		env->ThrowNew( env->FindClass("java/lang/IllegalArgumentException"),"MS SAPI: Pause Recognizer failed" );
-	}
+	if (FAILED(recognizer->hr))
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Pause recognizer failed",
+            recognizer->hr);
+        jclass exception = env->FindClass("javax/speech/EngineException");
+        if (exception == 0) /* Unable to find the new exception class, give up. */
+        {
+            std::cerr << buffer << std::endl;
+        }
+        env->ThrowNew(exception, buffer);
+    }
+	
 }
 
 /*
@@ -76,7 +97,10 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiResume
 (JNIEnv *env, jobject object, jlong recognizerHandle){
 
-	if( SUCCEEDED(reinterpret_cast<Recognizer*>(recognizerHandle)->resume()) ){
+	Recognizer* recognizer = (Recognizer*)recognizerHandle;
+	recognizer->resume();	
+			
+	if( SUCCEEDED(recognizer->hr) ){
 		return true;
 	}
 	else{
@@ -91,14 +115,17 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiSetGrammar
   (JNIEnv *env, jobject object, jlong recognizerHandle, jstring grammarPath){
+		
+	Recognizer* recognizer = (Recognizer*)recognizerHandle;
+	recognizer->setGrammar( (const wchar_t*)env->GetStringChars( grammarPath, NULL) );
 
-		if( SUCCEEDED(reinterpret_cast< Recognizer* >(recognizerHandle)->setGrammar( (const wchar_t*)env->GetStringChars( grammarPath, NULL) )) ){
-			reinterpret_cast< Recognizer* >(recognizerHandle)->startdictation();	
-			return true;
-		}
-		else{
-			return false;
-		}
+	if( SUCCEEDED(recognizer->hr) ){
+		recognizer->startdictation();	
+		return true;
+	}
+	else{
+		return false;
+	}
 
 		
 }

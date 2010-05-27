@@ -1,9 +1,7 @@
 #include <stdafx.h>
 #include "Recognizer.h"
 
-
-
-HRESULT Recognizer::setGrammar( LPCWSTR grammarPath ){
+void Recognizer::setGrammar( LPCWSTR grammarPath ){
 	
 	if( SUCCEEDED(hr) ){
 		hr = cpRecoCtxt->CreateGrammar( grammarCount++, &cpGrammar);
@@ -15,34 +13,22 @@ HRESULT Recognizer::setGrammar( LPCWSTR grammarPath ){
 
 	if( SUCCEEDED(hr) ){
 		hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
-	}						
-	//std::cout<< "Grammar loaded. hr:" << hr <<"\n";
-	//fflush(stdout);
-
-	return hr;		
+	}							
 }
 
-HRESULT Recognizer::pause(){
+void Recognizer::pause(){
 
-	if( SUCCEEDED(hr) ){
-		hr = cpRecoCtxt->Pause( NULL);
-	}
-	return hr;								
+		hr = cpRecoCtxt->Pause( NULL);							
 }
 
-HRESULT Recognizer::resume(){
+void Recognizer::resume(){
 
-	if( SUCCEEDED(hr) ){
 		hr = cpRecoCtxt->Resume(NULL);
-	}
-	return hr;
 }
 
 Recognizer::Recognizer(){
 
-	grammarCount =0;
-
-	hr = ::CoInitialize(NULL);			
+	grammarCount =0;			
 	
 	if( SUCCEEDED(hr) ){
 		// create a new InprocRecognizer.
