@@ -26,10 +26,14 @@ void Recognizer::resume(){
 		hr = cpRecoCtxt->Resume(NULL);
 }
 
-Recognizer::Recognizer(){
-
-	grammarCount =0;			
+Recognizer::Recognizer()
+:cpRecognizer(NULL), cpRecoCtxt(NULL), cpGrammar(NULL), hr(0)
+{
 	
+	grammarCount				= 0;
+	CComPtr<ISpAudio>           cpAudio			= NULL;
+	//CComPtr<ISpObjectToken>     cpObjectToken	= NULL;
+
 	if( SUCCEEDED(hr) ){
 		// create a new InprocRecognizer.
 		hr = cpRecognizer.CoCreateInstance(CLSID_SpInprocRecognizer);
@@ -48,6 +52,18 @@ Recognizer::Recognizer(){
 	   hr = cpRecognizer->SetInput(cpAudio, TRUE);
 	}
 
+	//if (SUCCEEDED(hr))
+	//{
+	//	// Get the default audio input token.
+	//	hr = SpGetDefaultTokenFromCategoryId(SPCAT_AUDIOIN, &cpObjectToken);
+	//}
+
+	//if (SUCCEEDED(hr))
+	//{
+	//   // Set the audio input to our token.
+	//   hr = cpRecognizer->SetInput(cpObjectToken, TRUE);
+	//}
+
 	if( SUCCEEDED(hr) ){
 		// create a new Recognition context.
 		hr = cpRecognizer->CreateRecoContext( &cpRecoCtxt);
@@ -64,7 +80,10 @@ Recognizer::Recognizer(){
 
 	if( SUCCEEDED(hr) ){
 		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION ), SPFEI(SPEI_RECOGNITION ) );
-	}
+	}	
+	
+	//cpAudio.Release();
+	cpObjectToken.Release();
 
 }
 
@@ -73,10 +92,6 @@ Recognizer::~Recognizer(){
 	cpGrammar.Release();
 	cpRecoCtxt.Release();
 	cpRecognizer.Release();
-	cpObjectToken.Release();
-	cpAudio.Release();
-
-	::CoUninitialize();
 }
 
 void Recognizer::startdictation(){

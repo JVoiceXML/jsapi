@@ -15,13 +15,17 @@ void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr)
         0,
         NULL) > 0)
     {
-        sprintf_s(buffer, size, "%s: %s (%llu)", text, buffer, hr);
-    }
+		
+		sprintf_s(buffer, size, "%s: %s (%#lX)", text, buffer, hr);
+   
+	}
     else
     {
-        sprintf_s(buffer, size, "%s: %llu", text, buffer, hr);
+		sprintf_s(buffer, size, "%s: %#lX", text, hr);
     }
+	
 }
+
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -117,6 +121,20 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 {
 	Synthesizer* synth = (Synthesizer*) handle;	
 	synth->Pause();
+
+	if (FAILED(synth->hr))
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Pause recognizer failed",
+            synth->hr);
+        jclass exception = env->FindClass("javax/speech/EngineException");
+        if (exception == 0) /* Unable to find the new exception class, give up. */
+        {
+            std::cerr << buffer << std::endl;
+        }
+        env->ThrowNew(exception, buffer);
+    }
+
 }
 
 /*

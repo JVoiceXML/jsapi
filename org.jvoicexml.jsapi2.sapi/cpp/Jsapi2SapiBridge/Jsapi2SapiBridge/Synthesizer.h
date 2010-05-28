@@ -1,5 +1,4 @@
-#pragma once
-#include <iostream>
+#include <stdafx.h>
 
 class Synthesizer
 {
@@ -20,7 +19,7 @@ public:
 		}
 
 		boolean Pause(){
-			if(  SUCCEEDED( cpVoice->Pause() )  ){
+			if(  SUCCEEDED( hr = cpVoice->Pause() )  ){
 				return true;
 			}
 			else {

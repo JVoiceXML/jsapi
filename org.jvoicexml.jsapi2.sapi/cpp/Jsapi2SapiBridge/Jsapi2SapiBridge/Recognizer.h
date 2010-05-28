@@ -25,9 +25,6 @@ class Recognizer
 		int							grammarCount;	
 
 		CComPtr<ISpRecognizer>		cpRecognizer;
-		CComPtr<ISpObjectToken>     cpObjectToken;
-		CComPtr<ISpAudio>           cpAudio;
-
 		CComPtr<ISpRecoContext>		cpRecoCtxt;
 		CComPtr<ISpRecoGrammar>		cpGrammar;
 };		
