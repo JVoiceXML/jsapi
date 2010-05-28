@@ -48,8 +48,9 @@ public class TestRecognizer {
      */
     @Before
     public void setUp() throws Exception {
+        RecognizerMode mode = new SapiRecognizerMode(SpeechLocale.GERMAN);
         recognizer = (Recognizer) EngineManager
-            .createEngine(new RecognizerMode( SpeechLocale.GERMAN ));      
+            .createEngine(mode);      
         recognizer.allocate();
         recognizer.waitEngineState(Engine.ALLOCATED);
     }
