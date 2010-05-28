@@ -27,7 +27,7 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognize
 	  
 	/* check if Handle valid */
 	if (FAILED(recognizer->hr))
-    {
+    {      
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "Allocation of recognizer failed",
             recognizer->hr);
@@ -35,10 +35,12 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognize
         if (exception == 0) /* Unable to find the new exception class, give up. */
         {
             std::cerr << buffer << std::endl;
+			fflush(stdout);
             return 0;
         }
         env->ThrowNew(exception, buffer);
     }
+
     return (jlong) recognizer;	
 }
 
