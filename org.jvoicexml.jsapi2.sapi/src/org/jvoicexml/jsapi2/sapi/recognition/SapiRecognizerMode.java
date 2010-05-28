@@ -27,7 +27,7 @@ implements EngineFactory {
     @Override
     public Engine createEngine() throws IllegalArgumentException,
             EngineException {       
-        return null;
+        return new SapiRecognizer();
     }
 
 }

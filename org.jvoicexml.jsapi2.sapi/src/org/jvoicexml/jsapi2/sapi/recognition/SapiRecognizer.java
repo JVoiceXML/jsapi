@@ -27,6 +27,10 @@ public class SapiRecognizer extends JseBaseRecognizer  {
 	 * Constructs a new recognizer object.
 	 * @param RecognizerMode the recognizer mode
 	 */
+	 public SapiRecognizer(){
+	     mode=null;
+	 }
+	
 	public SapiRecognizer(final SapiRecognizerMode recognizerMode){
 	    mode = recognizerMode;
 	}
