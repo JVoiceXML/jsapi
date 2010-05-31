@@ -23,6 +23,12 @@ import org.jvoicexml.jsapi2.sapi.SapiEngineListFactory;
  * @author Dirk Schnelle-Walka
  * @author Josua Arndt
  *
+ *!!!!!!!!!!!!!!!!!!!!!!!Beware!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * each Test allocate the Synthesizer so beware that
+ * a test is run completely bevor the next Test starts.
+ * 
+ * Disregard this will cause native code to crash
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  */
 public final class TestSynthesizer {
     /** The test object. */
@@ -48,6 +54,8 @@ public final class TestSynthesizer {
             .createEngine(SynthesizerMode.DEFAULT);
         synthesizer.allocate();
         synthesizer.waitEngineState(Engine.ALLOCATED);
+        
+        System.out.println("Allocate synthesizerHandle");
     }
 
     /**
@@ -60,6 +68,8 @@ public final class TestSynthesizer {
        if (synthesizer != null) {
            synthesizer.deallocate();
            synthesizer.waitEngineState(Engine.DEALLOCATED);
+           
+           System.out.println("Deallocate synthesizerHandle \n");
        }
     }
 
@@ -71,30 +81,28 @@ public final class TestSynthesizer {
     @Test
     public void testSpeak() throws Exception {
         synthesizer.speak("this is a test output", null);
-
-        Thread.sleep(50);
+        System.out.println("this is a test output");
+        Thread.sleep(3000);
     }
     /**
      * Test case for {@link SapiSynthesizer#handleSpause()}.
-     * @throws Exception
-     *         test failed
-     */
-    @Test
-    public void testPause() throws Exception {
-        synthesizer.pause();
-        Thread.sleep(100);
-    }
-    
-    /**
      * Test case for {@link SapiSynthesizer#handleResume()}.
      * @throws Exception
      *         test failed
      */
     @Test
-    public void testResume() throws Exception {
+    public void testPause() throws Exception {
+        synthesizer.speak("this is a test output with a pause and resume test", null);     
+        System.out.println("this is a test output with a pause and resume test");
+        Thread.sleep(1800);
+        synthesizer.pause();
+        System.out.println("Pause");
+        Thread.sleep(3000);
         synthesizer.resume();
-        Thread.sleep(500);
+        System.out.println("Resume");
+        Thread.sleep(1500);       
     }
+
 
     /**
      * Test case for {@link SapiSynthesizer#handleSpeak(int, javax.speech.synthesis.Speakable)}.
@@ -105,6 +113,7 @@ public final class TestSynthesizer {
     public void testSpeakSsml() throws Exception {
         synthesizer.speakMarkup(
                 "This sounds normal <pitch middle = '+10'/> but the pitch drops half way through", null);
+        System.out.println("This sounds normal <pitch middle = '+10'/> but the pitch drops half way through");
         Thread.sleep(4000);
     }
 
@@ -122,61 +131,61 @@ public final class TestSynthesizer {
 //
 //        System.out.println( "SynthesizerMode: " +  synth.getEngineMode().toString());
         
-    	SapiSynthesizer sps = null;//new SapiSynthesizer("Microsoft Anna");
-    	SapiSynthesizer sps2 = null;//new SapiSynthesizer("LH Stefan");  
-
-    	System.out.println( "new Synthesizer:\tokay");
-        try {
-        	sps.handleAllocate();        	
-        	sps2.handleAllocate();
-        	System.out.println( "Allocate:\t\tokay");
-        	Thread.sleep(200);
-		} catch (EngineStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (EngineException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (AudioException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-	 
-		sps.handleSpeak( 5, "Hello i love Java and i was paused and resumed now i will be cancelled please wait a moment the rest of this sentence well be Purged");//
-		sps2.handleSpeak( 3, "was geht ab wir reden zu zweit ");
-		System.out.println( "Speak:\t\t\tokay");//<RATE SPEED= \"-5\">
-		Thread.sleep(435);
-
-		sps.handlePause();
-		System.out.println( "Pause:\t\t\tokay");
-		Thread.sleep(2000);
-		
-		if(sps.handleResume()){
-			System.out.println( "Resume:\t\t\tokay");
-			Thread.sleep(3200);			
-		}else{
-			System.out.println( "Resume:\t\t\tnot okay");
-			System.exit(0);
-		}		
-		if(sps.handleCancel()){
-			System.out.println( "Cancel:\t\t\tokay");			
-		}else{
-			System.out.println( "Cancel:\t\t\tnot okay");
-			System.exit(0);
-		}
-		Thread.sleep(2000);
-		sps.handleSpeak( 5, "So now I spaek again");//
-		System.out.println( "Speak:\t\t\tokay");//<RATE SPEED= \"-5\">
-		Thread.sleep(2000);
-			
-		sps.handleDeallocate();
-		sps2.handleDeallocate();
-		System.out.println( "Deallocate:\t\tokay");	
-		
-		//System.exit(0);
+//    	SapiSynthesizer sps = null;//new SapiSynthesizer("Microsoft Anna");
+//    	SapiSynthesizer sps2 = null;//new SapiSynthesizer("LH Stefan");  
+//
+//    	System.out.println( "new Synthesizer:\tokay");
+//        try {
+//        	sps.handleAllocate();        	
+//        	sps2.handleAllocate();
+//        	System.out.println( "Allocate:\t\tokay");
+//        	Thread.sleep(200);
+//		} catch (EngineStateException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (SecurityException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (EngineException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (AudioException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}	
+//	 
+//		sps.handleSpeak( 5, "Hello i love Java and i was paused and resumed now i will be cancelled please wait a moment the rest of this sentence well be Purged");//
+//		sps2.handleSpeak( 3, "was geht ab wir reden zu zweit ");
+//		System.out.println( "Speak:\t\t\tokay");//<RATE SPEED= \"-5\">
+//		Thread.sleep(435);
+//
+//		sps.handlePause();
+//		System.out.println( "Pause:\t\t\tokay");
+//		Thread.sleep(2000);
+//		
+//		if(sps.handleResume()){
+//			System.out.println( "Resume:\t\t\tokay");
+//			Thread.sleep(3200);			
+//		}else{
+//			System.out.println( "Resume:\t\t\tnot okay");
+//			System.exit(0);
+//		}		
+//		if(sps.handleCancel()){
+//			System.out.println( "Cancel:\t\t\tokay");			
+//		}else{
+//			System.out.println( "Cancel:\t\t\tnot okay");
+//			System.exit(0);
+//		}
+//		Thread.sleep(2000);
+//		sps.handleSpeak( 5, "So now I spaek again");//
+//		System.out.println( "Speak:\t\t\tokay");//<RATE SPEED= \"-5\">
+//		Thread.sleep(2000);
+//			
+//		sps.handleDeallocate();
+//		sps2.handleDeallocate();
+//		System.out.println( "Deallocate:\t\tokay");	
+//		
+//		//System.exit(0);
 		
     }
 }

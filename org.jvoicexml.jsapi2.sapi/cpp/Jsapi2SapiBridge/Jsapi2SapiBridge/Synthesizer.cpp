@@ -52,10 +52,10 @@ Synthesizer::~Synthesizer()
 
 HRESULT Synthesizer::Speak( LPCWSTR text )
 {
-    return cpVoice->Speak( text, SPF_IS_NOT_XML, NULL);
+    return cpVoice->Speak( text,  SPF_IS_NOT_XML, NULL);//SPF_ASYNC | without async programm crash, with it pause is not possible SPF_ASYNC |
 }
 
 HRESULT Synthesizer::SpeakSSML( LPCWSTR ssml )
 {
-    return cpVoice->Speak(ssml, SPF_IS_XML, NULL);
+    return cpVoice->Speak(ssml,  SPF_IS_XML, NULL);
 }

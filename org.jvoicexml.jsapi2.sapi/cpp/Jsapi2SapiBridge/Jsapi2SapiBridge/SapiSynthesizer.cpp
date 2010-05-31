@@ -70,6 +70,9 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
         }
         env->ThrowNew(exception, buffer);
     }
+
+	//std::cout << "Allocate :: synthesizerHandle to Java:" << synth << std::endl;
+	//fflush(stdout);
     return (jlong) synth;
 }
 
@@ -116,7 +119,11 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
   (JNIEnv * env, jobject obj, jlong handle)
 {
 	Synthesizer* synthesizer = (Synthesizer*) handle;
-    delete synthesizer;
+    
+	//std::cout << "Deallocate :: synthesizerHandle from Java:" << synthesizer << std::endl;
+	//fflush(stdout);
+
+	delete synthesizer;
 }
 
 /*
@@ -128,6 +135,10 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
   (JNIEnv *env, jobject obj, jlong handle)
 {
 	Synthesizer* synth = (Synthesizer*) handle;	
+	
+	//std::cout << "Pause :: synthesizerHandle from Java:" << synth << std::endl;
+	//fflush(stdout);
+
 	synth->Pause();
 
 	if (FAILED(synth->hr))
@@ -152,8 +163,12 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandlResume
   (JNIEnv *env, jobject obj, jlong handle)
-{
+{	
 	Synthesizer* synth = (Synthesizer*) handle;	
+
+	//std::cout << "Resume:: synthesizerHandle from Java:" << synth << std::endl;
+	//fflush(stdout);
+
 	return synth->Resume();
 }
 
@@ -167,10 +182,23 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 {
 	Synthesizer* synth = (Synthesizer*) handle;
 
+	//std::cout << "Speak :: synthesizerHandle from Java:" << synth << std::endl;
+	//fflush(stdout);
+
 	/* get string and cast as const wchar_t* */
     const wchar_t* utterance = (const wchar_t*)env->GetStringChars(item, NULL);
+		
 	HRESULT hr = synth->Speak(utterance);
-    if (FAILED(hr))
+
+	//std::cout << "speak okay" << utterance << std::endl;
+	//fflush(stdout);
+
+	//env->ReleaseStringChars(item, (const jchar*)utterance);
+	//
+	//std::cout << "release okay" << utterance << std::endl;
+	//fflush(stdout);
+   
+	if (FAILED(hr))
     {
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "Speak failed", hr);
