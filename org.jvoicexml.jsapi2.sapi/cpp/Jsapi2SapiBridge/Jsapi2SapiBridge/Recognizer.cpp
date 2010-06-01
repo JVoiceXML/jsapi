@@ -82,8 +82,8 @@ Recognizer::Recognizer()
 		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION ), SPFEI(SPEI_RECOGNITION ) );
 	}	
 	
-	//cpAudio.Release();
-	cpObjectToken.Release();
+	cpAudio.Release();
+	//cpObjectToken.Release();
 
 }
 
