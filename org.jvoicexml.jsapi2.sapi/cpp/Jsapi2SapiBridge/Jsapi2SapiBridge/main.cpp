@@ -5,6 +5,8 @@ static HWND hWnd = NULL;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	
+
 	switch (message)
 	{
 	case WM_NCCREATE:
@@ -18,22 +20,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 
-	return DefWindowProc(hWnd, message, lParam, wParam);
+	return DefWindowProcA(hWnd, message, lParam, wParam);
 }
 
 BOOL APIENTRY DllMain(HINSTANCE  hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
-{
+{	
+	HRESULT hr = S_FALSE;
+
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        ::CoInitialize(NULL);
+       hr = ::CoInitialize(NULL);
+	   
+	   std::cout<< "CoInitialize \tThreadID: 0x" <<std::hex<< GetCurrentThreadId();
+	   std::cout<< "\tProcess ID: 0x" <<std::hex<< CoGetCurrentProcess() <<"\n";fflush(stdout);
+			//switch (hr)
+			//{
+			//case S_OK: std::cout<< "CoInitialize: S_OK :" << hr <<"\n";fflush(stdout);break;
+			//	case S_FALSE: std::cout<< "CoInitialize: S_FALSE :" << hr <<"\n";fflush(stdout);break;
+			//	case RPC_E_CHANGED_MODE: std::cout<< "CoInitialize: RPC_E_CHANGED_MODE :" << hr <<"\n";fflush(stdout);break;
+			//	default: std::cout<< "CoInitialize: " << hr <<"\n";fflush(stdout);break;
+			//}
         break;
+
     case DLL_THREAD_ATTACH:
-        ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
+       hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	   
+	   std::cout<< "CoInitializeEx \tThreadID: 0x" <<std::hex<< GetCurrentThreadId();
+	   std::cout<< "\tProcess ID: 0x" <<std::hex<< CoGetCurrentProcess() <<"\n";fflush(stdout);
+			//switch (hr)
+			//{
+			//	case S_OK: std::cout<< "CoInitializeEx: S_OK :" << hr <<"\n";fflush(stdout);break;
+			//	case S_FALSE: std::cout<< "CoInitializeEx: S_FALSE :" << hr <<"\n";fflush(stdout);break;
+			//	case RPC_E_CHANGED_MODE: std::cout<< "CoInitializeEx: RPC_E_CHANGED_MODE :" << hr <<"\n";fflush(stdout);break;
+			//	default: std::cout<< "CoInitializeEx: " << hr <<"\n";fflush(stdout);break;
+			//}
         break;
     case DLL_PROCESS_DETACH:
     case DLL_THREAD_DETACH:
         ::CoUninitialize();
+		std::cout<< "CoUninitialize \tThreadID: 0x" <<std::hex<< GetCurrentThreadId();
+		std::cout<< "\tProcess ID: 0x" <<std::hex<< CoGetCurrentProcess() <<"\n";fflush(stdout);
         break;
     }
 

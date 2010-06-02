@@ -28,7 +28,7 @@ public class SapiRecognizer extends JseBaseRecognizer  {
 	 * @param RecognizerMode the recognizer mode
 	 */
 	 public SapiRecognizer(){
-	     mode=null;
+	     mode = null;
 	 }
 	
 	public SapiRecognizer(final SapiRecognizerMode recognizerMode){
