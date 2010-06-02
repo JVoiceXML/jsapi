@@ -8,6 +8,8 @@ import javax.speech.EngineStateException;
 import javax.speech.SpeechLocale;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerMode;
+import javax.speech.synthesis.Synthesizer;
+import javax.speech.synthesis.SynthesizerMode;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +32,7 @@ import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer;
 public class TestRecognizer {
     
     private Recognizer recognizer;
+    private Synthesizer synthesizer;
     
     @BeforeClass
     public static void init() throws Exception {
@@ -53,6 +56,8 @@ public class TestRecognizer {
             .createEngine(mode);      
         recognizer.allocate();
         recognizer.waitEngineState(Engine.ALLOCATED);
+        
+        System.out.println("Allocate Recognizer");
     }
     
     /**
@@ -65,32 +70,27 @@ public class TestRecognizer {
         if(recognizer != null){
            recognizer.deallocate();
            recognizer.waitEngineState(Engine.DEALLOCATED);
+           
+           System.out.println("Dellocate Recognizer \n");
         }
     }
     
     /**
      * Test case for {@link SapiRecognizer#handlePause()}.
+     * Test case for {@link SapiRecognizer#handleResume()}.
      * @throws Exception
      *         test failed
      */  
     @Test
     public void testPause() throws Exception {
             recognizer.pause();
+            System.out.println("\tPause Recognizer \n");
+            Thread.sleep(5000);
+            recognizer.resume();
+            System.out.println("\tResume Recognizer \n");
             Thread.sleep(5000);
     }
-    
-    /**
-     * Test case for {@link SapiRecognizer#handleResume()}.
-     * @throws Exception
-     *         test failed
-     */
-    @Test
-    public void testResume() throws Exception {
-        recognizer.resume();
-        Thread.sleep(5000);
-}
-    
-    
+     
     
 //    public void testRecognition() throws Exception {
 //        
@@ -105,48 +105,48 @@ public class TestRecognizer {
 	
     public static void main(String[] args) throws InterruptedException, EngineStateException, AudioException, EngineException 
     { 
-    	SapiRecognizer recognizer = null;  //new SapiRecognizer();
-    	System.out.println( "new SapiRecognizer:\tokay");
-    	
-    	Thread.sleep(20);
-    	
-    	try {
-			recognizer.allocate();
-			System.out.println( "Allocate:\t\tokay");
-		} catch (EngineStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (EngineException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (AudioException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-				 	
-		recognizer.setGrammar("Licht.xml");		
-		System.out.println( "Load grammar:\t\tokay");
-		Thread.sleep(20);
-		
-		recognizer.startRecognition();		
-		System.out.println( "Start:\t\tokay");
-		Thread.sleep(2000);
-		
-		recognizer.pause();
-		System.out.println( "Pause:\t\tokay");
-		Thread.sleep(200);
-		
-		recognizer.resume();	
-		System.out.println( "resume:\t\tokay");
-		Thread.sleep(400);
-		
-		recognizer.deallocate();
-		System.out.println( "Deallocate:\t\tokay");
-		
-		System.exit(0);
+//    	SapiRecognizer recognizer = new SapiRecognizer();
+//    	System.out.println( "new SapiRecognizer:\tokay");
+//    	    	
+//    	Thread.sleep(20);
+//    	
+//    	try {
+//			recognizer.allocate();
+//			System.out.println( "Allocate:\t\tokay");
+//		} catch (EngineStateException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (EngineException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (AudioException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (SecurityException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//				 	
+//		recognizer.setGrammar("Licht.xml");		
+//		System.out.println( "Load grammar:\t\tokay");
+//		Thread.sleep(20);
+//		
+//		recognizer.startRecognition();		
+//		System.out.println( "Start:\t\tokay");
+//		Thread.sleep(2000);
+//		
+//		recognizer.pause();
+//		System.out.println( "Pause:\t\tokay");
+//		Thread.sleep(200);
+//		
+//		recognizer.resume();	
+//		System.out.println( "resume:\t\tokay");
+//		Thread.sleep(400);
+//		
+//		recognizer.deallocate();
+//		System.out.println( "Deallocate:\t\tokay");
+//		
+//		System.exit(0);
     }
 
 }

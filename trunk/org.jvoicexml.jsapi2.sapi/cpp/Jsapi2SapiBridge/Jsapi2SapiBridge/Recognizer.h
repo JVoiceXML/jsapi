@@ -23,7 +23,6 @@ class Recognizer
 	private:
 
 		int							grammarCount;	
-
 		CComPtr<ISpRecognizer>		cpRecognizer;
 		CComPtr<ISpRecoContext>		cpRecoCtxt;
 		CComPtr<ISpRecoGrammar>		cpGrammar;
