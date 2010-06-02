@@ -18,7 +18,7 @@ void Recognizer::setGrammar( LPCWSTR grammarPath ){
 
 void Recognizer::pause(){
 
-		*hr = cpRecoCtxt->Pause( NULL);	*/						
+		hr = cpRecoCtxt->Pause( NULL);				
 }
 
 void Recognizer::resume(){
@@ -36,13 +36,14 @@ Recognizer::Recognizer()
 
 	if( SUCCEEDED(hr) ){
 		// create a new InprocRecognizer.
+			//hr = CoCreateInstance(CLSID_SpInprocRecognizer, NULL ,CLSCTX_LOCAL_SERVER,CLSID_SpInprocRecognizer, (void**)&cpRecognizer);
 		hr = cpRecognizer.CoCreateInstance(CLSID_SpInprocRecognizer);
 	}
 	
-	std::cout<< "\nallocate \tThreadID: 0x" <<std::hex<< GetCurrentThreadId();
+	std::cout<< "\nRecognizer  \tThreadID: 0x" <<std::hex<< GetCurrentThreadId();
 	std::cout<< "\tProcess ID: 0x" <<std::hex<< CoGetCurrentProcess() <<"\n";fflush(stdout);
 
-	std::cout<< "CoCreateInstance of SpInprocRecognizer \thr:" << hr <<"\n";fflush(stdout);
+	std::cout<< "CoCreateInstance of SpInprocRecognizer \t\thr:" << hr <<"\n";fflush(stdout);
 
 	if (SUCCEEDED(hr))
 	{
@@ -57,19 +58,19 @@ Recognizer::Recognizer()
 	   // Set the audio input to our object.
 	   hr = cpRecognizer->SetInput(cpAudio, TRUE);
 	}
-	std::cout<< "SetInput of cpRecognizer hr:" << hr <<"\n";fflush(stdout);
+	std::cout<< "SetInput of cpRecognizer \t\t\thr:" << hr <<"\n";fflush(stdout);
 
 
 	if( SUCCEEDED(hr) ){
 		// create a new Recognition context.
 		hr = cpRecognizer->CreateRecoContext( &cpRecoCtxt);
 	}
-	std::cout<< "CreateRecoContext hr:" << hr <<"\n";fflush(stdout);
+	std::cout<< "CreateRecoContext \t\t\t\thr:" << hr <<"\n";fflush(stdout);
 
 	if( SUCCEEDED(hr) ){
 		hr = cpRecoCtxt->SetAudioOptions(SPAO_RETAIN_AUDIO, NULL, NULL);
 	}	
-	std::cout<< "SetAudioOptions hr:" << hr <<"\n";fflush(stdout);
+	std::cout<< "SetAudioOptions \t\t\t\thr:" << hr <<"\n";fflush(stdout);
 
 	//if( SUCCEEDED(hr) ){
 	//	// Set the Notivy.
@@ -79,7 +80,7 @@ Recognizer::Recognizer()
 	if( SUCCEEDED(hr) ){
 		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION ), SPFEI(SPEI_RECOGNITION ) );
 	}	
-	std::cout<< "SetInterest hr:" << hr <<"\n";fflush(stdout);
+	std::cout<< "SetInterest \t\t\t\t\thr:" << hr <<"\n";fflush(stdout);
 	
 
 	cpAudio.Release();
