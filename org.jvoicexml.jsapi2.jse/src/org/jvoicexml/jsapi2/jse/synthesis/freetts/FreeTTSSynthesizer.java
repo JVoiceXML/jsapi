@@ -41,6 +41,7 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(FreeTTSSynthesizer.class.getName());
+
     /**
      * The currently active voice for this synthesizer.
      */
@@ -326,5 +327,10 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
     @Override
     public void propertyChangeRequest(
             final EnginePropertyChangeRequestEvent event) {
+    }
+
+    @Override
+    protected AudioFormat getAudioFormat() {
+        return new AudioFormat(8000f, 16, 1, true, true);
     }
 }

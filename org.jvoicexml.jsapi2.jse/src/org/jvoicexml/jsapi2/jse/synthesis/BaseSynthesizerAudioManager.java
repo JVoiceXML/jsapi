@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.EngineStateException;
 
@@ -34,9 +35,11 @@ public class BaseSynthesizerAudioManager extends JseBaseAudioManager {
     private OutputStream outputStream;
 
     /**
-     * Class constructor.
+     * Constructs a new object.
+     * @param format native engine audio format
      */
-    public BaseSynthesizerAudioManager() {
+    public BaseSynthesizerAudioManager(final AudioFormat format) {
+        super(format);
     }
 
     /**

@@ -46,10 +46,11 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
     private AudioFormatConverter formatConverter;
 
     /**
-     * Class constructor.
+     * Constructs a new object.
+     * @param format native engine audio format
      */
-    public JseBaseAudioManager() {
-        engineAudioFormat = new AudioFormat(8000f, 16, 1, true, true);
+    public JseBaseAudioManager(final AudioFormat format) {
+        engineAudioFormat = format;
         targetAudioFormat = engineAudioFormat;
     }
 
