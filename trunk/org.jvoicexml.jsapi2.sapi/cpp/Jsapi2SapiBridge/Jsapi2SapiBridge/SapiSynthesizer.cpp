@@ -6,7 +6,7 @@
 // alternative look-up error codes returned by sapi in the file sperror.h
 void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr) 
 {	
-	LPSTR pMassage = NULL;
+	LPSTR pMessage = NULL;
 	DWORD length = -1;
 	
 	length = FormatMessageA(
@@ -18,19 +18,17 @@ void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr)
 							GetModuleHandle(_T("SAPI.dll")),
 							hr,
 							MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-							(LPSTR)pMassage,
+							(LPSTR)pMessage,
 							0,
 							NULL);
-    if ( length > 0 )
+    if (length > 0)
     {		
-		sprintf_s( buffer, length, "%s. %s: (%#lX)", text, pMassage, hr);	
-		LocalFree(pMassage);
+		sprintf_s( buffer, length, "%s. %s: (%#lX)", text, pMessage, hr);	
+		LocalFree(pMessage);
 	}
     else
     {
-		MAKE_SAPI_ERROR(hr);
-
-		sprintf_s(buffer, size, "%s. MS Sapi5 ErrorCode: %#lX", text, hr);
+		sprintf_s(buffer, size, "%s. ErrorCode: %#lX", text, hr);
     }	
 }
 
@@ -41,7 +39,8 @@ void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr)
  * Signature: (Ljava/lang/String;)Ljavax/speech/synthesis/Speakable;
  */
 JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_getSpeakable
-(JNIEnv *, jobject, jstring){
+(JNIEnv *, jobject, jstring)
+{
 	return NULL;
 }
 
@@ -51,7 +50,7 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
  * Signature: (Ljava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleAllocate
-  (JNIEnv * env, jobject obj, jstring string)
+  (JNIEnv *env, jobject obj, jstring string)
 {
     const wchar_t* engineName = (const wchar_t*)env->GetStringChars(string, NULL);
  
@@ -71,8 +70,6 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
         env->ThrowNew(exception, buffer);
     }
 
-	//std::cout << "Allocate :: synthesizerHandle to Java:" << synth << std::endl;
-	//fflush(stdout);
     return (jlong) synth;
 }
 
@@ -177,27 +174,18 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
  * Method:    sapiHandleSpeak
  * Signature: (JILjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleSpeak
+JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleSpeak
   (JNIEnv *env, jobject obj, jlong handle, jint id, jstring item)
 {
 	Synthesizer* synth = (Synthesizer*) handle;
 
-	//std::cout << "Speak :: synthesizerHandle from Java:" << synth << std::endl;
-	//fflush(stdout);
-
 	/* get string and cast as const wchar_t* */
     const wchar_t* utterance = (const wchar_t*)env->GetStringChars(item, NULL);
 		
-	HRESULT hr = synth->Speak(utterance);
+    long size;
+    byte* buffer;
 
-	//std::cout << "speak okay" << utterance << std::endl;
-	//fflush(stdout);
-
-	//env->ReleaseStringChars(item, (const jchar*)utterance);
-	//
-	//std::cout << "release okay" << utterance << std::endl;
-	//fflush(stdout);
-   
+	HRESULT hr = synth->Speak(utterance, size, buffer);
 	if (FAILED(hr))
     {
         char buffer[1024];
@@ -206,19 +194,25 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
         if (exception == 0) /* Unable to find the new exception class, give up. */
         {
             std::cerr << buffer << std::endl;
-            return;
+            return NULL;
         }
         env->ThrowNew(exception, buffer);
     }
+    jbyteArray jb = env->NewByteArray(size);
+    env->SetByteArrayRegion(jb, 0, size, (jbyte *)buffer);
+    delete[] buffer;
+
+    return jb;
 }
+
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
  * Method:    sapiHandleSpeakSsml
- * Signature: (JILjava/lang/String;)V
+ * Signature: (JILjava/lang/String;)[B
  */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleSpeakSsml
-  (JNIEnv *env, jobject obj, jlong handle, jint id, jstring markup)
+JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleSpeakSsml
+  (JNIEnv *env, jobject onj, jlong handle, jint id, jstring markup)
 {
 	Synthesizer* synth = (Synthesizer*) handle;
 	
@@ -233,8 +227,9 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
         if (exception == 0) /* Unable to find the new exception class, give up. */
         {
             std::cerr << buffer << std::endl;
-            return;
+            return NULL;
         }
         env->ThrowNew(exception, buffer);
     }
+    return NULL;
 }

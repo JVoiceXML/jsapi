@@ -84,6 +84,7 @@ public final class TestSynthesizer {
         System.out.println("this is a test output");
         Thread.sleep(3000);
     }
+
     /**
      * Test case for {@link SapiSynthesizer#handleSpause()}.
      * Test case for {@link SapiSynthesizer#handleResume()}.

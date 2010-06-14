@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdafx.h>
 
 class Synthesizer
@@ -6,7 +8,7 @@ public:
 	Synthesizer(const wchar_t* engineName);
     virtual ~Synthesizer();
 
-	HRESULT Speak( LPCWSTR text );
+	HRESULT Speak(LPCWSTR text, long& size, byte*& buffer);
     HRESULT SpeakSSML(LPCWSTR ssml);
 
     boolean Cancel(){

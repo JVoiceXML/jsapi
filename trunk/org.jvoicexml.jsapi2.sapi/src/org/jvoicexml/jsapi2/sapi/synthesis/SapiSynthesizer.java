@@ -1,11 +1,17 @@
 package org.jvoicexml.jsapi2.sapi.synthesis;
 
+import java.io.ByteArrayInputStream;
+
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
+import javax.speech.AudioManager;
+import javax.speech.AudioSegment;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
+import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 /**
@@ -157,7 +163,17 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
      */
     @Override
     public void handleSpeak(final int id, final String item) {
-        sapiHandleSpeak(synthesizerHandle, id, item);
+        final byte[] bytes = sapiHandleSpeak(synthesizerHandle, id, item);
+        final AudioManager manager = getAudioManager();
+        final String locator = manager.getMediaLocator();
+        final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        final AudioSegment segment;
+        if (locator == null) {
+            segment = new BaseAudioSegment(item, in);
+        } else {
+            segment = new BaseAudioSegment(locator, item, in);
+        }
+        setAudioSegment(id, segment);
     }
 
     /**
@@ -169,8 +185,9 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
      *            id of the item
      * @param item
      *            the item to speak
+     * @return byte array of the synthesized speech
      */
-    private native void sapiHandleSpeak(final long handle, final int id,
+    private native byte[] sapiHandleSpeak(final long handle, final int id,
             final String item);
 
     /**
@@ -184,15 +201,16 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
 
     /**
      * Speaks the given item.
-     * 
+     *
      * @param handle
      *            synthesizer handle
      * @param id
      *            id of the item
      * @param ssml
      *            the SSML markup to speak
+     * @return byte array of the synthesized speech
      */
-    private native void sapiHandleSpeakSsml(final long handle, final int id,
+    private native byte[] sapiHandleSpeakSsml(final long handle, final int id,
             final String ssml);
 
     /**
@@ -201,6 +219,14 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     @Override
     protected EnginePropertyChangeRequestListener getChangeRequestListener() {
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected AudioFormat getAudioFormat() {
+        return new AudioFormat(8000f, 16, 1, true, true);
     }
     
 }
