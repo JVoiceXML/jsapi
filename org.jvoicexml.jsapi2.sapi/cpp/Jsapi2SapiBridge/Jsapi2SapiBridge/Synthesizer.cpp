@@ -50,9 +50,41 @@ Synthesizer::~Synthesizer()
     }
 }
 
-HRESULT Synthesizer::Speak( LPCWSTR text )
+
+HRESULT Synthesizer::Speak(LPCWSTR text, long& size, byte*& buffer)
 {
-    return cpVoice->Speak( text,  SPF_IS_NOT_XML, NULL);//SPF_ASYNC | without async programm crash, with it pause is not possible SPF_ASYNC |
+
+    CComPtr<ISpeechMemoryStream> stream;
+    hr = stream.CoCreateInstance(CLSID_SpMemoryStream);
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+
+    hr = cpVoice->SetOutput(stream, TRUE);
+    std::cout << "output " << hr << " " << GetLastError() << std::endl;
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    hr = cpVoice->Speak(text, SPF_IS_NOT_XML, NULL);
+    std::cout << "speak " << hr << std::endl;
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    VARIANT c;
+    VariantInit(&c); 
+    hr = stream->GetData(&c);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    SAFEARRAY* sa = c.parray;
+    SafeArrayGetUBound(sa, 1, &size);
+    buffer = new byte[size];
+    memcpy(buffer, sa->pvData, size * sizeof(byte));
+    return S_OK;
 }
 
 HRESULT Synthesizer::SpeakSSML( LPCWSTR ssml )

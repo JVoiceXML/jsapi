@@ -9,15 +9,10 @@
 #define WIN32_LEAN_AND_MEAN             // Selten verwendete Teile der Windows-Header nicht einbinden.
 
 // Windows-Headerdateien:
-//#include <sapi53.h>
-//#include <comip.h>
 #include <sapi53.h>
 #include <sphelper.h>
 #include "resource.h"
 
-//#include <atlwin.h>
-//extern CComModule _Module;
-//#include <atlcom.h>
 
 // TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.
 
