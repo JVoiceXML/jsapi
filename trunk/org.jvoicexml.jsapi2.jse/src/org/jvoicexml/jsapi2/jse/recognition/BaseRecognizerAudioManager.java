@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -39,9 +40,11 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
     private InputStream inputStream;
 
     /**
-     * Class constructor.
+     * Constructs a new object.
+     * @param format native engine audio format
      */
-    public BaseRecognizerAudioManager() {
+    public BaseRecognizerAudioManager(final AudioFormat format) {
+        super(format);
     }
 
     /**

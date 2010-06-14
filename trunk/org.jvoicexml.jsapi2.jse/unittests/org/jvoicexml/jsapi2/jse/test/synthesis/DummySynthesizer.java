@@ -1,6 +1,6 @@
 package org.jvoicexml.jsapi2.jse.test.synthesis;
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
-import javax.speech.AudioManager;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
@@ -70,6 +70,12 @@ public class DummySynthesizer extends JseBaseSynthesizer {
 
     @Override
     protected EnginePropertyChangeRequestListener getChangeRequestListener() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected AudioFormat getAudioFormat() {
         // TODO Auto-generated method stub
         return null;
     }

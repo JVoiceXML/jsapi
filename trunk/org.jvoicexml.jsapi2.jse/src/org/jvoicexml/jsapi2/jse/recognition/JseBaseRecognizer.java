@@ -50,6 +50,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
 import javax.speech.EngineEvent;
@@ -123,7 +124,8 @@ public abstract class JseBaseRecognizer extends BaseRecognizer {
      */
     @Override
     protected AudioManager createAudioManager() {
-        return new BaseRecognizerAudioManager();
+        final AudioFormat format = new AudioFormat(8000f, 16, 1, true, true);
+        return new BaseRecognizerAudioManager(format);
     }
 
     /**

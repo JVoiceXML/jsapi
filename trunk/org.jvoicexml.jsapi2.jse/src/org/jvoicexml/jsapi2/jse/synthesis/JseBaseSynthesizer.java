@@ -2,6 +2,7 @@ package org.jvoicexml.jsapi2.jse.synthesis;
 
 import java.util.logging.Logger;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioManager;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
@@ -64,12 +65,19 @@ public abstract class JseBaseSynthesizer extends BaseSynthesizer
     }
 
     /**
+     * Retrieves teh audio format that is produced by this synthesizer.
+     * @return audio format.
+     */
+    protected abstract AudioFormat getAudioFormat();
+
+    /**
      * {@inheritDoc}
      */
     @Override
     protected AudioManager createAudioManager() {
+        final AudioFormat format = getAudioFormat();
         final BaseSynthesizerAudioManager manager =
-            new BaseSynthesizerAudioManager();
+            new BaseSynthesizerAudioManager(format);
         manager.setEngine(this);
         return manager;
     }
