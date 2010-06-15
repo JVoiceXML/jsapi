@@ -3,35 +3,6 @@
 #include "Synthesizer.h"
 #include <sperror.h>
 
-// alternative look-up error codes returned by sapi in the file sperror.h
-void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr) 
-{	
-	LPSTR pMessage = NULL;
-	DWORD length = -1;
-	
-	length = FormatMessageA(
-							FORMAT_MESSAGE_ALLOCATE_BUFFER  |
-							FORMAT_MESSAGE_FROM_HMODULE |
-							FORMAT_MESSAGE_FROM_SYSTEM	|
-							FORMAT_MESSAGE_IGNORE_INSERTS |
-							FORMAT_MESSAGE_MAX_WIDTH_MASK,
-							GetModuleHandle(_T("SAPI.dll")),
-							hr,
-							MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-							(LPSTR)pMessage,
-							0,
-							NULL);
-    if (length > 0)
-    {		
-		sprintf_s( buffer, length, "%s. %s: (%#lX)", text, pMessage, hr);	
-		LocalFree(pMessage);
-	}
-    else
-    {
-		sprintf_s(buffer, size, "%s. ErrorCode: %#lX", text, hr);
-    }	
-}
-
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -183,20 +154,24 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
     const wchar_t* utterance = (const wchar_t*)env->GetStringChars(item, NULL);
 		
     long size;
-    byte* buffer;
+    byte* buffer = NULL;
 
 	HRESULT hr = synth->Speak(utterance, size, buffer);
 	if (FAILED(hr))
     {
-        char buffer[1024];
-        GetErrorMessage(buffer, sizeof(buffer), "Speak failed", hr);
+        if (buffer != NULL)
+        {
+            delete[] buffer;
+        }
+        char msg[1024];
+        GetErrorMessage(msg, sizeof(msg), "Speak failed", hr);
         jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
         if (exception == 0) /* Unable to find the new exception class, give up. */
         {
-            std::cerr << buffer << std::endl;
+            std::cerr << msg << std::endl;
             return NULL;
         }
-        env->ThrowNew(exception, buffer);
+        env->ThrowNew(exception, msg);
     }
     jbyteArray jb = env->NewByteArray(size);
     env->SetByteArrayRegion(jb, 0, size, (jbyte *)buffer);
@@ -218,11 +193,47 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
 	
 	/* get string and cast as const wchar_t* */
     const wchar_t* utterance = (const wchar_t*)env->GetStringChars(markup, NULL);
-	HRESULT hr = synth->SpeakSSML(utterance);
+    long size;
+    byte* buffer = NULL;
+	HRESULT hr = synth->SpeakSSML(utterance, size, buffer);
+    if (FAILED(hr))
+    {
+        if (buffer != NULL)
+        {
+            delete[] buffer;
+        }
+        char msg[1024];
+        GetErrorMessage(msg, sizeof(msg), "Speak SSML failed", hr);
+        jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
+        if (exception == 0) /* Unable to find the new exception class, give up. */
+        {
+            std::cerr << msg << std::endl;
+            return NULL;
+        }
+        env->ThrowNew(exception, msg);
+    }
+    jbyteArray jb = env->NewByteArray(size);
+    env->SetByteArrayRegion(jb, 0, size, (jbyte *)buffer);
+    delete[] buffer;
+
+    return jb;
+}
+
+/*
+ * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
+ * Method:    sapiGetAudioFormat
+ * Signature: (J)Ljavax/sound/sampled/AudioFormat;
+ */
+JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiGetAudioFormat
+  (JNIEnv *env, jobject object, jlong handle)
+{
+	Synthesizer* synth = (Synthesizer*) handle;
+    WAVEFORMATEX format;
+    HRESULT hr = synth->GetAudioFormat(format);
     if (FAILED(hr))
     {
         char buffer[1024];
-        GetErrorMessage(buffer, sizeof(buffer), "Speak SSML failed", hr);
+        GetErrorMessage(buffer, sizeof(buffer), "GetAudioFormat failed", hr);
         jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
         if (exception == 0) /* Unable to find the new exception class, give up. */
         {
@@ -231,5 +242,9 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
         }
         env->ThrowNew(exception, buffer);
     }
-    return NULL;
+    jclass jclazz = env->FindClass("javax/sound/sampled/AudioFormat");
+    jmethodID method = env->GetMethodID(jclazz, "AudioFormat", "FIBB");
+    return env->NewObject(jclazz, method, format.nSamplesPerSec,
+        format.wBitsPerSample, format.nChannels, JNI_TRUE, JNI_TRUE);
 }
+
