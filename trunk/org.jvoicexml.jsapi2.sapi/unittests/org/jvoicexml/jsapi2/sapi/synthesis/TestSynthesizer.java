@@ -1,5 +1,9 @@
 package org.jvoicexml.jsapi2.sapi.synthesis;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
+
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.Engine;
 import javax.speech.EngineException;
@@ -82,7 +86,7 @@ public final class TestSynthesizer {
     public void testSpeak() throws Exception {
         synthesizer.speak("this is a test output", null);
         System.out.println("this is a test output");
-        Thread.sleep(3000);
+        synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
     }
 
     /**

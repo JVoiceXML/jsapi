@@ -9,7 +9,8 @@ public:
     virtual ~Synthesizer();
 
 	HRESULT Speak(LPCWSTR text, long& size, byte*& buffer);
-    HRESULT SpeakSSML(LPCWSTR ssml);
+    HRESULT SpeakSSML(LPCWSTR ssml, long& size, byte*& buffer);
+    HRESULT GetAudioFormat(WAVEFORMATEX& format);
 
     boolean Cancel(){
 			if(  SUCCEEDED( cpVoice->Speak(NULL, SPF_PURGEBEFORESPEAK, NULL) )  ){

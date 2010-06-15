@@ -3,6 +3,33 @@
 
 static HWND hWnd = NULL;
 
+// alternative look-up error codes returned by sapi in the file sperror.h
+void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr) 
+{	
+	LPSTR pMessage = NULL;
+	DWORD length = FormatMessageA(
+							FORMAT_MESSAGE_ALLOCATE_BUFFER  |
+							FORMAT_MESSAGE_FROM_HMODULE |
+							FORMAT_MESSAGE_FROM_SYSTEM	|
+							FORMAT_MESSAGE_IGNORE_INSERTS |
+							FORMAT_MESSAGE_MAX_WIDTH_MASK,
+							GetModuleHandle(_T("SAPI.dll")),
+							hr,
+							MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+							(LPSTR)pMessage,
+							0,
+							NULL);
+    if (length > 0)
+    {		
+		sprintf_s( buffer, length, "%s. %s: (%#lX)", text, pMessage, hr);	
+		LocalFree(pMessage);
+	}
+    else
+    {
+		sprintf_s(buffer, size, "%s. ErrorCode: %#lX", text, hr);
+    }	
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	

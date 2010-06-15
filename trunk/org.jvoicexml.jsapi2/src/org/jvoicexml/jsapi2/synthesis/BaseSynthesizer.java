@@ -333,14 +333,15 @@ public abstract class BaseSynthesizer extends BaseEngine
     protected final void baseAllocate() throws EngineStateException,
             EngineException, AudioException, SecurityException {
 
-        // Starts AudioManager
-        final AudioManager audioManager = getAudioManager();
-        audioManager.audioStart();
-
         // Procceed to real engine allocation
         handleAllocate();
         long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED | RESUMED
                 | DEFOCUSED);
+
+        // Starts AudioManager
+        final AudioManager audioManager = getAudioManager();
+        audioManager.audioStart();
+
         postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
     }
 
@@ -403,12 +404,31 @@ public abstract class BaseSynthesizer extends BaseEngine
 
     /**
      * Speak the item with the given id.
+     * <p>
+     * Implementations synthesize the text to speak and make it available
+     * via an {@link java.io.InputStream}. This input stream is used to
+     * create a {@link javax.speech.AudioSegment} which is passed to the
+     * {@link QueueManager} to be played back using the settings from the
+     * {@link javax.speech.AudioManager}.
+     * </p>
      * @param id id of the text to speak
      * @param item the text to speak
      */
-    protected abstract void handleSpeak(int id, String item);
+    protected abstract void handleSpeak(final int id, final String item);
 
-    protected abstract void handleSpeak(int id, Speakable item);
+    /**
+     * Speak the SSML item with the given id.
+     * <p>
+     * Implementations synthesize the text to speak and make it available
+     * via an {@link java.io.InputStream}. This input stream is used to
+     * create a {@link javax.speech.AudioSegment} which is passed to the
+     * {@link QueueManager} to be played back using the settings from the
+     * {@link javax.speech.AudioManager}.
+     * </p>
+     * @param id id of the SSML markup text to speak
+     * @param item the SSML markup text to speak
+     */
+    protected abstract void handleSpeak(final int id, final Speakable item);
 
     /**
      * Returns a <code>String</code> of the names of all the
@@ -420,8 +440,9 @@ public abstract class BaseSynthesizer extends BaseEngine
      * @return a <code>String</code> containing the names of all the states
      *         set in <code>state</code>
      */
-    public String stateToString(long state) {
-        StringBuffer buf = new StringBuffer(super.stateToString(state));
+    public String stateToString(final long state) {
+        final String stateString = super.stateToString(state);
+        final StringBuffer buf = new StringBuffer(stateString);
         if ((state & Synthesizer.QUEUE_EMPTY) != 0) {
             buf.append(" QUEUE_EMPTY ");
         }

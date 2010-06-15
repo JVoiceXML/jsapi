@@ -36,7 +36,7 @@ public class BaseSpeakable implements Speakable {
     /**
      * {@inheritDoc}
      */
-    public String getMarkupText() {
+    public final String getMarkupText() {
         return markup;
     }
 }

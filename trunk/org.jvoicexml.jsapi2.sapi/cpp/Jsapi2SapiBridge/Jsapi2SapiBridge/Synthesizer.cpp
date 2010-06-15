@@ -53,7 +53,6 @@ Synthesizer::~Synthesizer()
 
 HRESULT Synthesizer::Speak(LPCWSTR text, long& size, byte*& buffer)
 {
-
     CComPtr<ISpeechMemoryStream> stream;
     hr = stream.CoCreateInstance(CLSID_SpMemoryStream);
     if(FAILED(hr))
@@ -62,13 +61,11 @@ HRESULT Synthesizer::Speak(LPCWSTR text, long& size, byte*& buffer)
 	}
 
     hr = cpVoice->SetOutput(stream, TRUE);
-    std::cout << "output " << hr << " " << GetLastError() << std::endl;
     if (FAILED(hr))
     {
         return hr;
     }
     hr = cpVoice->Speak(text, SPF_IS_NOT_XML, NULL);
-    std::cout << "speak " << hr << std::endl;
     if (FAILED(hr))
     {
         return hr;
@@ -87,7 +84,74 @@ HRESULT Synthesizer::Speak(LPCWSTR text, long& size, byte*& buffer)
     return S_OK;
 }
 
-HRESULT Synthesizer::SpeakSSML( LPCWSTR ssml )
+HRESULT Synthesizer::SpeakSSML(LPCWSTR ssml, long& size, byte*& buffer)
 {
-    return cpVoice->Speak(ssml,  SPF_IS_XML, NULL);
+    CComPtr<ISpeechMemoryStream> stream;
+    hr = stream.CoCreateInstance(CLSID_SpMemoryStream);
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+
+    hr = cpVoice->SetOutput(stream, TRUE);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    hr = cpVoice->Speak(ssml, SPF_IS_XML, NULL);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    VARIANT c;
+    VariantInit(&c); 
+    hr = stream->GetData(&c);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    SAFEARRAY* sa = c.parray;
+    SafeArrayGetUBound(sa, 1, &size);
+    buffer = new byte[size];
+    memcpy(buffer, sa->pvData, size * sizeof(byte));
+    return S_OK;
 }
+
+HRESULT Synthesizer::GetAudioFormat(WAVEFORMATEX& f)
+{
+    CComPtr<ISpeechMemoryStream> stream;
+    hr = stream.CoCreateInstance(CLSID_SpMemoryStream);
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+
+    CComPtr<ISpeechAudioFormat> format;
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+    hr = stream->get_Format(&format);
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+    CComPtr<ISpeechWaveFormatEx> waveFormat;
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+    hr = format->GetWaveFormatEx(&waveFormat);
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+    
+    waveFormat->get_AvgBytesPerSec((long*)&f.nAvgBytesPerSec);
+    waveFormat->get_BitsPerSample((short*)&f.wBitsPerSample);
+    waveFormat->get_Channels((short*)&f.nChannels);
+    waveFormat->get_FormatTag((short*)&f.wFormatTag);
+    waveFormat->get_SamplesPerSec((long*)&f.nSamplesPerSec);
+    return S_OK;
+}
+
