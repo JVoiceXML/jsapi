@@ -226,8 +226,7 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
      */
     @Override
     protected AudioFormat getAudioFormat() {
-        return new AudioFormat(22050, 16, 1, true, false);
-//        return sapiGetAudioFormat(synthesizerHandle);
+        return sapiGetAudioFormat(synthesizerHandle);
     }
 
     /**
