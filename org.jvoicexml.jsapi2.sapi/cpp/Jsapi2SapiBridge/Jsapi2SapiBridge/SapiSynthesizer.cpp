@@ -39,6 +39,7 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
             return 0;
         }
         env->ThrowNew(exception, buffer);
+        return NULL;
     }
 
     return (jlong) synth;
@@ -172,6 +173,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
             return NULL;
         }
         env->ThrowNew(exception, msg);
+        return NULL;
     }
     jbyteArray jb = env->NewByteArray(size);
     env->SetByteArrayRegion(jb, 0, size, (jbyte *)buffer);
@@ -211,6 +213,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
             return NULL;
         }
         env->ThrowNew(exception, msg);
+        return NULL;
     }
     jbyteArray jb = env->NewByteArray(size);
     env->SetByteArrayRegion(jb, 0, size, (jbyte *)buffer);
@@ -228,23 +231,48 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
   (JNIEnv *env, jobject object, jlong handle)
 {
 	Synthesizer* synth = (Synthesizer*) handle;
-    WAVEFORMATEX format;
-    HRESULT hr = synth->GetAudioFormat(format);
-    if (FAILED(hr))
+    //WAVEFORMATEX format;
+    //HRESULT hr = synth->GetAudioFormat(format);
+    //if (FAILED(hr))
+    //{
+    //    char buffer[1024];
+    //    GetErrorMessage(buffer, sizeof(buffer), "GetAudioFormat failed", hr);
+    //    jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
+    //    if (exception == 0) /* Unable to find the new exception class, give up. */
+    //    {
+    //        std::cerr << buffer << std::endl;
+    //        return NULL;
+    //    }
+    //    env->ThrowNew(exception, buffer);
+    //}
+    jclass clazz = env->FindClass("javax/sound/sampled/AudioFormat");
+    if (clazz == NULL)
     {
-        char buffer[1024];
-        GetErrorMessage(buffer, sizeof(buffer), "GetAudioFormat failed", hr);
-        jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
+        char* msg = "Unable to create javax/sound/sampled/AudioFormat!";
+        jclass exception = env->FindClass("java/lang/NullPointerException");
         if (exception == 0) /* Unable to find the new exception class, give up. */
         {
-            std::cerr << buffer << std::endl;
+            std::cerr << msg << std::endl;
             return NULL;
         }
-        env->ThrowNew(exception, buffer);
+        env->ThrowNew(exception, msg);
+        return NULL;
     }
-    jclass jclazz = env->FindClass("javax/sound/sampled/AudioFormat");
-    jmethodID method = env->GetMethodID(jclazz, "AudioFormat", "FIBB");
-    return env->NewObject(jclazz, method, format.nSamplesPerSec,
-        format.wBitsPerSample, format.nChannels, JNI_TRUE, JNI_TRUE);
+    jmethodID method = env->GetMethodID(clazz, "<init>", "(FIIZZ)V");
+    if (method == NULL)
+    {
+        char* msg = "Constructor for javax/sound/sampled/AudioFormat not found!";
+        jclass exception = env->FindClass("java/lang/NullPointerException");
+        if (exception == 0) /* Unable to find the new exception class, give up. */
+        {
+            std::cerr << msg << std::endl;
+            return NULL;
+        }
+        env->ThrowNew(exception, msg);
+        return NULL;
+    }
+    //return env->NewObject(clazz, method, format.nSamplesPerSec,
+    //    format.wBitsPerSample, format.nChannels, JNI_TRUE, JNI_TRUE);
+    return env->NewObject(clazz, method, 22050.0,
+        16, 1, JNI_TRUE, JNI_FALSE);
 }
-
