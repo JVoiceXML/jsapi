@@ -44,7 +44,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				WarningLevel="3"
+				WarningLevel="2"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -172,6 +172,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SapiEngineListFactory.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SapiRecognizer.cpp"
 				>
 			</File>
@@ -183,6 +187,10 @@
 				RelativePath=".\Synthesizer.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\Voice.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
@@ -191,6 +199,10 @@
 			>
 			<File
 				RelativePath="..\include\org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\org_jvoicexml_jsapi2_sapi_SapiEngineListFactory.h"
 				>
 			</File>
 			<File
@@ -215,6 +227,10 @@
 			</File>
 			<File
 				RelativePath="..\include\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Voice.h"
 				>
 			</File>
 		</Filter>

@@ -4,6 +4,7 @@ import javax.speech.EngineMode;
 import javax.speech.recognition.RecognizerMode;
 import javax.speech.spi.EngineListFactory;
 import javax.speech.synthesis.SynthesizerMode;
+import javax.speech.synthesis.Voice;
 
 import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizerMode;
 import org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizerMode;
@@ -14,6 +15,9 @@ import org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizerMode;
  *
  */
 public class SapiEngineListFactory implements EngineListFactory {
+    static {
+        System.loadLibrary("Jsapi2SapiBridge");
+    }
 
     /**
      * {@inheritDoc}
@@ -21,8 +25,12 @@ public class SapiEngineListFactory implements EngineListFactory {
     @Override
     public EngineList createEngineList(final EngineMode require) {
         if (require instanceof SynthesizerMode) {
+            final SynthesizerMode mode = (SynthesizerMode) require;
+            final Voice[] voices = sapiGetVoices();
             final SynthesizerMode[] features = new SynthesizerMode[] {
-                    new SapiSynthesizerMode()
+                    new SapiSynthesizerMode(null, mode.getEngineName(),
+                            mode.getRunning(), mode.getSupportsLetterToSound(),
+                            mode.getSupportsMarkup(), voices)
             };
             return new EngineList(features);
         }            
@@ -35,5 +43,11 @@ public class SapiEngineListFactory implements EngineListFactory {
         
         return null;
     }
+
+    /**
+     * Retrieves all voices.
+     * @return all voices
+     */
+    private native Voice[] sapiGetVoices();
 
 }

@@ -50,6 +50,69 @@ Synthesizer::~Synthesizer()
     }
 }
 
+HRESULT Synthesizer::ListVoices(Voice*& voices, ULONG& num)
+{
+    CComPtr<IEnumSpObjectTokens> cpEnum;
+    CComPtr<ISpObjectTokenCategory> cpVoiceCat;
+
+    HRESULT hr = SpGetCategoryFromId(SPCAT_VOICES, &cpVoiceCat);
+    if (FAILED(hr))
+    {
+        return hr;  
+    }
+
+    hr = cpVoiceCat->EnumTokens(NULL, NULL, &cpEnum);
+    ISpObjectToken *pToken;
+    cpEnum->GetCount(&num);
+    voices = new Voice[num];
+    ULONG i = 0;
+    while (cpEnum->Next(1, &pToken, NULL)==S_OK)
+    {
+        CComPtr<ISpDataKey> cpAttribKey;
+        hr=pToken->OpenKey(L"Attributes", &cpAttribKey);
+        if (FAILED(hr))
+        {
+            continue;
+        }
+        WCHAR *wBuf = NULL;
+        hr = cpAttribKey->GetStringValue(L"Name", &wBuf);
+        if (SUCCEEDED(hr))
+        {
+            voices[i].SetName(wBuf);
+            wprintf(L"%s\n", wBuf);
+            CoTaskMemFree(wBuf);
+        }
+        else
+        {
+            return hr;
+        }
+
+        WCHAR *keyName=NULL;
+        int index=0;
+        for(;;)
+        {
+            hr=cpAttribKey->EnumValues(index, &keyName);
+            if (hr!=S_OK)
+            {
+                if (hr==SPERR_NO_MORE_ITEMS)
+                    break;
+                break;
+            }
+            wprintf(L"  '%s'", keyName);
+            hr=cpAttribKey->GetStringValue(keyName, &wBuf);
+            if (hr==S_OK)
+            {
+                wprintf(L" = '%s'", wBuf);
+                CoTaskMemFree(wBuf);
+            }
+            wprintf(L"\n");
+            CoTaskMemFree(keyName);
+            index++;
+        }
+        ++i;
+    }
+    return S_OK;
+}
 
 HRESULT Synthesizer::Speak(LPCWSTR text, long& size, byte*& buffer)
 {

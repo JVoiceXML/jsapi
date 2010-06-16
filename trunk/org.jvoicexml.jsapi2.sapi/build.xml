@@ -60,8 +60,9 @@ This file builds the JSR 113.jar.
       </fileset>
     </copy>
     <javah destdir="cpp/Jsapi2SapiBridge/include">
+      <class name="${component}.SapiEngineListFactory"/>
       <class name="${component}.recognition.SapiRecognizer"/>
-      <class name="${component}.synthesis.SapiSynthesizer"/>
+      <class name="${component}.synthesis.SapiSynthesizerMode"/>
       <classpath refid="classpath"/>
       <classpath location="${build}"/>
     </javah>

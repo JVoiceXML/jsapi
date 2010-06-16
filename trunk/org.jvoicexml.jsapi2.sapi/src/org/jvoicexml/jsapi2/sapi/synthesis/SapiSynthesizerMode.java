@@ -34,8 +34,8 @@ public final class SapiSynthesizerMode extends SynthesizerMode
 
     /**
      * Constructs a new object.
-     * @param engineName  the name of the engine
-     * @param modeName   the name of the mode
+     * @param engineName the name of the engine
+     * @param modeName the name of the mode
      */
     public SapiSynthesizerMode(final String engineName,
             final String modeName,
@@ -53,5 +53,4 @@ public final class SapiSynthesizerMode extends SynthesizerMode
             EngineException {
         return new SapiSynthesizer(this);
     }
-
 }
