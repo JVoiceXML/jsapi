@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdafx.h>
+#include "Voice.h"
 
 class Synthesizer
 {
@@ -11,6 +11,8 @@ public:
 	HRESULT Speak(LPCWSTR text, long& size, byte*& buffer);
     HRESULT SpeakSSML(LPCWSTR ssml, long& size, byte*& buffer);
     HRESULT GetAudioFormat(WAVEFORMATEX& format);
+
+    static HRESULT Synthesizer::ListVoices(Voice*& voices, ULONG& num);
 
     boolean Cancel(){
 			if(  SUCCEEDED( cpVoice->Speak(NULL, SPF_PURGEBEFORESPEAK, NULL) )  ){

@@ -29,7 +29,7 @@ import org.jvoicexml.jsapi2.sapi.SapiEngineListFactory;
  *
  *!!!!!!!!!!!!!!!!!!!!!!!Beware!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  * each Test allocate the Synthesizer so beware that
- * a test is run completely bevor the next Test starts.
+ * a test is run completely before the next Test starts.
  * 
  * Disregard this will cause native code to crash
  * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -47,6 +47,7 @@ public final class TestSynthesizer {
         EngineManager.registerEngineListFactory(
                 SapiEngineListFactory.class.getCanonicalName());
     }
+
     /**
      * Set up the test .
      * @throws Exception

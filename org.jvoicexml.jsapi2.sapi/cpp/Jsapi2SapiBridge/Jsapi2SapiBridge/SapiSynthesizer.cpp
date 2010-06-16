@@ -41,7 +41,6 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
         env->ThrowNew(exception, buffer);
         return NULL;
     }
-
     return (jlong) synth;
 }
 
@@ -258,8 +257,8 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
         env->ThrowNew(exception, msg);
         return NULL;
     }
-    jmethodID method = env->GetMethodID(clazz, "<init>", "(FIIZZ)V");
-    if (method == NULL)
+    jmethodID constructor = env->GetMethodID(clazz, "<init>", "(FIIZZ)V");
+    if (constructor == NULL)
     {
         char* msg = "Constructor for javax/sound/sampled/AudioFormat not found!";
         jclass exception = env->FindClass("java/lang/NullPointerException");
@@ -273,6 +272,6 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
     }
     //return env->NewObject(clazz, method, format.nSamplesPerSec,
     //    format.wBitsPerSample, format.nChannels, JNI_TRUE, JNI_TRUE);
-    return env->NewObject(clazz, method, 22050.0,
+    return env->NewObject(clazz, constructor, 22050.0,
         16, 1, JNI_TRUE, JNI_FALSE);
 }
