@@ -24,10 +24,13 @@ implements EngineFactory {
         super(locale);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Engine createEngine() throws IllegalArgumentException,
             EngineException {       
-        return new SapiRecognizer();
+        return new SapiRecognizer(this);
     }
 
 }

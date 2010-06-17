@@ -1,22 +1,23 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
-import javax.speech.AudioException;
+import java.io.InputStream;
+
 import javax.speech.Engine;
-import javax.speech.EngineException;
 import javax.speech.EngineManager;
-import javax.speech.EngineStateException;
-import javax.speech.SpeechLocale;
+import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerMode;
-import javax.speech.synthesis.Synthesizer;
-import javax.speech.synthesis.SynthesizerMode;
+import javax.speech.recognition.Result;
+import javax.speech.recognition.ResultEvent;
+import javax.speech.recognition.ResultListener;
+import javax.speech.recognition.ResultToken;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.jvoicexml.jsapi2.demo.inputdemo.InputDemo;
 import org.jvoicexml.jsapi2.sapi.SapiEngineListFactory;
-import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer;
 
 
 /**
@@ -29,11 +30,21 @@ import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer;
  * @author Josua Arndt
  *
  */
-public class TestRecognizer {
-    
+public final class TestRecognizer implements ResultListener {
+    /** The test object. */
     private Recognizer recognizer;
-    private Synthesizer synthesizer;
-    
+
+    /** Locking mechanism. */
+    private final Object lock = new Object();
+
+    /** The recognition result. */
+    private Result result;
+
+    /**
+     * Prepare the test environment for all tests.
+     * @throws Exception
+     *         prepare failed
+     */
     @BeforeClass
     public static void init() throws Exception {
         System.setProperty("javax.speech.supports.audio.management",
@@ -51,15 +62,12 @@ public class TestRecognizer {
      */
     @Before
     public void setUp() throws Exception {
-        RecognizerMode mode = new SapiRecognizerMode(SpeechLocale.GERMAN);
-        recognizer = (Recognizer) EngineManager
-            .createEngine(mode);      
+        recognizer =
+            (Recognizer) EngineManager.createEngine(RecognizerMode.DEFAULT);
         recognizer.allocate();
         recognizer.waitEngineState(Engine.ALLOCATED);
-        
-        System.out.println("Allocate Recognizer");
     }
-    
+
     /**
      * Tear down the test .
      * @throws Exception
@@ -67,14 +75,42 @@ public class TestRecognizer {
      */
     @After
     public void tearDown() throws Exception {
-        if(recognizer != null){
+        if (recognizer != null) {
            recognizer.deallocate();
            recognizer.waitEngineState(Engine.DEALLOCATED);
-           
-           System.out.println("Dellocate Recognizer \n");
         }
     }
-    
+
+    /**
+     * Test case for the recognizer.
+     * @throws Exception
+     *         test failed.
+     */
+    @Test
+    public void testRecognize() throws Exception {
+        recognizer.addResultListener(this);
+
+        final GrammarManager grammarManager = recognizer.getGrammarManager();
+        final InputStream in = InputDemo.class.getResourceAsStream("hello.xml");
+        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");
+
+        recognizer.requestFocus();
+        recognizer.resume();
+        recognizer.waitEngineState(Engine.RESUMED);
+        System.out.println("Please say something...");
+        synchronized (lock) {
+            lock.wait();
+        }
+        System.out.print("Recognized: ");
+        final ResultToken[] tokens = result.getBestTokens();
+
+        for (int i = 0; i < tokens.length; i++) {
+            System.out.print(tokens[i].getText() + " ");
+        }
+        System.out.println();
+        
+    }
+
     /**
      * Test case for {@link SapiRecognizer#handlePause()}.
      * Test case for {@link SapiRecognizer#handleResume()}.
@@ -90,6 +126,20 @@ public class TestRecognizer {
             System.out.println("\tResume Recognizer \n");
             Thread.sleep(5000);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void resultUpdate(final ResultEvent event) {
+        System.out.println(event);
+        if (event.getId() == ResultEvent.RESULT_ACCEPTED) {
+            result = (Result) (event.getSource());
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        }
+    }
      
     
 //    public void testRecognition() throws Exception {
@@ -102,51 +152,4 @@ public class TestRecognizer {
 //        Thread.sleep(6000);
 //        recognizer.deallocate();
 //    }
-	
-    public static void main(String[] args) throws InterruptedException, EngineStateException, AudioException, EngineException 
-    { 
-//    	SapiRecognizer recognizer = new SapiRecognizer();
-//    	System.out.println( "new SapiRecognizer:\tokay");
-//    	    	
-//    	Thread.sleep(20);
-//    	
-//    	try {
-//			recognizer.allocate();
-//			System.out.println( "Allocate:\t\tokay");
-//		} catch (EngineStateException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (EngineException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (AudioException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (SecurityException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//				 	
-//		recognizer.setGrammar("Licht.xml");		
-//		System.out.println( "Load grammar:\t\tokay");
-//		Thread.sleep(20);
-//		
-//		recognizer.startRecognition();		
-//		System.out.println( "Start:\t\tokay");
-//		Thread.sleep(2000);
-//		
-//		recognizer.pause();
-//		System.out.println( "Pause:\t\tokay");
-//		Thread.sleep(200);
-//		
-//		recognizer.resume();	
-//		System.out.println( "resume:\t\tokay");
-//		Thread.sleep(400);
-//		
-//		recognizer.deallocate();
-//		System.out.println( "Deallocate:\t\tokay");
-//		
-//		System.exit(0);
-    }
-
 }

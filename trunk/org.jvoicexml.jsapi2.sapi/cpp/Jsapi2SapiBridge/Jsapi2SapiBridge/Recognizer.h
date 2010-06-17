@@ -1,30 +1,29 @@
-#include <stdafx.h>
+#pragma once
 
 class Recognizer
 {
-	public:
+public:
 
-		Recognizer();
+    Recognizer();
+    virtual ~Recognizer();
 
-		virtual ~Recognizer();
+    void pause();
 
-		void pause();
+    void Resume();
 
-		void resume();
+    void setGrammar( LPCWSTR grammarPath );
 
-		void setGrammar( LPCWSTR grammarPath );
+    void startdictation();
 
-		void startdictation();
+    HRESULT BlockForResult(ISpRecoContext * pRecoCtxt, ISpRecoResult ** ppResult);
 
-		HRESULT BlockForResult(ISpRecoContext * pRecoCtxt, ISpRecoResult ** ppResult);
-		
-		HRESULT	hr;
+    HRESULT	hr;
 
-	private:
+private:
 
-		int							grammarCount;	
-		CComPtr<ISpRecognizer>		cpRecognizer;
-		CComPtr<ISpRecoContext>		cpRecoCtxt;
-		CComPtr<ISpRecoGrammar>		cpGrammar;
+    int							grammarCount;	
+    CComPtr<ISpRecognizer>		cpRecognizer;
+    CComPtr<ISpRecoContext>		cpRecoCtxt;
+    CComPtr<ISpRecoGrammar>		cpGrammar;
 };		
 

@@ -97,16 +97,18 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
  * Signature: (J)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiResume
-(JNIEnv *env, jobject object, jlong recognizerHandle){
-
+(JNIEnv *env, jobject object, jlong recognizerHandle)
+{
 	Recognizer* recognizer = (Recognizer*)recognizerHandle;
-	recognizer->resume();	
+	recognizer->Resume();	
 			
-	if( SUCCEEDED(recognizer->hr) ){
-		return true;
+	if(SUCCEEDED(recognizer->hr) )
+    {
+        return JNI_TRUE;
 	}
-	else{
-		return false;
+	else
+    {
+		return JNI_FALSE;
 	}
 }
 
