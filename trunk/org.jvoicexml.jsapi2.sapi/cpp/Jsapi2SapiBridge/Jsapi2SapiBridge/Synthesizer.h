@@ -45,10 +45,13 @@ public:
 			
 			return cpVoice->GetNotifyEventHandle();
 		}
-    HRESULT	hr;
 
+        HRESULT GetLastHResult()
+        {
+            return hr;
+        }
 private:					
-
+    HRESULT	hr;
     ISpVoice* cpVoice;
 
 };

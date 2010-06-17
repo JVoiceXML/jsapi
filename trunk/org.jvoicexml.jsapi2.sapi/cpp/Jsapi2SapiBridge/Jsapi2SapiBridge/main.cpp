@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
-
 static HWND hWnd = NULL;
+static HINSTANCE hInstance = NULL;
 
 // alternative look-up error codes returned by sapi in the file sperror.h
 void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr) 
@@ -13,7 +13,7 @@ void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr)
 							FORMAT_MESSAGE_FROM_SYSTEM	|
 							FORMAT_MESSAGE_IGNORE_INSERTS |
 							FORMAT_MESSAGE_MAX_WIDTH_MASK,
-							GetModuleHandle(_T("SAPI.dll")),
+							hInstance,
 							hr,
 							MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 							(LPSTR)pMessage,
@@ -29,6 +29,7 @@ void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr)
 		sprintf_s(buffer, size, "%s. ErrorCode: %#lX", text, hr);
     }	
 }
+
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -50,7 +51,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return DefWindowProcA(hWnd, message, lParam, wParam);
 }
 
-BOOL APIENTRY DllMain(HINSTANCE  hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
+BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {	
 	HRESULT hr = S_FALSE;
 
@@ -95,6 +96,7 @@ BOOL APIENTRY DllMain(HINSTANCE  hModule, DWORD  ul_reason_for_call, LPVOID lpRe
     {
         return TRUE;
     }
+    hInstance = hModule;
 	TCHAR *szWindowClass=_T("JSAPI2SapiWindowClass");
 	TCHAR *szTitle=_T("JSAPI2 SAPI");
 

@@ -9,6 +9,7 @@ import javax.speech.AudioSegment;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
+import javax.speech.synthesis.Voice;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
@@ -46,15 +47,26 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     @Override
     protected void handleAllocate() throws EngineStateException,
         EngineException, AudioException, SecurityException {
-        synthesizerHandle = sapiHandleAllocate("sapi");
+        final Voice voice;
+        if (mode == null) {
+            voice = null;
+        } else {
+            final Voice[] voices = mode.getVoices();
+            if (voices == null) {
+                voice = null;
+            } else {
+                voice = voices[0];
+            }
+        }
+        synthesizerHandle = sapiHandleAllocate(voice);
     }
 
     /**
      * Allocates a SAPI synthesizer.
-     * @param name name of this synthesizer
+     * @param voice the voice to use
      * @return synthesizer handle
      */
-    private native long sapiHandleAllocate(final String name);
+    private native long sapiHandleAllocate(final Voice voice);
 
     /**
      * {@inheritDoc}
