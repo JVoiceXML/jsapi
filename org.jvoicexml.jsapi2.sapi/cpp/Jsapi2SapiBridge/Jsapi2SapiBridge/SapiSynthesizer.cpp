@@ -2,7 +2,7 @@
 #include <org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer.h>
 #include "Synthesizer.h"
 #include <sperror.h>
-
+#include "JNIUtils.h"
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
@@ -18,28 +18,53 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
  * Method:    sapiHandleAllocate
- * Signature: (Ljava/lang/String;)J
+ * Signature: (Ljavax/speech/synthesis/Voice;)J
  */
 JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleAllocate
-  (JNIEnv *env, jobject obj, jstring string)
+  (JNIEnv *env, jobject obj, jobject jvoice)
 {
-    const wchar_t* engineName = (const wchar_t*)env->GetStringChars(string, NULL);
- 
+    const wchar_t* engineName;
+    if (jvoice == NULL)
+    {
+        engineName = NULL;
+    }
+    else 
+    {
+        jclass voiceClass = env->GetObjectClass(jvoice);
+        if (voiceClass == NULL)
+        {
+            ThrowJavaException(env, "java/lang/NullPointerException",
+                "Unable to create javax/speech/synthesis/Voice!");
+            return 0;
+        }
+        jmethodID voiceNameMethod = env->GetMethodID(voiceClass, "getName",
+            "()Ljava/lang/String;");
+        if (voiceNameMethod == NULL)
+        {
+            ThrowJavaException(env, "java/lang/NullPointerException",
+                "Unable to get the getName method of javax/speech/synthesis/Voice!");
+            return 0;
+        }
+        jstring name = (jstring) env->CallObjectMethod(jvoice, voiceNameMethod);
+        if (name == NULL)
+        {
+            engineName = NULL;
+        }
+        else
+        {
+            engineName = (const wchar_t*)env->GetStringChars(name, NULL);
+        }
+    }
+
 	/* create new Synthesizer class */
 	Synthesizer* synth = new Synthesizer(engineName);		
-    if (FAILED(synth->hr))
+    if (FAILED(synth->GetLastHResult()))
     {
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "Allocation of synthesizer failed",
-            synth->hr);
-        jclass exception = env->FindClass("javax/speech/EngineException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << buffer << std::endl;
-            return 0;
-        }
-        env->ThrowNew(exception, buffer);
-        return NULL;
+            synth->GetLastHResult());
+        ThrowJavaException(env, "javax/speech/EngineException", buffer);
+        return 0;
     }
     return (jlong) synth;
 }
@@ -109,19 +134,13 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 
 	synth->Pause();
 
-	if (FAILED(synth->hr))
+    if (FAILED(synth->GetLastHResult()))
     {
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "Pause recognizer failed",
-            synth->hr);
-        jclass exception = env->FindClass("javax/speech/EngineException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << buffer << std::endl;
-        }
-        env->ThrowNew(exception, buffer);
+            synth->GetLastHResult());
+        ThrowJavaException(env, "javax/speech/EngineException", buffer);
     }
-
 }
 
 /*
@@ -165,13 +184,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
         }
         char msg[1024];
         GetErrorMessage(msg, sizeof(msg), "Speak failed", hr);
-        jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << msg << std::endl;
-            return NULL;
-        }
-        env->ThrowNew(exception, msg);
+        ThrowJavaException(env, "javax/speech/synthesis/SpeakableException", msg);
         return NULL;
     }
     jbyteArray jb = env->NewByteArray(size);
@@ -205,13 +218,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
         }
         char msg[1024];
         GetErrorMessage(msg, sizeof(msg), "Speak SSML failed", hr);
-        jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << msg << std::endl;
-            return NULL;
-        }
-        env->ThrowNew(exception, msg);
+        ThrowJavaException(env, "javax/speech/synthesis/SpeakableException", msg);
         return NULL;
     }
     jbyteArray jb = env->NewByteArray(size);
@@ -247,27 +254,15 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
     jclass clazz = env->FindClass("javax/sound/sampled/AudioFormat");
     if (clazz == NULL)
     {
-        char* msg = "Unable to create javax/sound/sampled/AudioFormat!";
-        jclass exception = env->FindClass("java/lang/NullPointerException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << msg << std::endl;
-            return NULL;
-        }
-        env->ThrowNew(exception, msg);
+        ThrowJavaException(env, "javax/sound/sampled/AudioFormat",
+            "Unable to create javax/sound/sampled/AudioFormat!");
         return NULL;
     }
     jmethodID constructor = env->GetMethodID(clazz, "<init>", "(FIIZZ)V");
     if (constructor == NULL)
     {
-        char* msg = "Constructor for javax/sound/sampled/AudioFormat not found!";
-        jclass exception = env->FindClass("java/lang/NullPointerException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << msg << std::endl;
-            return NULL;
-        }
-        env->ThrowNew(exception, msg);
+        ThrowJavaException(env, "java/lang/NullPointerException",
+            "Constructor for javax/sound/sampled/AudioFormat not found!");
         return NULL;
     }
     //return env->NewObject(clazz, method, format.nSamplesPerSec,

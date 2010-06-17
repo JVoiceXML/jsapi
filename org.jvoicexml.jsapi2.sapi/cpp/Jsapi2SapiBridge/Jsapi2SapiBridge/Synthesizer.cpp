@@ -2,14 +2,13 @@
 #include "Synthesizer.h"
 
 Synthesizer::Synthesizer(const wchar_t* engineName)
-:cpVoice(NULL), hr(0)
+:cpVoice(NULL), hr(S_OK)
 {
-    CComPtr<ISpObjectToken>			cpToken;
-    CComPtr<IEnumSpObjectTokens>	cpEnum;
-
-    HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&cpVoice);
+    HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice,
+        (void **)&cpVoice);
 
     // create cpEnum that contains the information about the designated TTSEngine
+    CComPtr<IEnumSpObjectTokens> cpEnum;
     if(SUCCEEDED(hr))
     {	
         hr = SpEnumTokens(SPCAT_VOICES, engineName, NULL, &cpEnum);  
@@ -18,6 +17,7 @@ Synthesizer::Synthesizer(const wchar_t* engineName)
     // load required cpToken from cpEnum 
     // get the closest token if designated Voice is not traceable the system default
     // Voice is selected
+    CComPtr<ISpObjectToken> cpToken;
     if(SUCCEEDED(hr))
     {
         hr = cpEnum->Next(1, &cpToken, NULL);
