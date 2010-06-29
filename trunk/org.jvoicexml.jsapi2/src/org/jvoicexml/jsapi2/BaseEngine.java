@@ -123,14 +123,6 @@ public abstract class BaseEngine implements Engine {
     /**
      * Creates a new <code>Engine</code> in the
      * <code>DEALLOCATED</code> state.
-     */
-    public BaseEngine() {
-        this(null);
-    }
-
-    /**
-     * Creates a new <code>Engine</code> in the
-     * <code>DEALLOCATED</code> state.
      *
      * @param mode the operating mode of this <code>Engine</code>
      */
