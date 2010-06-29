@@ -8,7 +8,6 @@
 package org.jvoicexml.jsapi2.jse.recognition;
 
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -107,7 +106,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         }
 
         public boolean isPublic() {
-            return (rule.getScope() == rule.PUBLIC ? true : false); }
+            return rule.getScope() == Rule.PUBLIC ? true : false;
+        }
 
         public String getRulename() { return rule.getRuleName(); }
 
@@ -121,8 +121,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     }
 
     private class InternalRuleIdComparator implements Comparator{
-     public InternalRuleIdComparator(){
-
+     public InternalRuleIdComparator() {
      }
 
      public int compare(Object o1, Object o2){

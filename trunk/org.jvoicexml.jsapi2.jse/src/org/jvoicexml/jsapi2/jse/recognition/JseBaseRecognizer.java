@@ -45,42 +45,17 @@
  */
 package org.jvoicexml.jsapi2.jse.recognition;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-
 import javax.sound.sampled.AudioFormat;
-import javax.speech.AudioException;
 import javax.speech.AudioManager;
-import javax.speech.EngineEvent;
-import javax.speech.EngineException;
-import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
-import javax.speech.VocabularyManager;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.GrammarManager;
-import javax.speech.recognition.Recognizer;
-import javax.speech.recognition.RecognizerEvent;
-import javax.speech.recognition.RecognizerListener;
 import javax.speech.recognition.RecognizerMode;
-import javax.speech.recognition.RecognizerProperties;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
-import javax.speech.recognition.ResultListener;
-import javax.speech.recognition.RuleGrammar;
-import javax.speech.recognition.SpeakerManager;
 
-import org.jvoicexml.jsapi2.BaseAudioManager;
-import org.jvoicexml.jsapi2.BaseEngine;
-import org.jvoicexml.jsapi2.BaseEngineProperties;
-import org.jvoicexml.jsapi2.BaseVocabularyManager;
-import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
-import org.jvoicexml.jsapi2.recognition.BaseGrammar;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
-import org.jvoicexml.jsapi2.recognition.BaseRecognizerProperties;
-import org.jvoicexml.jsapi2.recognition.BaseSpeakerManager;
 
 
 /**
