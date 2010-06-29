@@ -1,17 +1,31 @@
 #include "stdafx.h"
 #include "Recognizer.h"
 
-Recognizer::Recognizer()
-: cpRecognizer(NULL), cpRecoCtxt(NULL), cpGrammar(NULL), hr(S_OK)
+Recognizer::Recognizer(HWND hwnd)
+: cpRecognizerEngine(NULL), cpRecoCtxt(NULL), cpGrammar(NULL), hr(S_OK), grammarCount(0)
 {
-
-	grammarCount				= 0;
-	CComPtr<ISpAudio>           cpAudio			= NULL;
-
     // create a new InprocRecognizer.
-    //hr = CoCreateInstance(CLSID_SpInprocRecognizer, NULL ,CLSCTX_LOCAL_SERVER,
-    //      CLSID_SpInprocRecognizer, (void**)&cpRecognizer);
-    hr = cpRecognizer.CoCreateInstance(CLSID_SpInprocRecognizer);	
+    hr = cpRecognizerEngine.CoCreateInstance(CLSID_SpInprocRecognizer);	
+    if (SUCCEEDED(hr))
+    {
+        hr = cpRecognizerEngine->CreateRecoContext(&cpRecoCtxt);
+    }
+    if (SUCCEEDED(hr))
+    {
+        // Set recognition notification for dictation
+        hr = cpRecoCtxt->SetNotifyWindowMessage(hwnd, WM_RECOEVENT, 0, 0);
+    }
+
+    if (SUCCEEDED(hr))
+    {
+        // This specifies which of the recognition events are going to trigger
+        // notifications.
+        // Here, all we are interested in is the beginning and ends of sounds, as well as
+        // when the engine has recognized something
+        hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION), SPFEI(SPEI_RECOGNITION));
+    }
+
+    CComPtr<ISpAudio> cpAudio;
 	if (SUCCEEDED(hr))
 	{
 	   // Set up the inproc recognizer audio input with an audio input object.
@@ -21,24 +35,11 @@ Recognizer::Recognizer()
 	if (SUCCEEDED(hr))
 	{
 	   // Set the audio input to our object.
-	   hr = cpRecognizer->SetInput(cpAudio, TRUE);
-	}
-	if( SUCCEEDED(hr) )
-    {
-		// create a new Recognition context.
-		hr = cpRecognizer->CreateRecoContext( &cpRecoCtxt);
+	   hr = cpRecognizerEngine->SetInput(cpAudio, TRUE);
 	}
 	if( SUCCEEDED(hr) )
     {
 		hr = cpRecoCtxt->SetAudioOptions(SPAO_RETAIN_AUDIO, NULL, NULL);
-	}	
-	//if( SUCCEEDED(hr) ){
-	//	// Set the Notivy.
-	//	hr = cpRecoCtxt->SetNotifyWin32Event();
-	//}
-	if( SUCCEEDED(hr) )
-    {
-		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION ), SPFEI(SPEI_RECOGNITION ) );
 	}	
 	cpAudio.Release();
 }
@@ -47,27 +48,25 @@ Recognizer::~Recognizer()
 {
 	cpGrammar.Release();
 	cpRecoCtxt.Release();
-	cpRecognizer.Release();
-	
-	//::CoUninitialize();
-	//std::cout<< "CoUninitialize" <<"\n";fflush(stdout);
+	cpRecognizerEngine.Release();
 }
 
 
-void Recognizer::setGrammar( LPCWSTR grammarPath )
+HRESULT Recognizer::setGrammar( LPCWSTR grammarPath )
 {
-	
-	if( SUCCEEDED(hr) ){
-		hr = cpRecoCtxt->CreateGrammar( grammarCount++, &cpGrammar);
-	}
+    hr = cpRecoCtxt->CreateGrammar( grammarCount++, &cpGrammar);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+	hr = cpGrammar->LoadCmdFromFile( grammarPath,SPLO_STATIC);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
 
-	if( SUCCEEDED(hr) ){
-		hr = cpGrammar->LoadCmdFromFile( grammarPath,SPLO_STATIC);
-	}
-
-	if( SUCCEEDED(hr) ){
-		hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
-	}							
+	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
+    return hr;
 }
 
 void Recognizer::pause()

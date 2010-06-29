@@ -6,14 +6,15 @@ import javax.speech.SpeechLocale;
 import javax.speech.recognition.RecognizerMode;
 import javax.speech.spi.EngineFactory;
 
-public class SapiRecognizerMode extends RecognizerMode
-implements EngineFactory {
+public final class SapiRecognizerMode extends RecognizerMode
+    implements EngineFactory {
 
     /**
      * Constructs a new object.
      */
     public SapiRecognizerMode() {
-        super();
+        super("Microsoft SAPI", "SAPI", Boolean.FALSE, Boolean.TRUE,
+                Boolean.TRUE, RecognizerMode.MEDIUM_SIZE, null, null);
     }
 
     /**
@@ -29,7 +30,7 @@ implements EngineFactory {
      */
     @Override
     public Engine createEngine() throws IllegalArgumentException,
-            EngineException {       
+            EngineException {
         return new SapiRecognizer(this);
     }
 

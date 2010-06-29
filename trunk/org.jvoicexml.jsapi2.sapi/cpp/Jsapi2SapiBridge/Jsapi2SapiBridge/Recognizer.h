@@ -4,14 +4,14 @@ class Recognizer
 {
 public:
 
-    Recognizer();
+    Recognizer(HWND hwnd);
     virtual ~Recognizer();
 
     void pause();
 
     void Resume();
 
-    void setGrammar( LPCWSTR grammarPath );
+    HRESULT setGrammar( LPCWSTR grammarPath );
 
     void startdictation();
 
@@ -22,7 +22,7 @@ public:
 private:
 
     int							grammarCount;	
-    CComPtr<ISpRecognizer>		cpRecognizer;
+    CComPtr<ISpRecognizer>		cpRecognizerEngine;
     CComPtr<ISpRecoContext>		cpRecoCtxt;
     CComPtr<ISpRecoGrammar>		cpGrammar;
 };		

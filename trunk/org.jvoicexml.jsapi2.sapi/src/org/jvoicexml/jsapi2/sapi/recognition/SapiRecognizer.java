@@ -16,18 +16,15 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         System.loadLibrary("Jsapi2SapiBridge");
     }
 
-    /** Mode of this Engine. **/
-    private final SapiRecognizerMode mode;
-
     /** SAPI recognizer Handle. **/
-    public long recognizerHandle;
+    private long recognizerHandle;
 
     /**
      * Constructs a new object.
-     * @param recognizerMode the recognizer mode.
+     * @param mode the recognizer mode.
      */
-    public SapiRecognizer(final SapiRecognizerMode recognizerMode) {
-        mode = recognizerMode;
+    public SapiRecognizer(final SapiRecognizerMode mode) {
+        super(mode);
     }
 
     /**
@@ -40,6 +37,9 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
     private native Vector<?> sapiGetBuildInGrammars(long handle);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void handleAllocate() throws EngineStateException, EngineException,
             AudioException, SecurityException {
@@ -83,7 +83,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         return false;
     }
 
-    public boolean setGrammar(String grammarPath) {
+    public boolean setGrammar(final String grammarPath) {
         return sapiSetGrammar(recognizerHandle, grammarPath);
     }
 
