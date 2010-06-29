@@ -182,7 +182,7 @@ public class BaseGrammarManager implements GrammarManager {
     public Grammar getGrammar(String grammarReference) throws
             EngineStateException {
 
-        //Validate current state
+        // Validate current state
         insureValidEngineState();
 
         return grammars.get(grammarReference);
@@ -277,32 +277,35 @@ public class BaseGrammarManager implements GrammarManager {
             GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
 
-        //Validate current state
+        // Validate current state
         insureValidEngineState();
 
-        //Make sure that recognizer supports markup
+        // Make sure that recognizer supports markup
         if (recognizer != null) {
-            if (!recognizer.getEngineMode().getSupportsMarkup()) {
+            final EngineMode mode = recognizer.getEngineMode();
+            if (!mode.getSupportsMarkup()) {
                 throw new EngineException("Engine doesn't support markup");
             }
         }
 
-        //Proccess grammar
-        SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser();
+        // Proccess grammar
+        final SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser();
         Rule[] rules = srgsParser.load(reader);
-        if (rules != null) {
-            //Initialize rule grammar
-            BaseRuleGrammar brg = new BaseRuleGrammar(recognizer, grammarReference);
-            brg.addRules(rules);
-            brg.setAttributes(srgsParser.getAttributes());
-
-            //Register grammar
-            grammars.put(grammarReference, brg);
-
-            return brg;
+        if (rules == null) {
+            return null;
         }
+        //Initialize rule grammar
+        BaseRuleGrammar brg =
+            new BaseRuleGrammar(recognizer, grammarReference);
+        brg.addRules(rules);
+        @SuppressWarnings("unchecked")
+        final HashMap attributes = srgsParser.getAttributes();
+        brg.setAttributes(attributes);
 
-        return null;
+        // Register grammar
+        grammars.put(grammarReference, brg);
+
+        return brg;
     }
 
     /**
@@ -348,8 +351,9 @@ public class BaseGrammarManager implements GrammarManager {
             EngineStateException,
             EngineException {
 
-        return loadGrammar(grammarReference, mediaType,
-                           new InputStreamReader(byteStream, encoding));
+        final InputStreamReader reader =
+            new InputStreamReader(byteStream, encoding);
+        return loadGrammar(grammarReference, mediaType, reader);
     }
 
 
