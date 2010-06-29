@@ -27,18 +27,15 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
         System.loadLibrary("Jsapi2SapiBridge");
     }
 
-    /** Name of this engine. */
-    private final SapiSynthesizerMode mode;
-
     /** SAPI synthesizer handle. */
     private long synthesizerHandle;
 
     /**
      * Constructs a new synthesizer object.
-     * @param synthesizerMode the synthesizer mode
+     * @param mode the synthesizer mode
      */
-    SapiSynthesizer(final SapiSynthesizerMode synthesizerMode) {
-        mode = synthesizerMode;
+    SapiSynthesizer(final SapiSynthesizerMode mode) {
+        super(mode);
     }
 
     /**
@@ -48,6 +45,7 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     protected void handleAllocate() throws EngineStateException,
         EngineException, AudioException, SecurityException {
         final Voice voice;
+        final SapiSynthesizerMode mode = (SapiSynthesizerMode) getEngineMode();
         if (mode == null) {
             voice = null;
         } else {

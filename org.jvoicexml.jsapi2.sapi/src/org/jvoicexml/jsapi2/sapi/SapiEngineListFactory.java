@@ -30,7 +30,7 @@ public class SapiEngineListFactory implements EngineListFactory {
             final SynthesizerMode[] features = new SynthesizerMode[] {
                     new SapiSynthesizerMode(null, mode.getEngineName(),
                             mode.getRunning(), mode.getSupportsLetterToSound(),
-                            mode.getSupportsMarkup(), voices)
+                            Boolean.TRUE, voices)
             };
             return new EngineList(features);
         }            

@@ -56,8 +56,17 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
         }
     }
 
+    HRESULT hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    if (FAILED(hr))
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Initializing COM failed!",
+            hr);
+        ThrowJavaException(env, "javax/speech/EngineException", buffer);
+        return 0;
+    }
 	/* create new Synthesizer class */
-	Synthesizer* synth = new Synthesizer(engineName);		
+	Synthesizer* synth = new Synthesizer(engineName);
     if (FAILED(synth->GetLastHResult()))
     {
         char buffer[1024];
@@ -78,7 +87,8 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
   (JNIEnv *env, jobject obj, jlong handle)
 {
 	Synthesizer* synth = (Synthesizer*) handle;
-	return synth->Cancel();
+	boolean success = synth->Cancel();
+    return success ? JNI_TRUE : JNI_FALSE;
 }
 
 /*
@@ -112,11 +122,8 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
   (JNIEnv * env, jobject obj, jlong handle)
 {
 	Synthesizer* synthesizer = (Synthesizer*) handle;
-    
-	//std::cout << "Deallocate :: synthesizerHandle from Java:" << synthesizer << std::endl;
-	//fflush(stdout);
-
 	delete synthesizer;
+    ::CoUninitialize();
 }
 
 /*
@@ -133,7 +140,6 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 	//fflush(stdout);
 
 	synth->Pause();
-
     if (FAILED(synth->GetLastHResult()))
     {
         char buffer[1024];
@@ -156,7 +162,8 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
 	//std::cout << "Resume:: synthesizerHandle from Java:" << synth << std::endl;
 	//fflush(stdout);
 
-	return synth->Resume();
+	boolean success = synth->Resume();
+    return success ? JNI_TRUE : JNI_FALSE;
 }
 
 /*

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer.h"
 #include "Recognizer.h"
+#include "JNIUtils.h"
 
 
 /*
@@ -20,25 +21,28 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogni
  * Signature: (J)V
  */
 JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiAllocate
-  (JNIEnv *env, jobject object){
+  (JNIEnv *env, jobject object)
+{
+    HRESULT hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    if (FAILED(hr))
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Initializing COM failed!",
+            hr);
+        ThrowJavaException(env, "javax/speech/EngineException", buffer);
+        return 0;
+    }
 
-	/* create new Recognizer class */
-	  Recognizer* recognizer =new Recognizer();
-	  
-	/* check if Handle valid */
-	if (FAILED(recognizer->hr))
+    /* create new Recognizer class */
+    Recognizer* recognizer = new Recognizer(hWnd);
+    /* check if Handle valid */
+    if (FAILED(recognizer->hr))
     {      
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "Allocation of recognizer failed",
             recognizer->hr);
-        jclass exception = env->FindClass("javax/speech/EngineException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << buffer << std::endl;
-			fflush(stdout);
-            return 0;
-        }
-        env->ThrowNew(exception, buffer);
+        ThrowJavaException(env, "javax/speech/EngineException", buffer);
+        return 0;
     }
 
     return (jlong) recognizer;	
@@ -121,15 +125,16 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
   (JNIEnv *env, jobject object, jlong recognizerHandle, jstring grammarPath){
 		
 	Recognizer* recognizer = (Recognizer*)recognizerHandle;
-	recognizer->setGrammar( (const wchar_t*)env->GetStringChars( grammarPath, NULL) );
-
-	if( SUCCEEDED(recognizer->hr) ){
-		return true;
+    const wchar_t* gram = (const wchar_t*)env->GetStringChars(grammarPath, NULL);
+	HRESULT hr = recognizer->setGrammar(gram);
+	if (SUCCEEDED(hr))
+    {
+        return JNI_TRUE;
 	}
-	else{
-		return false;
+	else
+    {
+		return JNI_FALSE;
 	}
-
 }
 
 /*
