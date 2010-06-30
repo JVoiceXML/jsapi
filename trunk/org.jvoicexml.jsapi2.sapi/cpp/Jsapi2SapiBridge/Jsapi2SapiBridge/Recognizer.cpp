@@ -51,22 +51,60 @@ Recognizer::~Recognizer()
 	cpRecognizerEngine.Release();
 }
 
-
-HRESULT Recognizer::setGrammar( LPCWSTR grammarPath )
+HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
 {
-    hr = cpRecoCtxt->CreateGrammar( grammarCount++, &cpGrammar);
+    hr = cpRecoCtxt->CreateGrammar(grammarCount++, &cpGrammar);
     if (FAILED(hr))
     {
         return hr;
     }
-	hr = cpGrammar->LoadCmdFromFile( grammarPath,SPLO_STATIC);
+    CComPtr<IStream> stream;
+    hr = ::CreateStreamOnHGlobal(NULL, true, &stream);
     if (FAILED(hr))
     {
         return hr;
     }
-
+    ULONG written;
+    stream->Write(grammar, wcslen(grammar), &written);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    CComPtr<ISpGrammarCompiler> compiler;
+    compiler.CoCreateInstance(CLSID_SpGrammarCompiler);
+    CComPtr<IStream> compiledStream;
+    hr = ::CreateStreamOnHGlobal(NULL, true, &compiledStream);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    hr = compiler->CompileStream(stream, compiledStream, NULL, NULL, NULL, 0);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+    HGLOBAL hGrammar;
+    ::GetHGlobalFromStream(compiledStream, &hGrammar);
+    cpGrammar->LoadCmdFromMemory((SPBINARYGRAMMAR *)::GlobalLock(hGrammar), SPLO_DYNAMIC);
+    compiler.Release();
 	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
     return hr;
+}
+
+HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
+{
+    hr = cpRecoCtxt->CreateGrammar(grammarCount++, &cpGrammar);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+	hr = cpGrammar->LoadCmdFromFile(grammarPath, SPLO_STATIC);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+
+	return cpGrammar->SetGrammarState(SPGS_ENABLED);
 }
 
 void Recognizer::pause()
@@ -75,9 +113,9 @@ void Recognizer::pause()
 		hr = cpRecoCtxt->Pause( NULL);				
 }
 
-void Recognizer::Resume()
+HRESULT Recognizer::Resume()
 {
-	hr = cpRecoCtxt->Resume(NULL);
+    return cpRecoCtxt->Resume(NULL);
 }
 
 void Recognizer::startdictation()

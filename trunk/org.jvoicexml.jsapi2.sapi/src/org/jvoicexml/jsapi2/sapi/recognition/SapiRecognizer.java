@@ -1,10 +1,15 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Vector;
 
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
+import javax.speech.recognition.Grammar;
+import javax.speech.recognition.GrammarManager;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
@@ -69,17 +74,42 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
     private native void sapiPause(long handle, int flags);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected boolean handleResume() {
-        return sapiResume(recognizerHandle);
+    protected boolean handleResume() throws EngineStateException {
+        final GrammarManager manager = getGrammarManager();
+        final Grammar[] grammars = manager.listGrammars();
+        final String[] grammarSources = new String[grammars.length];
+        int i = 0;
+        for (Grammar grammar : grammars) {
+            try {
+                final File file = File.createTempFile("sapi", "xml");
+                file.deleteOnExit();
+                final FileOutputStream out = new FileOutputStream(file);
+                final String xml = grammar.toString();
+                out.write(xml.getBytes());
+                out.close();
+                grammarSources[i] = file.getCanonicalPath();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            ++i;
+        }
+        return sapiResume(recognizerHandle, grammarSources);
     }
 
-    private native boolean sapiResume(long Handle);
+    private native boolean sapiResume(long handle, String[] grammars)
+        throws EngineStateException;
 
-    @SuppressWarnings("unchecked")
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected boolean setGrammars(Vector grammarDefinition) {
-
+    protected boolean setGrammars(
+            @SuppressWarnings("rawtypes") Vector grammarDefinition) {
         return false;
     }
 

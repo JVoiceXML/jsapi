@@ -9,9 +9,10 @@ public:
 
     void pause();
 
-    void Resume();
+    HRESULT Resume();
 
-    HRESULT setGrammar( LPCWSTR grammarPath );
+    HRESULT LoadGrammar(const wchar_t* grammar);
+    HRESULT LoadGrammarFile(LPCWSTR grammarPath);
 
     void startdictation();
 
