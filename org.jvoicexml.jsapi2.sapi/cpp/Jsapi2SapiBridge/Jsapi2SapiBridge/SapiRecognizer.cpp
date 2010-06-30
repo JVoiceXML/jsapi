@@ -95,18 +95,37 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
   (JNIEnv *env, jobject object, jlong recognizerHandle, jint flags){
 
 }
+
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    nativHandleResume
- * Signature: (J)Z
+ * Method:    sapiResume
+ * Signature: (J[Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiResume
-(JNIEnv *env, jobject object, jlong recognizerHandle)
+  (JNIEnv *env, jobject object, jlong handle, jobjectArray grammars)
 {
-	Recognizer* recognizer = (Recognizer*)recognizerHandle;
-	recognizer->Resume();	
-			
-	if(SUCCEEDED(recognizer->hr) )
+	Recognizer* recognizer = (Recognizer*)handle;
+    jsize size = env->GetArrayLength(grammars);
+    for (jsize i=0; i<size; i++)
+    {
+        jstring grammar = (jstring) env->GetObjectArrayElement(grammars, i);
+        const wchar_t* gram = (const wchar_t*)env->GetStringChars(grammar, NULL);
+        HRESULT hr = recognizer->LoadGrammarFile(gram);
+        if (FAILED(hr))
+        {
+            char buffer[1024];
+            GetErrorMessage(buffer, sizeof(buffer), "Resume recognizer failed",
+                recognizer->hr);
+            jclass exception = env->FindClass("javax/speech/EngineStateException");
+            if (exception == 0) /* Unable to find the new exception class, give up. */
+            {
+                std::cerr << buffer << std::endl;
+            }
+            env->ThrowNew(exception, buffer);
+        }
+    }
+	HRESULT hr = recognizer->Resume();				
+	if(SUCCEEDED(hr))
     {
         return JNI_TRUE;
 	}
@@ -126,7 +145,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 		
 	Recognizer* recognizer = (Recognizer*)recognizerHandle;
     const wchar_t* gram = (const wchar_t*)env->GetStringChars(grammarPath, NULL);
-	HRESULT hr = recognizer->setGrammar(gram);
+	HRESULT hr = recognizer->LoadGrammarFile(gram);
 	if (SUCCEEDED(hr))
     {
         return JNI_TRUE;
