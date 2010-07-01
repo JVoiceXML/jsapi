@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "Recognizer.h"
+#include "JNIUtils.h"
 
-Recognizer::Recognizer(HWND hwnd)
-: cpRecognizerEngine(NULL), cpRecoCtxt(NULL), cpGrammar(NULL), hr(S_OK), grammarCount(0)
+Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
+: cpRecognizerEngine(NULL), cpRecoCtxt(NULL), cpGrammar(NULL), hr(S_OK), grammarCount(0),
+  jenv(env), jrec(rec)
 {
     // create a new InprocRecognizer.
     hr = cpRecognizerEngine.CoCreateInstance(CLSID_SpInprocRecognizer);	
@@ -13,7 +15,7 @@ Recognizer::Recognizer(HWND hwnd)
     if (SUCCEEDED(hr))
     {
         // Set recognition notification for dictation
-        hr = cpRecoCtxt->SetNotifyWindowMessage(hwnd, WM_RECOEVENT, 0, 0);
+        hr = cpRecoCtxt->SetNotifyWindowMessage(hwnd, WM_RECOEVENT, (WPARAM) this, 0);
     }
 
     if (SUCCEEDED(hr))
@@ -105,6 +107,39 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
     }
 
 	return cpGrammar->SetGrammarState(SPGS_ENABLED);
+}
+
+HRESULT Recognizer::RecognitionHappened()
+{
+    CSpEvent event;
+    // Process all of the recognition events
+    while (event.GetFrom(cpRecoCtxt) == S_OK)
+    {
+        switch (event.eEventId)
+        {
+        case SPEI_RECOGNITION:
+            ISpRecoResult* result = event.RecoResult();
+            wchar_t* utterance;
+            return result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
+                &utterance, NULL);
+            Recognized(utterance);
+            CoTaskMemFree(utterance);
+        }
+    }
+    return S_FALSE;
+} 
+
+void Recognizer::Recognized(wchar_t* utterance)
+{
+    jclass clazz;
+    jmethodID methodId;
+    if (!GetMethodId(jenv, "org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer",
+        "reportResult", "(Ljavax/speech/SpeechLocale;)V", clazz, methodId))
+    {
+        return;
+    }
+    jstring jstr = jenv->NewString((jchar*)utterance, wcslen(utterance));
+    jenv->CallObjectMethod(jrec, methodId, jstr);
 }
 
 void Recognizer::pause()

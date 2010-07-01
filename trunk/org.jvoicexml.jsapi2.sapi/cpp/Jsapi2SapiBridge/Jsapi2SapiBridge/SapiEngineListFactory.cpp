@@ -20,50 +20,25 @@ JNIEXPORT jobjectArray JNICALL Java_org_jvoicexml_jsapi2_sapi_SapiEngineListFact
     Synthesizer::ListVoices(voices, num);
     ::CoUninitialize();
 
-    jclass clazz = env->FindClass("javax/speech/synthesis/Voice");
-    if (clazz == NULL)
+    jclass clazz;
+    jmethodID constructor;
+    BOOL rc = GetMethodId(env, "javax/speech/synthesis/Voice",
+        "<init>", "(Ljavax/speech/SpeechLocale;Ljava/lang/String;III)V",
+        clazz, constructor);
+    if (!rc)
     {
-        char* msg = "Unable to create javax/speech/synthesis/Voice!";
-        jclass exception = env->FindClass("java/lang/NullPointerException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << msg << std::endl;
-            return NULL;
-        }
-        env->ThrowNew(exception, msg);
         return NULL;
     }
-    jmethodID constructor = env->GetMethodID(clazz, "<init>",
-        "(Ljavax/speech/SpeechLocale;Ljava/lang/String;III)V");
-    if (constructor == NULL)
-    {
-        char* msg = "Constructor for javax/speech/synthesis/Voice not found!";
-        jclass exception = env->FindClass("java/lang/NullPointerException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << msg << std::endl;
-            return NULL;
-        }
-        env->ThrowNew(exception, msg);
-        return NULL;
-    }
-
     jobjectArray jvoices = env->NewObjectArray(num, clazz, NULL);
     if (jvoices == NULL)
     {
         char* msg = "Error creating the voices array!";
-        jclass exception = env->FindClass("java/lang/NullPointerException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << msg << std::endl;
-            return NULL;
-        }
-        env->ThrowNew(exception, msg);
+        ThrowJavaException(env, "java/lang/NullPointerException", msg);
         return NULL;
     }
     for (ULONG i=0; i<num; i++)
     {
-        WCHAR* voiceName = voices[i].GetName();
+        wchar_t* voiceName = voices[i].GetName();
         jstring name = env->NewString((jchar*)voiceName, wcslen(voiceName));
         jobject voice = env->NewObject(clazz, constructor, NULL, name, -1, -1, -1);
         env->SetObjectArrayElement(jvoices, i, voice);

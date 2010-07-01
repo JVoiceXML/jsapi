@@ -1,10 +1,7 @@
 package org.jvoicexml.jsapi2.sapi.synthesis;
 
-import javax.speech.AudioException;
 import javax.speech.Engine;
-import javax.speech.EngineException;
 import javax.speech.EngineManager;
-import javax.speech.EngineStateException;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
 

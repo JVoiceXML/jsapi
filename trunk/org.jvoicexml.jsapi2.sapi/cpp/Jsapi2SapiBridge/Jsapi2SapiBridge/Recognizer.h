@@ -1,10 +1,12 @@
 #pragma once
 
+#include <jni.h>
+
 class Recognizer
 {
 public:
 
-    Recognizer(HWND hwnd);
+    Recognizer(HWND hwnd, JNIEnv *env, jobject rec);
     virtual ~Recognizer();
 
     void pause();
@@ -13,6 +15,7 @@ public:
 
     HRESULT LoadGrammar(const wchar_t* grammar);
     HRESULT LoadGrammarFile(LPCWSTR grammarPath);
+    HRESULT RecognitionHappened();
 
     void startdictation();
 
@@ -21,10 +24,13 @@ public:
     HRESULT	hr;
 
 private:
+    void Recognized(wchar_t* utterance);
 
     int							grammarCount;	
     CComPtr<ISpRecognizer>		cpRecognizerEngine;
     CComPtr<ISpRecoContext>		cpRecoCtxt;
     CComPtr<ISpRecoGrammar>		cpGrammar;
+    JNIEnv* jenv;
+    jobject jrec;
 };		
 
