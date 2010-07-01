@@ -11,3 +11,25 @@ void ThrowJavaException(JNIEnv* env, char* exceptionClassName, char* message)
     }
     env->ThrowNew(exception, message);
 }
+
+BOOL GetMethodId(JNIEnv* env, const char* className, const char* methodName,
+                 const char* sig, jclass& clazz, jmethodID& methodId)
+{
+    clazz = env->FindClass(className);
+    if (clazz == NULL)
+    {
+        char msg[512];
+        _snprintf(msg, sizeof(msg), "Unable to %s!", className);
+        ThrowJavaException(env, "java/lang/NullPointerException", msg);
+        return FALSE;
+    }
+    methodId = env->GetMethodID(clazz, methodName, sig);
+    if (methodId == NULL)
+    {
+        char msg[1024];
+        _snprintf(msg, sizeof(msg), "Unable to find method '%s(%s)'!", methodName, sig);
+        ThrowJavaException(env, "java/lang/NullPointerException", msg);
+        return FALSE;
+    }
+    return TRUE;
+}

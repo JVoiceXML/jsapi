@@ -4,18 +4,32 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.recognition.Grammar;
+import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.GrammarManager;
+import javax.speech.recognition.Result;
+import javax.speech.recognition.ResultEvent;
+import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
+import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 
+/**
+ * A SAPI recognizer.
+ * @author Dirk Schnelle-Walka
+ *
+ */
 public final class SapiRecognizer extends JseBaseRecognizer {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(SapiRecognizer.class.getName());
 
     static {
         System.loadLibrary("Jsapi2SapiBridge");
@@ -109,7 +123,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      */
     @Override
     protected boolean setGrammars(
-            @SuppressWarnings("rawtypes") Vector grammarDefinition) {
+            @SuppressWarnings("rawtypes") final Vector grammarDefinition) {
         return false;
     }
 
@@ -130,6 +144,40 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
     private native void start(long handle);
 
+    /**
+     * Notification from the SAPI recognizer about a recognition result.
+     * @param utterance the detected utterance
+     */
+    private void reportResult(final String utterance) {
+        final RuleGrammar grammar = currentGrammar;
+        final BaseResult result;
+        try {
+            result = new BaseResult(grammar, utterance);
+        } catch (GrammarException e) {
+            LOGGER.warning(e.getMessage());
+            return;
+        }
+
+        final ResultEvent created = new ResultEvent(result,
+                ResultEvent.RESULT_CREATED, false, false);
+        postResultEvent(created);
+
+        final ResultEvent grammarFinalized =
+            new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED);
+        postResultEvent(grammarFinalized);
+
+        if (result.getResultState() == Result.REJECTED) {
+            final ResultEvent rejected =
+                new ResultEvent(result, ResultEvent.RESULT_REJECTED,
+                        false, false);
+            postResultEvent(rejected);
+        } else {
+            final ResultEvent accepted = new ResultEvent(result,
+                        ResultEvent.RESULT_ACCEPTED, false, false);
+            postResultEvent(accepted);
+        }
+    }
+
     class SapiChangeRequestListener
             implements EnginePropertyChangeRequestListener {
 
@@ -138,7 +186,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             // TODO Auto-generated method stub
 
         }
-
     }
 
 }

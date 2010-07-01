@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Recognizer.h"
 
 HWND hWnd = NULL;
 static HINSTANCE hInstance = NULL;
@@ -33,8 +34,6 @@ void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	
-
 	switch (message)
 	{
 	case WM_NCCREATE:
@@ -46,12 +45,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
+    case WM_RECOEVENT:
+        Recognizer* recognizer = (Recognizer*) wParam;
+        recognizer->RecognitionHappened();
+        return 0;
 	}
 
 	return DefWindowProcA(hWnd, message, lParam, wParam);
 }
 
-BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
+BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {	
     if (hWnd != NULL)
     {

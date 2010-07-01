@@ -34,7 +34,7 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognize
     }
 
     /* create new Recognizer class */
-    Recognizer* recognizer = new Recognizer(hWnd);
+    Recognizer* recognizer = new Recognizer(hWnd, env, object);
     /* check if Handle valid */
     if (FAILED(recognizer->hr))
     {      
@@ -76,14 +76,8 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "Pause recognizer failed",
             recognizer->hr);
-        jclass exception = env->FindClass("javax/speech/EngineException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << buffer << std::endl;
-        }
-        env->ThrowNew(exception, buffer);
-    }
-	
+        ThrowJavaException(env, "javax/speech/EngineException", buffer);
+    }	
 }
 
 /*
@@ -116,12 +110,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
             char buffer[1024];
             GetErrorMessage(buffer, sizeof(buffer), "Resume recognizer failed",
                 recognizer->hr);
-            jclass exception = env->FindClass("javax/speech/EngineStateException");
-            if (exception == 0) /* Unable to find the new exception class, give up. */
-            {
-                std::cerr << buffer << std::endl;
-            }
-            env->ThrowNew(exception, buffer);
+            ThrowJavaException(env, "javax/speech/EngineStateException", buffer);
         }
     }
 	HRESULT hr = recognizer->Resume();				
@@ -162,9 +151,9 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
  * Signature: ()Lorg/jvoicexml/jsapi2/EnginePropertyChangeRequestListener;
  */
 JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_getChangeRequestListener
- (JNIEnv *env, jobject object){
-
-	return false;
+ (JNIEnv *env, jobject object)
+{
+	return NULL;
 }
 
 /*
@@ -173,9 +162,7 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogni
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_start
-(JNIEnv *env, jobject object, jlong recognizerHandle){
-
-	reinterpret_cast< Recognizer* >(recognizerHandle)->startdictation();
-	
+(JNIEnv *env, jobject object, jlong recognizerHandle)
+{
+	reinterpret_cast<Recognizer*>(recognizerHandle)->startdictation();	
 }
-
