@@ -3,8 +3,8 @@
   
   <rule id="DEVICE" scope="public">
     <one-of>
-      <item repeat="0-1" repeat-prob="0.5" weight="0.5">licht</item>
-	 <item repeat="0-1" repeat-prob="0.5" weight="0.5">lampe</item>
+      <item repeat="1" repeat-prob="0.5" weight="0.5">licht</item>
+	 <item repeat="1" repeat-prob="0.5" weight="0.5">lampe</item>
     </one-of>
   </rule>
  
@@ -18,11 +18,9 @@
   <rule id="LIGHT" scope="public">
     <one-of>
 	 <item>
-	  <ruleref special="GARBAGE"/>
 	  <ruleref uri="#DEVICE" />
 	  <ruleref special="GARBAGE"/>
 	  <ruleref uri="#COMMAND" />
-	  <ruleref special="GARBAGE"/>
 	 </item>
     </one-of>
   </rule>
