@@ -114,6 +114,7 @@ public final class TestSynthesizer {
         synthesizer.speakMarkup(
                 "This sounds normal <pitch middle = '+10'/> but the pitch drops half way through", null);
         System.out.println("This sounds normal <pitch middle = '+10'/> but the pitch drops half way through");
+        
         Thread.sleep(4000);
     }
 }
