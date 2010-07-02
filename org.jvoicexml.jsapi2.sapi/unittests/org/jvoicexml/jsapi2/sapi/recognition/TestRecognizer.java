@@ -16,7 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.jvoicexml.jsapi2.demo.inputdemo.InputDemo;
 import org.jvoicexml.jsapi2.sapi.SapiEngineListFactory;
 
 
@@ -91,8 +90,8 @@ public final class TestRecognizer implements ResultListener {
         recognizer.addResultListener(this);
 
         final GrammarManager grammarManager = recognizer.getGrammarManager();
-        final InputStream in = InputDemo.class.getResourceAsStream("hello.xml");
-        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");
+        final InputStream in = TestRecognizer.class.getResourceAsStream("Licht.xml");
+        grammarManager.loadGrammar("grammar:LIGHT", null, in, "ISO-8859-1");
 
         recognizer.requestFocus();
         recognizer.resume();
@@ -110,22 +109,22 @@ public final class TestRecognizer implements ResultListener {
         System.out.println();
         
     }
-
-    /**
-     * Test case for {@link SapiRecognizer#handlePause()}.
-     * Test case for {@link SapiRecognizer#handleResume()}.
-     * @throws Exception
-     *         test failed
-     */  
-    @Test
-    public void testPause() throws Exception {
-            recognizer.pause();
-            System.out.println("\tPause Recognizer \n");
-            Thread.sleep(5000);
-            recognizer.resume();
-            System.out.println("\tResume Recognizer \n");
-            Thread.sleep(5000);
-    }
+//
+//    /**
+//     * Test case for {@link SapiRecognizer#handlePause()}.
+//     * Test case for {@link SapiRecognizer#handleResume()}.
+//     * @throws Exception
+//     *         test failed
+//     */  
+//    @Test
+//    public void testPause() throws Exception {
+//            recognizer.pause();
+//            System.out.println("\tPause Recognizer \n");
+//            Thread.sleep(5000);
+//            recognizer.resume();
+//            System.out.println("\tResume Recognizer \n");
+//            Thread.sleep(5000);
+//    }
 
     /**
      * {@inheritDoc}

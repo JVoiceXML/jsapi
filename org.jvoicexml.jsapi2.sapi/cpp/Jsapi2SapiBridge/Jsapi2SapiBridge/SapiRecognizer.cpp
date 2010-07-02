@@ -103,8 +103,9 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
     for (jsize i=0; i<size; i++)
     {
         jstring grammar = (jstring) env->GetObjectArrayElement(grammars, i);
-        const wchar_t* gram = (const wchar_t*)env->GetStringChars(grammar, NULL);
-        HRESULT hr = recognizer->LoadGrammarFile(gram);
+		const wchar_t* gram = (const wchar_t*)env->GetStringChars(grammar, NULL);	
+		
+		HRESULT hr = recognizer->LoadGrammarFile(gram);
         if (FAILED(hr))
         {
             char buffer[1024];

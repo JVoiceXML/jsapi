@@ -103,9 +103,13 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 file.deleteOnExit();
                 final FileOutputStream out = new FileOutputStream(file);
                 final String xml = grammar.toString();
+                
                 out.write(xml.getBytes());
                 out.close();
                 grammarSources[i] = file.getCanonicalPath();
+                System.out.println(xml);
+//                System.out.println(grammarSources[i]);
+                
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
