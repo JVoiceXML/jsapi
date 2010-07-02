@@ -6,6 +6,21 @@
 #include <fstream>
 #include <string>
 
+void wchar_t2jstring(wchar_t* lstr , char* Buffer) {
+
+         char* buffer = NULL;
+
+         int res = WideCharToMultiByte(CP_ACP, 0, lstr, -1, NULL, 0, NULL, NULL);
+ 
+         if (res > 0) {
+                 buffer = (char*)malloc(res+10);
+                 res = WideCharToMultiByte(CP_ACP, 0, lstr, -1, buffer, res+10, NULL, NULL);
+		 }else{
+			
+		 }
+ }
+
+
 Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 : cpRecognizerEngine(NULL), cpRecoCtxt(NULL), cpGrammar(NULL), hr(S_OK), grammarCount(0),
   jenv(env), jrec(rec)
@@ -72,7 +87,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
         return hr;
     }
     ULONG written;
-    stream->Write(grammar, wcslen(grammar), &written);
+    hr = stream->Write(grammar, wcslen(grammar), &written);
     if (FAILED(hr))
     {
         return hr;
@@ -85,10 +100,12 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
     {
         return hr;
     }
-    hr = compiler->CompileStream(stream, compiledStream, NULL, NULL, NULL, 0);
+	CComPtr<IStream> headerStream;
+	CComPtr<ISpErrorLog> errorLog;
+    hr = compiler->CompileStream(stream, compiledStream, headerStream, NULL, errorLog, 0);
     if (FAILED(hr))
     {
-        return hr;
+		return hr;
     }
     HGLOBAL hGrammar;
     ::GetHGlobalFromStream(compiledStream, &hGrammar);
@@ -120,7 +137,7 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
 
 	cpRecoCtxt->SetNotifyWin32Event();					// Achtung bei allocate ->SetNotifyWindowMessage() auskommentiert
 	hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
-
+	std::cout<< " was erkannt "<<std::endl; 
 	RecognitionHappened();
 
 	return hr;
@@ -154,9 +171,12 @@ HRESULT Recognizer::RecognitionHappened()
 
 void Recognizer::Recognized(wchar_t* utterance)
 {
-	jclass clazz = jenv->GetObjectClass(jrec);
+	//jclass clazz = jenv->GetObjectClass(jrec);
+	jclass clazz = jenv->FindClass("org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer");
+	std::cout<< "RecognizerClassHandle: "<< clazz <<std::endl; 
+
     jmethodID methodId = jenv->GetMethodID(clazz, "reportResult","(Ljava/lang/String;)V");
-  
+	std::cout<< "reportResultMethodeId: " << methodId <<std::endl;
 	//  if (!GetMethodId(jenv, "org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer",
   //      "reportResult", "(JLjava/lang/String;)V", clazz, methodId))
   //  {
@@ -168,13 +188,24 @@ void Recognizer::Recognized(wchar_t* utterance)
 
 	  if ( methodId == NULL )
     {
-		std::cout<< "RecognizerClassHandle: "<<clazz<<std::endl; 
-		std::cout<< "reportResultMethodeId: " <<methodId<<std::endl; 
-		std::cout<< "Recocnizer::Recognized(utterance);  cant get Method ID"<<std::endl; fflush(stdout);
+		std::cout<< "Recognizer::Recognized(utterance);  cant get Method ID"<<std::endl; fflush(stdout);
 		return;
     }
-    jstring jstr = jenv->NewString((jchar*)utterance, wcslen(utterance));
-    jenv->CallObjectMethod(jrec, methodId, jstr);
+
+	int len = wcslen(utterance);
+	std::cout<< len <<std::endl; fflush(stdout);
+	std::cout<< utterance <<std::endl; fflush(stdout);
+
+	char Buffer[1024];
+	wchar_t2jstring(utterance , Buffer);
+
+	jstring jstr = jenv->NewStringUTF( Buffer );
+
+    //jstring jstr = jenv->NewString((jchar*)utterance, wcslen(utterance));
+	
+	jenv->CallVoidMethod( jrec, jenv->GetMethodID(jenv->FindClass("System/out"), "println", "(Ljava/lang/String;)V"), (jstring)utterance);
+
+    //jenv->CallObjectMethod(jrec, methodId, jstr);
 }
 
 void Recognizer::pause()
@@ -238,3 +269,5 @@ HRESULT Recognizer::BlockForResult(ISpRecoContext * pRecoCtxt, ISpRecoResult ** 
 
 	return hr;
 }
+
+
