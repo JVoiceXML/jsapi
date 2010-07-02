@@ -26,8 +26,8 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
     {
         // This specifies which of the recognition events are going to trigger
         // notifications.
-        // Here, all we are interested in is the beginning and ends of sounds, as well as
-        // when the engine has recognized something
+        // Here, all we are interested in is when the engine has recognized something
+		// no false recognition
         hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION), SPFEI(SPEI_RECOGNITION));
     }
 
@@ -147,7 +147,8 @@ void Recognizer::Recognized(wchar_t* utterance)
     if (!GetMethodId(jenv, "org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer",
         "reportResult", "(Ljavax/speech/SpeechLocale;)V", clazz, methodId))
     {
-        return;
+		std::cout<< "Recocnizer::Recognized(utterance) cant get Method ID"<<std::endl; fflush(stdout);
+		return;
     }
     jstring jstr = jenv->NewString((jchar*)utterance, wcslen(utterance));
     jenv->CallObjectMethod(jrec, methodId, jstr);
