@@ -44,7 +44,7 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognize
         ThrowJavaException(env, "javax/speech/EngineException", buffer);
         return 0;
     }
-
+	
     return (jlong) recognizer;	
 }
 
@@ -98,6 +98,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiResume
   (JNIEnv *env, jobject object, jlong handle, jobjectArray grammars)
 {
+
 	Recognizer* recognizer = (Recognizer*)handle;
     jsize size = env->GetArrayLength(grammars);
     for (jsize i=0; i<size; i++)

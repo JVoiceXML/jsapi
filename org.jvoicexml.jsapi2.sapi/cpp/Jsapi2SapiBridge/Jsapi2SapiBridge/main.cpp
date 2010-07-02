@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Recognizer.h"
+#include "sperror.h"
 
 HWND hWnd = NULL;
 static HINSTANCE hInstance = NULL;
@@ -48,6 +49,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
     case WM_RECOEVENT:
         Recognizer* recognizer = (Recognizer*) wParam;
+		std::cout<< "CALLBACK WM_RECOEVENT"<<std::endl; fflush(stdout);
         recognizer->RecognitionHappened();
         return 0;
 	}
