@@ -1,11 +1,9 @@
-<grammar mode="voice" xml:lang="en-US" version="1.0" root="greeting">
+<grammar mode="voice" xml:lang="en-US" version="1.0" root="greeting" xmlns="http://www.w3.org/2001/06/grammar">
   <rule id="greeting" scope="public">
-    <item repeat="0-1">
-      <one-of>
-        <item> good morning </item>
-        <item> hello </item>
-      </one-of>
-    </item>
+     <one-of>
+       <item > good morning </item>
+       <item > hello </item>
+     </one-of>
     <one-of>
       <item> dirk </item>
       <item> david </item>

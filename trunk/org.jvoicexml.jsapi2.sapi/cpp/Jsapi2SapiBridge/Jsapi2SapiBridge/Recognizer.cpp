@@ -2,6 +2,10 @@
 #include "Recognizer.h"
 #include "JNIUtils.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
 Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 : cpRecognizerEngine(NULL), cpRecoCtxt(NULL), cpGrammar(NULL), hr(S_OK), grammarCount(0),
   jenv(env), jrec(rec)
@@ -95,16 +99,52 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
 
 HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
 {
+	std::ifstream in (grammarPath);
+
+	std::wstring path = grammarPath;
+	std::string  name( path.begin(), path.end() );
+	name += "22";
+	if( in.is_open() ){
+		
+		std::cout << name << std::endl;flush(std::cout);
+
+		std::ofstream out(CA2W(name.c_str()) );
+		std::string line;
+
+		getline(in,line);
+		getline(in,line);
+		
+		while( getline(in,line) ){
+			out << line << "\n";
+			std::cout << line << std::endl;flush(std::cout);
+
+		}
+	
+		in.close();
+		out.close(); 
+		
+	
+				
+	}
+	else {
+		std::cout << "Unable to open File" << std::endl;flush(std::cout);
+	}
+	std::cout << grammarPath << std::endl;flush(std::cout);
+
     hr = cpRecoCtxt->CreateGrammar(grammarCount++, &cpGrammar);
     if (FAILED(hr))
     {
         return hr;
     }
-	hr = cpGrammar->LoadCmdFromFile(grammarPath, SPLO_STATIC);
+	hr = cpGrammar->LoadCmdFromFile( CA2W(name.c_str()) , SPLO_STATIC);
+	
+	//hr = cpGrammar->LoadCmdFromFile(grammarPath, SPLO_STATIC);
     if (FAILED(hr))
     {
         return hr;
     }
+	remove( name.c_str()  );
+	
 
 	return cpGrammar->SetGrammarState(SPGS_ENABLED);
 }
