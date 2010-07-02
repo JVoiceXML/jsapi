@@ -753,7 +753,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         str.append(mode);
         str.append("\" root=\"");
         str.append(getRoot());
-        str.append("\">\n");
+        str.append("\" xmlns=\"http://www.w3.org/2001/06/grammar\">\n");
 
         Iterator it = rules.keySet().iterator();
         Vector v = new Vector();
