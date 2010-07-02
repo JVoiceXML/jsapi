@@ -103,11 +103,17 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 file.deleteOnExit();
                 final FileOutputStream out = new FileOutputStream(file);
                 final String xml = grammar.toString();
-                
-                out.write(xml.getBytes());
+                int index = xml.indexOf(".dtd");              
+                StringBuffer temp = new StringBuffer();
+                temp.append( xml.substring(index+8) );
+                index = temp.indexOf("06/grammar");
+                temp.insert(index+11, " xml:lang=\"de-DE\" ");
+                System.out.println(temp);
+                out.write(temp.toString().getBytes());
+//                out.write(xml.getBytes());
                 out.close();
                 grammarSources[i] = file.getCanonicalPath();
-                System.out.println(xml);
+//                System.out.println(xml);
 //                System.out.println(grammarSources[i]);
                 
             } catch (IOException e) {

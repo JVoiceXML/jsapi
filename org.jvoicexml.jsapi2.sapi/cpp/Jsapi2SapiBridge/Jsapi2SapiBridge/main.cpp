@@ -7,6 +7,7 @@ static HINSTANCE hInstance = NULL;
 // alternative look-up error codes returned by sapi in the file sperror.h
 void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr) 
 {	
+	DWORD Error = GetLastError();
 	LPSTR pMessage = NULL;
 	DWORD length = FormatMessageA(
 							FORMAT_MESSAGE_ALLOCATE_BUFFER  |
