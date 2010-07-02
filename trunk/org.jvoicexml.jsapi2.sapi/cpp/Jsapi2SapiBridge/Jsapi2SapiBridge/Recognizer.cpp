@@ -19,7 +19,8 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
     if (SUCCEEDED(hr))
     {
         // Set recognition notification for dictation
-        hr = cpRecoCtxt->SetNotifyWindowMessage(hwnd, WM_RECOEVENT, (WPARAM) this, 0);
+        //hr = cpRecoCtxt->SetNotifyWindowMessage(hwnd, WM_RECOEVENT, (WPARAM) this, 0);
+		//cpRecoCtxt->SetNotifyWin32Event();
     }
 
     if (SUCCEEDED(hr))
@@ -103,7 +104,7 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
     hr = cpRecoCtxt->CreateGrammar(grammarCount++, &cpGrammar);
     if (FAILED(hr))
     {
-        return hr;
+        return GetLastError();;
     }
 	hr = cpGrammar->LoadCmdFromFile( grammarPath , SPLO_STATIC);
 	
@@ -113,16 +114,25 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
     }
 
 	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
-
-	return cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
+	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
 	
+	std::cout<< "c-Code PLEASE SPEAK Licht ein"<<std::endl; fflush(stdout);
+
+	cpRecoCtxt->SetNotifyWin32Event();					// Achtung bei allocate ->SetNotifyWindowMessage() auskommentiert
+	hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
+
+	RecognitionHappened();
+
+	return hr;
 }
 
 HRESULT Recognizer::RecognitionHappened()
 {
+	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+
     CSpEvent event;
     // Process all of the recognition events
-    while ( event.GetFrom(cpRecoCtxt) == S_OK)
+    while ( SUCCEEDED( event.GetFrom(cpRecoCtxt) ) )//== S_OK
     {
         switch (event.eEventId)
         {
@@ -131,6 +141,8 @@ HRESULT Recognizer::RecognitionHappened()
             wchar_t* utterance;
             hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
                 &utterance, NULL);
+			
+			std::cout<< "c-Code Utterance: "<< CW2A(utterance) <<std::endl; fflush(stdout);
 
             Recognized(utterance);
             CoTaskMemFree(utterance);
@@ -142,12 +154,23 @@ HRESULT Recognizer::RecognitionHappened()
 
 void Recognizer::Recognized(wchar_t* utterance)
 {
-    jclass clazz;
-    jmethodID methodId;
-    if (!GetMethodId(jenv, "org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer",
-        "reportResult", "(Ljavax/speech/SpeechLocale;)V", clazz, methodId))
+	jclass clazz = jenv->GetObjectClass(jrec);
+    jmethodID methodId = jenv->GetMethodID(clazz, "reportResult","(Ljava/lang/String;)V");
+  
+	//  if (!GetMethodId(jenv, "org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer",
+  //      "reportResult", "(JLjava/lang/String;)V", clazz, methodId))
+  //  {
+		//std::cout<< clazz<<std::endl; 
+		//std::cout<< methodId<<std::endl; 
+		//std::cout<< "Recocnizer::Recognized(utterance);  cant get Method ID"<<std::endl; fflush(stdout);
+		//return;
+  //  }
+
+	  if ( methodId == NULL )
     {
-		std::cout<< "Recocnizer::Recognized(utterance) cant get Method ID"<<std::endl; fflush(stdout);
+		std::cout<< "RecognizerClassHandle: "<<clazz<<std::endl; 
+		std::cout<< "reportResultMethodeId: " <<methodId<<std::endl; 
+		std::cout<< "Recocnizer::Recognized(utterance);  cant get Method ID"<<std::endl; fflush(stdout);
 		return;
     }
     jstring jstr = jenv->NewString((jchar*)utterance, wcslen(utterance));

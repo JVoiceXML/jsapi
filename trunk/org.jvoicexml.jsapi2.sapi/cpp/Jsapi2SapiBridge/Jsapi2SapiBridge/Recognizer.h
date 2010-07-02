@@ -15,7 +15,6 @@ public:
 
     HRESULT LoadGrammar(const wchar_t* grammar);
     HRESULT LoadGrammarFile(LPCWSTR grammarPath);
-	//HRESULT LoadGrammarFile(std::wstring grammarPath);
     HRESULT RecognitionHappened();
 
     void startdictation();

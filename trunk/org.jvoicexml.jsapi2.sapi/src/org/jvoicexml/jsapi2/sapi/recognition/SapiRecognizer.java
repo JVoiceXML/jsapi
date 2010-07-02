@@ -108,12 +108,11 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 temp.append( xml.substring(index+8) );
                 index = temp.indexOf("06/grammar");
                 temp.insert(index+11, " xml:lang=\"de-DE\" ");
-                System.out.println(temp);
                 out.write(temp.toString().getBytes());
-//                out.write(xml.getBytes());
                 out.close();
                 grammarSources[i] = file.getCanonicalPath();
-//                System.out.println(xml);
+                
+//                System.out.println(temp);
 //                System.out.println(grammarSources[i]);
                 
             } catch (IOException e) {
@@ -158,6 +157,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      * Notification from the SAPI recognizer about a recognition result.
      * @param utterance the detected utterance
      */
+    @SuppressWarnings("unused")
     private void reportResult(final String utterance) {
         final RuleGrammar grammar = currentGrammar;
         final BaseResult result;
