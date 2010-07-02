@@ -30,7 +30,6 @@ package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +38,6 @@ import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
-import javax.speech.recognition.Grammar;
 import javax.speech.recognition.RecognizerEvent;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.RuleGrammar;
@@ -200,22 +198,13 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
         }
 
         try {
-
-
             //Get and set input
             InputStream inputStream = ((JseBaseAudioManager)getAudioManager()).getInputStream();
 
             ((SphinxInputDataProcessor)dataProcessor).setInputStream(inputStream);
 
             recognizer.allocate();
-/*
-            final RuleGrammar[] grammars = listRuleGrammars();
-            for (int i = 0; i < grammars.length; i++) {
-                deleteRuleGrammar(grammars[i]);
-            }*/
-
             recognizer.addResultListener(resultListener);
-
         } catch (java.io.IOException ioe) {
            throw new AudioException(ioe.getMessage());
         }
