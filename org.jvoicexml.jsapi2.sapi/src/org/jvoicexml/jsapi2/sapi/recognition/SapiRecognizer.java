@@ -102,19 +102,17 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 final File file = File.createTempFile("sapi", "xml");
                 file.deleteOnExit();
                 final FileOutputStream out = new FileOutputStream(file);
-                final String xml = grammar.toString();
-                int index = xml.indexOf(".dtd");              
-                StringBuffer temp = new StringBuffer();
-                temp.append( "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n" );
-                temp.append( xml.substring(index+8) );
-                index = temp.indexOf("06/grammar");
-                temp.insert(index+11, " xml:lang=\"de-DE\" ");
-                out.write(temp.toString().getBytes());
+   
+                StringBuffer xml = new StringBuffer();          
+                xml.append( grammar.toString() );
+                int index = xml.indexOf("06/grammar");
+                xml.insert(index+11, " xml:lang=\"de-DE\" ");
+                out.write(xml.toString().getBytes());
                 out.close();
-                grammarSources[i] = file.getCanonicalPath();
-//              System.out.println(xml);                
-                //System.out.println(temp);
+                grammarSources[i] = file.getCanonicalPath();                
+//                System.out.println(xml);
 //                System.out.println(grammarSources[i]);
+           
                 
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -163,9 +161,9 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         
         System.out.println("Java Code " + utterance);
         
-        final RuleGrammar grammar = currentGrammar;
+        final RuleGrammar grammar = currentGrammar;    // current grammar is not available 
         System.out.println(grammar);
-        System.out.println("Java Code 1");
+        
         final BaseResult result;
         try {
             result = new BaseResult(grammar, utterance);
@@ -173,7 +171,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             LOGGER.warning(e.getMessage());
             return;
         }
-        System.out.println("Java Code 2");
 
         final ResultEvent created = new ResultEvent(result,
                 ResultEvent.RESULT_CREATED, false, false);
