@@ -113,7 +113,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 out.close();
                 grammarSources[i] = file.getCanonicalPath();
 //              System.out.println(xml);                
-                System.out.println(temp);
+                //System.out.println(temp);
 //                System.out.println(grammarSources[i]);
                 
             } catch (IOException e) {
@@ -160,7 +160,12 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      */
     @SuppressWarnings("unused")
     private void reportResult(final String utterance) {
+        
+        System.out.println("Java Code " + utterance);
+        
         final RuleGrammar grammar = currentGrammar;
+        System.out.println(grammar);
+        System.out.println("Java Code 1");
         final BaseResult result;
         try {
             result = new BaseResult(grammar, utterance);
@@ -168,6 +173,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             LOGGER.warning(e.getMessage());
             return;
         }
+        System.out.println("Java Code 2");
 
         final ResultEvent created = new ResultEvent(result,
                 ResultEvent.RESULT_CREATED, false, false);

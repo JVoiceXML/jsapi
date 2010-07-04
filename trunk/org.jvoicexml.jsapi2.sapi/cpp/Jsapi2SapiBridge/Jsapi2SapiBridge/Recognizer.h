@@ -24,7 +24,7 @@ public:
     HRESULT	hr;
 
 private:
-    void Recognized(wchar_t* utterance);
+    void Recognized(LPWSTR utterance);
 
     int							grammarCount;	
     CComPtr<ISpRecognizer>		cpRecognizerEngine;
