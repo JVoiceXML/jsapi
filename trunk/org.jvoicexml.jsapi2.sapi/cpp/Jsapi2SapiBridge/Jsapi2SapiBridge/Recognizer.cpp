@@ -135,9 +135,9 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
 	
 	std::cout<< "c-Code PLEASE SPEAK Licht ein"<<std::endl; fflush(stdout);
 
-	cpRecoCtxt->SetNotifyWin32Event();					// Achtung bei allocate ->SetNotifyWindowMessage() auskommentiert
+	hr = cpRecoCtxt->SetNotifyWin32Event();					// Achtung bei allocate ->SetNotifyWindowMessage() auskommentiert
 	hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
-	//std::cout<< "c-Code etwas wurde erkannt "<<std::endl; 
+	std::cout<< "c-Code etwas wurde erkannt "<<std::endl; 
 	RecognitionHappened();
 
 	return hr;
@@ -172,20 +172,20 @@ HRESULT Recognizer::RecognitionHappened()
 void Recognizer::Recognized(LPWSTR utterance)
 {
 	//jclass clazz = jenv->GetObjectClass(jrec);
-	jclass clazz;// = jenv->FindClass("org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer");
-    jmethodID methodId;// = jenv->GetMethodID(clazz, "reportResult","(Ljava/lang/String;)V");
+	jclass clazz = jenv->FindClass("org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer");
+    jmethodID methodId = jenv->GetMethodID(clazz, "reportResult","(Ljava/lang/String;)V");
 
-	if (!GetMethodId(jenv, "org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer",
-        "reportResult", "(JLjava/lang/String;)V", clazz, methodId))
-    {
-		std::cout<< "Recocnizer::Recognized(utterance);  cant get Method ID"<<std::endl; fflush(stdout);
-		return;
-    }
+	//if (!GetMethodId(jenv, "org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer",
+ //       "reportResult", "(JLjava/lang/String;)V", clazz, methodId))
+ //   {
+	//	std::cout<< "Recognizer::Recognized(utterance);  cant get Method ID"<<std::endl; fflush(stdout);
+	//	return;
+ //   }
 
 	int len = wcslen(utterance);
 	jstring jstr = jenv->NewString((jchar*) utterance, wcslen(utterance));
 	
-	std::cout<< "c-Code "<<utt <<std::endl; fflush(stdout);	
+	std::cout<< "c-Code "<<  CW2A(utterance) <<std::endl; fflush(stdout);	
 
     jenv->CallObjectMethod(jrec, methodId, jstr);
 }
