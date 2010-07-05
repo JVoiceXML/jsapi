@@ -8,7 +8,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.jvoicexml.jsapi2"/>
 	<classpathentry kind="lib" path="/javax.speech/bin"/>
 	<classpathentry kind="lib" path="/org.jvoicexml.jsapi2/bin"/>
-	<classpathentry kind="lib" path="/org.jvoicexml.jsapi2.jse/eclipse-compiled"/>
+	<classpathentry kind="lib" path="/org.jvoicexml.jsapi2.jse/eclipse-compiled" sourcepath="/org.jvoicexml.jsapi2.jse"/>
 	<classpathentry kind="lib" path="/org.jvoicexml.jsapi2/classes"/>
 	<classpathentry kind="lib" path="classes"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
