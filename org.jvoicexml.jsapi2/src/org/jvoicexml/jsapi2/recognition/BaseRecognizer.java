@@ -630,7 +630,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
     protected abstract void handlePause(int flags);
 
-    protected abstract boolean handleResume();
+    protected abstract boolean handleResume() throws EngineStateException;
 
     protected abstract boolean setGrammars(Vector grammarDefinition);
 
