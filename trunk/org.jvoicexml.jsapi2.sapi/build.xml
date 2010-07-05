@@ -36,7 +36,7 @@ This file builds the JSR 113.jar.
   <target name="clean" description="Remove all compiled and distribution files">
     <delete dir="${build}" />
     <delete file="${dist.jar}" />
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}">
+    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}" failifexecutionfails="false">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Clean"/>
     </exec>
@@ -66,7 +66,7 @@ This file builds the JSR 113.jar.
       <classpath refid="classpath"/>
       <classpath location="${build}"/>
     </javah>
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}">
+    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}" failifexecutionfails="false">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Build"/>
     </exec>
