@@ -89,8 +89,8 @@ public class SrgsRuleGrammarParser {
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
-            Node grammarNode = (Node) xpath.evaluate("/grammar", builder.parse(inputSource), XPathConstants.NODE);
-
+            Node grammarNode = (Node) xpath.evaluate("/grammar",
+                    builder.parse(inputSource), XPathConstants.NODE);
             Rule[] rules = parseGrammar(grammarNode);
 
             //Extract header from grammar
@@ -134,9 +134,6 @@ public class SrgsRuleGrammarParser {
                 }
 
                 ArrayList<RuleComponent> rcs = evalChildNodes(ruleNode);
-//                NodeList nodes = (NodeList)xpath.evaluate("child::node()", ruleNode, XPathConstants.NODESET);
-//                for (int k = 0; k < nodes.getLength(); k++) {
-                //ArrayList<RuleComponent> rcs = evalNode(nodes.item(k));
                 if (rcs.size() == 1) {
                     Rule rule = new Rule(ruleId, rcs.get(0), scope);
                     rules.add(rule);
@@ -146,7 +143,6 @@ public class SrgsRuleGrammarParser {
                     Rule rule = new Rule(ruleId, rs, scope);
                     rules.add(rule);
                 }
-                //   }
             }
         } catch (XPathExpressionException ex) {
             ex.printStackTrace();

@@ -45,7 +45,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     protected String root;
     protected String version;
     protected String xmlns;
-    protected String xmlLang;
     protected String xmlBase;
     protected String mode;
     protected String tagFormat;
@@ -72,7 +71,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         root = null;
         version = "1.0";
         xmlns = "";
-        xmlLang = SpeechLocale.getDefault().toString();
         xmlBase = "";
         mode = "voice";
         tagFormat = "";
@@ -358,7 +356,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         if (attribute.equals("root")) setRoot(value);
         else if (attribute.equals("version")) version = value;
         else if (attribute.equals("xmlns")) xmlns = value;
-        else if (attribute.equals("xml:lang")) xmlLang = value;
+        else if (attribute.equals("xml:lang")) setSpeechLocale(new SpeechLocale(value));
         else if (attribute.equals("xml:base")) xmlBase = value;
         else if (attribute.equals("mode")) mode = value;
         else if (attribute.equals("tagFormat")) tagFormat = value;
@@ -382,7 +380,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         if (attribute.equals("root")) return getRoot();
         else if (attribute.equals("version")) return version;
         else if (attribute.equals("xmlns")) return xmlns;
-        else if (attribute.equals("xml:lang")) return xmlLang;
+        else if (attribute.equals("xml:lang")) return getSpeechLocale().toString();
         else if (attribute.equals("xml:base")) return xmlBase;
         else if (attribute.equals("mode")) return mode;
         else if (attribute.equals("tagFormat")) return tagFormat;
@@ -751,6 +749,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         str.append(version);
         str.append("\" mode=\"");
         str.append(mode);
+        str.append("\" xml:lang=\"");
+        str.append(getSpeechLocale());
         str.append("\" root=\"");
         str.append(getRoot());
         str.append("\" xmlns=\"http://www.w3.org/2001/06/grammar\">\n");
@@ -762,7 +762,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
             v.addElement(r);
         }
 
-        Collections.sort(v,new InternalRuleIdComparator());
+        Collections.sort(v, new InternalRuleIdComparator());
         for (int i = 0; i < v.size(); ++i) {
             final InternalRule internalRule = (InternalRule) v.get(i);
             if (displayDisabledRules || internalRule.isActivable()) {

@@ -272,6 +272,7 @@ public class BaseGrammarManager implements GrammarManager {
      * @throws EngineStateException
      * @throws EngineException
      */
+    @SuppressWarnings("unchecked")
     public Grammar loadGrammar(String grammarReference, String mediaType,
                                Reader reader) throws
             GrammarException, IllegalArgumentException, IOException,
@@ -288,17 +289,17 @@ public class BaseGrammarManager implements GrammarManager {
             }
         }
 
-        // Proccess grammar
+        // Process grammar
         final SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser();
         Rule[] rules = srgsParser.load(reader);
         if (rules == null) {
             return null;
         }
-        //Initialize rule grammar
+        // Initialize rule grammar
         BaseRuleGrammar brg =
             new BaseRuleGrammar(recognizer, grammarReference);
         brg.addRules(rules);
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("rawtypes")
         final HashMap attributes = srgsParser.getAttributes();
         brg.setAttributes(attributes);
 
