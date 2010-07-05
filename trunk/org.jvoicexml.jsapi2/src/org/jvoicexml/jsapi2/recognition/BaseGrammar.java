@@ -16,11 +16,13 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.speech.SpeechEventExecutor;
+import javax.speech.SpeechLocale;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarEvent;
 import javax.speech.recognition.GrammarListener;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
+import javax.speech.recognition.RecognizerMode;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultListener;
 
@@ -40,6 +42,9 @@ import javax.speech.recognition.ResultListener;
 public class BaseGrammar implements Grammar, ResultListener {
     /** Reference to the recognizer. */
     private transient Recognizer recognizer;
+
+    /** The language. */
+    private SpeechLocale locale;
 
     /** Registered listeners for grammar changes. */
     private transient Vector grammarListeners;
@@ -83,28 +88,28 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
-    public Recognizer getRecognizer() {
+    public final Recognizer getRecognizer() {
         return recognizer;
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getReference() {
+    public final String getReference() {
         return name;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setActivatable(final boolean value) {
+    public final void setActivatable(final boolean value) {
         activatable = value;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean isActivatable() {
+    public final boolean isActivatable() {
         return activatable;
     }
 
@@ -151,14 +156,14 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
-    public GrammarManager getGrammarManager() {
+    public final GrammarManager getGrammarManager() {
         return recognizer.getGrammarManager();
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addGrammarListener(final GrammarListener listener) {
+    public final void addGrammarListener(final GrammarListener listener) {
         if (!grammarListeners.contains(listener)) {
             grammarListeners.addElement(listener);
         }
@@ -167,14 +172,14 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
-    public void removeGrammarListener(final GrammarListener listener) {
+    public final void removeGrammarListener(final GrammarListener listener) {
         grammarListeners.removeElement(listener);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addResultListener(final ResultListener listener) {
+    public final void addResultListener(final ResultListener listener) {
         if (!resultListeners.contains(listener)) {
             resultListeners.addElement(listener);
         }
@@ -183,8 +188,33 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
-    public void removeResultListener(final ResultListener listener) {
+    public final void removeResultListener(final ResultListener listener) {
         resultListeners.removeElement(listener);
+    }
+
+    /**
+     * Retrieves the locale of this grammar.
+     * @return the locale
+     */
+    protected final SpeechLocale getSpeechLocale() {
+        if (locale == null) {
+            final RecognizerMode mode =
+                (RecognizerMode) recognizer.getEngineMode();
+            final SpeechLocale[] locales = mode.getSpeechLocales();
+            locale = locales[0];
+            if (locale == null) {
+                locale = SpeechLocale.getDefault();
+            }
+        }
+        return locale;
+    }
+
+    /**
+     * Sets the speech locale of this grammar.
+     * @param speechLocale the locale
+     */
+    protected final void setSpeechLocale(final SpeechLocale speechLocale) {
+        locale = speechLocale;
     }
 
     /**

@@ -48,14 +48,12 @@ public class DummySynthesizer extends BaseSynthesizer {
         return false;
     }
 
-    protected boolean handleDeallocate() {
+    protected void handleDeallocate() {
         // TODO Auto-generated method stub
-        return false;
     }
 
-    protected boolean handlePause() {
+    protected void handlePause() {
         // TODO Auto-generated method stub
-        return false;
     }
 
     protected boolean handleResume() {
