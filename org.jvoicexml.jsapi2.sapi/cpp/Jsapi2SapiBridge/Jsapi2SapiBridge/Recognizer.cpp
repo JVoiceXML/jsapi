@@ -6,21 +6,6 @@
 #include <fstream>
 #include <string>
 
-void wchar_t2jstring(wchar_t* lstr , char* Buffer) {
-
-         char* buffer = NULL;
-
-         int res = WideCharToMultiByte(CP_ACP, 0, lstr, -1, NULL, 0, NULL, NULL);
- 
-         if (res > 0) {
-                 buffer = (char*)malloc(res+10);
-                 res = WideCharToMultiByte(CP_ACP, 0, lstr, -1, buffer, res+10, NULL, NULL);
-		 }else{
-			
-		 }
- }
-
-
 Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 : cpRecognizerEngine(NULL), cpRecoCtxt(NULL), cpGrammar(NULL), hr(S_OK), grammarCount(0),
   jenv(env), jrec(rec)
@@ -174,10 +159,9 @@ void Recognizer::Recognized(LPWSTR utterance)
     jenv->CallObjectMethod(jrec, methodId, jstr);
 }
 
-void Recognizer::pause()
+HRESULT Recognizer::Pause()
 {
-
-		hr = cpRecoCtxt->Pause( NULL);				
+    return cpRecoCtxt->Pause(NULL);				
 }
 
 LPWSTR Recognizer::Resume()
@@ -199,7 +183,7 @@ LPWSTR Recognizer::Resume()
     return RecognitionHappened();
 }
 
-void Recognizer::startdictation()
+void Recognizer::StartDictation()
 {	
 	USES_CONVERSION;
 	CComPtr<ISpRecoResult>		cpResult;

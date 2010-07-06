@@ -56,6 +56,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return DefWindowProcA(hWnd, message, lParam, wParam);
 }
 
+DWORD MessageLoop(void)
+{
+    std::cout << "message loop started" << std::endl;
+    MSG msg;
+    while (GetMessage(&msg, hWnd, 0, 0) == TRUE)
+    {
+        std::cout << msg.hwnd << ": " << msg.message << std::endl;
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+    std::cout << "message loop ended" << std::endl;
+    return 0;
+}
+
 BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {	
     if (hWnd != NULL)
@@ -99,5 +113,7 @@ BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpRese
 	{
         return FALSE;
 	}
+    //DWORD threadId;
+    //CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) MessageLoop, NULL, 0, &threadId);
     return TRUE;
 }
