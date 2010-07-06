@@ -95,7 +95,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
  * Method:    sapiResume
  * Signature: (J[Ljava/lang/String;)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiResume
+JNIEXPORT jstring JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiResume
   (JNIEnv *env, jobject object, jlong handle, jobjectArray grammars)
 {
 
@@ -106,24 +106,22 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
         jstring grammar = (jstring) env->GetObjectArrayElement(grammars, i);
 		const wchar_t* gram = (const wchar_t*)env->GetStringChars(grammar, NULL);	
 		
-		HRESULT hr = recognizer->LoadGrammarFile(gram);
-        if (FAILED(hr))
+		HRESULT hr= recognizer->LoadGrammarFile(gram);
+        if ( FAILED(hr) )
         {
             char buffer[1024];
             GetErrorMessage(buffer, sizeof(buffer), "Resume recognizer failed",
-                recognizer->hr);
+                hr);
             ThrowJavaException(env, "javax/speech/EngineStateException", buffer);
         }
     }
-	HRESULT hr = recognizer->Resume();				
-	if(SUCCEEDED(hr))
-    {
-        return JNI_TRUE;
-	}
-	else
-    {
-		return JNI_FALSE;
-	}
+	
+	LPWSTR utterance =recognizer->Resume();
+
+	int len = wcslen(utterance);
+	jstring jstr = env->NewString((jchar*) utterance, wcslen(utterance));
+		
+	return jstr;
 }
 
 /*

@@ -11,11 +11,11 @@ public:
 
     void pause();
 
-    HRESULT Resume();
+    LPWSTR Resume();
 
     HRESULT LoadGrammar(const wchar_t* grammar);
     HRESULT LoadGrammarFile(LPCWSTR grammarPath);
-    HRESULT RecognitionHappened();
+    LPWSTR RecognitionHappened();
 
     void startdictation();
 

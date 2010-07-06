@@ -96,8 +96,8 @@ public final class TestRecognizer implements ResultListener {
         recognizer.requestFocus();
         recognizer.resume();
         recognizer.waitEngineState(Engine.RESUMED);
-        System.out.println("Please say something...");
-       
+        System.out.println("Please say something...");      
+        
         synchronized (lock) {
             lock.wait();
         }
