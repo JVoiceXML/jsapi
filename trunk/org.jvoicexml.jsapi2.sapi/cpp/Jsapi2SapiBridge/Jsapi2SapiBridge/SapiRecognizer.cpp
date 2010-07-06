@@ -69,7 +69,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
   (JNIEnv *env, jobject object, jlong recognizerHandle){
 		
 	Recognizer* recognizer = (Recognizer*)recognizerHandle;
-	recognizer->pause();
+	recognizer->Pause();
 	
 	if (FAILED(recognizer->hr))
     {
@@ -164,5 +164,5 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogni
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_start
 (JNIEnv *env, jobject object, jlong recognizerHandle)
 {
-	reinterpret_cast<Recognizer*>(recognizerHandle)->startdictation();	
+	reinterpret_cast<Recognizer*>(recognizerHandle)->StartDictation();	
 }

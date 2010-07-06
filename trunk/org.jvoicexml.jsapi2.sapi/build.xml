@@ -1,4 +1,4 @@
-<project name="org.jvoicexml.jsapi2.jsapi" default="jar" basedir=".">
+<project name="org.jvoicexml.jsapi2.sapi" default="jar" basedir=".">
   <description>
 This file builds the JSR 113.jar.
     </description>
@@ -36,7 +36,8 @@ This file builds the JSR 113.jar.
   <target name="clean" description="Remove all compiled and distribution files">
     <delete dir="${build}" />
     <delete file="${dist.jar}" />
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}" failifexecutionfails="false">
+    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
+      osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Clean"/>
     </exec>
@@ -66,13 +67,15 @@ This file builds the JSR 113.jar.
       <classpath refid="classpath"/>
       <classpath location="${build}"/>
     </javah>
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}" failifexecutionfails="false">
+    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
+      osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Build"/>
     </exec>
   </target>
 
-  <target name="jar" depends="compile" description="Pack all compiled files into jar files">
+  <target name="jar" depends="compile"
+    description="Pack all compiled files into jar files">
     <jar jarfile="${dist.jar}" compress="false">
       <fileset dir="${build}">
         <include name="org/jvoicexml/**/*.class" />
@@ -80,10 +83,19 @@ This file builds the JSR 113.jar.
       <manifest>
         <attribute name="Built-By" value="${user.name}" />
         <section name="common">
-          <attribute name="Implementation-Vendor" value="JVoiceXML group" />
-          <attribute name="Implementation-Title" value="SAPI implementation for JSR113" />
+          <attribute name="Implementation-Vendor"
+            value="JVoiceXML group" />
+          <attribute name="Implementation-Title"
+            value="SAPI implementation for JSR113" />
+          <attribute name="Implementation-Version"
+              value="${version}" />
         </section>
       </manifest>
     </jar>
+    <copy todir="${dist}">
+      <fileset dir="cpp/Jsapi2SapiBridge/Debug">
+        <include name="*.dll"/>
+      </fileset>
+    </copy>
   </target>
 </project>
