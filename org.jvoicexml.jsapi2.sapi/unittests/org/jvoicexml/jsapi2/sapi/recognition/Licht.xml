@@ -18,11 +18,11 @@
   <rule id="LIGHT" scope="public">
     <one-of>
 	 <item>
-	  <ruleref special="GARBAGE"/>
+	  <!--ruleref special="GARBAGE"/-->
 	  <ruleref uri="#DEVICE" />
-	  <ruleref special="GARBAGE"/>
+	  <!-- ruleref special="GARBAGE"/-->
 	  <ruleref uri="#COMMAND" />
-	  <ruleref special="GARBAGE"/>
+	  <!-- ruleref special="GARBAGE"/-->
 	 </item>
     </one-of>
   </rule>
