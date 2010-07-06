@@ -1,5 +1,5 @@
-Developers of JVoiceXML
-=======================
+Developers of JSAPI
+===================
 
 Here we list all developers who have contributed to JSR 113 base layer
 http://jsapi.sourceforge.net
@@ -8,10 +8,12 @@ Thanks to everyone to help us with this project!
 
 project manager
 ---------------
-Dirk Schnelle (dirk (dot) schnelle (at) jvoicexml (dot) org)
+Dirk Schnelle-Walka (dirk (dot) schnelle (at) jvoicexml (dot) org)
 
 coding
 ------
-Dirk Schnelle (dirk (dot) schnelle (at) jvoicexml (dot) org)
+Dirk Schnelle-Walka (dirk (dot) schnelle (at) jvoicexml (dot) org)
+Stefan Radomski
+Josua Arndt
 Renato Cassaca
 David Rodriguez
