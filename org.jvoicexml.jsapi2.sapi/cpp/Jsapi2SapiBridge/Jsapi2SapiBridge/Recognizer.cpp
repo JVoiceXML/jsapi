@@ -30,6 +30,7 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
     if (SUCCEEDED(hr))
     {
         hr = cpRecognizerEngine->CreateRecoContext(&cpRecoCtxt);
+		//hr = cpRecoCtxt->Pause(NULL);
     }
     if (SUCCEEDED(hr))
     {
@@ -117,33 +118,28 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
 
 HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
 {
-
     hr = cpRecoCtxt->CreateGrammar(grammarCount++, &cpGrammar);
     if (FAILED(hr))
     {
-        return GetLastError();;
+        return hr;
     }
-	hr = cpGrammar->LoadCmdFromFile( grammarPath , SPLO_STATIC);
-	
+
+	hr = cpGrammar->LoadCmdFromFile( grammarPath , SPLO_STATIC);	
     if (FAILED(hr))
     {
         return hr;
     }
 
 	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
-	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
+    if (FAILED(hr))
+    {
+        return hr;
+    }
 	
-	std::cout<< "c-Code PLEASE SPEAK Licht ein"<<std::endl; fflush(stdout);
-
-	hr = cpRecoCtxt->SetNotifyWin32Event();					// Achtung bei allocate ->SetNotifyWindowMessage() auskommentiert
-	hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
-	std::cout<< "c-Code etwas wurde erkannt "<<std::endl; 
-	RecognitionHappened();
-
-	return hr;
+	return hr;	
 }
 
-HRESULT Recognizer::RecognitionHappened()
+LPWSTR Recognizer::RecognitionHappened()
 {
 	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
 
@@ -158,34 +154,22 @@ HRESULT Recognizer::RecognitionHappened()
             LPWSTR utterance;
             hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
                 &utterance, NULL);
-			
-			std::cout<< "c-Code Utterance: "<< CW2A(utterance) <<std::endl; fflush(stdout);
 
-            Recognized(utterance);
-            CoTaskMemFree(utterance);
-			return hr;
+            //Recognized(utterance);
+            //CoTaskMemFree(utterance);
+			return utterance;
         }
     }
-    return S_FALSE;
+    return NULL;
 } 
 
 void Recognizer::Recognized(LPWSTR utterance)
 {
-	//jclass clazz = jenv->GetObjectClass(jrec);
 	jclass clazz = jenv->FindClass("org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer");
     jmethodID methodId = jenv->GetMethodID(clazz, "reportResult","(Ljava/lang/String;)V");
 
-	//if (!GetMethodId(jenv, "org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer",
- //       "reportResult", "(JLjava/lang/String;)V", clazz, methodId))
- //   {
-	//	std::cout<< "Recognizer::Recognized(utterance);  cant get Method ID"<<std::endl; fflush(stdout);
-	//	return;
- //   }
-
 	int len = wcslen(utterance);
 	jstring jstr = jenv->NewString((jchar*) utterance, wcslen(utterance));
-	
-	std::cout<< "c-Code "<<  CW2A(utterance) <<std::endl; fflush(stdout);	
 
     jenv->CallObjectMethod(jrec, methodId, jstr);
 }
@@ -196,9 +180,23 @@ void Recognizer::pause()
 		hr = cpRecoCtxt->Pause( NULL);				
 }
 
-HRESULT Recognizer::Resume()
-{
-    return cpRecoCtxt->Resume(NULL);
+LPWSTR Recognizer::Resume()
+{   
+	//hr = cpRecoCtxt->Resume(NULL);
+
+	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
+	if (FAILED(hr))
+    {
+        return NULL;
+    }
+
+	hr = cpRecoCtxt->SetNotifyWin32Event();					// Achtung bei allocate ->SetNotifyWindowMessage() auskommentiert
+	hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
+
+	//LPWSTR result = RecognitionHappened();
+	//hr = cpRecoCtxt->Pause(NULL);
+
+    return RecognitionHappened();
 }
 
 void Recognizer::startdictation()

@@ -93,37 +93,37 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      */
     @Override
     protected boolean handleResume() throws EngineStateException {
-        final GrammarManager manager = getGrammarManager();
-        final Grammar[] grammars = manager.listGrammars();
+        GrammarManager manager = getGrammarManager();
+        Grammar[] grammars = manager.listGrammars();
         final String[] grammarSources = new String[grammars.length];
         int i = 0;
         for (Grammar grammar : grammars) {
             try {
                 final File file = File.createTempFile("sapi", "xml");
                 file.deleteOnExit();
-                final FileOutputStream out = new FileOutputStream(file);
-   
-                StringBuffer xml = new StringBuffer();          
-                xml.append( grammar.toString() );
-                int index = xml.indexOf("06/grammar");
-                xml.insert(index+11, " xml:lang=\"de-DE\" ");
+                final FileOutputStream out = new FileOutputStream(file);   
+                String xml = grammar.toString();           
                 out.write(xml.toString().getBytes());
                 out.close();
-                grammarSources[i] = file.getCanonicalPath();                
-//                System.out.println(xml);
+                grammarSources[i] = file.getCanonicalPath();
+//               System.out.println(xml);
 //                System.out.println(grammarSources[i]);
-           
-                
+                          
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             ++i;
         }
-        return sapiResume(recognizerHandle, grammarSources);
+        
+        Recognition reco = new Recognition();
+        reco.setGrammarSource(grammarSources);
+        reco.start();
+        
+        return true;        
     }
 
-    private native boolean sapiResume(long handle, String[] grammars)
+    private native String sapiResume(long handle, String[] grammars)
         throws EngineStateException;
 
     /**
@@ -158,20 +158,18 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      */
     @SuppressWarnings("unused")
     private void reportResult(final String utterance) {
+                       
+            final RuleGrammar grammar = currentGrammar;    // current grammar is not available 
+            
+            BaseResult result = null;      
+            try {
+                result = new BaseResult(grammar, utterance);
+                System.out.println("Java Code result" + result);
+            } catch (GrammarException e) {
+                LOGGER.warning(e.getMessage());
+                return;
+            }  
         
-        System.out.println("Java Code " + utterance);
-        
-        final RuleGrammar grammar = currentGrammar;    // current grammar is not available 
-        System.out.println(grammar);
-        
-        final BaseResult result;
-        try {
-            result = new BaseResult(grammar, utterance);
-        } catch (GrammarException e) {
-            LOGGER.warning(e.getMessage());
-            return;
-        }
-
         final ResultEvent created = new ResultEvent(result,
                 ResultEvent.RESULT_CREATED, false, false);
         postResultEvent(created);
@@ -200,6 +198,54 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             // TODO Auto-generated method stub
 
         }
+    }
+    
+    
+    private class Recognition extends Thread{
+        
+        String[] grammarSource;
+        
+        public void setGrammarSource( String[] source ){
+            grammarSource = source;
+        }
+        
+        public void run(){            
+                 String result = sapiResume(recognizerHandle, grammarSource);
+                 reportResult2(result);
+        }
+        
+        private void reportResult2(final String utterance) {
+                      
+            final RuleGrammar grammar = currentGrammar;     
+            
+            BaseResult result = null;      
+            try {
+                result = new BaseResult(grammar, utterance);
+            } catch (GrammarException e) {
+                LOGGER.warning(e.getMessage());
+                return;
+            }  
+        
+        final ResultEvent created = new ResultEvent(result,
+                ResultEvent.RESULT_CREATED, false, false);
+        postResultEvent(created);
+
+        final ResultEvent grammarFinalized =
+            new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED);
+        postResultEvent(grammarFinalized);
+
+        if (result.getResultState() == Result.REJECTED) {
+            final ResultEvent rejected =
+                new ResultEvent(result, ResultEvent.RESULT_REJECTED,
+                        false, false);
+            postResultEvent(rejected);
+        } else {
+            final ResultEvent accepted = new ResultEvent(result,
+                        ResultEvent.RESULT_ACCEPTED, false, false);
+            postResultEvent(accepted);
+        }
+    }
+        
     }
 
 }
