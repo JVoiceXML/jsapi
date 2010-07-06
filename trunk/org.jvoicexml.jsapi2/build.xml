@@ -74,8 +74,12 @@ This file builds the JSR 113.jar.
       <manifest>
         <attribute name="Built-By" value="${user.name}" />
         <section name="common">
-          <attribute name="Implementation-Vendor" value="JVoiceXML group" />
-          <attribute name="Implementation-Title" value="JSR 113" />
+          <attribute name="Implementation-Vendor"
+            value="JVoiceXML group" />
+          <attribute name="Implementation-Title"
+            value="Base implementation for JSR 113 vendors" />
+          <attribute name="Implementation-Version"
+              value="${version}" />
         </section>
       </manifest>
     </jar>
@@ -84,6 +88,8 @@ This file builds the JSR 113.jar.
   <target name="-components" depends="-jar">
     <ant dir="../org.jvoicexml.jsapi2.jse" antfile="build.xml"
         inheritall="false"/>
+    <ant dir="../org.jvoicexml.jsapi2.sapi" antfile="build.xml"
+        inheritall="false" />
     <copy file="../javax.speech/dist/jsr113.jar" todir="${dist}" />
   </target>
 
