@@ -2,7 +2,10 @@ package org.jvoicexml.jsapi2.sapi.recognition;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -152,44 +155,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
     private native void start(long handle);
 
-    /**
-     * Notification from the SAPI recognizer about a recognition result.
-     * @param utterance the detected utterance
-     */
-    @SuppressWarnings("unused")
-    private void reportResult(final String utterance) {
-                       
-            final RuleGrammar grammar = currentGrammar;    // current grammar is not available 
-            
-            BaseResult result = null;      
-            try {
-                result = new BaseResult(grammar, utterance);
-                System.out.println("Java Code result" + result);
-            } catch (GrammarException e) {
-                LOGGER.warning(e.getMessage());
-                return;
-            }  
-        
-        final ResultEvent created = new ResultEvent(result,
-                ResultEvent.RESULT_CREATED, false, false);
-        postResultEvent(created);
-
-        final ResultEvent grammarFinalized =
-            new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED);
-        postResultEvent(grammarFinalized);
-
-        if (result.getResultState() == Result.REJECTED) {
-            final ResultEvent rejected =
-                new ResultEvent(result, ResultEvent.RESULT_REJECTED,
-                        false, false);
-            postResultEvent(rejected);
-        } else {
-            final ResultEvent accepted = new ResultEvent(result,
-                        ResultEvent.RESULT_ACCEPTED, false, false);
-            postResultEvent(accepted);
-        }
-    }
-
     class SapiChangeRequestListener
             implements EnginePropertyChangeRequestListener {
 
@@ -211,20 +176,29 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         
         public void run(){            
                  String result = sapiResume(recognizerHandle, grammarSource);
-                 reportResult2(result);
+                 reportResult(result);
         }
         
-        private void reportResult2(final String utterance) {
-                      
-            final RuleGrammar grammar = currentGrammar;     
+        /**
+         * Notification from the SAPI recognizer about a recognition result.
+         * @param utterance the detected utterance
+         */
+        private void reportResult(final String utterance) {
+      
+            GrammarManager manager = getGrammarManager();
+            Grammar[] grammars = manager.listGrammars();
             
-            BaseResult result = null;      
-            try {
-                result = new BaseResult(grammar, utterance);
-            } catch (GrammarException e) {
-                LOGGER.warning(e.getMessage());
-                return;
-            }  
+            BaseResult result = null; 
+            
+            for (Grammar grammar : grammars) {               
+        
+                try {
+                    result = new BaseResult( grammar , utterance);
+                } catch (GrammarException e) {
+                    LOGGER.warning(e.getMessage());
+                    return;
+                } 
+            }
         
         final ResultEvent created = new ResultEvent(result,
                 ResultEvent.RESULT_CREATED, false, false);
