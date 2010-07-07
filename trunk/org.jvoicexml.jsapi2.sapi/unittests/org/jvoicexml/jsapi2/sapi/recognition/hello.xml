@@ -1,4 +1,4 @@
-<grammar mode="voice" xml:lang="en-US" version="1.0" root="greeting" xmlns="http://www.w3.org/2001/06/grammar">
+<grammar xml:lang="de-DE" version="1.0" root="greeting" xmlns="http://www.w3.org/2001/06/grammar">
   <rule id="greeting" scope="public">
      <one-of>
        <item > good morning </item>

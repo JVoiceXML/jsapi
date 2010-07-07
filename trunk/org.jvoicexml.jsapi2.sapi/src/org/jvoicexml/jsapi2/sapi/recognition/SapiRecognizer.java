@@ -118,15 +118,18 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             }
             ++i;
         }
-        
-        Recognition reco = new Recognition();
-        reco.setGrammarSource(grammarSources);
-        reco.start();
-        
+         sapiResume(recognizerHandle, grammarSources);
+         
+        SapiRecognitionThread reco = new SapiRecognitionThread(this);
+        reco.start();        
         return true;        
     }
 
-    private native String sapiResume(long handle, String[] grammars)
+    public long getRecognizerHandle() {
+        return recognizerHandle;
+    }
+
+    private native boolean sapiResume(long handle, String[] grammars)
         throws EngineStateException;
 
     /**
@@ -165,49 +168,37 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         }
     }
     
+   public void reportResult(final String utterance) {
+        
+        GrammarManager manager = getGrammarManager();
+        Grammar[] grammars = manager.listGrammars();
+       
+//        RuleGrammar grammar = currentGrammar;
+        
+        BaseResult result = null; 
+        
+        for (Grammar grammar : grammars) {               
     
-    private class Recognition extends Thread{
-        
-        String[] grammarSource;
-        
-        public void setGrammarSource( String[] source ){
-            grammarSource = source;
-        }
-        
-        public void run(){            
-                 String result = sapiResume(recognizerHandle, grammarSource);
-                 reportResult(result);
-        }
-        
-        /**
-         * Notification from the SAPI recognizer about a recognition result.
-         * @param utterance the detected utterance
-         */
-        private void reportResult(final String utterance) {
-      
-            GrammarManager manager = getGrammarManager();
-            Grammar[] grammars = manager.listGrammars();
+            try {
+                result = new BaseResult( grammar , utterance);
+            } catch (GrammarException e) {
+                LOGGER.warning(e.getMessage());
+                return;
+            } 
             
-            BaseResult result = null; 
-            
-            for (Grammar grammar : grammars) {               
-        
-                try {
-                    result = new BaseResult( grammar , utterance);
-                } catch (GrammarException e) {
-                    LOGGER.warning(e.getMessage());
-                    return;
-                } 
+            if( result != null){
+                System.out.println( result.toString() );
             }
-        
+        }
+    
         final ResultEvent created = new ResultEvent(result,
                 ResultEvent.RESULT_CREATED, false, false);
         postResultEvent(created);
-
+    
         final ResultEvent grammarFinalized =
             new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED);
         postResultEvent(grammarFinalized);
-
+    
         if (result.getResultState() == Result.REJECTED) {
             final ResultEvent rejected =
                 new ResultEvent(result, ResultEvent.RESULT_REJECTED,
@@ -218,8 +209,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                         ResultEvent.RESULT_ACCEPTED, false, false);
             postResultEvent(accepted);
         }
-    }
-        
-    }
+   }
 
 }

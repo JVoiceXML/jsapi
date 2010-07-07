@@ -90,9 +90,8 @@ public final class TestRecognizer implements ResultListener {
         recognizer.addResultListener(this);
 
         final GrammarManager grammarManager = recognizer.getGrammarManager();
-        final InputStream in = TestRecognizer.class.getResourceAsStream("Licht.xml");
-        grammarManager.loadGrammar("grammar:LIGHT", null, in, "iso-8859-1");
-
+        final InputStream in = TestRecognizer.class.getResourceAsStream("hello.xml");
+        grammarManager.loadGrammar("grammar:greeting", null, in, "iso-8859-1");
         recognizer.requestFocus();
         recognizer.resume();
         recognizer.waitEngineState(Engine.RESUMED);
