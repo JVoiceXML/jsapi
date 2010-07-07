@@ -181,6 +181,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SapiRecognitionThread.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SapiRecognizer.cpp"
 				>
 			</File>
@@ -204,6 +208,10 @@
 			>
 			<File
 				RelativePath=".\JNIUtils.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\org_jvoicexml_jsapi2_sapi_recognition_SapiRecognitionThread.h"
 				>
 			</File>
 			<File

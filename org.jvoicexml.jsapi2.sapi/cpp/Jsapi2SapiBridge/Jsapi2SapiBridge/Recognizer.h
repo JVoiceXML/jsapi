@@ -9,12 +9,14 @@ public:
     Recognizer(HWND hwnd, JNIEnv *env, jobject rec);
     virtual ~Recognizer();
 
-    LPWSTR Resume();
+    HRESULT Resume();
     HRESULT Pause();
 
     HRESULT LoadGrammar(const wchar_t* grammar);
     HRESULT LoadGrammarFile(LPCWSTR grammarPath);
     LPWSTR RecognitionHappened();
+	
+	LPWSTR startRecognition();
 
     void StartDictation();
 

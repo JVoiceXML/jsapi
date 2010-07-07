@@ -164,23 +164,28 @@ HRESULT Recognizer::Pause()
     return cpRecoCtxt->Pause(NULL);				
 }
 
-LPWSTR Recognizer::Resume()
+HRESULT Recognizer::Resume()
 {   
-	//hr = cpRecoCtxt->Resume(NULL);
+	return cpRecoCtxt->Resume(NULL); 
+}
 
+LPWSTR Recognizer::startRecognition(){
+	
 	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
 	if (FAILED(hr))
     {
         return NULL;
     }
 
-	hr = cpRecoCtxt->SetNotifyWin32Event();					// Achtung bei allocate ->SetNotifyWindowMessage() auskommentiert
+	hr = cpRecoCtxt->SetNotifyWin32Event();// Achtung bei allocate ->SetNotifyWindowMessage() auskommentiert	
+	if (FAILED(hr))
+    {
+        return NULL;
+    }		
 	hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
 
-	//LPWSTR result = RecognitionHappened();
-	//hr = cpRecoCtxt->Pause(NULL);
-
     return RecognitionHappened();
+
 }
 
 void Recognizer::StartDictation()

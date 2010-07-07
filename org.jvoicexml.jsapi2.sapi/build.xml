@@ -63,7 +63,8 @@ This file builds the JSR 113.jar.
     <javah destdir="cpp/Jsapi2SapiBridge/include">
       <class name="${component}.SapiEngineListFactory"/>
       <class name="${component}.recognition.SapiRecognizer"/>
-      <class name="${component}.synthesis.SapiSynthesizer"/>
+      <class name="${component}.recognition.SapiRecognitionThread"/>
+      <class name="${component}.synthesis.SapiSynthesizer"/>  	
       <classpath refid="classpath"/>
       <classpath location="${build}"/>
     </javah>
