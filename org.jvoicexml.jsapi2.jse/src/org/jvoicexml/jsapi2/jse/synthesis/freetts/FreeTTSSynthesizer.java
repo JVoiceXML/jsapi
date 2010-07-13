@@ -275,7 +275,6 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
             final InputStream in;
             try {
                 in = player.getAudioBytes();
-                System.out.println("***P " + in.available());
             } catch (IOException e) {
                 LOGGER.warning(e.getLocalizedMessage());
                 return;
