@@ -80,6 +80,7 @@ HRESULT Synthesizer::ListVoices(Voice*& voices, ULONG& num)
         {
             voices[i].SetName(wBuf);
             wprintf(L"%s\n", wBuf);
+			fflush(stdout);
             CoTaskMemFree(wBuf);
         }
         else
