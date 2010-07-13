@@ -418,7 +418,6 @@ public class QueueManager {
          * @return the first queue item
          */
         protected QueueItem getQueueItem() {
-            QueueItem item = null;
             synchronized (queue) {
                 while (queue.size() == 0 && !done) {
                     try {
@@ -431,15 +430,13 @@ public class QueueManager {
                 if (done) {
                     return null;
                 }
-                item = (QueueItem) queue.elementAt(0);
-
+                return (QueueItem) queue.elementAt(0);
             }
-            return item;
         }
 
         /**
-         * Removes the given item, posting the appropriate events. The item may have
-         * already been removed (due to a cancel).
+         * Removes the given item, posting the appropriate events.
+         * The item may have already been removed (due to a cancel).
          *
          * @param item
          *                the item to remove
@@ -472,7 +469,6 @@ public class QueueManager {
 
                     // transfer item from the queue to the play queue
                     removeQueueItem(item);
-
                     playThread.addQueueItem(item);
 
                     // Synthesize item
@@ -484,9 +480,11 @@ public class QueueManager {
                         synthesizer.handleSpeak(id, (Speakable) itemSource);
                     } else {
                         throw new RuntimeException(
-                                "WTF! It could only be text or speakable but was "
-                                + (itemSource == null ? "null" : item.getClass().getName()));
+                             "WTF! It could only be text or speakable but was "
+                             + (itemSource == null ? "null" :
+                                 item.getClass().getName()));
                     }
+                    playThread.itemChanged(item);
                 }
             }
         }
@@ -681,18 +679,6 @@ public class QueueManager {
                 }
 
                 if (!cancelFirstItem) {
-
-                    // Delay the event sending by the remaining time audio length
-                    /*
-                     * long audioTime = ((long)((totalBytesRead * 1000) /
-                     * (audioFormat.getSampleRate() *
-                     * audioFormat.getSampleSizeInBits()/8))); long endStreaming =
-                     * System.currentTimeMillis(); long procTime = endStreaming -
-                     * startStreaming; long sleepTime = audioTime - procTime; if
-                     * (sleepTime > 0) { try {
-                     * Thread.currentThread().sleep(sleepTime); } catch
-                     * (InterruptedException ex2) { } }
-                     */
                     synthesizer.postSpeakableEvent(new SpeakableEvent(
                             source, SpeakableEvent.SPEAKABLE_ENDED, id),
                             listener);
@@ -717,13 +703,24 @@ public class QueueManager {
                             SynthesizerEvent.QUEUE_UPDATED, true);
                 }
             }
+            System.out.println("*** TERMINATED");
+        }
+
+        /**
+         * Notifies the play queue that the given item has changed.
+         * @param item the item that has changed
+         */
+        public void itemChanged(final QueueItem item) {
+            synchronized (playQueue) {
+                playQueue.notifyAll();
+            }
         }
 
         /**
          * Adds the given item to the play queue.
          * @param item the item to add
          */
-        public void addQueueItem(QueueItem item) {
+        public void addQueueItem(final QueueItem item) {
             synchronized (playQueue) {
                 playQueue.addElement(item);
                 playQueue.notifyAll();
@@ -736,7 +733,6 @@ public class QueueManager {
          * @return a queue item to play
          */
         protected QueueItem getQueueItemToPlay() {
-            QueueItem item = null;
             synchronized (playQueue) {
                 while (playQueue.isEmpty()
                         || (((QueueItem) playQueue.elementAt(0)).getAudioSegment())
@@ -750,10 +746,8 @@ public class QueueManager {
                 if (done) {
                     return null;
                 }
-                item = (QueueItem) playQueue.elementAt(0);
-
+                return (QueueItem) playQueue.elementAt(0);
             }
-            return item;
         }
 
 
