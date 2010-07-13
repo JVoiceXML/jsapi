@@ -175,7 +175,7 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
      * @exception IOException
      *            error reading the audio data
      */
-    public byte[] getAudioBytes() throws IOException {
+    public InputStream getAudioBytes() throws IOException {
         byte[] res;
         synchronized (buffer) {
             res = buffer.toByteArray();
@@ -183,10 +183,6 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
         }
         final AudioFormatConverter converter =
             baseAudioManager.getAudioFormatConverter();
-        final InputStream bais = converter.getConvertedAudio(res);
-        res = new byte[bais.available()];
-        bais.read(res);
-
-        return res;
+        return converter.getConvertedAudio(res);
     }
 }

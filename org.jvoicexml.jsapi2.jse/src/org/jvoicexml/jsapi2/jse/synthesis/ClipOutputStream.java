@@ -29,7 +29,7 @@ public class ClipOutputStream extends OutputStream implements LineListener {
     private ByteArrayOutputStream buffer;
 
     /** Synchronization of start and end play back. */
-    private final Semaphore sem;
+    private final Object lock;
 
     /** The audio manager to use. */
     private final JseBaseAudioManager manager;
@@ -40,7 +40,7 @@ public class ClipOutputStream extends OutputStream implements LineListener {
      */
     public ClipOutputStream(final JseBaseAudioManager audioManager) {
         buffer = new ByteArrayOutputStream();
-        sem = new Semaphore(1);
+        lock = new Object();
         manager = audioManager;
     }
 
@@ -49,7 +49,9 @@ public class ClipOutputStream extends OutputStream implements LineListener {
      */
     @Override
     public void write(final int b) throws IOException {
-        buffer.write(b);
+        synchronized (buffer) {
+            buffer.write(b);
+        }
     }
 
 
@@ -59,7 +61,9 @@ public class ClipOutputStream extends OutputStream implements LineListener {
     @Override
     public void write(final byte[] b, final int off, final int len)
         throws IOException {
-        buffer.write(b, off, len);
+        synchronized (buffer) {
+            buffer.write(b, off, len);
+        }
     }
 
     /**
@@ -67,7 +71,9 @@ public class ClipOutputStream extends OutputStream implements LineListener {
      */
     @Override
     public void write(final byte[] b) throws IOException {
-        buffer.write(b);
+        synchronized (buffer) {
+            buffer.write(b);
+        }
     }
 
     /**
@@ -79,15 +85,14 @@ public class ClipOutputStream extends OutputStream implements LineListener {
         final Clip clip;
         try {
             final DataLine.Info info = new DataLine.Info(Clip.class, format);
-            try {
-                sem.acquire();
-            } catch (InterruptedException e) {
-                throw new IOException(e.getMessage(), e);
-            }
             clip = (Clip) AudioSystem.getLine(info);
-            byte[] bytes = buffer.toByteArray();
-            clip.open(format, bytes, 0, bytes.length);
             clip.addLineListener(this);
+            final byte[] bytes;
+            synchronized (buffer) {
+                bytes = buffer.toByteArray();
+                buffer.reset();
+            }
+            clip.open(format, bytes, 0, bytes.length);
             clip.start();
         } catch (LineUnavailableException e) {
             throw new IOException(e.getMessage(), e);
@@ -95,10 +100,12 @@ public class ClipOutputStream extends OutputStream implements LineListener {
 
         // Wait until all data has been played back.
         try {
-            sem.acquire();
-            buffer.reset();
+            synchronized (lock) {
+                lock.wait();
+            }
+            clip.removeLineListener(this);
+            clip.stop();
             clip.close();
-            sem.release();
         } catch (InterruptedException e) {
             throw new IOException(e.getMessage(), e);
         }
@@ -109,9 +116,13 @@ public class ClipOutputStream extends OutputStream implements LineListener {
      */
     @Override
     public void update(final LineEvent event) {
+        System.out.println(event);
         if ((event.getType() == LineEvent.Type.CLOSE)
                 || (event.getType() == LineEvent.Type.STOP)) {
-            sem.release();
+//            System.out.println("*** notify");
+            synchronized (lock) {
+                lock.notifyAll();
+            }
         }
     }
 }
