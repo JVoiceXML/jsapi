@@ -116,10 +116,8 @@ public class ClipOutputStream extends OutputStream implements LineListener {
      */
     @Override
     public void update(final LineEvent event) {
-        System.out.println(event);
         if ((event.getType() == LineEvent.Type.CLOSE)
                 || (event.getType() == LineEvent.Type.STOP)) {
-//            System.out.println("*** notify");
             synchronized (lock) {
                 lock.notifyAll();
             }
