@@ -703,7 +703,6 @@ public class QueueManager {
                             SynthesizerEvent.QUEUE_UPDATED, true);
                 }
             }
-            System.out.println("*** TERMINATED");
         }
 
         /**
