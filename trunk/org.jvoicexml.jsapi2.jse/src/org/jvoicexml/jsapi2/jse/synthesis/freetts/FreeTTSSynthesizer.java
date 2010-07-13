@@ -272,12 +272,15 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
 
         if (audioPlayer instanceof FreeTTSAudioPlayer) {
             FreeTTSAudioPlayer player = (FreeTTSAudioPlayer) audioPlayer;
-            InputStream in;
+            final InputStream in;
             try {
-                in = new ByteArrayInputStream(player.getAudioBytes());
+                in = player.getAudioBytes();
+                System.out.println("***P " + in.available());
             } catch (IOException e) {
                 LOGGER.warning(e.getLocalizedMessage());
                 return;
+            } finally {
+                player.reset();
             }
             final AudioManager manager = getAudioManager();
             final String locator = manager.getMediaLocator();
@@ -289,7 +292,6 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
                 segment = new BaseAudioSegment(locator, markupText, in);
             }
             setAudioSegment(id, segment);
-            player.reset();
         }
     }
 
