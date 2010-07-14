@@ -80,8 +80,13 @@ public final class TestSynthesizer {
     @Test
     public void testSpeak() throws Exception {
         synthesizer.speak("this is a test output", null);
+        synthesizer.speak("this is another test output", null);
         System.out.println("this is a test output");
         synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
+//        synthesizer.speakMarkup(
+//                "This sounds normal <pitch middle = '+10'/> but the pitch drops half way through", null);
+//        System.out.println("This sounds normal <pitch middle = '+10'/> but the pitch drops half way through");
+//        synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
     }
 
     /**
@@ -112,9 +117,8 @@ public final class TestSynthesizer {
     @Test
     public void testSpeakSsml() throws Exception {
         synthesizer.speakMarkup(
-                "This sounds normal <pitch middle = '+10'/> but the pitch drops half way through", null);
-        System.out.println("This sounds normal <pitch middle = '+10'/> but the pitch drops half way through");
-        
-        Thread.sleep(4000);
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><speak version=\"1.0\" xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schematicLocation=\"http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd\">This is a test</speak>", null);
+        System.out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?><speak version=\"1.0\" xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schematicLocation=\"http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd\">This is a test</speak>");
+        synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
     }
 }
