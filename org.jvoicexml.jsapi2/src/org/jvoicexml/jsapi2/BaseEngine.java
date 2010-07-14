@@ -216,13 +216,9 @@ public abstract class BaseEngine implements Engine {
         } else {
             // Will wait forever to reach that state
             while (!testEngineState(state)) {
-//                System.out.println(stateToString(getEngineState()) + " - "
-//                        + stateToString(state));
                 synchronized (engineStateLock) {
                     engineStateLock.wait(300);
                 }
-//                System.out.println(stateToString(getEngineState()) + " - "
-//                        + stateToString(state));
             }
         }
         return getEngineState();
