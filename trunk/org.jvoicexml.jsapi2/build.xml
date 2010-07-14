@@ -68,7 +68,11 @@ This file builds the JSR 113.jar.
 
   <target name="preverify" depends="compile">
     <mkdir dir="preverify"/>
-    <pathconvert property="midp.path" refid="midp.lib"/>
+    <path id="preverify.path">
+      <path refid="midp.lib"/>
+      <pathelement location="../javax.speech/classes"/>
+    </path>
+    <pathconvert property="midp.path" refid="preverify.path"/>
     <exec executable="${midp.home}/bin/preverify">
       <arg value="-classpath"/>
       <arg value="${midp.path}"/>

@@ -297,13 +297,12 @@ public class QueueManager {
             boolean topOfQueueChanged;
             final int addedId;
             synchronized (queue) {
-                queueId++;
-                addedId = queueId;
+                addedId = ++queueId;
                 final QueueItem item;
                 if (text == null) {
-                    item = new QueueItem(queueId, speakable, listener);
+                    item = new QueueItem(addedId, speakable, listener);
                 } else {
-                    item = new QueueItem(queueId, speakable, listener, text);
+                    item = new QueueItem(addedId, speakable, listener, text);
                 }
                 topOfQueueChanged = isQueueEmpty();
                 queue.addElement(item);
