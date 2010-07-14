@@ -181,6 +181,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SapiRecognitionThread.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SapiRecognizer.cpp"
 				>
 			</File>

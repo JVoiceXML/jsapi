@@ -158,10 +158,6 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesi
   (JNIEnv *env, jobject obj, jlong handle)
 {	
 	Synthesizer* synth = (Synthesizer*) handle;	
-
-	//std::cout << "Resume:: synthesizerHandle from Java:" << synth << std::endl;
-	//fflush(stdout);
-
 	boolean success = synth->Resume();
     return success ? JNI_TRUE : JNI_FALSE;
 }
