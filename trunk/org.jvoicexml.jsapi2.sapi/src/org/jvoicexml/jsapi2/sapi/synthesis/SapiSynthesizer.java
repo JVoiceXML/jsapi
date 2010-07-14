@@ -206,7 +206,17 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     @Override
     protected void handleSpeak(final int id, final Speakable item) {
         final String markup = item.getMarkupText();
-        sapiHandleSpeakSsml(synthesizerHandle, id, markup);
+        final byte[] bytes = sapiHandleSpeakSsml(synthesizerHandle, id, markup);
+        final AudioManager manager = getAudioManager();
+        final String locator = manager.getMediaLocator();
+        final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        final AudioSegment segment;
+        if (locator == null) {
+            segment = new BaseAudioSegment(markup, in);
+        } else {
+            segment = new BaseAudioSegment(locator, markup, in);
+        }
+        setAudioSegment(id, segment);
     }
 
     /**
