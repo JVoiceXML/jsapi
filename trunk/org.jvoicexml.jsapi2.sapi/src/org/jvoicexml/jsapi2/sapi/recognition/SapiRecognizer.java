@@ -2,10 +2,7 @@ package org.jvoicexml.jsapi2.sapi.recognition;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -17,7 +14,6 @@ import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
-import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
@@ -109,20 +105,16 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 out.write(xml.toString().getBytes());
                 out.close();
                 grammarSources[i] = file.getCanonicalPath();
-//               System.out.println(xml);
-//                System.out.println(grammarSources[i]);
-                          
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new EngineStateException(e.getMessage());
             }
             ++i;
         }
          sapiResume(recognizerHandle, grammarSources);
          
-        SapiRecognitionThread reco = new SapiRecognitionThread(this);
-        reco.start();        
-        return true;        
+        final SapiRecognitionThread reco = new SapiRecognitionThread(this);
+        reco.start();
+        return true;
     }
 
     public long getRecognizerHandle() {
@@ -170,23 +162,22 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     
    public void reportResult(final String utterance) {
         
-        GrammarManager manager = getGrammarManager();
-        Grammar[] grammars = manager.listGrammars();
+        final GrammarManager manager = getGrammarManager();
+        final Grammar[] grammars = manager.listGrammars();
        
 //        RuleGrammar grammar = currentGrammar;
         
         BaseResult result = null; 
         
-        for (Grammar grammar : grammars) {               
-    
+        for (Grammar grammar : grammars) {
             try {
-                result = new BaseResult( grammar , utterance);
+                result = new BaseResult(grammar, utterance);
             } catch (GrammarException e) {
                 LOGGER.warning(e.getMessage());
                 return;
             } 
             
-            if( result != null){
+            if (result != null) {
                 System.out.println( result.toString() );
             }
         }
@@ -210,5 +201,4 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             postResultEvent(accepted);
         }
    }
-
 }

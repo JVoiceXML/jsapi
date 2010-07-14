@@ -14,9 +14,9 @@ public:
 
     HRESULT LoadGrammar(const wchar_t* grammar);
     HRESULT LoadGrammarFile(LPCWSTR grammarPath);
-    LPWSTR RecognitionHappened();
+    wchar_t* RecognitionHappened();
 	
-	LPWSTR startRecognition();
+	wchar_t* StartRecognition();
 
     void StartDictation();
 

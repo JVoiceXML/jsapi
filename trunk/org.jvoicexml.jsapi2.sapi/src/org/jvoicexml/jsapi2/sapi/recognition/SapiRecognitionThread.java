@@ -1,22 +1,35 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
-public class SapiRecognitionThread extends Thread{
+/**
+ * Perform the recognition in an own java process.
+ * @author Josua Arndt
+ * @author Dirk Schnelle-Walka
+ *
+ */
+class SapiRecognitionThread extends Thread {
       
-    /** calling SapiRecognizer  **/
+    /** The calling SapiRecognizer.  **/
     private SapiRecognizer recognizer;
    
-    /** Start recognition **/
-    private native String sapiRecognize(long recognizerHandle);
-    
-    public SapiRecognitionThread(SapiRecognizer recognizer){
-        this.recognizer = recognizer;
+    /**
+     * Constructs a new object.
+     * @param rec the calling recognizer
+     */
+    public SapiRecognitionThread(final SapiRecognizer rec) {
+        recognizer = rec;
     }
     
-    public void run(){
-        String utterance = sapiRecognize(recognizer.getRecognizerHandle());
-    
+    /**
+     * {@inheritDoc}
+     */
+    public void run() {
+        String utterance = sapiRecognize(recognizer.getRecognizerHandle());    
         recognizer.reportResult(utterance);
-    
     }
-    
+
+    /**
+     * Start recognition.
+     * @param recognizerHandle the recognizer handle
+     */
+    private native String sapiRecognize(long recognizerHandle);
 }

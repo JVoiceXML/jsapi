@@ -124,7 +124,7 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
 	return hr;	
 }
 
-LPWSTR Recognizer::RecognitionHappened()
+wchar_t* Recognizer::RecognitionHappened()
 {
 	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
 
@@ -169,7 +169,7 @@ HRESULT Recognizer::Resume()
 	return cpRecoCtxt->Resume(NULL); 
 }
 
-LPWSTR Recognizer::startRecognition(){
+wchar_t* Recognizer::StartRecognition(){
 	
 	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
 	if (FAILED(hr))
