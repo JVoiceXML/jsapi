@@ -52,6 +52,8 @@ public final class TestRecognizer implements ResultListener {
                 Boolean.TRUE.toString());
         EngineManager.registerEngineListFactory(
                 SapiEngineListFactory.class.getCanonicalName());
+        
+        
     }
     
     /**
@@ -61,10 +63,12 @@ public final class TestRecognizer implements ResultListener {
      */
     @Before
     public void setUp() throws Exception {
+        System.out.println("Allocating ASR Engine");
         recognizer =
             (Recognizer) EngineManager.createEngine(RecognizerMode.DEFAULT);
         recognizer.allocate();
         recognizer.waitEngineState(Engine.ALLOCATED);
+        System.out.println("ASR Engine allocated");
     }
 
     /**
@@ -74,10 +78,12 @@ public final class TestRecognizer implements ResultListener {
      */
     @After
     public void tearDown() throws Exception {
+        System.out.println("Deallocainge ASR Engine");
         if (recognizer != null) {
            recognizer.deallocate();
            recognizer.waitEngineState(Engine.DEALLOCATED);
         }
+        System.out.println("ASR Engine deallocated");
     }
 
     /**
@@ -90,12 +96,45 @@ public final class TestRecognizer implements ResultListener {
         recognizer.addResultListener(this);
 
         final GrammarManager grammarManager = recognizer.getGrammarManager();
-        final InputStream in = TestRecognizer.class.getResourceAsStream("hello.xml");
-        grammarManager.loadGrammar("grammar:greeting", null, in, "iso-8859-1");
+        final InputStream in = TestRecognizer.class.getResourceAsStream("global_WZ.xml");
+        grammarManager.loadGrammar("grammar:global_WZ", null, in, "UTF-8");//iso-8859-1
         recognizer.requestFocus();
         recognizer.resume();
         recognizer.waitEngineState(Engine.RESUMED);
-        System.out.println("Please say something...");      
+        System.out.println("Test1 Please say something...");      
+        
+        synchronized (lock) {
+            lock.wait();
+        }
+        
+        System.out.print("Recognized: ");
+        final ResultToken[] tokens = result.getBestTokens();
+
+        for (int i = 0; i < tokens.length; i++) {
+            System.out.print(tokens[i].getText() + " ");
+        }
+        System.out.println();
+        
+    }
+    /**
+     * Test case 2 for the recognizer.
+     * @throws Exception
+     *         test failed.
+     */
+    @Test
+    public void testRecognize2() throws Exception {
+        recognizer.addResultListener(this);
+
+        final GrammarManager grammarManager = recognizer.getGrammarManager();
+        InputStream in = TestRecognizer.class.getResourceAsStream("global_WZ.xml");
+        grammarManager.loadGrammar("grammar:global_WZ", null, in, "UTF-8");//iso-8859-1
+        in = TestRecognizer.class.getResourceAsStream("hello.xml");
+        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");//iso-8859-1
+        
+        recognizer.requestFocus();
+        recognizer.resume();
+        recognizer.waitEngineState(Engine.RESUMED);
+        System.out.println("Test2 Please say something...");      
         
         synchronized (lock) {
             lock.wait();
