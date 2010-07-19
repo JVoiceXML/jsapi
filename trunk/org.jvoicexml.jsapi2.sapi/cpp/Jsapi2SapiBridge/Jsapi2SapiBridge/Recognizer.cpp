@@ -169,8 +169,12 @@ HRESULT Recognizer::Resume()
 	return cpRecoCtxt->Resume(NULL); 
 }
 
-wchar_t* Recognizer::StartRecognition(){
-	
+wchar_t* Recognizer::StartRecognition()
+{
+    if (cpGrammar == NULL)
+    {
+        return NULL;
+    }
 	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
 	if (FAILED(hr))
     {

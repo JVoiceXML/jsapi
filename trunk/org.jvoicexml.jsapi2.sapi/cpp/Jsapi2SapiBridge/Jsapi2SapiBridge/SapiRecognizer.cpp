@@ -101,6 +101,10 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 
 	Recognizer* recognizer = (Recognizer*)handle;
     jsize size = env->GetArrayLength(grammars);
+    if (size == 0)
+    {
+        return JNI_TRUE;
+    }
     for (jsize i=0; i<size; i++)
     {
         jstring grammar = (jstring) env->GetObjectArrayElement(grammars, i);
@@ -161,3 +165,21 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 {
 	reinterpret_cast<Recognizer*>(recognizerHandle)->StartDictation();	
 }
+
+/*
+ * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
+ * Method:    sapiRecognize
+ * Signature: (J)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiRecognize
+  (JNIEnv *env, jobject object, jlong handle)
+{
+    Recognizer* recognizer = (Recognizer*) handle;
+    wchar_t* result = recognizer->StartRecognition();
+    if (result == NULL)
+    {
+        return NULL;
+    }
+    return env->NewString((jchar*)result, wcslen(result));
+}
+
