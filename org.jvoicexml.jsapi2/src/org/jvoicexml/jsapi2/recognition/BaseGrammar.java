@@ -201,7 +201,9 @@ public class BaseGrammar implements Grammar, ResultListener {
             final RecognizerMode mode =
                 (RecognizerMode) recognizer.getEngineMode();
             final SpeechLocale[] locales = mode.getSpeechLocales();
-            locale = locales[0];
+            if (locales != null) {
+                locale = locales[0];
+            }
             if (locale == null) {
                 locale = SpeechLocale.getDefault();
             }
