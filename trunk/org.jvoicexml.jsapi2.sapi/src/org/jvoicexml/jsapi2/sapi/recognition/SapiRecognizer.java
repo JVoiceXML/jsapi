@@ -176,6 +176,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         if (utterance == null) {
             return;
         }
+
         final GrammarManager manager = getGrammarManager();
         final Grammar[] grammars = manager.listGrammars();
        
@@ -190,6 +191,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 LOGGER.warning(e.getMessage());
                 return;
             } 
+                               
         }
     
         final ResultEvent created = new ResultEvent(result,

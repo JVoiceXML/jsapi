@@ -1,6 +1,7 @@
 #pragma once
 
 #include <jni.h>
+#include <vector>
 
 class Recognizer
 {
@@ -14,6 +15,10 @@ public:
 
     HRESULT LoadGrammar(const wchar_t* grammar);
     HRESULT LoadGrammarFile(LPCWSTR grammarPath);
+
+	HRESULT EjectGrammar(LPCSTR ID);
+
+
     wchar_t* RecognitionHappened();
 	
 	wchar_t* StartRecognition();
@@ -30,7 +35,9 @@ private:
     int							grammarCount;	
     CComPtr<ISpRecognizer>		cpRecognizerEngine;
     CComPtr<ISpRecoContext>		cpRecoCtxt;
-    CComPtr<ISpRecoGrammar>		cpGrammar;
+
+	std::vector< CComPtr<ISpRecoGrammar> > gramVec;
+
     JNIEnv* jenv;
     jobject jrec;
 };		

@@ -7,7 +7,7 @@
 #include <string>
 
 Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
-: cpRecognizerEngine(NULL), cpRecoCtxt(NULL), cpGrammar(NULL), hr(S_OK), grammarCount(0),
+: cpRecognizerEngine(NULL), cpRecoCtxt(NULL), hr(S_OK), grammarCount(0),
   jenv(env), jrec(rec)
 {
     // create a new InprocRecognizer.
@@ -49,18 +49,28 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
     {
 		hr = cpRecoCtxt->SetAudioOptions(SPAO_RETAIN_AUDIO, NULL, NULL);
 	}	
+
+	gramVec.get_allocator().allocate( 5 );
+
 	cpAudio.Release();
 }
 
 Recognizer::~Recognizer()
 {
-	cpGrammar.Release();
+	for(int i=0; i<gramVec.size(); i++){
+		
+		hr = gramVec.at(i)->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+		gramVec.at(i).Release();
+	}
+
 	cpRecoCtxt.Release();
 	cpRecognizerEngine.Release();
 }
 
 HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
 {
+	CComPtr<ISpRecoGrammar>		cpGrammar;
+
     hr = cpRecoCtxt->CreateGrammar(grammarCount++, &cpGrammar);
     if (FAILED(hr))
     {
@@ -103,7 +113,9 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
 
 HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
 {
-    hr = cpRecoCtxt->CreateGrammar(grammarCount++, &cpGrammar);
+	CComPtr<ISpRecoGrammar>		cpGrammar;
+
+    hr = cpRecoCtxt->CreateGrammar(++grammarCount, &cpGrammar);
     if (FAILED(hr))
     {
         return hr;
@@ -120,13 +132,34 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
     {
         return hr;
     }
+
+	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+
+	gramVec.insert( gramVec.end() ,cpGrammar);
 	
 	return hr;	
 }
 
+HRESULT EjectGrammar(LPCSTR ID){
+
+
+
+
+	return S_FALSE; 
+}
+
 wchar_t* Recognizer::RecognitionHappened()
 {
-	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+	for(int i=0; i<gramVec.size(); i++){
+		
+		hr = gramVec.at(i)->SetRuleState(NULL, NULL, SPRS_INACTIVE );	
+	}
+	
+	//hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
 
     CSpEvent event;
     // Process all of the recognition events
@@ -142,6 +175,8 @@ wchar_t* Recognizer::RecognitionHappened()
 
             //Recognized(utterance);
             //CoTaskMemFree(utterance);
+			USES_CONVERSION;
+			std::cout<< "I heard: " << W2A(utterance)<<"\n";fflush(stdout);
 			return utterance;
         }
     }
@@ -171,15 +206,16 @@ HRESULT Recognizer::Resume()
 
 wchar_t* Recognizer::StartRecognition()
 {
-    if (cpGrammar == NULL)
-    {
-        return NULL;
-    }
-	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
+
+	for(int i=0; i<gramVec.size(); i++){
+		
+		hr = gramVec.at(i)->SetRuleState(NULL, NULL, SPRS_ACTIVE );	
+	}
 	if (FAILED(hr))
     {
         return NULL;
     }
+
 
 	hr = cpRecoCtxt->SetNotifyWin32Event();// Achtung bei allocate ->SetNotifyWindowMessage() auskommentiert	
 	if (FAILED(hr))
@@ -202,18 +238,24 @@ void Recognizer::StartDictation()
 
 	if (  SUCCEEDED( hr = BlockForResult(cpRecoCtxt, &cpResult) ) )
 	{		
-            cpGrammar->SetGrammarState(SPGS_DISABLED);
+            for(int i=0; i<gramVec.size(); i++){
+		
+				hr = gramVec.at(i)->SetGrammarState(SPGS_DISABLED);
+			}
 
             CSpDynamicString dstrText;
 
             if (SUCCEEDED(cpResult->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, 
                                             TRUE, &dstrText, NULL)))
             {
-				std::cout<< "I heard: " << W2A(dstrText)<<"\n";
-				fflush(stdout);
+				std::cout<< "I heard: " << W2A(dstrText)<<"\n";fflush(stdout);
+				
 				cpResult.Release();   						
-            }                  
-            hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
+            }
+			
+			for(int i=0; i<gramVec.size(); i++){		
+				hr = gramVec.at(i)->SetGrammarState(SPGS_ENABLED);
+			}
     }
 }
 
@@ -224,14 +266,18 @@ HRESULT Recognizer::BlockForResult(ISpRecoContext * pRecoCtxt, ISpRecoResult ** 
 	HRESULT hr = S_OK;
 	CSpEvent event;
 
-	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
+	for(int i=0; i<gramVec.size(); i++){		
+		hr = gramVec.at(i)->SetRuleState(NULL, NULL, SPRS_ACTIVE);	
+	}
 
 	if ( SUCCEEDED(hr)&& SUCCEEDED(hr = event.GetFrom(pRecoCtxt)) && hr == S_FALSE ) //
 	{
 		hr = pRecoCtxt->WaitForNotifyEvent(INFINITE);
 	}
 	
-	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+	for(int i=0; i<gramVec.size(); i++){		
+		hr = gramVec.at(i)->SetRuleState(NULL, NULL, SPRS_INACTIVE );	
+	}
 
 	*ppResult = event.RecoResult();
 

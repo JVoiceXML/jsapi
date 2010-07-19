@@ -1,13 +1,15 @@
-<grammar xml:lang="de-DE" version="1.0" root="greeting" xmlns="http://www.w3.org/2001/06/grammar">
+<grammar mode="voice" xml:lang="de-DE" version="1.0" root="greeting">
   <rule id="greeting" scope="public">
-     <one-of>
-       <item > good morning </item>
-       <item > hello </item>
-     </one-of>
+    <item repeat="0-5">
+      <one-of>
+        <item> Guten Morgen </item>
+        <item> Hallo </item>
+      </one-of>
+    </item>
     <one-of>
-      <item> dirk </item>
-      <item> david </item>
-      <item> renato </item>
+      <item repeat="0-5"> Dirk </item>
+      <item> David </item>
+      <item> Renato </item>
     </one-of>
   </rule>
 </grammar> 

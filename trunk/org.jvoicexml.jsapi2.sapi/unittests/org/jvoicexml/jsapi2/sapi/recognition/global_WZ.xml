@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar mode="voice" root="Global_WZ" version="1.0" xml:lang="de-DE"
+	xmlns="http://www.w3.org/2001/06/grammar">
+	
+	<rule id="global_Licht" scope="public">
+		<one-of>
+			<item>Beleuchtung</item>
+			<item>Lampe</item>
+			<item>Licht</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">an</item>
+					<item repeat="0-1">aus</item>
+				</one-of>
+			</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">Alle</item>
+					<item repeat="0-1">hinter L E D Wand</item>
+					<item repeat="0-1">D A M Zentrale</item>
+					<item repeat="0-1">L E D Panel</item>
+					<item repeat="0-1">L E D Streifen</item>
+					<item repeat="0-1">L E D Wand</item>
+					<item repeat="0-1">R G B Lampe</item>
+					<item repeat="0-1">R G B Lampe Blau</item>
+					<item repeat="0-1">R G B Lampe Gruen</item>
+					<item repeat="0-1">R G B Lampe Rot</item>
+					<item repeat="0-1">Sitzecke</item>
+					<item repeat="0-1">T V Rack</item>
+					<item repeat="0-1">Tisch 1</item>
+					<item repeat="0-1">Tisch 2</item>
+				</one-of>
+			</item>
+		</one-of>
+		<one-of>
+			<item>
+				<one-of>
+					<item repeat="0-1">an</item>
+					<item repeat="0-1">aus</item>
+				</one-of>
+			</item>
+			<item>Beleuchtung</item>
+			<item>Lampe</item>
+			<item>Licht</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">Alle</item>
+					<item repeat="0-1">hinter L E D Wand</item>
+					<item repeat="0-1">D A M Zentrale</item>
+					<item repeat="0-1">L E D Panel</item>
+					<item repeat="0-1">L E D Streifen</item>
+					<item repeat="0-1">L E D Wand</item>
+					<item repeat="0-1">R G B Lampe</item>
+					<item repeat="0-1">R G B Lampe Blau</item>
+					<item repeat="0-1">R G B Lampe Gruen</item>
+					<item repeat="0-1">R G B Lampe Rot</item>
+					<item repeat="0-1">Sitzecke</item>
+					<item repeat="0-1">T V Rack</item>
+					<item repeat="0-1">Tisch 1</item>
+					<item repeat="0-1">Tisch 2</item>
+				</one-of>
+			</item>
+		</one-of>
+	</rule>
+	
+	<rule id="global_Rollladen" scope="public">
+		<one-of>
+			<item>Jalousie</item>
+			<item>Rollladen</item>
+			<item>Rolllaeden</item>
+			<item>Rollo</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">hoch</item>
+					<item repeat="0-1">rauf</item>
+					<item repeat="0-1">runter</item>
+					<item repeat="0-1">senken</item>
+					<item repeat="0-1">stop</item>
+				</one-of>
+			</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">Alle</item>
+					<item repeat="0-1">Ecke</item>
+					<item repeat="0-1">Ecke Terrase</item>
+					<item repeat="0-1">Hof Fenster</item>
+					<item repeat="0-1">Hof Tuer</item>
+					<item repeat="0-1">Terrase</item>
+					<item repeat="0-1">Terrase links</item>
+					<item repeat="0-1">Terrase rechts</item>
+				</one-of>
+			</item>
+		</one-of>
+		<one-of>
+			<item>
+				<one-of>
+					<item repeat="0-1">hoch</item>
+					<item repeat="0-1">rauf</item>
+					<item repeat="0-1">runter</item>
+					<item repeat="0-1">senken</item>
+					<item repeat="0-1">stop</item>
+				</one-of>
+			</item>
+			<item>Jalousie</item>
+			<item>Rollladen</item>
+			<item>Rolllaeden</item>
+			<item>Rollo</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">Alle</item>
+					<item repeat="0-1">Ecke</item>
+					<item repeat="0-1">Ecke Terrase</item>
+					<item repeat="0-1">Hof Fenster</item>
+					<item repeat="0-1">Hof Tuer</item>
+					<item repeat="0-1">Terrase</item>
+					<item repeat="0-1">Terrase links</item>
+					<item repeat="0-1">Terrase rechts</item>
+				</one-of>
+			</item>
+		</one-of>
+	</rule>
+	
+	<rule id="global_Szene" scope="public">
+		<one-of>
+			<item>Szene</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">Fernseh schauen</item>
+					<item repeat="0-1">Hell</item>
+					<item repeat="0-1">Klassik</item>
+				</one-of>
+			</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">Szene</item>
+				</one-of>
+			</item>
+		</one-of>
+		<one-of>
+			<item>
+				<one-of>
+					<item repeat="0-1">Fernseh schauen</item>
+					<item repeat="0-1">Hell</item>
+					<item repeat="0-1">Klassik</item>
+				</one-of>
+			</item>
+			<item>Szene</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">Szene</item>
+				</one-of>
+			</item>
+		</one-of>
+	</rule>
+	
+	<rule id="global_TV" scope="public">
+		<one-of>
+			<item>Fernseh</item>
+			<item>Fernsehen</item>
+			<item>Fernseher</item>
+			<item>Glotze</item>
+			<item>T V</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">A R D</item>
+					<item repeat="0-1">A R D H D</item>
+					<item repeat="0-1">Z D F</item>
+					<item repeat="0-1">Z D F H D</item>
+					<item repeat="0-1">an</item>
+					<item repeat="0-1">aus</item>
+				</one-of>
+			</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">Sender</item>
+				</one-of>
+			</item>
+		</one-of>
+		<one-of>
+			<item>
+				<one-of>
+					<item repeat="0-1">A R D</item>
+					<item repeat="0-1">A R D H D</item>
+					<item repeat="0-1">Z D F</item>
+					<item repeat="0-1">Z D F H D</item>
+					<item repeat="0-1">an</item>
+					<item repeat="0-1">aus</item>
+				</one-of>
+			</item>
+			<item>Fernseh</item>
+			<item>Fernsehen</item>
+			<item>Fernseher</item>
+			<item>Glotze</item>
+			<item>T V</item>
+			<item>
+				<one-of>
+					<item repeat="0-1">Sender</item>
+				</one-of>
+			</item>
+		</one-of>
+	</rule>
+	
+	<rule id="Global_WZ" scope="public">
+		<one-of>
+			<item>
+				<ruleref uri="#global_Licht"></ruleref>
+				<ruleref uri="#global_Rollladen"></ruleref>
+				<ruleref uri="#global_Szene"></ruleref>
+				<ruleref uri="#global_TV"></ruleref>
+			</item>
+		</one-of>
+	</rule>
+	
+</grammar>
