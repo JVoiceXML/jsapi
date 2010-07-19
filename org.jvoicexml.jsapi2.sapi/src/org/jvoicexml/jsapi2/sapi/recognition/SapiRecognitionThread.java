@@ -6,8 +6,11 @@ package org.jvoicexml.jsapi2.sapi.recognition;
  * @author Dirk Schnelle-Walka
  *
  */
-class SapiRecognitionThread extends Thread {
-      
+final class SapiRecognitionThread extends Thread {
+    static {
+        System.loadLibrary("Jsapi2SapiBridge");
+    }
+
     /** The calling SapiRecognizer.  **/
     private SapiRecognizer recognizer;
    
@@ -30,6 +33,7 @@ class SapiRecognitionThread extends Thread {
     /**
      * Start recognition.
      * @param recognizerHandle the recognizer handle
+     * @return recognition result
      */
-    private native String sapiRecognize(long recognizerHandle);
+    private native String sapiRecognize(final long recognizerHandle);
 }

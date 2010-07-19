@@ -110,12 +110,24 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             }
             ++i;
         }
-         sapiResume(recognizerHandle, grammarSources);
-         
-        final SapiRecognitionThread reco = new SapiRecognitionThread(this);
-        reco.start();
+        sapiResume(recognizerHandle, grammarSources);
+        
+        final Thread thread = new Thread() {
+            public void run() {
+                String utterance = sapiRecognize(recognizerHandle);
+                reportResult(utterance);
+            }
+        };
+        thread.start();
         return true;
     }
+
+    /**
+     * Start recognition.
+     * @param handle the recognizer handle
+     * @return recognition result
+     */
+    private native String sapiRecognize(final long handle);
 
     public long getRecognizerHandle() {
         return recognizerHandle;
@@ -161,7 +173,9 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     }
     
    public void reportResult(final String utterance) {
-        
+        if (utterance == null) {
+            return;
+        }
         final GrammarManager manager = getGrammarManager();
         final Grammar[] grammars = manager.listGrammars();
        
@@ -176,10 +190,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 LOGGER.warning(e.getMessage());
                 return;
             } 
-            
-            if (result != null) {
-                System.out.println( result.toString() );
-            }
         }
     
         final ResultEvent created = new ResultEvent(result,
