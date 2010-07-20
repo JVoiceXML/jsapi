@@ -6,9 +6,10 @@
 #include <fstream>
 #include <string>
 
+//using namespace system;
+
 Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
-: cpRecognizerEngine(NULL), cpRecoCtxt(NULL), hr(S_OK), grammarCount(0),
-  jenv(env), jrec(rec)
+: cpRecognizerEngine(NULL), cpRecoCtxt(NULL), hr(S_OK), jenv(env), jrec(rec)
 {
     // create a new InprocRecognizer.
     hr = cpRecognizerEngine.CoCreateInstance(CLSID_SpInprocRecognizer);	
@@ -16,12 +17,6 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
     {
         hr = cpRecognizerEngine->CreateRecoContext(&cpRecoCtxt);
 		//hr = cpRecoCtxt->Pause(NULL);
-    }
-    if (SUCCEEDED(hr))
-    {
-        // Set recognition notification for dictation
-        //hr = cpRecoCtxt->SetNotifyWindowMessage(hwnd, WM_RECOEVENT, (WPARAM) this, 0);
-		//cpRecoCtxt->SetNotifyWin32Event();
     }
 
     if (SUCCEEDED(hr))
@@ -48,22 +43,26 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 	if( SUCCEEDED(hr) )
     {
 		hr = cpRecoCtxt->SetAudioOptions(SPAO_RETAIN_AUDIO, NULL, NULL);
-	}	
-
-	gramVec.get_allocator().allocate( 5 );
+	}
 
 	cpAudio.Release();
 }
 
 Recognizer::~Recognizer()
 {
-	for(int i=0; i<gramVec.size(); i++){
-		
-		hr = gramVec.at(i)->SetRuleState(NULL, NULL, SPRS_INACTIVE );
-		gramVec.at(i).Release();
-	}
+	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
 
+	for( it ; it != gramHash.end(); it++){		
+
+		hr = it->second->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+
+		hr = it->second->SetGrammarState(SPGS_DISABLED);
+		
+		it->second.Release();
+	}
+	
 	cpRecoCtxt.Release();
+
 	cpRecognizerEngine.Release();
 }
 
@@ -71,7 +70,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
 {
 	CComPtr<ISpRecoGrammar>		cpGrammar;
 
-    hr = cpRecoCtxt->CreateGrammar(grammarCount++, &cpGrammar);
+    hr = cpRecoCtxt->CreateGrammar( NULL , &cpGrammar);
     if (FAILED(hr))
     {
         return hr;
@@ -111,11 +110,11 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
     return hr;
 }
 
-HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
+HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath,LPCWSTR grammarID )
 {
 	CComPtr<ISpRecoGrammar>		cpGrammar;
-
-    hr = cpRecoCtxt->CreateGrammar(++grammarCount, &cpGrammar);
+	
+    hr = cpRecoCtxt->CreateGrammar( NULL, &cpGrammar);
     if (FAILED(hr))
     {
         return hr;
@@ -133,33 +132,38 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath)
         return hr;
     }
 
-	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-
-	gramVec.insert( gramVec.end() ,cpGrammar);
+	gramHash.insert( std::make_pair( grammarID , cpGrammar ) );
 	
 	return hr;	
 }
 
-HRESULT EjectGrammar(LPCSTR ID){
+HRESULT Recognizer::DeleteGrammar(LPCWSTR ID){
 
+	std::map< std::wstring , CComPtr<ISpRecoGrammar> >::iterator it = gramHash.find(ID);
+	
+	CComPtr<ISpRecoGrammar>		pGrammar = it->second;
 
+	pGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
 
+	pGrammar->SetGrammarState(SPGS_DISABLED);
 
-	return S_FALSE; 
+	pGrammar.Detach();
+
+	pGrammar.Release();
+
+	gramHash.erase(it);
+
+	return hr; 
 }
 
 wchar_t* Recognizer::RecognitionHappened()
 {
-	for(int i=0; i<gramVec.size(); i++){
-		
-		hr = gramVec.at(i)->SetRuleState(NULL, NULL, SPRS_INACTIVE );	
-	}
-	
-	//hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
+
+	for( it ; it != gramHash.end(); it++){		
+
+		hr = it->second->SetRuleState(NULL, NULL, SPRS_INACTIVE );	
+	}	
 
     CSpEvent event;
     // Process all of the recognition events
@@ -171,28 +175,27 @@ wchar_t* Recognizer::RecognitionHappened()
             ISpRecoResult* result = event.RecoResult();
             LPWSTR utterance;
             hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
-                &utterance, NULL);
+                &utterance, NULL);			
 
-            //Recognized(utterance);
-            //CoTaskMemFree(utterance);
-			USES_CONVERSION;
-			std::cout<< "I heard: " << W2A(utterance)<<"\n";fflush(stdout);
+			std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
+
+			for( it ; it != gramHash.end(); it++){	
+
+					CComPtr<ISpRecoGrammar>		pGrammar = it->second ;
+
+					pGrammar->SetGrammarState(SPGS_DISABLED);
+					pGrammar.Detach();
+					pGrammar.Release();
+			}
+
+			gramHash.clear();
+
 			return utterance;
         }
     }
     return NULL;
 } 
 
-void Recognizer::Recognized(LPWSTR utterance)
-{
-	jclass clazz = jenv->FindClass("org/jvoicexml/jsapi2/sapi/recognition/SapiRecognizer");
-    jmethodID methodId = jenv->GetMethodID(clazz, "reportResult","(Ljava/lang/String;)V");
-
-	int len = wcslen(utterance);
-	jstring jstr = jenv->NewString((jchar*) utterance, wcslen(utterance));
-
-    jenv->CallObjectMethod(jrec, methodId, jstr);
-}
 
 HRESULT Recognizer::Pause()
 {
@@ -205,79 +208,82 @@ HRESULT Recognizer::Resume()
 }
 
 wchar_t* Recognizer::StartRecognition()
-{
+{	
+	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
 
-	for(int i=0; i<gramVec.size(); i++){
-		
-		hr = gramVec.at(i)->SetRuleState(NULL, NULL, SPRS_ACTIVE );	
+	for( it ; it != gramHash.end(); it++){		
+
+		hr = it->second->SetRuleState(NULL, NULL, SPRS_ACTIVE );	
 	}
 	if (FAILED(hr))
     {
         return NULL;
     }
 
-
-	hr = cpRecoCtxt->SetNotifyWin32Event();// Achtung bei allocate ->SetNotifyWindowMessage() auskommentiert	
+	hr = cpRecoCtxt->SetNotifyWin32Event();	
 	if (FAILED(hr))
     {
         return NULL;
     }		
+
 	hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
 
     return RecognitionHappened();
-
 }
 
 void Recognizer::StartDictation()
 {	
-	USES_CONVERSION;
 	CComPtr<ISpRecoResult>		cpResult;
 
-	std::cout<< "Please speak now \n";
-	fflush(stdout);
+	CComPtr<ISpRecoGrammar>		cpGrammar;
 
-	if (  SUCCEEDED( hr = BlockForResult(cpRecoCtxt, &cpResult) ) )
-	{		
-            for(int i=0; i<gramVec.size(); i++){
-		
-				hr = gramVec.at(i)->SetGrammarState(SPGS_DISABLED);
-			}
+	
+    hr = cpRecoCtxt->CreateGrammar( NULL, &cpGrammar);
 
-            CSpDynamicString dstrText;
+	hr = cpGrammar->LoadDictation(NULL, SPLO_STATIC);
 
-            if (SUCCEEDED(cpResult->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, 
-                                            TRUE, &dstrText, NULL)))
-            {
-				std::cout<< "I heard: " << W2A(dstrText)<<"\n";fflush(stdout);
-				
-				cpResult.Release();   						
-            }
+	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
+    
+	//std::cout<< "Please speak now \n";flush(std::cout);
+
+	if ( SUCCEEDED(hr = BlockForResult( cpGrammar, &cpResult)))
+	{
+		CSpDynamicString dstrText;
+
+        if (SUCCEEDED(cpResult->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, 
+                                        TRUE, &dstrText, NULL)))
+        {
+
+			// ToDo Give back the Dictation Result To Java Code
+			// and create a terminate Method
+			USES_CONVERSION;
+			std::cout<< "I heard: " << W2A(dstrText)<<"\n";fflush(stdout);
 			
-			for(int i=0; i<gramVec.size(); i++){		
-				hr = gramVec.at(i)->SetGrammarState(SPGS_ENABLED);
-			}
-    }
+			cpResult.Release();   						
+        }
+							
+		hr = cpGrammar->SetGrammarState(SPGS_ENABLED);			
+	}
 }
 
-HRESULT Recognizer::BlockForResult(ISpRecoContext * pRecoCtxt, ISpRecoResult ** ppResult)
+
+HRESULT Recognizer::BlockForResult( ISpRecoGrammar* cpGrammar, ISpRecoResult ** ppResult)
 {	
 	USES_CONVERSION;
 
 	HRESULT hr = S_OK;
 	CSpEvent event;
 
-	for(int i=0; i<gramVec.size(); i++){		
-		hr = gramVec.at(i)->SetRuleState(NULL, NULL, SPRS_ACTIVE);	
-	}
-
-	if ( SUCCEEDED(hr)&& SUCCEEDED(hr = event.GetFrom(pRecoCtxt)) && hr == S_FALSE ) //
-	{
-		hr = pRecoCtxt->WaitForNotifyEvent(INFINITE);
-	}
+	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );	
 	
-	for(int i=0; i<gramVec.size(); i++){		
-		hr = gramVec.at(i)->SetRuleState(NULL, NULL, SPRS_INACTIVE );	
+	hr = cpRecoCtxt->SetNotifyWin32Event();
+
+	if ( SUCCEEDED(hr)&& SUCCEEDED(hr = event.GetFrom( cpRecoCtxt )) && hr == S_FALSE ) //
+	{
+		hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
 	}
+			
+	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );	
 
 	*ppResult = event.RecoResult();
 

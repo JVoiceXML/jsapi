@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import javax.speech.Engine;
 import javax.speech.EngineManager;
+import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerMode;
@@ -78,7 +79,7 @@ public final class TestRecognizer implements ResultListener {
      */
     @After
     public void tearDown() throws Exception {
-        System.out.println("Deallocainge ASR Engine");
+        System.out.println("Deallocatinge ASR Engine");
         if (recognizer != null) {
            recognizer.deallocate();
            recognizer.waitEngineState(Engine.DEALLOCATED);
@@ -87,37 +88,48 @@ public final class TestRecognizer implements ResultListener {
     }
 
     /**
-     * Test case for the recognizer.
+     * Simple Test case for the recognizer.
+     * Use only one Grammar
+     * 
      * @throws Exception
      *         test failed.
      */
-    @Test
-    public void testRecognize() throws Exception {
-        recognizer.addResultListener(this);
-
-        final GrammarManager grammarManager = recognizer.getGrammarManager();
-        final InputStream in = TestRecognizer.class.getResourceAsStream("global_WZ.xml");
-        grammarManager.loadGrammar("grammar:global_WZ", null, in, "UTF-8");//iso-8859-1
-        recognizer.requestFocus();
-        recognizer.resume();
-        recognizer.waitEngineState(Engine.RESUMED);
-        System.out.println("Test1 Please say something...");      
-        
-        synchronized (lock) {
-            lock.wait();
-        }
-        
-        System.out.print("Recognized: ");
-        final ResultToken[] tokens = result.getBestTokens();
-
-        for (int i = 0; i < tokens.length; i++) {
-            System.out.print(tokens[i].getText() + " ");
-        }
-        System.out.println();
-        
-    }
+//    @Test
+//    public void testRecognize() throws Exception {
+//        recognizer.addResultListener(this);
+//
+//        final GrammarManager grammarManager = recognizer.getGrammarManager();
+//        final InputStream in = TestRecognizer.class.getResourceAsStream("global_WZ.xml");
+//        grammarManager.loadGrammar("grammar:global_WZ", null, in, "UTF-8");//iso-8859-1
+//        recognizer.requestFocus();
+//        recognizer.resume();
+//        recognizer.waitEngineState(Engine.RESUMED);
+//        System.out.println("Test1 Please say something...");      
+//        
+//        synchronized (lock) {
+//            lock.wait();
+//        }
+//        
+//        System.out.print("Recognized: ");
+//        final ResultToken[] tokens = result.getBestTokens();
+//
+//        for (int i = 0; i < tokens.length; i++) {
+//            System.out.print(tokens[i].getText() + " ");
+//        }
+//        System.out.println();
+//        
+//    }
     /**
-     * Test case 2 for the recognizer.
+     * Test case  for the recognizer.
+     * 
+     * Use 2 grammars for the first recognition 
+     * gretting contains:
+     *          ( Hallo| Guten Morgen) [ Dirk| David| Renato| Josua] 
+     * LIGHT contains:
+     *          (Licht| Lampe) (ein| aus)
+     * 
+     * only use greeting for the second recognition
+     * 
      * @throws Exception
      *         test failed.
      */
@@ -126,45 +138,52 @@ public final class TestRecognizer implements ResultListener {
         recognizer.addResultListener(this);
 
         final GrammarManager grammarManager = recognizer.getGrammarManager();
-        InputStream in = TestRecognizer.class.getResourceAsStream("global_WZ.xml");
-        grammarManager.loadGrammar("grammar:global_WZ", null, in, "UTF-8");//iso-8859-1
+        InputStream in = TestRecognizer.class.getResourceAsStream("Licht.xml");
+        grammarManager.loadGrammar("grammar:LIGHT", null, in, "UTF-8");//iso-8859-1
         in = TestRecognizer.class.getResourceAsStream("hello.xml");
         grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");//iso-8859-1
+        
         
         recognizer.requestFocus();
         recognizer.resume();
         recognizer.waitEngineState(Engine.RESUMED);
-        System.out.println("Test2 Please say something...");      
+        System.out.println("Test2.1 Please say something...");      
         
         synchronized (lock) {
             lock.wait();
         }
         
         System.out.print("Recognized: ");
-        final ResultToken[] tokens = result.getBestTokens();
+        ResultToken[] tokens = result.getBestTokens();
 
         for (int i = 0; i < tokens.length; i++) {
             System.out.print(tokens[i].getText() + " ");
         }
-        System.out.println();
+        System.out.println();        
+        
+        Grammar gram = grammarManager.getGrammar("grammar:LIGHT");
+        grammarManager.deleteGrammar(gram);
+        
+        recognizer.pause();                      
+        recognizer.requestFocus();
+        recognizer.resume();
+        recognizer.waitEngineState(Engine.RESUMED);
+        System.out.println("Test2.2 Please say something...");      
+        
+        synchronized (lock) {
+            lock.wait();
+        }
+        
+        System.out.print("Recognized: ");
+        tokens = result.getBestTokens();
+
+        for (int i = 0; i < tokens.length; i++) {
+            System.out.print(tokens[i].getText() + " ");
+        }
+        System.out.println();     
         
     }
 
-//    /**
-//     * Test case for {@link SapiRecognizer#handlePause()}.
-//     * Test case for {@link SapiRecognizer#handleResume()}.
-//     * @throws Exception
-//     *         test failed
-//     */  
-//    @Test
-//    public void testPause() throws Exception {
-//            recognizer.pause();
-//            System.out.println("\tPause Recognizer \n");
-//            Thread.sleep(5000);
-//            recognizer.resume();
-//            System.out.println("\tResume Recognizer \n");
-//            Thread.sleep(5000);
-//    }
 
     /**
      * {@inheritDoc}
@@ -179,16 +198,5 @@ public final class TestRecognizer implements ResultListener {
             }
         }
     }
-     
     
-//    public void testRecognition() throws Exception {
-//        
-//        SapiRecognizer recognizer = new SapiRecognizer();
-//        recognizer.allocate();
-//        recognizer.waitEngineState(Engine.ALLOCATED);
-//        
-//        recognizer.setGrammar("Licht.xml");       
-//        Thread.sleep(6000);
-//        recognizer.deallocate();
-//    }
 }

@@ -95,9 +95,11 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         GrammarManager manager = getGrammarManager();
         Grammar[] grammars = manager.listGrammars();
         final String[] grammarSources = new String[grammars.length];
+        final String[] grammarReferences = new String[grammars.length];
         int i = 0;
         for (Grammar grammar : grammars) {
             try {
+                
                 final File file = File.createTempFile("sapi", "xml");
                 file.deleteOnExit();
                 final FileOutputStream out = new FileOutputStream(file);   
@@ -105,12 +107,13 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 out.write(xml.toString().getBytes());
                 out.close();
                 grammarSources[i] = file.getCanonicalPath();
+                grammarReferences[i] = grammar.getReference();
             } catch (IOException e) {
                 throw new EngineStateException(e.getMessage());
             }
             ++i;
         }
-        sapiResume(recognizerHandle, grammarSources);
+        sapiResume(recognizerHandle, grammarSources, grammarReferences);
         
         final Thread thread = new Thread() {
             public void run() {
@@ -132,9 +135,10 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     public long getRecognizerHandle() {
         return recognizerHandle;
     }
+   
+    private native boolean sapiResume(long handle, String[] grammars, String[] references)
+    throws EngineStateException;
 
-    private native boolean sapiResume(long handle, String[] grammars)
-        throws EngineStateException;
 
     /**
      * {@inheritDoc}
@@ -145,11 +149,11 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         return false;
     }
 
-    public boolean setGrammar(final String grammarPath) {
-        return sapiSetGrammar(recognizerHandle, grammarPath);
+    public boolean setGrammar(final String grammarPath, String reference) {
+        return sapiSetGrammar(recognizerHandle, grammarPath, reference);
     }
 
-    private native boolean sapiSetGrammar(long handle, String grammarPath);
+    private native boolean sapiSetGrammar(long handle, String grammarPath, String reference);
 
     @Override
     protected EnginePropertyChangeRequestListener getChangeRequestListener() {
@@ -191,7 +195,10 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 LOGGER.warning(e.getMessage());
                 return;
             } 
-                               
+            
+            if( result.getNumTokens() != 0){
+                break;
+            }                             
         }
     
         final ResultEvent created = new ResultEvent(result,

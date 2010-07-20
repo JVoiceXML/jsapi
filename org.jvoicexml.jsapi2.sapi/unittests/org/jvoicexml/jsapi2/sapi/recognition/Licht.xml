@@ -1,14 +1,14 @@
 <grammar version="1.0" xml:lang="de-DE" root = "LIGHT" 
 	xmlns="http://www.w3.org/2001/06/grammar" > <!--tag-format="semantics-ms/1.0"-->
   
-  <rule id="DEVICE" scope="public">
+  <rule id="DEVICE" scope="private">
     <one-of>
       <item >licht</item>
 	 <item >lampe</item>
     </one-of>
   </rule>
  
-  <rule id="COMMAND" scope="public">
+  <rule id="COMMAND" scope="private">
     <one-of>
       <item >ein</item>
 	 <item >aus</item>
@@ -18,7 +18,7 @@
   <rule id="LIGHT" scope="public">
     <one-of>
 	 <item>
-	  <!--ruleref special="GARBAGE"/-->
+	  <!-- ruleref special="GARBAGE"/-->
 	  <ruleref uri="#DEVICE" />
 	  <!-- ruleref special="GARBAGE"/-->
 	  <ruleref uri="#COMMAND" />
