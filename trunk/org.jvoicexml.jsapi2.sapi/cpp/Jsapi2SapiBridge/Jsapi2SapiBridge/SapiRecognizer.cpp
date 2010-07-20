@@ -93,10 +93,10 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
  * Method:    sapiResume
- * Signature: (J[Ljava/lang/String;)Z
+ * Signature: (J[Ljava/lang/String;[Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiResume
-  (JNIEnv *env, jobject object, jlong handle, jobjectArray grammars)
+(JNIEnv *env, jobject object, jlong handle, jobjectArray grammars, jobjectArray references)
 {
 
 	Recognizer* recognizer = (Recognizer*)handle;
@@ -109,8 +109,11 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
     {
         jstring grammar = (jstring) env->GetObjectArrayElement(grammars, i);
 		const wchar_t* gram = (const wchar_t*)env->GetStringChars(grammar, NULL);	
-		
-		HRESULT hr= recognizer->LoadGrammarFile(gram);
+        
+		jstring reference = (jstring) env->GetObjectArrayElement(references, i);
+		const wchar_t* ref = (const wchar_t*)env->GetStringChars(reference, NULL);	
+
+		HRESULT hr= recognizer->LoadGrammarFile(gram, ref);
         if ( FAILED(hr) )
         {
             char buffer[1024];
@@ -125,15 +128,17 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    nativSetGrammar
- * Signature: (JLjava/lang/String;)Z
+ * Method:    sapiSetGrammar
+ * Signature: (JLjava/lang/String;Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiSetGrammar
-  (JNIEnv *env, jobject object, jlong recognizerHandle, jstring grammarPath){
+(JNIEnv *env, jobject object, jlong recognizerHandle, jstring grammarPath, jstring reference){
 		
 	Recognizer* recognizer = (Recognizer*)recognizerHandle;
     const wchar_t* gram = (const wchar_t*)env->GetStringChars(grammarPath, NULL);
-	HRESULT hr = recognizer->LoadGrammarFile(gram);
+	const wchar_t* ref = (const wchar_t*)env->GetStringChars(reference, NULL);	
+	
+	HRESULT hr = recognizer->LoadGrammarFile(gram, ref);
 	if (SUCCEEDED(hr))
     {
         return JNI_TRUE;
