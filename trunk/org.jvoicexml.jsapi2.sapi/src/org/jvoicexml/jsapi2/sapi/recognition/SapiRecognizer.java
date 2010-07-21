@@ -220,11 +220,13 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         postResultEvent(grammarFinalized);
     
         if (result.getResultState() == Result.REJECTED) {
+            result.setResultState(Result.REJECTED);
             final ResultEvent rejected =
                 new ResultEvent(result, ResultEvent.RESULT_REJECTED,
                         false, false);
             postResultEvent(rejected);
         } else {
+            result.setResultState(Result.ACCEPTED);
             final ResultEvent accepted = new ResultEvent(result,
                         ResultEvent.RESULT_ACCEPTED, false, false);
             postResultEvent(accepted);
