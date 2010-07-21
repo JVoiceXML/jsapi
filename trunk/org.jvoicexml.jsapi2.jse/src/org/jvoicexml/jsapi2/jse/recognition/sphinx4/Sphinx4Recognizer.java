@@ -403,4 +403,16 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
         
     }
 
+    @Override
+    protected void handleRequestFocus() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected void handleReleaseFocus() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
