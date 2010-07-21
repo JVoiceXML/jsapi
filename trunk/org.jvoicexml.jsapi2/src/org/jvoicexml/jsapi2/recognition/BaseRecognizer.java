@@ -189,6 +189,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         postEngineEvent(states[0], states[1], EngineEvent.ENGINE_FOCUSED);
 
         notifyGrammarActivation();
+        handleRequestFocus();
     }
 
     /**
@@ -213,6 +214,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEFOCUSED);
 
         notifyGrammarActivation();
+        handleReleaseFocus();
     }
 
     /**
@@ -633,6 +635,10 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected abstract boolean handleResume() throws EngineStateException;
 
     protected abstract boolean setGrammars(Vector grammarDefinition);
+
+    protected abstract void handleRequestFocus();
+
+    protected abstract void handleReleaseFocus();
 
     /**
      * Returns a list of engine built-in grammars.
