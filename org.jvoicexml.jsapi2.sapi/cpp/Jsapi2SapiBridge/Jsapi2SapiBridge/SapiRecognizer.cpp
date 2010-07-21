@@ -117,7 +117,8 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
         if ( FAILED(hr) )
         {
             char buffer[1024];
-			GetErrorMessage(buffer, sizeof(buffer), "Resume Recognizer: load Grammar failed",
+			GetErrorMessage(buffer, sizeof(buffer),
+                "Resume Recognizer: load Grammar failed",
                 hr);
             ThrowJavaException(env, "javax/speech/EngineStateException", buffer);
         }

@@ -7,10 +7,6 @@ package org.jvoicexml.jsapi2.sapi.recognition;
  *
  */
 final class SapiRecognitionThread extends Thread {
-    static {
-        System.loadLibrary("Jsapi2SapiBridge");
-    }
-
     /** The calling SapiRecognizer.  **/
     private SapiRecognizer recognizer;
    
@@ -20,20 +16,22 @@ final class SapiRecognitionThread extends Thread {
      */
     public SapiRecognitionThread(final SapiRecognizer rec) {
         recognizer = rec;
+        setDaemon(true);
     }
     
     /**
      * {@inheritDoc}
      */
     public void run() {
-        String utterance = sapiRecognize(recognizer.getRecognizerHandle());    
+        final long handle = recognizer.getRecognizerHandle();
+        String utterance = recognizer.sapiRecognize(handle);
         recognizer.reportResult(utterance);
     }
 
     /**
-     * Start recognition.
-     * @param recognizerHandle the recognizer handle
-     * @return recognition result
+     * Stops the recognition process.
      */
-    private native String sapiRecognize(final long recognizerHandle);
+    public void stopRecognition() {
+        interrupt();
+    }
 }
