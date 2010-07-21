@@ -37,6 +37,9 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     /** SAPI recognizer Handle. **/
     private long recognizerHandle;
 
+    /** Asynchronous recognition. */
+    private SapiRecognitionThread recognitionThread;
+
     /**
      * Constructs a new object.
      * @param mode the recognizer mode.
@@ -73,16 +76,30 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
     private native void sapiDeallocate(long handle);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void handlePause() {
         sapiPause(recognizerHandle);
+        if (recognitionThread != null) {
+            recognitionThread.stopRecognition();
+            recognitionThread = null;
+        }
     }
 
     private native void sapiPause(long handle);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void handlePause(int flags) {
+    protected void handlePause(final int flags) {
         sapiPause(recognizerHandle, flags);
+        if (recognitionThread != null) {
+            recognitionThread.stopRecognition();
+            recognitionThread = null;
+        }
     }
 
     private native void sapiPause(long handle, int flags);
@@ -114,14 +131,8 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             ++i;
         }
         sapiResume(recognizerHandle, grammarSources, grammarReferences);
-        
-        final Thread thread = new Thread() {
-            public void run() {
-                String utterance = sapiRecognize(recognizerHandle);
-                reportResult(utterance);
-            }
-        };
-        thread.start();
+        recognitionThread = new SapiRecognitionThread(this);
+        recognitionThread.start();
         return true;
     }
 
@@ -130,7 +141,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      * @param handle the recognizer handle
      * @return recognition result
      */
-    private native String sapiRecognize(final long handle);
+    native String sapiRecognize(final long handle);
 
     public long getRecognizerHandle() {
         return recognizerHandle;
@@ -154,7 +165,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     }
 
     private native boolean sapiSetGrammar(long handle, String grammarPath, String reference);
-
     @Override
     protected EnginePropertyChangeRequestListener getChangeRequestListener() {
         return null;
@@ -196,7 +206,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 return;
             } 
             
-            if( result.getNumTokens() != 0){
+            if (result.getNumTokens() != 0) {
                 break;
             }                             
         }
@@ -220,4 +230,16 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             postResultEvent(accepted);
         }
    }
+
+    @Override
+    protected void handleRequestFocus() {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
+    protected void handleReleaseFocus() {
+        // TODO Auto-generated method stub
+        
+    }
 }

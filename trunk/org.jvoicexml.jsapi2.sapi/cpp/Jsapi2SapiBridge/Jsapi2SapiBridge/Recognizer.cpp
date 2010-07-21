@@ -50,6 +50,7 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 
 Recognizer::~Recognizer()
 {
+    Pause();
 	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
 
 	for( it ; it != gramHash.end(); it++){		
@@ -62,7 +63,6 @@ Recognizer::~Recognizer()
 	}
 	
 	cpRecoCtxt.Release();
-
 	cpRecognizerEngine.Release();
 }
 
@@ -209,16 +209,19 @@ HRESULT Recognizer::Resume()
 
 wchar_t* Recognizer::StartRecognition()
 {	
-	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
-
-	for( it ; it != gramHash.end(); it++){		
-
-		hr = it->second->SetRuleState(NULL, NULL, SPRS_ACTIVE );	
-	}
-	if (FAILED(hr))
+    if (gramHash.empty())
     {
         return NULL;
     }
+	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
+	for( it ; it != gramHash.end(); it++){		
+
+		hr = it->second->SetRuleState(NULL, NULL, SPRS_ACTIVE );	
+        if (FAILED(hr))
+        {
+            return NULL;
+        }
+	}
 
 	hr = cpRecoCtxt->SetNotifyWin32Event();	
 	if (FAILED(hr))
@@ -227,7 +230,10 @@ wchar_t* Recognizer::StartRecognition()
     }		
 
 	hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
-
+    if (FAILED(hr))
+    {
+        return NULL;
+    }
     return RecognitionHappened();
 }
 
@@ -244,8 +250,6 @@ void Recognizer::StartDictation()
 
 	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
     
-	//std::cout<< "Please speak now \n";flush(std::cout);
-
 	if ( SUCCEEDED(hr = BlockForResult( cpGrammar, &cpResult)))
 	{
 		CSpDynamicString dstrText;
