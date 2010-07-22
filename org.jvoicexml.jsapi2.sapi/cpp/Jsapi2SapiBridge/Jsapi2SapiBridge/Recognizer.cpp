@@ -6,16 +6,16 @@
 #include <fstream>
 #include <string>
 
-//using namespace system;
 
 Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 : cpRecognizerEngine(NULL), cpRecoCtxt(NULL), hr(S_OK), jenv(env), jrec(rec)
 {
-    // create a new InprocRecognizer.
+    
+	// create a new InprocRecognizer.
     hr = cpRecognizerEngine.CoCreateInstance(CLSID_SpInprocRecognizer);	
     if (SUCCEEDED(hr))
     {
-        hr = cpRecognizerEngine->CreateRecoContext(&cpRecoCtxt);
+        hr = cpRecognizerEngine->CreateRecoContext(&cpRecoCtxt);		
 		//hr = cpRecoCtxt->Pause(NULL);
     }
 
@@ -46,6 +46,7 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 	}
 
 	cpAudio.Release();
+
 }
 
 Recognizer::~Recognizer()
@@ -134,6 +135,7 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath,LPCWSTR grammarID )
 
 	gramHash.insert( std::make_pair( grammarID , cpGrammar ) );
 	
+
 	return hr;	
 }
 
@@ -163,42 +165,46 @@ wchar_t* Recognizer::RecognitionHappened()
 	for( it ; it != gramHash.end(); it++){		
 
 		hr = it->second->SetRuleState(NULL, NULL, SPRS_INACTIVE );	
-	}	
+	}
 
+	LPWSTR utterance = NULL;
     CSpEvent event;
     // Process all of the recognition events
-    while ( SUCCEEDED( event.GetFrom(cpRecoCtxt) ) )//== S_OK
-    {
-        switch (event.eEventId)
+	while ( SUCCEEDED( hr = event.GetFrom(cpRecoCtxt)) && hr!=S_FALSE )//== S_OK
+    {	
+		switch (event.eEventId)
         {
-        case SPEI_RECOGNITION:
-            ISpRecoResult* result = event.RecoResult();
-            LPWSTR utterance;
-            hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
-                &utterance, NULL);			
+			case SPEI_RECOGNITION:
 
-			std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
+				ISpRecoResult* result = event.RecoResult();
+				
+				hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
+					&utterance, NULL);	
 
-			for( it ; it != gramHash.end(); it++){	
+				it = gramHash.begin();
+
+				for( it ; it != gramHash.end(); it++){	
 
 					CComPtr<ISpRecoGrammar>		pGrammar = it->second ;
 
 					pGrammar->SetGrammarState(SPGS_DISABLED);
 					pGrammar.Detach();
 					pGrammar.Release();
-			}
+				}
 
-			gramHash.clear();
-
-			return utterance;
+				gramHash.clear();				
+				break;
         }
     }
-    return NULL;
+
+    return utterance;
 } 
 
 
 HRESULT Recognizer::Pause()
 {
+	continuing = false;
+
     return cpRecoCtxt->Pause(NULL);				
 }
 
@@ -209,32 +215,53 @@ HRESULT Recognizer::Resume()
 
 wchar_t* Recognizer::StartRecognition()
 {	
-    if (gramHash.empty())
+
+
+	if (gramHash.empty())
     {
         return NULL;
     }
 	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
+
 	for( it ; it != gramHash.end(); it++){		
 
-		hr = it->second->SetRuleState(NULL, NULL, SPRS_ACTIVE );	
+		hr = it->second->SetRuleState(NULL, NULL, SPRS_ACTIVE );
+
         if (FAILED(hr))
         {
             return NULL;
         }
 	}
-
+	
 	hr = cpRecoCtxt->SetNotifyWin32Event();	
+
 	if (FAILED(hr))
     {
         return NULL;
-    }		
+    }	
 
-	hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
-    if (FAILED(hr))
-    {
-        return NULL;
-    }
-    return RecognitionHappened();
+	continuing = true;
+
+	hr=S_FALSE;
+
+	while( continuing && hr==S_FALSE  ){
+
+		hr = cpRecoCtxt->WaitForNotifyEvent(1000);
+
+			if( hr == S_OK ){
+				cpRecoCtxt->SetNotifySink(NULL);
+				return RecognitionHappened();
+			}
+	}
+
+	cpRecoCtxt->SetNotifySink(NULL);
+    return NULL;
+}
+
+HRESULT Recognizer::AbortRecognition(){
+
+	return cpRecoCtxt->SetNotifySink(NULL);
+
 }
 
 void Recognizer::StartDictation()

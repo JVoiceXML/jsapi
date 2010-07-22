@@ -168,19 +168,24 @@ public final class TestRecognizer implements ResultListener {
         recognizer.requestFocus();
         recognizer.resume();
         recognizer.waitEngineState(Engine.RESUMED);
-        System.out.println("Test2.2 Please say something...");      
+        System.out.println("Test2.2 Please say something...");             
         
-        synchronized (lock) {
-            lock.wait();
-        }
+        Thread.sleep(3000);
         
+        ((SapiRecognizer)recognizer).handlePause();
+
+        Thread.sleep(2000);
+      
+      if(result != null){              
         System.out.print("Recognized: ");
+        
         tokens = result.getBestTokens();
 
         for (int i = 0; i < tokens.length; i++) {
             System.out.print(tokens[i].getText() + " ");
         }
-        System.out.println();     
+        System.out.println(); 
+      }
         
     }
 
@@ -189,14 +194,15 @@ public final class TestRecognizer implements ResultListener {
      * {@inheritDoc}
      */
     @Override
-    public void resultUpdate(final ResultEvent event) {
-        System.out.println(event);
+    public void resultUpdate(final ResultEvent event) {       
+        System.out.println( event);
         if (event.getId() == ResultEvent.RESULT_ACCEPTED) {
             result = (Result) (event.getSource());
             synchronized (lock) {
                 lock.notifyAll();
             }
         }
+        
     }
     
 }

@@ -28,10 +28,14 @@ public:
 
 	void StartDictation();
 
+	HRESULT AbortRecognition();
+
 
     HRESULT	hr;
 
 private:
+
+	boolean continuing;
 
     void Recognized(LPWSTR utterance);
 
