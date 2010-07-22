@@ -186,9 +186,12 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         }
     }
     
-   public void reportResult(final String utterance) {
-        if (utterance == null) {
-            return;
+   public void reportResult( String utterance) {
+        
+       if (utterance == null) {           
+           
+           
+           return;          
         }
 
         final GrammarManager manager = getGrammarManager();
@@ -244,4 +247,13 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         // TODO Auto-generated method stub
         
     }
+    
+    public void abortRecognition(){
+        sapiAbortRecognition( recognizerHandle );
+    }
+    
+    private native void sapiAbortRecognition(long handle);
+
+
+    
 }

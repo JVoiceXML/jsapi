@@ -180,6 +180,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 JNIEXPORT jstring JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiRecognize
   (JNIEnv *env, jobject object, jlong handle)
 {
+
     Recognizer* recognizer = (Recognizer*) handle;
     wchar_t* result = recognizer->StartRecognition();
     if (result == NULL)
@@ -189,3 +190,26 @@ JNIEXPORT jstring JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogni
     return env->NewString((jchar*)result, wcslen(result));
 }
 
+
+/*
+ * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
+ * Method:    sapiAbortRecognition
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiAbortRecognition
+(JNIEnv *env, jobject object, jlong handle)
+{
+
+	Recognizer* recognizer = (Recognizer*) handle;
+	
+	HRESULT hr = recognizer->AbortRecognition();
+
+	 if ( FAILED(hr) )
+        {
+            char buffer[1024];
+			GetErrorMessage(buffer, sizeof(buffer),
+                "Abort Recognition failed",
+                hr);
+            ThrowJavaException(env, "javax/speech/EngineStateException", buffer);
+        }
+}
