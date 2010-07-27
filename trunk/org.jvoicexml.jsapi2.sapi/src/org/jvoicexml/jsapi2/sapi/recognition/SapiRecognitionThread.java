@@ -33,5 +33,7 @@ final class SapiRecognitionThread extends Thread {
      */
     public void stopRecognition() {
         interrupt();
+        final long handle = recognizer.getRecognizerHandle();
+        recognizer.sapiAbortRecognition(handle);
     }
 }

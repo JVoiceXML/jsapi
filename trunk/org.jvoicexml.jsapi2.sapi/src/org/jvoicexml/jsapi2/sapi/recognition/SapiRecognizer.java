@@ -248,12 +248,5 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         
     }
     
-    public void abortRecognition(){
-        sapiAbortRecognition( recognizerHandle );
-    }
-    
-    private native void sapiAbortRecognition(long handle);
-
-
-    
+    native void sapiAbortRecognition(long handle);
 }

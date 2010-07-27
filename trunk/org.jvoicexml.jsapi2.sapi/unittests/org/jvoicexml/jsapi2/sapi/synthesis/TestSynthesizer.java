@@ -2,6 +2,8 @@ package org.jvoicexml.jsapi2.sapi.synthesis;
 
 import javax.speech.Engine;
 import javax.speech.EngineManager;
+import javax.speech.synthesis.SpeakableEvent;
+import javax.speech.synthesis.SpeakableListener;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
 
@@ -90,7 +92,7 @@ public final class TestSynthesizer {
     }
 
     /**
-     * Test case for {@link SapiSynthesizer#handleSpause()}.
+     * Test case for {@link SapiSynthesizer#handlePause()}.
      * Test case for {@link SapiSynthesizer#handleResume()}.
      * @throws Exception
      *         test failed
@@ -102,12 +104,40 @@ public final class TestSynthesizer {
         Thread.sleep(1800);
         synthesizer.pause();
         System.out.println("Pause");
-        Thread.sleep(3000);
+        synthesizer.waitEngineState(Synthesizer.PAUSED);
+        Thread.sleep(800);
         synthesizer.resume();
         System.out.println("Resume");
-        Thread.sleep(1500);       
+        synthesizer.waitEngineState(Synthesizer.RESUMED);
+        synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
     }
 
+    /**
+     * Test case for {@link SapiSynthesizer#handleCancel()}.
+     * @throws Exception
+     *         test failed
+     */
+    @Test
+    public void testCancel() throws Exception {
+        final Object lock = new Object();
+        final SpeakableListener listener = new SpeakableListener() {
+            @Override
+            public void speakableUpdate(final SpeakableEvent e) {
+                synchronized (lock) {
+                    lock.notifyAll();
+                }
+            }
+        };
+        synthesizer.speak("this is a test output for the cancel test", listener);
+        System.out.println("this is a test output for the cancel test");
+        synchronized (lock) {
+            lock.wait();
+        }
+        Thread.sleep(800);
+        System.out.println("Cancel");
+        synthesizer.cancel();
+        synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
+    }
 
     /**
      * Test case for {@link SapiSynthesizer#handleSpeak(int, javax.speech.synthesis.Speakable)}.
