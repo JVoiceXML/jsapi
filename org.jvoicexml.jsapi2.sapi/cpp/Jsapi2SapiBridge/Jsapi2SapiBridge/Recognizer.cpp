@@ -205,28 +205,27 @@ HRESULT Recognizer::Pause()
 {
 	continuing = false;
 
-    return cpRecoCtxt->Pause(NULL);				
+    //return cpRecoCtxt->Pause(NULL);				
+    return S_OK;
 }
 
 HRESULT Recognizer::Resume()
 {   
-	return cpRecoCtxt->Resume(NULL); 
+	//return cpRecoCtxt->Resume(NULL); 
+    return S_OK;
 }
 
 wchar_t* Recognizer::StartRecognition()
 {	
-
-
 	if (gramHash.empty())
     {
         return NULL;
     }
+
 	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
-
-	for( it ; it != gramHash.end(); it++){		
-
+	for( it ; it != gramHash.end(); it++)
+    {		
 		hr = it->second->SetRuleState(NULL, NULL, SPRS_ACTIVE );
-
         if (FAILED(hr))
         {
             return NULL;
@@ -234,34 +233,30 @@ wchar_t* Recognizer::StartRecognition()
 	}
 	
 	hr = cpRecoCtxt->SetNotifyWin32Event();	
-
 	if (FAILED(hr))
     {
         return NULL;
     }	
 
 	continuing = true;
+	hr = S_FALSE;
 
-	hr=S_FALSE;
-
-	while( continuing && hr==S_FALSE  ){
-
-		hr = cpRecoCtxt->WaitForNotifyEvent(1000);
-
-			if( hr == S_OK ){
-				cpRecoCtxt->SetNotifySink(NULL);
-				return RecognitionHappened();
-			}
+	while( continuing && hr==S_FALSE  )
+    {
+		hr = cpRecoCtxt->WaitForNotifyEvent(300);
+        if(hr == S_OK)
+        {
+            return RecognitionHappened();
+        }
 	}
 
-	cpRecoCtxt->SetNotifySink(NULL);
     return NULL;
 }
 
-HRESULT Recognizer::AbortRecognition(){
-
-	return cpRecoCtxt->SetNotifySink(NULL);
-
+HRESULT Recognizer::AbortRecognition()
+{
+    continuing = false;
+    return S_OK;
 }
 
 void Recognizer::StartDictation()

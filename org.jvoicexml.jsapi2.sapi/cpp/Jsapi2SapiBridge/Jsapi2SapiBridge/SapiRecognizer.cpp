@@ -203,13 +203,12 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 	Recognizer* recognizer = (Recognizer*) handle;
 	
 	HRESULT hr = recognizer->AbortRecognition();
-
-	 if ( FAILED(hr) )
-        {
-            char buffer[1024];
-			GetErrorMessage(buffer, sizeof(buffer),
-                "Abort Recognition failed",
-                hr);
-            ThrowJavaException(env, "javax/speech/EngineStateException", buffer);
-        }
+    if ( FAILED(hr) )
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer),
+            "Abort Recognition failed",
+            hr);
+        ThrowJavaException(env, "javax/speech/EngineStateException", buffer);
+    }
 }

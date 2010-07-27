@@ -94,31 +94,124 @@ public final class TestRecognizer implements ResultListener {
      * @throws Exception
      *         test failed.
      */
-//    @Test
-//    public void testRecognize() throws Exception {
-//        recognizer.addResultListener(this);
-//
-//        final GrammarManager grammarManager = recognizer.getGrammarManager();
-//        final InputStream in = TestRecognizer.class.getResourceAsStream("global_WZ.xml");
-//        grammarManager.loadGrammar("grammar:global_WZ", null, in, "UTF-8");//iso-8859-1
-//        recognizer.requestFocus();
-//        recognizer.resume();
-//        recognizer.waitEngineState(Engine.RESUMED);
-//        System.out.println("Test1 Please say something...");      
-//        
-//        synchronized (lock) {
-//            lock.wait();
-//        }
-//        
-//        System.out.print("Recognized: ");
-//        final ResultToken[] tokens = result.getBestTokens();
-//
-//        for (int i = 0; i < tokens.length; i++) {
-//            System.out.print(tokens[i].getText() + " ");
-//        }
-//        System.out.println();
-//        
-//    }
+    @Test
+    public void testRecognize() throws Exception {
+        recognizer.addResultListener(this);
+
+        final GrammarManager grammarManager = recognizer.getGrammarManager();
+        final InputStream in = TestRecognizer.class.getResourceAsStream("hello.xml");
+        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");//iso-8859-1
+        recognizer.requestFocus();
+        recognizer.resume();
+        recognizer.waitEngineState(Engine.RESUMED);
+        System.out.println("Test1 Please say something...");      
+        
+        synchronized (lock) {
+            lock.wait();
+        }
+        
+        System.out.print("Recognized: ");
+        final ResultToken[] tokens = result.getBestTokens();
+
+        for (int i = 0; i < tokens.length; i++) {
+            System.out.print(tokens[i].getText() + " ");
+        }
+        System.out.println();
+        
+    }
+
+    /**
+     * Pause after the recognizer is ready.
+     * 
+     * @throws Exception
+     *         test failed.
+     */
+    @Test
+    public void testRecognizePause() throws Exception {
+        recognizer.addResultListener(this);
+
+        final GrammarManager grammarManager = recognizer.getGrammarManager();
+        final InputStream in = TestRecognizer.class.getResourceAsStream("hello.xml");
+        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");//iso-8859-1
+        recognizer.requestFocus();
+        recognizer.resume();
+        recognizer.waitEngineState(Engine.RESUMED);
+        System.out.println("delaying...");
+        Thread.sleep(500);
+        System.out.println("...delayed");
+        recognizer.pause();
+//        recognizer.waitEngineState(Engine.PAUSED);
+        recognizer.resume();
+        recognizer.waitEngineState(Engine.RESUMED);
+        System.out.println("Say something");
+        synchronized (lock) {
+            lock.wait();
+        }
+        
+        System.out.print("Recognized: ");
+        final ResultToken[] tokens = result.getBestTokens();
+
+        for (int i = 0; i < tokens.length; i++) {
+            System.out.print(tokens[i].getText() + " ");
+        }
+        System.out.println();
+        
+    }
+
+    /**
+     * Tests pause after recognition and resume with a different grammar.
+     * 
+     * @throws Exception
+     *         test failed.
+     */
+    @Test
+    public void testRecognizeResume() throws Exception {
+        recognizer.addResultListener(this);
+
+        final GrammarManager grammarManager = recognizer.getGrammarManager();
+        final InputStream in =
+            TestRecognizer.class.getResourceAsStream("hello.xml");
+        final Grammar hello =
+            grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");
+        recognizer.requestFocus();
+        recognizer.resume();
+        recognizer.waitEngineState(Engine.RESUMED);
+        System.out.println("Please say a greeting...");      
+        
+        synchronized (lock) {
+            lock.wait();
+        }
+        
+        System.out.print("Recognized: ");
+        final ResultToken[] tokens = result.getBestTokens();
+
+        for (int i = 0; i < tokens.length; i++) {
+            System.out.print(tokens[i].getText() + " ");
+        }
+        System.out.println();
+        recognizer.pause();
+        recognizer.waitEngineState(Engine.PAUSED);
+        grammarManager.deleteGrammar(hello);
+        final InputStream in2 =
+            TestRecognizer.class.getResourceAsStream("Licht.xml");
+        grammarManager.loadGrammar("grammar:LIGHT", null, in2, "UTF-8");
+        recognizer.resume();
+        recognizer.waitEngineState(Engine.RESUMED);
+        System.out.println("Please say a command...");      
+        
+        synchronized (lock) {
+            lock.wait();
+        }
+        
+        System.out.print("Recognized: ");
+        final ResultToken[] tokens2 = result.getBestTokens();
+
+        for (int i = 0; i < tokens2.length; i++) {
+            System.out.print(tokens2[i].getText() + " ");
+        }
+        System.out.println();
+    }
+
     /**
      * Test case  for the recognizer.
      * 
@@ -134,7 +227,7 @@ public final class TestRecognizer implements ResultListener {
      *         test failed.
      */
     @Test
-    public void testRecognize2() throws Exception {
+    public void testRecognize2Grammars() throws Exception {
         recognizer.addResultListener(this);
 
         final GrammarManager grammarManager = recognizer.getGrammarManager();
@@ -142,8 +235,7 @@ public final class TestRecognizer implements ResultListener {
         grammarManager.loadGrammar("grammar:LIGHT", null, in, "UTF-8");//iso-8859-1
         in = TestRecognizer.class.getResourceAsStream("hello.xml");
         grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");//iso-8859-1
-        
-        
+
         recognizer.requestFocus();
         recognizer.resume();
         recognizer.waitEngineState(Engine.RESUMED);
@@ -159,8 +251,8 @@ public final class TestRecognizer implements ResultListener {
         for (int i = 0; i < tokens.length; i++) {
             System.out.print(tokens[i].getText() + " ");
         }
-        System.out.println();        
-        
+        System.out.println();
+
         Grammar gram = grammarManager.getGrammar("grammar:LIGHT");
         grammarManager.deleteGrammar(gram);
         
@@ -168,25 +260,17 @@ public final class TestRecognizer implements ResultListener {
         recognizer.requestFocus();
         recognizer.resume();
         recognizer.waitEngineState(Engine.RESUMED);
-        System.out.println("Test2.2 Please say something...");             
-        
-        Thread.sleep(3000);
-        
-        ((SapiRecognizer)recognizer).handlePause();
+        System.out.println("Test2.2 Please say something...");
 
-        Thread.sleep(2000);
-      
-      if(result != null){              
+        Thread.sleep(3000);
+
         System.out.print("Recognized: ");
-        
         tokens = result.getBestTokens();
 
         for (int i = 0; i < tokens.length; i++) {
             System.out.print(tokens[i].getText() + " ");
         }
-        System.out.println(); 
-      }
-        
+        System.out.println();
     }
 
 
@@ -194,15 +278,14 @@ public final class TestRecognizer implements ResultListener {
      * {@inheritDoc}
      */
     @Override
-    public void resultUpdate(final ResultEvent event) {       
-        System.out.println( event);
+    public void resultUpdate(final ResultEvent event) {
+        System.out.println(event);
         if (event.getId() == ResultEvent.RESULT_ACCEPTED) {
             result = (Result) (event.getSource());
             synchronized (lock) {
                 lock.notifyAll();
             }
         }
-        
     }
     
 }
