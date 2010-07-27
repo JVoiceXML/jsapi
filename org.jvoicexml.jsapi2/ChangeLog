@@ -4,7 +4,8 @@ Version 0.3
 - some code cleanup
 - moved more classes to the CLDC base layer
 - fixed audio format conversion
-- bugfix: clipout is able to play multiple audio outputs
+- bugfix: clip outputstream is able to play multiple audio outputs
+- bugfix: clip outputstream can be canceled
 - recognizer defines the engine's audio format
 - started to work on a SAPI layer
 

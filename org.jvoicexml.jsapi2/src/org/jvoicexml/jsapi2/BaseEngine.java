@@ -54,7 +54,6 @@ import javax.speech.EngineEvent;
 import javax.speech.EngineException;
 import javax.speech.EngineListener;
 import javax.speech.EngineMode;
-import javax.speech.EngineProperties;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
@@ -153,11 +152,11 @@ public abstract class BaseEngine implements Engine {
     /**
      * Retrieves the {@link EnginePropertyChangeRequestListener} that should
      * receive notifications if there are any change requests to the
-     * {@link EngineProperties}. This method is called after the
-     * {@link EngineProperties} object is created.
+     * {@link javax.speech.EngineProperties}. This method is called after the
+     * {@link javax.speech.EngineProperties} object is created.
      * @return the listener for change request notifications,
      *         <code>null</code> if the underlying engine does not support
-     *         change requests to the {@link EngineProperties}.
+     *         change requests to the {@link javax.speech.EngineProperties}.
      */
     protected abstract EnginePropertyChangeRequestListener
         getChangeRequestListener();
@@ -761,5 +760,4 @@ public abstract class BaseEngine implements Engine {
 
     protected abstract void postEngineEvent(final long oldState,
             final long newState, final int eventType);
-
 }

@@ -63,6 +63,7 @@ public class QueueManager {
     private SynthesisQueue synthThread;
     /** Synthesized play items. */
     private PlayQueue playThread;
+    /** <code>true</code> if the queue manager is terminated. */
     private boolean done;
 
     /** Id of the last queued item. */
@@ -90,7 +91,7 @@ public class QueueManager {
     /**
      * Terminates the queue manager.
      */
-    public void terminate() {
+    public final void terminate() {
         synthThread.terminate();
     }
 
@@ -102,7 +103,7 @@ public class QueueManager {
      * @param listener a listener to notify about events of this item
      * @return queue id.
      */
-    public int appendItem(final Speakable speakable,
+    public final int appendItem(final Speakable speakable,
             final SpeakableListener listener) {
         return synthThread.appendItem(speakable, listener, null);
     }
@@ -116,7 +117,7 @@ public class QueueManager {
      * @param text the text to be spoken
      * @return queue id.
      */
-    public int appendItem(final Speakable speakable,
+    public final int appendItem(final Speakable speakable,
             final SpeakableListener listener, final String text) {
         return synthThread.appendItem(speakable, listener, text);
     }
@@ -165,11 +166,20 @@ public class QueueManager {
 
     /**
      * Cancel the current item.
+     * @return <code>true</code> if an item was canceled
      */
     protected boolean cancelItem() throws EngineStateException {
         if (playThread.isQueueEmpty()) {
             return synthThread.cancelItem();
         } else {
+            final BaseAudioManager manager =
+                (BaseAudioManager) synthesizer.getAudioManager();
+            final OutputStream out = manager.getOutputStream();
+            try {
+                out.close();
+            } catch (IOException e) {
+                throw new EngineStateException(e.getMessage());
+            }
             return playThread.cancelItem();
         }
     }
@@ -769,7 +779,11 @@ public class QueueManager {
          */
         protected boolean cancelItem() throws EngineStateException {
             synchronized (playQueue) {
-                QueueItem item = (QueueItem) playQueue.elementAt(0);
+                if (playQueue.isEmpty()) {
+                    return false;
+                }
+                final QueueItem item;
+                item = (QueueItem) playQueue.elementAt(0);
                 if (item.getAudioSegment() == null) {
                     synthesizer.handleCancel();
                     final Object source = item.getSource();
