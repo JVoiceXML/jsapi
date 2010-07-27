@@ -6,7 +6,6 @@ package org.jvoicexml.jsapi2.jse.synthesis;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.concurrent.Semaphore;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -33,6 +32,9 @@ public class ClipOutputStream extends OutputStream implements LineListener {
 
     /** The audio manager to use. */
     private final JseBaseAudioManager manager;
+
+    /** The current clip. */
+    private Clip clip;
 
     /**
      * Constructs a new object.
@@ -82,7 +84,6 @@ public class ClipOutputStream extends OutputStream implements LineListener {
     @Override
     public void flush() throws IOException {
         final AudioFormat format = manager.getTargetAudioFormat();
-        final Clip clip;
         try {
             final DataLine.Info info = new DataLine.Info(Clip.class, format);
             clip = (Clip) AudioSystem.getLine(info);
@@ -95,6 +96,7 @@ public class ClipOutputStream extends OutputStream implements LineListener {
             clip.open(format, bytes, 0, bytes.length);
             clip.start();
         } catch (LineUnavailableException e) {
+            clip = null;
             throw new IOException(e.getMessage(), e);
         }
 
@@ -108,7 +110,21 @@ public class ClipOutputStream extends OutputStream implements LineListener {
             clip.close();
         } catch (InterruptedException e) {
             throw new IOException(e.getMessage(), e);
+        } finally {
+            clip = null;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        if (clip != null) {
+            clip.stop();
+            clip.close();
+        }
+        super.close();
     }
 
     /**
