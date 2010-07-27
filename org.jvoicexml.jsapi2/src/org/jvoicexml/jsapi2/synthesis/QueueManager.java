@@ -223,12 +223,8 @@ public class QueueManager {
     }
 
     protected boolean cancelItem(final int id) {
-        boolean found = false;
-
-        found = playThread.cancelItem(id);
-        found = found || synthThread.cancelItem(id);
-
-        return found;
+        final boolean found = playThread.cancelItem(id);
+        return found || synthThread.cancelItem(id);
     }
 
     /**
