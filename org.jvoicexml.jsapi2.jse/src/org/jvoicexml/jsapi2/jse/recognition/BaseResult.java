@@ -53,14 +53,14 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
             Logger.getLogger(BaseResult.class.getName());
 
     private Vector resultListeners;
-    ResultToken tokens[];
-    int nTokens;
-    transient Grammar grammar;
-    int state;
-    int confidenceLevel;
+    private ResultToken tokens[];
+    private int nTokens;
+    private transient Grammar grammar;
+    private int state;
+    private int confidenceLevel;
 
-    String[] tags;
-    String   ruleName;
+    private String[] tags;
+    private String   ruleName;
 
     /**
      * Create an empty result.
@@ -88,9 +88,17 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     public BaseResult(Grammar gram, String result) throws GrammarException {
         resultListeners = new Vector();
         grammar = gram;
-        state = Result.UNFINALIZED;
         confidenceLevel = RecognizerProperties.UNKNOWN_CONFIDENCE;
-        tryTokens(gram, result);
+        if (result == null) {
+            state = Result.UNFINALIZED;
+        } else {
+            final boolean success = tryTokens(gram, result);
+            if (success) {
+                state = Result.ACCEPTED;
+            } else {
+                state = Result.REJECTED;
+            }
+        }
     }
 
     /**
@@ -775,11 +783,14 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
                     int i = 0;
                     tokens = new ResultToken[nTokens];
                     while (st.hasMoreTokens()) {
-                        tokens[i++]=new BaseResultToken(this, st.nextToken()); /** @todo information about startTime, endTime and confidenceLevel */
+                        /** @todo information about startTime, endTime and confidenceLevel */
+                        tokens[i] = new BaseResultToken(this, st.nextToken()); 
+                        ++i;
                     }
                     return true;
                 }
             } catch (GrammarException e) {
+                return false;
             }
         }
         return false;

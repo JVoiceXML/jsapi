@@ -84,4 +84,16 @@ public class DummyRecognizer extends JseBaseRecognizer {
         return false;
     }
 
+    @Override
+    protected void handleRequestFocus() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected void handleReleaseFocus() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

@@ -91,13 +91,7 @@ public class BaseGrammarManager implements GrammarManager {
     }
 
     /**
-     *
-     * @param grammarReference String
-     * @param rootName String
-     * @return RuleGrammar
-     * @throws IllegalArgumentException
-     * @throws EngineStateException
-     * @throws EngineException
+     * {@inheritDoc}
      */
     public RuleGrammar createRuleGrammar(String grammarReference,
                                          String rootName,
@@ -116,6 +110,7 @@ public class BaseGrammarManager implements GrammarManager {
         final BaseRuleGrammar brg =
             new BaseRuleGrammar(recognizer, grammarReference);
         brg.setAttribute("xml:lang", locale.toString());
+        brg.setRoot("test");
 
         //Register it
         grammars.put(grammarReference, brg);
@@ -366,22 +361,31 @@ public class BaseGrammarManager implements GrammarManager {
         return grammarMask;
     }
 
+    /**
+     * Checks if the recognizer is in a valid state to perform grammar
+     * operations. If the recognizer is currently allocating resources, this
+     * methods waits until the the resoucres are allocated.
+     * @throws EngineStateException
+     *         invalid engine state
+     */
     private void insureValidEngineState() throws EngineStateException {
-        if (recognizer != null) {
-            //Validate current state
-            if (recognizer.testEngineState(
-                    Recognizer.DEALLOCATED | Recognizer.DEALLOCATING_RESOURCES)) {
-                throw new EngineStateException(
-                        "Cannot execute GrammarManager operation: invalid engine state: "
-                        + recognizer.stateToString(recognizer.getEngineState()));
-            }
+        if (recognizer == null) {
+            return;
+        }
+        //Validate current state
+        if (recognizer.testEngineState(
+                Recognizer.DEALLOCATED | Recognizer.DEALLOCATING_RESOURCES)) {
+            throw new EngineStateException(
+              "Cannot execute GrammarManager operation: invalid engine state: "
+              + recognizer.stateToString(recognizer.getEngineState()));
+        }
 
-            //Wait until end of allocating (if it's currently allocating)
-            while (recognizer.testEngineState(recognizer.ALLOCATING_RESOURCES)) {
-                try {
-                    recognizer.waitEngineState(recognizer.ALLOCATED);
-                } catch (InterruptedException ex) {
-                }
+        //Wait until end of allocating (if it's currently allocating)
+        while (recognizer.testEngineState(Recognizer.ALLOCATING_RESOURCES)) {
+            try {
+                recognizer.waitEngineState(Recognizer.ALLOCATED);
+            } catch (InterruptedException ex) {
+                throw new EngineStateException(ex.getMessage());
             }
         }
     }
