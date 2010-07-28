@@ -52,17 +52,22 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 Recognizer::~Recognizer()
 {
     Pause();
+
+	/* Inactivate and Delete all Grammars contained in the gramHash */
 	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
 
 	for( it ; it != gramHash.end(); it++){		
 
-		hr = it->second->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+		CComPtr<ISpRecoGrammar>		Grammar = it->second ;
 
-		hr = it->second->SetGrammarState(SPGS_DISABLED);
+		hr = grammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+
+		hr = grammar->second->SetGrammarState(SPGS_DISABLED);
 		
-		it->second.Release();
+		grammar->second.Release();
 	}
 	
+	/*Release the CComPtr */
 	cpRecoCtxt.Release();
 	cpRecognizerEngine.Release();
 }
@@ -71,6 +76,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
 {
 	CComPtr<ISpRecoGrammar>		cpGrammar;
 
+	/* Create a Grammar Instance */
     hr = cpRecoCtxt->CreateGrammar( NULL , &cpGrammar);
     if (FAILED(hr))
     {
@@ -115,24 +121,28 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath,LPCWSTR grammarID )
 {
 	CComPtr<ISpRecoGrammar>		cpGrammar;
 	
+	/* Create a Grammar Instance */
     hr = cpRecoCtxt->CreateGrammar( NULL, &cpGrammar);
     if (FAILED(hr))
     {
         return hr;
     }
 
+	/* Load content for the Grammar from a file, content will not change */
 	hr = cpGrammar->LoadCmdFromFile( grammarPath , SPLO_STATIC);	
     if (FAILED(hr))
     {
         return hr;
     }
 
+	/* Enable the Grammar so the Recognizer will try to match the content*/
 	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
     if (FAILED(hr))
     {
         return hr;
     }
 
+	/* pair the grammarId and the gramamr and insert it in gramHash*/
 	gramHash.insert( std::make_pair( grammarID , cpGrammar ) );
 	
 
@@ -141,18 +151,21 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath,LPCWSTR grammarID )
 
 HRESULT Recognizer::DeleteGrammar(LPCWSTR ID){
 
+	/* find specified Grammar in gramHash*/
 	std::map< std::wstring , CComPtr<ISpRecoGrammar> >::iterator it = gramHash.find(ID);
 	
-	CComPtr<ISpRecoGrammar>		pGrammar = it->second;
+	CComPtr<ISpRecoGrammar>		cpGrammar = it->second;
+    /* Inactivate the Grammar so the recognizer won´t try to match the content any more */
+	cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
 
-	pGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+	/* Disable the Grammar */
+	cpGrammar->SetGrammarState(SPGS_DISABLED);
 
-	pGrammar->SetGrammarState(SPGS_DISABLED);
+	/* Detach and Release the CComPtr */
+	cpGrammar.Detach();
+	cpGrammar.Release();
 
-	pGrammar.Detach();
-
-	pGrammar.Release();
-
+	/* Erase the Grammar from gramHash*/
 	gramHash.erase(it);
 
 	return hr; 
@@ -160,8 +173,8 @@ HRESULT Recognizer::DeleteGrammar(LPCWSTR ID){
 
 wchar_t* Recognizer::RecognitionHappened()
 {
+	/* Inactivate all Grammars contained in the gramHash */
 	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
-
 	for( it ; it != gramHash.end(); it++){		
 
 		hr = it->second->SetRuleState(NULL, NULL, SPRS_INACTIVE );	
@@ -169,7 +182,8 @@ wchar_t* Recognizer::RecognitionHappened()
 
 	LPWSTR utterance = NULL;
     CSpEvent event;
-    // Process all of the recognition events
+
+    /* Process all of the recognition events */
 	while ( SUCCEEDED( hr = event.GetFrom(cpRecoCtxt)) && hr!=S_FALSE )//== S_OK
     {	
 		switch (event.eEventId)
@@ -177,19 +191,31 @@ wchar_t* Recognizer::RecognitionHappened()
 			case SPEI_RECOGNITION:
 
 				ISpRecoResult* result = event.RecoResult();
-				
+
 				hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
-					&utterance, NULL);	
+					&utterance, NULL);
+				
+				/* recieve an XMLRecoResult from the RecoResult */
+				ISpeechXMLRecoResult* XMLResult;
+				result->QueryInterface( IID_ISpeechXMLRecoResult , (void**)&XMLResult);
 
+				/* recieve an SML String from the XMLRecoResult */
+				BSTR SSML = NULL;
+				XMLResult->GetXMLResult( SPXRO_SML ,&SSML);
+
+				/* at the moment not knowing what to do so put it out */
+				std::wcout<< SSML <<std::endl;flush(std::wcout);
+
+				/* Delete all Grammars contained in the gramHash */
+				/* should be a temporary solution*/
 				it = gramHash.begin();
-
 				for( it ; it != gramHash.end(); it++){	
 
-					CComPtr<ISpRecoGrammar>		pGrammar = it->second ;
+					CComPtr<ISpRecoGrammar>		cpGrammar = it->second ;
 
-					pGrammar->SetGrammarState(SPGS_DISABLED);
-					pGrammar.Detach();
-					pGrammar.Release();
+					cpGrammar->SetGrammarState(SPGS_DISABLED);
+					cpGrammar.Detach();
+					cpGrammar.Release();
 				}
 
 				gramHash.clear();				
@@ -222,6 +248,7 @@ wchar_t* Recognizer::StartRecognition()
         return NULL;
     }
 
+	/* Activate the Grammars contained in gramHash */
 	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
 	for( it ; it != gramHash.end(); it++)
     {		
@@ -232,15 +259,18 @@ wchar_t* Recognizer::StartRecognition()
         }
 	}
 	
+	/* Set and Win32 Window Event to recieve the recognition Result */
 	hr = cpRecoCtxt->SetNotifyWin32Event();	
 	if (FAILED(hr))
     {
         return NULL;
     }	
 
+	/* set continuing to true, its a variable to abort the recognition */
 	continuing = true;
 	hr = S_FALSE;
 
+	/* wait for an event an try to look if it occured every 300ms*/
 	while( continuing && hr==S_FALSE  )
     {
 		hr = cpRecoCtxt->WaitForNotifyEvent(300);
@@ -320,5 +350,3 @@ HRESULT Recognizer::BlockForResult( ISpRecoGrammar* cpGrammar, ISpRecoResult ** 
 
 	return hr;
 }
-
-
