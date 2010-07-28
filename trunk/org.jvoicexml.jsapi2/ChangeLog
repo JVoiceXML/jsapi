@@ -8,6 +8,7 @@ Version 0.3
 - bugfix: clip outputstream can be canceled
 - recognizer defines the engine's audio format
 - started to work on a SAPI layer
+- bugfix: root rule is set correctly after all other changes have been committed
 
 Version 0.2
 ============
