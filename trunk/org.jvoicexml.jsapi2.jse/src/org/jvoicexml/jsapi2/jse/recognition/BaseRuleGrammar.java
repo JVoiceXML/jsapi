@@ -274,9 +274,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * updating an existing rule.
      * @param rule the definition of the rule.
      */
-    public void addRule(Rule rule) {
+    public void addRule(final Rule rule) {
         final InternalRule iRule = new InternalRule(rule, ruleId);
-        AddRuleOperation aro = new AddRuleOperation(iRule);
+        final AddRuleOperation aro = new AddRuleOperation(iRule);
         uncommitedChanges.add(aro);
         ruleId++;
     }
@@ -342,7 +342,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * @param rulename String
      */
     public void setRoot(String rulename) {
-        RootSetterOperation rsgo = new RootSetterOperation(rulename);
+        final RootSetterOperation rsgo = new RootSetterOperation(rulename);
         uncommitedChanges.add(rsgo);
     }
 
@@ -891,16 +891,22 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      *            if there is an error in the grammar
      */
     public boolean commitChanges() throws GrammarException {
-        boolean existChanges = uncommitedChanges.size() > 0;
-
+        final boolean existChanges = uncommitedChanges.size() > 0;
+        RootSetterOperation rootSetter = null;
         while (uncommitedChanges.size() > 0) {
-            final RuleGrammarOperation ruleGrammarOperation =
-                uncommitedChanges.remove(0);
-            ruleGrammarOperation.execute();
+            final RuleGrammarOperation operation = uncommitedChanges.remove(0);
+            if (operation instanceof RootSetterOperation) {
+                rootSetter = (RootSetterOperation) operation;
+            } else {
+                operation.execute();
+            }
         }
 
+        // Perform the root setter as the last operation
+        if (rootSetter != null) {
+            rootSetter.execute();
+        }
         return existChanges;
     }
-
 }
 
