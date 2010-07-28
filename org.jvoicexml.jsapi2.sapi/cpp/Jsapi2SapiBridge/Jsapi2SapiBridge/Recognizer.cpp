@@ -194,7 +194,7 @@ wchar_t* Recognizer::RecognitionHappened()
 
 				hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
 					&utterance, NULL);
-				
+
 				/* recieve an XMLRecoResult from the RecoResult */
 				ISpeechXMLRecoResult* XMLResult;
 				result->QueryInterface( IID_ISpeechXMLRecoResult , (void**)&XMLResult);
