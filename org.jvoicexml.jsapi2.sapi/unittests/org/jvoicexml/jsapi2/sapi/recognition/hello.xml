@@ -1,6 +1,8 @@
-<grammar mode="voice" xml:lang="de-DE" version="1.0" root="greeting">
-  <rule id="greeting" scope="public">
-    <item repeat="1-5">
+<grammar mode="voice" xml:lang="de-DE" version="1.0" root="greeting" 
+xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics-ms/1.0">
+  
+  <rule id="greeting" scope="public" >
+    <item repeat="0-5">
       <one-of>
         <item> Guten Morgen </item>
         <item> Hallo </item>
@@ -8,10 +10,10 @@
     </item>
     <item repeat="1-1">
       <one-of>
-        <item> Dirk </item>
-        <item> David </item>
-        <item> Renato </item>
-        <item> Josua </item>
+        <item> Dirk 	<tag> $.fullName="Dirk Schnelle Walka"; $.Qaulification={};$.Qaulification._value="Dr. Dipl.Inf. Univ. "; </tag> </item>
+        <item> David 	</item>
+        <item> Renato 	</item>
+        <item> Josua 	</item>
       </one-of>
     </item>
   </rule>
