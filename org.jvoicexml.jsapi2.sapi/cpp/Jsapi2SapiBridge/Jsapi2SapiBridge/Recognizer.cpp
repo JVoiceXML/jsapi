@@ -58,13 +58,13 @@ Recognizer::~Recognizer()
 
 	for( it ; it != gramHash.end(); it++){		
 
-		CComPtr<ISpRecoGrammar>		Grammar = it->second ;
+		CComPtr<ISpRecoGrammar>		grammar = it->second ;
 
 		hr = grammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
 
-		hr = grammar->second->SetGrammarState(SPGS_DISABLED);
+		hr = grammar->SetGrammarState(SPGS_DISABLED);
 		
-		grammar->second.Release();
+		grammar.Release();
 	}
 	
 	/*Release the CComPtr */
