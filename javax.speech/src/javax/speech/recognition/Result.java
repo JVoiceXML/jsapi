@@ -33,7 +33,7 @@ public interface Result {
 
     int ACCEPTED = 0x12d;
 
-    int REJECTED = 0x12d;
+    int REJECTED = 0x12e;
 
     void addResultListener(ResultListener listener);
 
