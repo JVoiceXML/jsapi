@@ -1,32 +1,34 @@
 package org.jvoicexml.jsapi2.jse.recognition;
 
 
-import java.util.ArrayList;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
-import javax.speech.recognition.Rule;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import javax.xml.xpath.XPathConstants;
-import javax.speech.recognition.RuleComponent;
-import javax.speech.recognition.RuleSequence;
-import javax.xml.xpath.XPathExpressionException;
-import javax.speech.recognition.RuleToken;
-import javax.speech.recognition.RuleAlternatives;
-import javax.speech.recognition.RuleSpecial;
-import javax.speech.recognition.RuleReference;
-import javax.speech.recognition.RuleTag;
-import javax.speech.recognition.RuleCount;
-import org.xml.sax.InputSource;
-import java.io.Reader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.speech.recognition.Rule;
+import javax.speech.recognition.RuleAlternatives;
+import javax.speech.recognition.RuleComponent;
+import javax.speech.recognition.RuleCount;
+import javax.speech.recognition.RuleReference;
+import javax.speech.recognition.RuleSequence;
+import javax.speech.recognition.RuleSpecial;
+import javax.speech.recognition.RuleTag;
+import javax.speech.recognition.RuleToken;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import org.xml.sax.SAXException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.w3c.dom.NamedNodeMap;
-import java.util.HashMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * <p>Title: </p>
@@ -120,6 +122,17 @@ public class SrgsRuleGrammarParser {
     private Rule[] parseGrammar(Node grammarNode) {
         ArrayList<Rule> rules = new ArrayList<Rule>();
 
+//        try{
+//            String root = xpath.evaluate("@root", grammarNode);
+//            attributes.remove("root");
+//            attributes.put("root", root);
+//            System.out.println("new root : "+ root);
+//            
+//        }catch (XPathExpressionException ex) {
+//            ex.printStackTrace();
+//        }
+        
+        
         try {
             NodeList ruleNodes = (NodeList) xpath.evaluate("rule", grammarNode,
                     XPathConstants.NODESET);

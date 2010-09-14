@@ -3,7 +3,6 @@
  */
 package org.jvoicexml.jsapi2.jse.recognition;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -18,7 +17,7 @@ import javax.sound.sampled.TargetDataLine;
 import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 
 /**
- * An {@link InputStream} that reads the d^^ata from the microphone.
+ * An {@link InputStream} that reads the data from the microphone.
  * @author Dirk Schnelle-Walka
  *
  */
