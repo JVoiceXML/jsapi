@@ -2,6 +2,7 @@ package org.jvoicexml.jsapi2.jse.recognition;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.speech.recognition.RuleComponent;
 
 /**
@@ -32,6 +33,9 @@ public class GrammarNode {
     public static final int TAG = 9;
     /** Represent an token node. */
     public static final int TOKEN = 10;
+    
+    /** Represent an token node. */
+    public static final int SPECIAL = 11;
 
     /** <code>true</code> if this node is a final node of the graph. */
     private boolean isFinal;

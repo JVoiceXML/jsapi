@@ -13,6 +13,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.speech.SpeechLocale;
 import javax.speech.recognition.GrammarException;
@@ -37,6 +39,10 @@ import org.jvoicexml.jsapi2.recognition.BaseGrammar;
  */
 public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(BaseRuleGrammar.class.getName());
+    
     protected HashMap<String, InternalRule> rules;
     protected Vector<RuleGrammarOperation> uncommitedChanges =
         new Vector<RuleGrammarOperation>();
@@ -227,10 +233,23 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     private class RootSetterOperation extends RuleGrammarOperation {
         private String rootRuleName;
 
+
         public RootSetterOperation(String rulename) {
             rootRuleName = rulename;
-        }
 
+//            try {
+//                throw new GrammarException("Cannot set a PRIVATE_SCOPE rule as root");
+//            } catch (GrammarException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+            
+            if(LOGGER.isLoggable(Level.FINE)){
+                LOGGER.fine("Set RootRuleName : "+ rootRuleName);
+            }
+        }
+        
+        
         public void execute() throws GrammarException {
             if (rootRuleName == null) {
                 updateRootRule();
@@ -344,9 +363,19 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     public void setRoot(String rulename) {
         final RootSetterOperation rsgo = new RootSetterOperation(rulename);
         uncommitedChanges.add(rsgo);
+        
+        if(LOGGER.isLoggable(Level.FINE)){
+            LOGGER.fine("added RootRule : "+ rulename);
+        }
+        
     }
 
     protected void setAttributes(HashMap<String, String> attributes) {
+        
+        if(LOGGER.isLoggable(Level.FINE)){
+            LOGGER.fine("Try to set Attributes for Grammar rule :" + attributes.get("root") );          
+        }
+        
         for (String name: attributes.keySet()) {
             setAttribute(name, attributes.get(name));
         }
@@ -359,7 +388,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         else if (attribute.equals("xml:lang")) setSpeechLocale(new SpeechLocale(value));
         else if (attribute.equals("xml:base")) xmlBase = value;
         else if (attribute.equals("mode")) mode = value;
-        else if (attribute.equals("tagFormat")) tagFormat = value;
+        else if (attribute.equals("tag-format")) tagFormat = value;
         else if (attribute.equals("xmlns:xsi")) xmlnsXsi = value;
         else if (attribute.equals("xsi:schemaLocation")) xsiSchemaLocation = value;
         else if (attribute.equals("type") ||
@@ -383,7 +412,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         else if (attribute.equals("xml:lang")) return getSpeechLocale().toString();
         else if (attribute.equals("xml:base")) return xmlBase;
         else if (attribute.equals("mode")) return mode;
-        else if (attribute.equals("tagFormat")) return tagFormat;
+        else if (attribute.equals("tag-format")) return tagFormat;
         else if (attribute.equals("xmlns:xsi")) return xmlnsXsi;
         else if (attribute.equals("xsi:schemaLocation")) return xsiSchemaLocation;
         else
@@ -542,7 +571,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         // size()=0 if rn is unresolvable
         // size()=1 if rn is properly resolvable
         // size()>1 if rn is an ambiguous reference
-        Vector matches = new Vector();
+        Vector<?> matches = new Vector();
 
 /*
         // Get list of imports
@@ -753,6 +782,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         str.append(getSpeechLocale());
         str.append("\" root=\"");
         str.append(getRoot());
+        str.append("\" tag-format=\"");
+        str.append(tagFormat);
         str.append("\" xmlns=\"http://www.w3.org/2001/06/grammar\">\n");
 
         Iterator it = rules.keySet().iterator();

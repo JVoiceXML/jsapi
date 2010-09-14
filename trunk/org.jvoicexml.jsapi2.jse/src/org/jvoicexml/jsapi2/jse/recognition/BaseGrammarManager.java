@@ -9,8 +9,11 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.speech.EngineException;
 import javax.speech.EngineMode;
@@ -33,11 +36,15 @@ import javax.speech.recognition.RuleGrammar;
  */
 public class BaseGrammarManager implements GrammarManager {
 
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+            Logger.getLogger(BaseGrammarManager.class.getName());
+    
     /** The listeners of grammar events. */
     protected final List<GrammarListener> grammarListeners;
 
     /** Storage of created grammars. */
-    protected final HashMap<String, Grammar> grammars;
+    protected HashMap<String, Grammar> grammars; // final gone
 
     /** Mask that filter events. */
     private int grammarMask;
@@ -135,7 +142,19 @@ public class BaseGrammarManager implements GrammarManager {
             throw new IllegalArgumentException("The Grammar is unknown");
 
         //Remove the grammar
-        grammars.remove(grammar.getReference());
+        Grammar key = grammars.remove(grammar.getReference());
+        
+        
+        if(LOGGER.isLoggable(Level.FINE)){
+            LOGGER.fine("Removed Grammar :"+ key.getReference());
+            Iterator<String> keys = grammars.keySet().iterator();
+            
+            while (keys.hasNext()){
+                LOGGER.fine("Grammar :"+ keys.next() );
+            }
+        }
+        
+        
     }
 
     /**
@@ -197,6 +216,11 @@ public class BaseGrammarManager implements GrammarManager {
     public Grammar loadGrammar(String grammarReference, String mediaType) throws
             GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
+        
+        if(LOGGER.isLoggable(Level.FINE)){
+            LOGGER.fine("Load Grammar : "+ grammarReference + " with media Type:"+ mediaType);
+        }
+               
         return loadGrammar(grammarReference, mediaType, true, false, null);
     }
 
@@ -222,7 +246,13 @@ public class BaseGrammarManager implements GrammarManager {
                                Vector loadedGrammars) throws
             GrammarException, IllegalArgumentException,
             IOException, EngineStateException, EngineException {
-
+        
+        if(LOGGER.isLoggable(Level.FINE)){
+            LOGGER.fine("Load Grammar : "+ grammarReference + " with media Type:"+ mediaType);
+            LOGGER.fine("loadReferences : "+ loadReferences + " reloadGrammars:"+ reloadGrammars);
+            LOGGER.fine("there are "+ loadedGrammars.size() +" loaded grammars:" );
+        }
+        
         //Validate current state
         insureValidEngineState();
 
@@ -237,6 +267,7 @@ public class BaseGrammarManager implements GrammarManager {
         //Proccess grammar
         URL url = new URL(grammarReference);
         InputStream grammarStream = url.openStream();
+        
         SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser();
         Rule[] rules = srgsParser.load(grammarStream);
         if (rules != null) {
@@ -272,7 +303,10 @@ public class BaseGrammarManager implements GrammarManager {
                                Reader reader) throws
             GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
-
+        
+        if(LOGGER.isLoggable(Level.FINE)){
+            LOGGER.fine("Load Grammar : "+ grammarReference + " with media Type:"+ mediaType + " and Reader :"+ reader);
+        }
         // Validate current state
         insureValidEngineState();
 
@@ -285,17 +319,45 @@ public class BaseGrammarManager implements GrammarManager {
         }
 
         // Process grammar
-        final SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser();
+        final SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser(); 
+
         Rule[] rules = srgsParser.load(reader);
         if (rules == null) {
             return null;
+        } 
+        
+        if(LOGGER.isLoggable(Level.FINE)){
+            LOGGER.fine("SrgsRuleGrammarParser parsed rules:" );
+            for(Rule rule: rules){               
+                LOGGER.fine( rule.getRuleName() );
+            }           
         }
+        
         // Initialize rule grammar
         BaseRuleGrammar brg =
             new BaseRuleGrammar(recognizer, grammarReference);
+        
+        if(LOGGER.isLoggable(Level.FINE)){
+            LOGGER.fine("new BaseRuleGrammar:"+ brg.getReference() );       
+        }       
+       
         brg.addRules(rules);
-        @SuppressWarnings("rawtypes")
+        
+        @SuppressWarnings("rawtypes")       
         final HashMap attributes = srgsParser.getAttributes();
+        
+        if(LOGGER.isLoggable(Level.FINE)){
+            LOGGER.fine("recieved from srgsParser.getAttributes(), root:"+ attributes.get("root") );       
+        }   
+        
+//        attributes.remove("root");
+//        String[] value = grammarReference.split(":");
+//        
+//        attributes.put("root", value[1].trim() );
+//        if(LOGGER.isDebugEnabled()){
+//            LOGGER.debug("replaced root with:" + value[1]);       
+//        }     
+//        
         brg.setAttributes(attributes);
 
         // Register grammar

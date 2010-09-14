@@ -25,8 +25,10 @@ import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
 import javax.speech.recognition.RuleReference;
 import javax.speech.recognition.RuleSequence;
+import javax.speech.recognition.RuleSpecial;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
+
 
 /**
  * Implementation of the parse method(s) on
@@ -156,7 +158,7 @@ public class RuleParser {
             final Rule currentRule = grammar.getRule(rNames[j]);
             startRule = currentRule.getRuleComponent();
             if (startRule == null) {
-                LOGGER.warning("BAD RULENAME " + rNames[j]);
+                LOGGER.severe("BAD RULENAME " + rNames[j]);
                 continue;
             }
             final GrammarGraph grammarGraph = rp.buildGrammarGraph(grammar,
@@ -227,6 +229,14 @@ public class RuleParser {
      */
     private GrammarGraph buildGrammarGraph(final RuleGrammar rg,
                                                  final RuleComponent r) {
+        
+//        if(LOGGER.isDebugEnabled()){
+//            LOGGER.debug("RuleComponent : "+ r.getClass());
+////            if (r instanceof RuleReference) {
+////                LOGGER.debug("RuleComponent : "+ ((RuleReference)r).getRuleName());
+////            }
+//        }
+        
         if (r instanceof RuleReference) {
             return buildGrammarGraph(rg, (RuleReference) r);
         } else if (r instanceof RuleToken) {
@@ -239,9 +249,26 @@ public class RuleParser {
             return buildGrammarGraph(rg, (RuleTag) r);
         } else if (r instanceof RuleCount) {
             return buildGrammarGraph(rg, (RuleCount) r);
-        } else {
+        } 
+//          else if (r instanceof RuleSpecial) {                                  //____________________________________
+//            return buildGrammarGraph(rg, (RuleSpecial) r);
+//        } 
+        
+        else {
             return null;
         }
+    }
+    
+    /**
+     * Creates an sub-graph that represents a ruleref Special.
+     * @param rg the rule grammar
+     * @param r the rule tag
+     * @return GrammarGraph
+     */
+    private GrammarGraph buildGrammarGraph(final RuleGrammar rg,
+                                           final RuleSpecial r) {
+        GrammarNode startNode = new GrammarNode(false, GrammarNode.SPECIAL, r);
+        return new GrammarGraph(startNode, startNode);
     }
 
     /**
@@ -277,11 +304,11 @@ public class RuleParser {
                    ruleref = rg1.getRule(simpleName).getRuleComponent();
                    currentRuleGrammar = rg1;
                } else {
-                   LOGGER.warning("ERROR: UNKNOWN GRAMMAR " + gname);
+                   LOGGER.severe("ERROR: UNKNOWN GRAMMAR " + gname);
                }
            }
            if (ruleref == null) {
-               LOGGER.warning("ERROR: UNKNOWN RULE NAME " + r.getRuleName()
+               LOGGER.severe("ERROR: UNKNOWN RULE NAME " + r.getRuleName()
                               + " " + r);
                return null;
            }

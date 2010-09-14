@@ -48,6 +48,7 @@ This file builds the JSAPI base layer for JSE.
       <include name="sphinx4.jar" />
     </fileset>
     <pathelement location="${base-project}/dist/jsr113-base.jar"/>
+    	<pathelement location="../org.jvoicexml/3rdparty/log4j1.2.16/lib/log4j-1.2.16.jar"/>
   </path>
 
   <target name="clean" description="Remove all compiled and distribution files">
