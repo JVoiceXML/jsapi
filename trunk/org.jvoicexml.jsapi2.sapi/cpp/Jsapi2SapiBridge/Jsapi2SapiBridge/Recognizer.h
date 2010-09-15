@@ -16,7 +16,7 @@ public:
 
     HRESULT Pause();
 
-    HRESULT LoadGrammar(const wchar_t* grammar);
+    HRESULT LoadGrammar(const wchar_t* grammar,LPCWSTR grammarID);
 
     HRESULT LoadGrammarFile(LPCWSTR grammarPath, LPCWSTR grammarID);
 	

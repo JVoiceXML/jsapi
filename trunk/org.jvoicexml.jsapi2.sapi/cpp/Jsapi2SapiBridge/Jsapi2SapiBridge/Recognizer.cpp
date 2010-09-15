@@ -2,9 +2,14 @@
 #include "Recognizer.h"
 #include "JNIUtils.h"
 
+//#include <WinDef.h>
 #include <iostream>
 #include <fstream>
 #include <string>
+
+#include <stdio.h>
+#import <msxml4.dll>
+
 
 
 Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
@@ -25,7 +30,7 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
         // notifications.
         // Here, all we are interested in is when the engine has recognized something
 		// no false recognition
-        hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION), SPFEI(SPEI_RECOGNITION));
+		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION), SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION) );//|SPFEI(SPEI_FALSE_RECOGNITION)
     }
 
     CComPtr<ISpAudio> cpAudio;
@@ -72,51 +77,97 @@ Recognizer::~Recognizer()
 	cpRecognizerEngine.Release();
 }
 
-HRESULT Recognizer::LoadGrammar(const wchar_t* grammar)
-{
-	CComPtr<ISpRecoGrammar>		cpGrammar;
 
-	/* Create a Grammar Instance */
+HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
+{
+	/* container for the new grammar */
+	CComPtr<ISpRecoGrammar> cpGrammar;
     hr = cpRecoCtxt->CreateGrammar( NULL , &cpGrammar);
     if (FAILED(hr))
     {
         return hr;
     }
+	
+	/* stream our grammar from java into this buffer */
     CComPtr<IStream> stream;
     hr = ::CreateStreamOnHGlobal(NULL, true, &stream);
     if (FAILED(hr))
     {
         return hr;
     }
+
+	// first, we need to convert from WCHAR to CHAR for the GrammarCompiler
+	//	(else we get a 0x80045003 - "unsupported format")
+	const size_t sizeGrammar = wcslen(grammar)+1;
+	char* grammar_ascii = new char[sizeGrammar];
+	wcstombs_s(NULL, grammar_ascii, sizeGrammar, grammar, sizeGrammar);
+	
     ULONG written;
-    hr = stream->Write(grammar, wcslen(grammar), &written);
+    hr = stream->Write(grammar_ascii, sizeGrammar - 1, &written);
+	//USES_CONVERSION;
+	//hr = stream->Write(W2A(grammar), wcslen(grammar), &written);
+	
     if (FAILED(hr))
     {
         return hr;
     }
+
+	/* GrammarCompiler for conversion in a binary format */
     CComPtr<ISpGrammarCompiler> compiler;
-    compiler.CoCreateInstance(CLSID_SpGrammarCompiler);
+    //hr = compiler.CoCreateInstance(CLSID_SpGrammarCompiler); //SAPI-Compiler
+	hr = compiler.CoCreateInstance(CLSID_SpW3CGrammarCompiler); //SRGS-Compiler
+    if (FAILED(hr))
+    {
+        std::cerr << "CoCreateInstance CLSID_SpW3CGramamrCompiler failed : 0x" << std::hex <<std::uppercase << hr << std::endl;
+		return hr;
+    }
+
     CComPtr<IStream> compiledStream;
     hr = ::CreateStreamOnHGlobal(NULL, true, &compiledStream);
     if (FAILED(hr))
     {
         return hr;
     }
+
 	CComPtr<IStream> headerStream;
 	CComPtr<ISpErrorLog> errorLog;
-    hr = compiler->CompileStream(stream, compiledStream, headerStream, NULL, errorLog, 0);
+	
+	/* seek the beginning of the stream */
+	LARGE_INTEGER pos;
+	pos.QuadPart = 0;
+	stream->Seek(pos, STREAM_SEEK_SET, NULL);
+
+	/* compile the stream, and get the errorlog */
+	/* @TODO: use the errorlog */
+    hr = compiler->CompileStream(stream, compiledStream, NULL, NULL, errorLog, 0);
     if (FAILED(hr))
     {
+		std::cerr << "Compile Stream failed : 0x" << std::hex <<std::uppercase << hr << std::endl;
 		return hr;
     }
+
+	/* load the binaryFormat into our GrammarObject */
     HGLOBAL hGrammar;
-    ::GetHGlobalFromStream(compiledStream, &hGrammar);
-    cpGrammar->LoadCmdFromMemory((SPBINARYGRAMMAR *)::GlobalLock(hGrammar), SPLO_DYNAMIC);
+    ::GetHGlobalFromStream(compiledStream, &hGrammar);//compiledStream
+    hr = cpGrammar->LoadCmdFromMemory((SPBINARYGRAMMAR *)::GlobalLock(hGrammar), SPLO_DYNAMIC);
+	if (FAILED(hr)) {
+		std::cerr << "Grammar: \"LoadFromMemory\" failed : 0x" << std::hex <<std::uppercase << hr << std::endl;
+		return hr;
+	}
+
     compiler.Release();
+
+	/* enable the grammar */
 	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
+
+	/* pair the grammarID and the grammar in gramHash */
+	gramHash.insert( std::make_pair( grammarID , cpGrammar ) );
+
     return hr;
 }
 
+//NOTE: Functioning, but not used anymore. Grammars are now directly loaded from memory.
+//		Might be useful someday so better keep it! =)
 HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath,LPCWSTR grammarID )
 {
 	CComPtr<ISpRecoGrammar>		cpGrammar;
@@ -181,7 +232,9 @@ wchar_t* Recognizer::RecognitionHappened()
 	}
 
 	LPWSTR utterance = NULL;
+	BSTR SSML = NULL;
     CSpEvent event;
+	ISpRecoResult* result = NULL;
 
     /* Process all of the recognition events */
 	while ( SUCCEEDED( hr = event.GetFrom(cpRecoCtxt)) && hr!=S_FALSE )//== S_OK
@@ -190,7 +243,7 @@ wchar_t* Recognizer::RecognitionHappened()
         {
 			case SPEI_RECOGNITION:
 
-				ISpRecoResult* result = event.RecoResult();
+				result = event.RecoResult();
 
 				hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
 					&utterance, NULL);
@@ -199,12 +252,11 @@ wchar_t* Recognizer::RecognitionHappened()
 				ISpeechXMLRecoResult* XMLResult;
 				result->QueryInterface( IID_ISpeechXMLRecoResult , (void**)&XMLResult);
 
-				/* recieve an SML String from the XMLRecoResult */
-				BSTR SSML = NULL;
+				/* recieve an SML String from the XMLRecoResult */				
 				XMLResult->GetXMLResult( SPXRO_SML ,&SSML);
 
 				/* at the moment not knowing what to do so put it out */
-				std::wcout<< SSML <<std::endl;flush(std::wcout);
+				//std::wcout<< SSML <<std::endl;flush(std::wcout);
 
 				/* Delete all Grammars contained in the gramHash */
 				/* should be a temporary solution*/
@@ -218,12 +270,32 @@ wchar_t* Recognizer::RecognitionHappened()
 					cpGrammar.Release();
 				}
 
-				gramHash.clear();				
-				break;
-        }
-    }
+				gramHash.clear();
 
-    return utterance;
+				return SSML;//utterance;
+				//break;
+				
+			case SPEI_FALSE_RECOGNITION:
+
+				/* Delete all Grammars contained in the gramHash */
+				/* should be a temporary solution*/
+				it = gramHash.begin();
+				for( it ; it != gramHash.end(); it++){	
+
+					CComPtr<ISpRecoGrammar>		cpGrammar = it->second ;
+
+					cpGrammar->SetGrammarState(SPGS_DISABLED);
+					cpGrammar.Detach();
+					cpGrammar.Release();
+				}
+				gramHash.clear();
+
+				return NULL;
+				//break;
+        }
+
+    }
+	return NULL;
 } 
 
 
@@ -278,6 +350,18 @@ wchar_t* Recognizer::StartRecognition()
         {
             return RecognitionHappened();
         }
+	}
+
+	/* Delete all Grammars contained in the gramHash */
+	/* should be a temporary solution*/
+	for( it ; it != gramHash.end(); it++){	
+
+	CComPtr<ISpRecoGrammar>		cpGrammar = it->second ;
+
+	cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
+	cpGrammar->SetGrammarState(SPGS_DISABLED);
+	cpGrammar.Detach();
+	cpGrammar.Release();
 	}
 
     return NULL;
