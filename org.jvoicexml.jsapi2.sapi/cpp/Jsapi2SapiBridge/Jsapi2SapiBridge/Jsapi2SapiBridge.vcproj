@@ -89,7 +89,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="2"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -112,6 +112,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\3rdparty\libcxxtl_0.1.2;&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v7.0A\Include&quot;;..\3rdparty\jni\include;..\3rdparty\jni\include\win32;..\include"
+				PreprocessorDefinitions="_WIN32_DCOM;"
+				MinimalRebuild="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -128,6 +131,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -178,10 +182,6 @@
 			</File>
 			<File
 				RelativePath=".\SapiEngineListFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SapiRecognitionThread.cpp"
 				>
 			</File>
 			<File
@@ -259,6 +259,10 @@
 		</Filter>
 		<File
 			RelativePath=".\ClassDiagram1.cd"
+			>
+		</File>
+		<File
+			RelativePath=".\ClassDiagram2.cd"
 			>
 		</File>
 	</Files>

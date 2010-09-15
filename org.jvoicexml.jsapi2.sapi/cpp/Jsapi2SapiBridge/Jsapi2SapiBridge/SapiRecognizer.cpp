@@ -113,7 +113,8 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 		jstring reference = (jstring) env->GetObjectArrayElement(references, i);
 		const wchar_t* ref = (const wchar_t*)env->GetStringChars(reference, NULL);	
 
-		HRESULT hr= recognizer->LoadGrammarFile(gram, ref);
+		//HRESULT hr= recognizer->LoadGrammarFile(gram, ref);
+		HRESULT hr= recognizer->LoadGrammar(gram, ref);
         if ( FAILED(hr) )
         {
             char buffer[1024];
@@ -140,6 +141,31 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 	const wchar_t* ref = (const wchar_t*)env->GetStringChars(reference, NULL);	
 	
 	HRESULT hr = recognizer->LoadGrammarFile(gram, ref);
+	if (SUCCEEDED(hr))
+    {
+        return JNI_TRUE;
+	}
+	else
+    {
+		return JNI_FALSE;
+	}
+}
+
+/*
+ * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
+ * Method:    sapiSetGrammarContent
+ * Signature: (JLjava/lang/String;Ljava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiSetGrammarContent
+(JNIEnv *env, jobject object, jlong recognizerHandle, jstring grammarContent, jstring reference)
+{
+		
+	Recognizer* recognizer = (Recognizer*)recognizerHandle;
+    const wchar_t* grammar = (const wchar_t*)env->GetStringChars(grammarContent, NULL);
+	const wchar_t* ref = (const wchar_t*)env->GetStringChars(reference, NULL);	
+	
+	HRESULT hr = recognizer->LoadGrammar(grammar, ref);
+
 	if (SUCCEEDED(hr))
     {
         return JNI_TRUE;

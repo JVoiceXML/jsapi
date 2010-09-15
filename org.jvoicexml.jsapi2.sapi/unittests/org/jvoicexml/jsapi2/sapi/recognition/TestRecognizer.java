@@ -1,5 +1,8 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import javax.speech.Engine;
@@ -56,7 +59,7 @@ public final class TestRecognizer implements ResultListener {
         
         
     }
-    
+
     /**
      * Set up the test .
      * @throws Exception
@@ -171,6 +174,7 @@ public final class TestRecognizer implements ResultListener {
         final GrammarManager grammarManager = recognizer.getGrammarManager();
         final InputStream in =
             TestRecognizer.class.getResourceAsStream("hello.xml");
+        System.out.println("Try to load Grammar");
         final Grammar hello =
             grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");
         recognizer.requestFocus();
@@ -188,13 +192,28 @@ public final class TestRecognizer implements ResultListener {
         for (int i = 0; i < tokens.length; i++) {
             System.out.print(tokens[i].getText() + " ");
         }
-        System.out.println();
+         System.out.println();
+         
+//        Object obj = ((SapiResult)result).getSemanticInterpretation();
+
+        System.out.println("Recognizer wait for Enginestate PAUSED");
         recognizer.pause();
         recognizer.waitEngineState(Engine.PAUSED);
         grammarManager.deleteGrammar(hello);
+        
+        System.out.println("List grammars after delete... ");
+        
+        Grammar[] grams = grammarManager.listGrammars();
+        System.out.println("count: "+ grams.length);
+        
+        for (int i=0; i<grams.length; i++){
+            System.out.println(grams[i].getReference());
+        }
+        System.out.println("Load new grammar... ");
         final InputStream in2 =
             TestRecognizer.class.getResourceAsStream("Licht.xml");
         grammarManager.loadGrammar("grammar:LIGHT", null, in2, "UTF-8");
+        System.out.println("Resume... ");
         recognizer.resume();
         recognizer.waitEngineState(Engine.RESUMED);
         System.out.println("Please say a command...");      
@@ -272,6 +291,55 @@ public final class TestRecognizer implements ResultListener {
         }
         System.out.println();
     }
+    
+    /**
+     * Simple Test case for setGrammarContent Methode.
+     * which uses the Sapi5 Compiler
+     * Use only one Grammar
+     * 
+     * @throws Exception
+     *         test failed.
+     */
+    @Test
+    public void testSetGrammarContent() throws Exception {
+                
+        recognizer.addResultListener(this);
+        
+        byte[] buffer = new byte[(int) new File("./unittests/org/jvoicexml/jsapi2/sapi/recognition/hello.xml").length()];
+        BufferedInputStream f = new BufferedInputStream(new FileInputStream("./unittests/org/jvoicexml/jsapi2/sapi/recognition/hello.xml"));
+        f.read(buffer);
+        f.close();
+        
+        String grammar = new String(buffer);
+        
+        //System.out.println( grammar );
+
+        if( ((SapiRecognizer)recognizer).setGrammarContent(grammar, "foobar")  ){
+            
+            SapiRecognitionThread recognitionThread = new SapiRecognitionThread( ( ( SapiRecognizer )recognizer) );
+            recognitionThread.start();
+            
+            System.out.println("Test1 Please say something...");      
+            
+            synchronized (lock) {
+                lock.wait();
+            }
+            
+            System.out.print("Recognized: ");
+            final ResultToken[] tokens = result.getBestTokens();
+    
+            for (int i = 0; i < tokens.length; i++) {
+                System.out.print(tokens[i].getText() + " ");
+            }
+            System.out.println();
+        
+        }
+        else
+        {
+         System.err.println( "Activating Grammar failed" );
+        }
+        
+    }
 
 
     /**
@@ -286,6 +354,12 @@ public final class TestRecognizer implements ResultListener {
                 lock.notifyAll();
             }
         }
+        if (event.getId() == ResultEvent.RESULT_REJECTED) {
+            
+            recognizer.pause();                      
+            recognizer.requestFocus();
+            recognizer.resume();
+            System.out.println("Recognition confidence was too low. Please try again ...");            
+        }    
     }
-    
 }
