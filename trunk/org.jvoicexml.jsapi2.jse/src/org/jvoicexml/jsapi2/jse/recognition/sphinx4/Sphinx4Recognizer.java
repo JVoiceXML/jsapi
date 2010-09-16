@@ -51,7 +51,6 @@ import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 /**
@@ -197,17 +196,13 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
             LOGGER.fine("allocating recognizer...");
         }
 
-        try {
-            //Get and set input
-            InputStream inputStream = ((JseBaseAudioManager)getAudioManager()).getInputStream();
+        //Get and set input
+        InputStream inputStream = ((JseBaseAudioManager)getAudioManager()).getInputStream();
 
-            ((SphinxInputDataProcessor)dataProcessor).setInputStream(inputStream);
+        ((SphinxInputDataProcessor)dataProcessor).setInputStream(inputStream);
 
-            recognizer.allocate();
-            recognizer.addResultListener(resultListener);
-        } catch (java.io.IOException ioe) {
-           throw new AudioException(ioe.getMessage());
-        }
+        recognizer.allocate();
+        recognizer.addResultListener(resultListener);
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("...allocated");
@@ -235,7 +230,7 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
 
         // Deallocate the recognizer and wait until it stops recognizing.
         recognizer.deallocate();
-        while (recognizer.getState() == RecognizerState.RECOGNIZING) {
+        while (recognizer.getState() == Recognizer.State.RECOGNIZING) {
             try {
                 Thread.sleep(SLEEP_MSEC);
             } catch (InterruptedException ie) {

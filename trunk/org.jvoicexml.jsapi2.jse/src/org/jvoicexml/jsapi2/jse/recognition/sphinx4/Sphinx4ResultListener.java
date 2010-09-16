@@ -27,12 +27,8 @@
 
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
-import java.util.logging.Logger;
-
-import edu.cmu.sphinx.result.ResultListener;
-import edu.cmu.sphinx.result.Result;
-
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.ResultEvent;
@@ -41,6 +37,11 @@ import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.recognition.BaseResultToken;
+
+import edu.cmu.sphinx.decoder.ResultListener;
+import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
 
 
 /**
@@ -149,5 +150,10 @@ class Sphinx4ResultListener implements ResultListener {
                         ResultEvent.RESULT_ACCEPTED, false, false);
             recognizer.postResultEvent(accepted);
         }
+    }
+
+    @Override
+    public void newProperties(final PropertySheet sheet)
+        throws PropertyException {
     }
 }
