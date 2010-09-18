@@ -9,7 +9,7 @@
 #define WIN32_LEAN_AND_MEAN             // Selten verwendete Teile der Windows-Header nicht einbinden.
 
 // Windows-Headerdateien:
-#include <sapi53.h>
+#include <sapi.h>
 #include <sphelper.h>
 #include "resource.h"
 
