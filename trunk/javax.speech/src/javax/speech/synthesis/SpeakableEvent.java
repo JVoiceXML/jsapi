@@ -124,7 +124,11 @@ public class SpeakableEvent extends SpeechEvent {
         super(source, id);
         if ((id != TOP_OF_QUEUE) && (id != SPEAKABLE_STARTED)
                 && (id != SPEAKABLE_ENDED) && (id != SPEAKABLE_PAUSED)
-                && (id != SPEAKABLE_RESUMED) && (id != SPEAKABLE_CANCELLED)) {
+                && (id != SPEAKABLE_RESUMED) && (id != SPEAKABLE_CANCELLED)
+                && (id != ELEMENT_REACHED) && (id != VOICE_CHANGED)
+                && (id != PROSODY_UPDATED) && (id != MARKER_REACHED)
+                && (id != WORD_STARTED) && (id != PHONEME_STARTED)
+                && (id != SPEAKABLE_FAILED)) {
             StringBuffer str = new StringBuffer();
             id2String(str);
             throw new IllegalArgumentException("Invalid event identifier "
@@ -381,6 +385,7 @@ public class SpeakableEvent extends SpeechEvent {
         maybeAddId(str, SPEAKABLE_RESUMED, "SPEAKABLE_RESUMED");
         maybeAddId(str, SPEAKABLE_CANCELLED, "SPEAKABLE_CANCELLED");
         maybeAddId(str, SPEAKABLE_ENDED, "SPEAKABLE_ENDED");
+        maybeAddId(str, SPEAKABLE_FAILED, "SPEAKABLE_FAILED");
         super.id2String(str);
     }
 
