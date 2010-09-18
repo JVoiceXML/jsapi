@@ -178,7 +178,12 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
     long size;
     byte* buffer = NULL;
 
-	HRESULT hr = synth->Speak(utterance, size, buffer);
+	std::vector<std::wstring> words;
+	std::vector<float> wordTimes;
+	std::vector<std::pair<std::wstring, int>> phoneInfos;
+
+
+	HRESULT hr = synth->Speak(utterance, false, size, buffer, words, wordTimes, phoneInfos);
 	if (FAILED(hr))
     {
         if (buffer != NULL)
@@ -190,6 +195,83 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
         ThrowJavaException(env, "javax/speech/synthesis/SpeakableException", msg);
         return NULL;
     }
+
+	//Send extra result information Java side
+	{
+		//Get Class of Synthesizer object
+		jclass synthesizerClass = env->GetObjectClass(obj);
+
+		//Send words to Java side
+		if (words.size() > 0)
+		{			
+			//Get ID of method to call
+			jmethodID setWordsMID = env->GetMethodID(synthesizerClass, "setWords", "(I[Ljava/lang/String;)V");
+
+			//Allocate a Java array to store words
+			jobjectArray wordsArray = env->NewObjectArray(words.size(), 
+														  env->FindClass("java/lang/String"),
+														  env->NewString((jchar*)"", 0));
+
+			//Populate Java array
+			for (size_t i = 0; i < words.size(); i++)
+			{
+				env->SetObjectArrayElement(wordsArray, i, env->NewString((jchar*)words.at(i).c_str(), words.at(i).size()));
+			}
+
+			//Put array in synthesizer queue
+			env->CallVoidMethod(obj, setWordsMID, id, wordsArray);
+		}
+
+
+		if (wordTimes.size() > 0)
+		{
+			//Get ID of method to call
+			jmethodID setWordsTimesMID = env->GetMethodID(synthesizerClass, "setWordsStartTimes", "(I[F)V");
+
+			jfloatArray timesArray = env->NewFloatArray(wordTimes.size());
+
+			//Copy values to Java array (creating a static array....)
+			float* times = new float[wordTimes.size()];
+			memcpy(times, &wordTimes[0], sizeof(float) * wordTimes.size()); //Because std::vector uses contiguous memory
+			
+			env->SetFloatArrayRegion(timesArray, 0, wordTimes.size(), times);
+
+			//And send Java array
+			env->CallVoidMethod(obj, setWordsTimesMID, id, timesArray);
+
+			//Now delete the native array
+			delete[] times;
+		}
+
+		if (phoneInfos.size() > 0)
+		{
+			//Get the ID of the method to call
+			jmethodID setPhonesMID = env->GetMethodID(synthesizerClass, "setPhonesInfo", "(I[Ljavax/speech/synthesis/PhoneInfo;)V");
+			
+			//Allocate a Java array to store phone infos
+			jobjectArray phonesArray = env->NewObjectArray(phoneInfos.size(), 
+														   env->FindClass("javax/speech/synthesis/PhoneInfo"),
+														   NULL);
+			
+			//Prepare the mass creation of PhoneInfo Java objects
+			jclass clazz = env->FindClass("javax/speech/synthesis/PhoneInfo");
+			jmethodID constructor = env->GetMethodID(clazz, "<init>", "(Ljava/lang/String;I)V");
+
+			//Populate Java array
+			for (size_t i = 0; i < phoneInfos.size(); i++)
+			{
+				jstring jPhone = env->NewString((jchar*)phoneInfos.at(i).first.c_str(), phoneInfos.at(i).first.size());
+				jint duration = phoneInfos.at(i).second;
+				env->SetObjectArrayElement(phonesArray, i, env->NewObject(clazz, constructor, jPhone, duration));
+			}
+
+			//Put array in synthesizer queue
+			env->CallVoidMethod(obj, setPhonesMID, id, phonesArray);
+		}
+
+	}
+
+	//Prepare return value
     jbyteArray jb = env->NewByteArray(size);
     env->SetByteArrayRegion(jb, 0, size, (jbyte *)buffer);
     delete[] buffer;
@@ -204,7 +286,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
  * Signature: (JILjava/lang/String;)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiHandleSpeakSsml
-  (JNIEnv *env, jobject onj, jlong handle, jint id, jstring markup)
+  (JNIEnv *env, jobject obj, jlong handle, jint id, jstring markup)
 {
 	Synthesizer* synth = (Synthesizer*) handle;
 	
@@ -212,7 +294,12 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
     const wchar_t* utterance = (const wchar_t*)env->GetStringChars(markup, NULL);
     long size;
     byte* buffer = NULL;
-	HRESULT hr = synth->SpeakSSML(utterance, size, buffer);
+
+	std::vector<std::wstring> words;
+	std::vector<float> wordTimes;
+	std::vector<std::pair<std::wstring, int>> phoneInfos;
+
+	HRESULT hr = synth->Speak(utterance, true, size, buffer, words, wordTimes, phoneInfos);
     if (FAILED(hr))
     {
         if (buffer != NULL)
@@ -224,6 +311,9 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
         ThrowJavaException(env, "javax/speech/synthesis/SpeakableException", msg);
         return NULL;
     }
+
+
+	//Prepare return value
     jbyteArray jb = env->NewByteArray(size);
     env->SetByteArrayRegion(jb, 0, size, (jbyte *)buffer);
     delete[] buffer;
@@ -240,20 +330,20 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
   (JNIEnv *env, jobject object, jlong handle)
 {
 	Synthesizer* synth = (Synthesizer*) handle;
-    //WAVEFORMATEX format;
-    //HRESULT hr = synth->GetAudioFormat(format);
-    //if (FAILED(hr))
-    //{
-    //    char buffer[1024];
-    //    GetErrorMessage(buffer, sizeof(buffer), "GetAudioFormat failed", hr);
-    //    jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
-    //    if (exception == 0) /* Unable to find the new exception class, give up. */
-    //    {
-    //        std::cerr << buffer << std::endl;
-    //        return NULL;
-    //    }
-    //    env->ThrowNew(exception, buffer);
-    //}
+    WAVEFORMATEX format;
+    HRESULT hr = synth->GetAudioFormat(format);
+    if (FAILED(hr))
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "GetAudioFormat failed", hr);
+        jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
+        if (exception == 0) /* Unable to find the new exception class, give up. */
+        {
+            std::cerr << buffer << std::endl;
+            return NULL;
+        }
+        env->ThrowNew(exception, buffer);
+    }
     jclass clazz = env->FindClass("javax/sound/sampled/AudioFormat");
     if (clazz == NULL)
     {
@@ -268,8 +358,10 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
             "Constructor for javax/sound/sampled/AudioFormat not found!");
         return NULL;
     }
-    //return env->NewObject(clazz, method, format.nSamplesPerSec,
-    //    format.wBitsPerSample, format.nChannels, JNI_TRUE, JNI_TRUE);
-    return env->NewObject(clazz, constructor, 22050.0,
-        16, 1, JNI_TRUE, JNI_FALSE);
+
+	//Store bytes-per-second in synthesizer to compute word times
+	synth->setBytesPerSecond(format.nAvgBytesPerSec);
+
+    return env->NewObject(clazz, constructor, (float)format.nSamplesPerSec,
+        (int)format.wBitsPerSample, (int)format.nChannels, JNI_TRUE, JNI_FALSE);
 }
