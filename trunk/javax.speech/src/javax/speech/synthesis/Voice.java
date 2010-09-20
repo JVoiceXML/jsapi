@@ -201,9 +201,14 @@ public class Voice {
             namesMatch = requiredName.equals(name);
         }
 
+        final boolean genderMatch;
         final int requiredGender = require.getGender();
-        final boolean genderMatch = ((gender & requiredGender) > 0);
-
+        if (requiredGender == GENDER_DONT_CARE) {
+          genderMatch = true;
+        }
+        else {
+          genderMatch = (gender == requiredGender);
+        }
         final boolean localeMatch;
         final SpeechLocale requiredLocale = require.getSpeechLocale();
         if (requiredLocale == null) {
@@ -235,7 +240,7 @@ public class Voice {
 
     /**
      * Determines the age closest to the given age.
-     * 
+     *
      * @param age
      *            the given age.
      * @return Age defined as a constant closest to the given age.
