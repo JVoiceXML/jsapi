@@ -45,12 +45,15 @@ public class EngineManager {
         ENGINE_LIST_FACTORIES = new Vector();
 
         final InputStream input
-            = ENGINE_LIST_FACTORIES.getClass().getResourceAsStream(
-                "/speech.properties");
+            = EngineManager.class.getResourceAsStream(
+                "speech.properties");
         if (input != null) {
             final Properties props = new Properties();
             try {
                 props.load(input);
+
+                //Close input
+                input.close();
             } catch (IOException e) {
                 // Ignore.
             }
@@ -69,7 +72,7 @@ public class EngineManager {
                     // Ignore.
                 }
             }
-        }    
+        }
     }
 
     public static EngineList availableEngines(EngineMode require) {
