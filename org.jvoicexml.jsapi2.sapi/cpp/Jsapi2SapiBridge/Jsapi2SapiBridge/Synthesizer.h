@@ -22,34 +22,41 @@ public:
 	static void setBytesPerSecond(float bps) { Synthesizer::bytesPerSecond = bps; };
 
     boolean Cancel(){
-		if(  SUCCEEDED( cpVoice->Speak(NULL, SPF_PURGEBEFORESPEAK, NULL) )  ){
+		if (SUCCEEDED( cpVoice->Speak(NULL, SPF_PURGEBEFORESPEAK, NULL)))
+        {
 			return true;
 		}
-		else {
+		else 
+        {
 			return false;
 		}			
 	}
 
 	boolean Pause(){
-		if(  SUCCEEDED( hr = cpVoice->Pause() )  ){
+		if(  SUCCEEDED( hr = cpVoice->Pause() )  )
+        {
 			return true;
 		}
-		else {
+		else 
+        {
 			return false;
 		}	
 	}
 
-	boolean Resume(){
-					if(  SUCCEEDED( cpVoice->Resume() )  ){
+	boolean Resume()
+    {
+		if(  SUCCEEDED( cpVoice->Resume() )  )
+        {
 			return true;
 		}
-		else {
+		else 
+        {
 			return false;
 		}	
 	}
 
-	HANDLE getEventHandler(){
-		
+	HANDLE getEventHandler()
+    {	
 		return cpVoice->GetNotifyEventHandle();
 	}
 
