@@ -15,11 +15,11 @@ public:
 
 	HRESULT Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& buffer, std::vector<std::wstring>& words, std::vector<float>& wordTimes, std::vector< std::pair<std::wstring, int> >& phoneInfos);
     //HRESULT SpeakSSML(LPCWSTR ssml, long& size, byte*& buffer);
-    HRESULT GetAudioFormat(WAVEFORMATEX& format);
+    static HRESULT GetAudioFormat(WAVEFORMATEX& format);
 
     static HRESULT Synthesizer::ListVoices(Voice*& voices, ULONG& num);
 
-	void setBytesPerSecond(float bps) { this->bytesPerSecond = bps; };
+	static void setBytesPerSecond(float bps) { Synthesizer::bytesPerSecond = bps; };
 
     boolean Cancel(){
 		if(  SUCCEEDED( cpVoice->Speak(NULL, SPF_PURGEBEFORESPEAK, NULL) )  ){
@@ -61,7 +61,7 @@ private:
     HRESULT	hr;
     ISpVoice* cpVoice;
 
-	float bytesPerSecond;
+	static float bytesPerSecond;
 
 	CComPtr<ISpPhoneConverter>      m_cpPhoneConv;                  // Phone converter
 
