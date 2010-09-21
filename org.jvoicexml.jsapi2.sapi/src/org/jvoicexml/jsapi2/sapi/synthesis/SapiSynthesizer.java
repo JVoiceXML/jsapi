@@ -1,6 +1,7 @@
 package org.jvoicexml.jsapi2.sapi.synthesis;
 
-import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.IOException;
 
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
@@ -13,6 +14,7 @@ import javax.speech.synthesis.Voice;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
+import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 /**
@@ -22,10 +24,6 @@ import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
  *
  */
 public final class SapiSynthesizer extends JseBaseSynthesizer {
-
-    static {
-        System.loadLibrary("Jsapi2SapiBridge");
-    }
 
     /** SAPI synthesizer handle. */
     private long synthesizerHandle;
@@ -174,9 +172,14 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     @Override
     public void handleSpeak(final int id, final String item) {
         final byte[] bytes = sapiHandleSpeak(synthesizerHandle, id, item);
-        final AudioManager manager = getAudioManager();
+        final JseBaseAudioManager manager = (JseBaseAudioManager) getAudioManager();
         final String locator = manager.getMediaLocator();
-        final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        InputStream in = null;
+        try {
+            in = manager.getAudioFormatConverter().getConvertedAudio(bytes);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         final AudioSegment segment;
         if (locator == null) {
             segment = new BaseAudioSegment(item, in);
@@ -207,9 +210,14 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     protected void handleSpeak(final int id, final Speakable item) {
         final String markup = item.getMarkupText();
         final byte[] bytes = sapiHandleSpeakSsml(synthesizerHandle, id, markup);
-        final AudioManager manager = getAudioManager();
+        final JseBaseAudioManager manager = (JseBaseAudioManager) getAudioManager();
         final String locator = manager.getMediaLocator();
-        final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+        InputStream in = null;
+        try {
+            in = manager.getAudioFormatConverter().getConvertedAudio(bytes);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         final AudioSegment segment;
         if (locator == null) {
             segment = new BaseAudioSegment(markup, in);
