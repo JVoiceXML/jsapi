@@ -60,7 +60,7 @@ public abstract class JseBaseAudioManager extends BaseAudioManager implements Au
      */
     public AudioFormatConverter getAudioFormatConverter() throws IOException {
         if (formatConverter == null) {
-            formatConverter = openAudioFormatConverter(targetAudioFormat,
+            formatConverter = openAudioFormatConverter(engineAudioFormat,
                     targetAudioFormat);
         }
         return formatConverter;
