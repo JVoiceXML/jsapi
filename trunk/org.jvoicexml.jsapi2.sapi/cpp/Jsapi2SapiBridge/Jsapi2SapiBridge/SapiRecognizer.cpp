@@ -23,16 +23,6 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogni
 JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiAllocate
   (JNIEnv *env, jobject object)
 {
-    HRESULT hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    if (FAILED(hr))
-    {
-        char buffer[1024];
-        GetErrorMessage(buffer, sizeof(buffer), "Initializing COM failed!",
-            hr);
-        ThrowJavaException(env, "javax/speech/EngineException", buffer);
-        return 0;
-    }
-
     /* create new Recognizer class */
     Recognizer* recognizer = new Recognizer(hWnd, env, object);
     /* check if Handle valid */

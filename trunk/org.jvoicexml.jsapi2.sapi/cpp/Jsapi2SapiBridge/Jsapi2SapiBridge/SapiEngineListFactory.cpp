@@ -6,19 +6,9 @@
 JNIEXPORT jobjectArray JNICALL Java_org_jvoicexml_jsapi2_sapi_SapiEngineListFactory_sapiGetVoices
   (JNIEnv *env, jobject obj)
 {
-    HRESULT hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    if (FAILED(hr))
-    {
-        char buffer[1024];
-        GetErrorMessage(buffer, sizeof(buffer), "Initializing COM failed!",
-            hr);
-        ThrowJavaException(env, "java/lang/NullPointerException", buffer);
-        return NULL;
-    }
     Voice* voices = NULL;
     ULONG num;
     Synthesizer::ListVoices(voices, num);
-    ::CoUninitialize();
 
     jclass clazz;
     jmethodID constructor;
