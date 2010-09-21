@@ -10,6 +10,8 @@ import javax.speech.synthesis.Voice;
 import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizerMode;
 import org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizerMode;
 
+import java.util.ArrayList;
+
 /**
  * Factory for the SAPI engines. 
  * @author Dirk Schnelle-Walka
@@ -27,7 +29,21 @@ public class SapiEngineListFactory implements EngineListFactory {
     public EngineList createEngineList(final EngineMode require) {
         if (require instanceof SynthesizerMode) {
             final SynthesizerMode mode = (SynthesizerMode) require;
-            final Voice[] voices = sapiGetVoices();
+            Voice[] voices = sapiGetVoices();
+            if (mode.getVoices() != null) {
+                //If a voice preference was presented
+               ArrayList<Voice> selectedVoices = new ArrayList<Voice>();
+                for (Voice reqVoice: mode.getVoices()) {
+                    for (Voice availVoice: voices) {
+                        if (availVoice.match(reqVoice)) {
+                            selectedVoices.add(availVoice);
+                            break;
+                        }
+                    }
+                }
+                voices = selectedVoices.toArray(new Voice[] {});
+            }
+
             final SynthesizerMode[] features = new SynthesizerMode[] {
                     new SapiSynthesizerMode(null, mode.getEngineName(),
                             mode.getRunning(), mode.getSupportsLetterToSound(),
