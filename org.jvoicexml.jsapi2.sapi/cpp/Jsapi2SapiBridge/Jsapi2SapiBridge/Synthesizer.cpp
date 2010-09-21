@@ -1,8 +1,11 @@
 #include <stdafx.h>
 #include "Synthesizer.h"
 
+//static initializations
+float Synthesizer::bytesPerSecond = 44100;
+
 Synthesizer::Synthesizer(const wchar_t* engineName)
-:cpVoice(NULL), hr(S_OK), bytesPerSecond(44100)
+:cpVoice(NULL), hr(S_OK)
 {
     HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice,
         (void **)&cpVoice);
@@ -28,7 +31,6 @@ Synthesizer::Synthesizer(const wchar_t* engineName)
         if ( SUCCEEDED( hr ) && 0 != ulNumTokens )
         {
 			CSpDynamicString descriptionString;
-			//desciptionString[0] = L'\0';
 
             // Get the next token in the enumeration
             // State is maintained in the enumerator
@@ -49,11 +51,6 @@ Synthesizer::Synthesizer(const wchar_t* engineName)
 			}
 			descriptionString.Clear();
 		}
-
-        /*hr = cpEnum->Next(1, &cpToken, NULL);
-
-		CComPtr<ISpDataKey> cpAttribKey;
-		hr = cpToken->OpenKey(L"Attributes", &cpAttribKey);*/
     }
     // Set the designated or system default Voice is used
     if(SUCCEEDED(hr))
@@ -319,7 +316,7 @@ HRESULT Synthesizer::SpeakSSML(LPCWSTR ssml, long& size, byte*& buffer)
 HRESULT Synthesizer::GetAudioFormat(WAVEFORMATEX& f)
 {
     CComPtr<ISpeechMemoryStream> stream;
-    hr = stream.CoCreateInstance(CLSID_SpMemoryStream);
+    HRESULT hr = stream.CoCreateInstance(CLSID_SpMemoryStream);
     if(FAILED(hr))
 	{
         return hr;
