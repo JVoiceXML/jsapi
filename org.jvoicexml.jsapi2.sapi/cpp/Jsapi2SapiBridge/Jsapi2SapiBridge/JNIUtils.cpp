@@ -1,6 +1,25 @@
 #include "stdafx.h"
 #include "JNIUtils.h"
 
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
+
+	HRESULT hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    if (FAILED(hr))
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Initializing COM failed!",
+            hr);
+        //ThrowJavaException(env, "javax/speech/EngineException", buffer);
+    }
+	return JNI_VERSION_1_4;
+}
+
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *jvm, void *reserved) {
+	::CoUninitialize();
+}
+
+
 void ThrowJavaException(JNIEnv* env, char* exceptionClassName, char* message)
 {
     jclass exception = env->FindClass(exceptionClassName);

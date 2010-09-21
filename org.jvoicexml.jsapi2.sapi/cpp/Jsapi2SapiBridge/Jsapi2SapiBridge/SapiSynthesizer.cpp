@@ -56,15 +56,6 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer
         }
     }
 
-    HRESULT hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    if (FAILED(hr))
-    {
-        char buffer[1024];
-        GetErrorMessage(buffer, sizeof(buffer), "Initializing COM failed!",
-            hr);
-        ThrowJavaException(env, "javax/speech/EngineException", buffer);
-        return 0;
-    }
 	/* create new Synthesizer class */
 	Synthesizer* synth = new Synthesizer(engineName);
     if (FAILED(synth->GetLastHResult()))
@@ -123,7 +114,6 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 {
 	Synthesizer* synthesizer = (Synthesizer*) handle;
 	delete synthesizer;
-    ::CoUninitialize();
 }
 
 /*
@@ -329,9 +319,8 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthe
 JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_sapiGetAudioFormat
   (JNIEnv *env, jobject object, jlong handle)
 {
-	Synthesizer* synth = (Synthesizer*) handle;
     WAVEFORMATEX format;
-    HRESULT hr = synth->GetAudioFormat(format);
+	HRESULT hr = Synthesizer::GetAudioFormat(format);
     if (FAILED(hr))
     {
         char buffer[1024];
@@ -360,7 +349,7 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
     }
 
 	//Store bytes-per-second in synthesizer to compute word times
-	synth->setBytesPerSecond(format.nAvgBytesPerSec);
+	Synthesizer::setBytesPerSecond((float)format.nAvgBytesPerSec);
 
     return env->NewObject(clazz, constructor, (float)format.nSamplesPerSec,
         (int)format.wBitsPerSample, (int)format.nChannels, JNI_TRUE, JNI_FALSE);
