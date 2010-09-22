@@ -32,7 +32,7 @@ public class SapiEngineListFactory implements EngineListFactory {
             Voice[] voices = sapiGetVoices();
             if (mode.getVoices() != null) {
                 //If a voice preference was presented
-               ArrayList<Voice> selectedVoices = new ArrayList<Voice>();
+                final ArrayList<Voice> selectedVoices = new ArrayList<Voice>();
                 for (Voice reqVoice: mode.getVoices()) {
                     for (Voice availVoice: voices) {
                         if (availVoice.match(reqVoice)) {
@@ -41,6 +41,16 @@ public class SapiEngineListFactory implements EngineListFactory {
                         }
                     }
                 }
+
+                //Update voices array
+                if (selectedVoices.size() > 0) {
+                    voices = selectedVoices.toArray(new Voice[] {});
+                }
+                else {
+                    //A requested voice was not found...
+                    return null;
+                }
+
                 voices = selectedVoices.toArray(new Voice[] {});
             }
 
