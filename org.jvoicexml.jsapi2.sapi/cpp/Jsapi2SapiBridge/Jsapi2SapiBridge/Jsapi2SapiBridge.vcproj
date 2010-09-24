@@ -5,6 +5,7 @@
 	Name="Jsapi2SapiBridge"
 	ProjectGUID="{25FB2422-022E-46BE-8943-0F765A6C934E}"
 	RootNamespace="Jsapi2SapiBridge"
+	AssemblyReferenceSearchPaths="&quot;..\3rdparty\log4cplus\lib&quot;"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -20,7 +21,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -40,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\3rdparty\libcxxtl_0.1.2;&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v7.0A\Include&quot;;..\3rdparty\jni\include;..\3rdparty\jni\include\win32;..\include"
+				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v7.0A\Include&quot;;..\3rdparty\jni\include;..\3rdparty\jni\include\win32;..\3rdparty\log4cplus\include;..\include"
 				PreprocessorDefinitions="_WIN32_DCOM;_SAPI_VER=0x053"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -59,7 +60,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="log4cplususd.lib odbc32.lib odbccp32.lib ws2_32.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
+				AdditionalLibraryDirectories="..\3rdparty\log4cplus\lib"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
 			/>

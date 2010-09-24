@@ -2,8 +2,8 @@
 #include "JNIUtils.h"
 
 
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
-
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
+{
 	HRESULT hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
     if (FAILED(hr))
     {
@@ -12,10 +12,11 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
             hr);
         //ThrowJavaException(env, "javax/speech/EngineException", buffer);
     }
-	return JNI_VERSION_1_4;
+    return JNI_VERSION_1_6;
 }
 
-JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *jvm, void *reserved) {
+JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *jvm, void *reserved)
+{
 	::CoUninitialize();
 }
 

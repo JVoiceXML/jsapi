@@ -2,7 +2,6 @@
 #include "Recognizer.h"
 #include "JNIUtils.h"
 
-//#include <WinDef.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -10,6 +9,9 @@
 #include <stdio.h>
 #import <msxml4.dll>
 
+
+log4cplus::Logger Recognizer::logger =
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.Recognizer"));
 
 
 Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
