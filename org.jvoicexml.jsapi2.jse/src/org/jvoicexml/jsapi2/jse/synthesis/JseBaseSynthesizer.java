@@ -65,7 +65,7 @@ public abstract class JseBaseSynthesizer extends BaseSynthesizer
     }
 
     /**
-     * Retrieves teh audio format that is produced by this synthesizer.
+     * Retrieves the audio format that is produced by this synthesizer.
      * @return audio format.
      */
     protected abstract AudioFormat getAudioFormat();
