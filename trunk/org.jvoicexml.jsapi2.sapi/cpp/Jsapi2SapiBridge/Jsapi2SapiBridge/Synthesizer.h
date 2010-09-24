@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "Voice.h"
+#include <log4cplus/logger.h>
 
 class Synthesizer
 {
@@ -14,7 +15,6 @@ public:
     virtual ~Synthesizer();
 
 	HRESULT Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& buffer, std::vector<std::wstring>& words, std::vector<float>& wordTimes, std::vector< std::pair<std::wstring, int> >& phoneInfos);
-    //HRESULT SpeakSSML(LPCWSTR ssml, long& size, byte*& buffer);
     static HRESULT GetAudioFormat(WAVEFORMATEX& format);
 
     static HRESULT Synthesizer::ListVoices(Voice*& voices, ULONG& num);
@@ -86,4 +86,6 @@ private:
 		return str;
 	}
 
+    /** Logger instance. */
+    static log4cplus::Logger logger;
 };

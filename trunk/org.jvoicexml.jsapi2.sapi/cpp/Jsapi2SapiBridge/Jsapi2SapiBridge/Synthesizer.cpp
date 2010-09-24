@@ -2,6 +2,8 @@
 #include "Synthesizer.h"
 
 //static initializations
+log4cplus::Logger Synthesizer::logger =
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.Synthesizer"));
 float Synthesizer::bytesPerSecond = 44100;
 
 Synthesizer::Synthesizer(const wchar_t* engineName)
@@ -176,21 +178,22 @@ HRESULT Synthesizer::ListVoices(Voice*& voices, ULONG& num)
 
 HRESULT Synthesizer::Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& buffer, std::vector<std::wstring>& words, std::vector<float>& wordTimes, std::vector<std::pair<std::wstring, int>>& phoneInfos)
 {
+    // Create a stream to redirect the output.
     CComPtr<ISpeechMemoryStream> stream;
     hr = stream.CoCreateInstance(CLSID_SpMemoryStream);
     if(FAILED(hr))
 	{
         return hr;
 	}
-
     hr = cpVoice->SetOutput(stream, TRUE);
     if (FAILED(hr))
     {
         return hr;
     }
 
-	//Start rendering text asynchronously
-	hr = cpVoice->Speak(speakString, SPF_ASYNC | (isSSML ? SPF_IS_XML : SPF_IS_NOT_XML), NULL);
+	// Start rendering text asynchronously
+	hr = cpVoice->Speak(speakString, SPF_ASYNC
+            | (isSSML ? SPF_IS_XML : SPF_IS_NOT_XML), NULL);
     if (FAILED(hr))
     {
         return hr;
@@ -200,7 +203,8 @@ HRESULT Synthesizer::Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& 
 	CSpEvent event;
 	bool stop = false;
 
-	while (stop == false) {
+	while (!stop)
+    {
 		//Wait for event generated while synthesizing 
 		cpVoice->WaitForNotifyEvent(50);
 
@@ -266,6 +270,7 @@ HRESULT Synthesizer::Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& 
 
 	};
 
+    // Retrieve the data from the stream and pass it back to the caller.
     VARIANT c;
     VariantInit(&c); 
     hr = stream->GetData(&c);
@@ -279,40 +284,7 @@ HRESULT Synthesizer::Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& 
     memcpy(buffer, sa->pvData, size * sizeof(byte));
     return S_OK;
 }
-/*
-HRESULT Synthesizer::SpeakSSML(LPCWSTR ssml, long& size, byte*& buffer)
-{
-    CComPtr<ISpeechMemoryStream> stream;
-    hr = stream.CoCreateInstance(CLSID_SpMemoryStream);
-    if(FAILED(hr))
-	{
-        return hr;
-	}
 
-    hr = cpVoice->SetOutput(stream, TRUE);
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-    hr = cpVoice->Speak(ssml, SPF_IS_XML, NULL);
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-    VARIANT c;
-    VariantInit(&c); 
-    hr = stream->GetData(&c);
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-    SAFEARRAY* sa = c.parray;
-    SafeArrayGetUBound(sa, 1, &size);
-    buffer = new byte[size];
-    memcpy(buffer, sa->pvData, size * sizeof(byte));
-    return S_OK;
-}
-*/
 HRESULT Synthesizer::GetAudioFormat(WAVEFORMATEX& f)
 {
     CComPtr<ISpeechMemoryStream> stream;

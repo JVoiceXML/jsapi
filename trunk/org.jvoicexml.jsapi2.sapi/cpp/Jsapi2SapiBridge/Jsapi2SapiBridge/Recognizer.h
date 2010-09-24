@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <log4cplus/logger.h>
 
 class Recognizer
 {
@@ -50,5 +51,8 @@ private:
     JNIEnv* jenv;
 
     jobject jrec;
+
+    /** Logger instance. */
+    static log4cplus::Logger logger;
 };		
 

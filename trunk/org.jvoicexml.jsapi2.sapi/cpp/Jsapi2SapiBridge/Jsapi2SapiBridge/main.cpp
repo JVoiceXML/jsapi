@@ -1,9 +1,15 @@
 #include "stdafx.h"
 #include "Recognizer.h"
 #include "sperror.h"
+#include <string>
+#include <log4cplus/logger.h>
+#include <log4cplus/configurator.h>
+
 
 HWND hWnd = NULL;
 static HINSTANCE hInstance = NULL;
+static log4cplus::Logger logger =
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.Main"));
 
 // alternative look-up error codes returned by sapi in the file sperror.h
 void GetErrorMessage(char* buffer, size_t size, const char* text, HRESULT hr) 
@@ -58,15 +64,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 DWORD MessageLoop(void)
 {
-    std::cout << "message loop started" << std::endl;
+    LOG4CPLUS_DEBUG(logger, _T("message loop started"));
     MSG msg;
     while (GetMessage(&msg, hWnd, 0, 0) == TRUE)
     {
-        std::cout << msg.hwnd << ": " << msg.message << std::endl;
+        LOG4CPLUS_DEBUG(logger, msg.hwnd << _T(": ") << msg.message);
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    std::cout << "message loop ended" << std::endl;
+    LOG4CPLUS_DEBUG(logger, _T("message loop ended"));
     return 0;
 }
 
@@ -76,6 +82,12 @@ BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpRese
     {
         return TRUE;
     }
+    // TODO add this to a configuration file
+    log4cplus::BasicConfigurator config;
+    config.configure();
+
+    LOG4CPLUS_INFO(logger, _T("Jsapi2SapiBridge successfully loaded"));
+
     hInstance = hModule;
 	TCHAR *szWindowClass=_T("JSAPI2SapiWindowClass");
 	TCHAR *szTitle=_T("JSAPI2 SAPI");
