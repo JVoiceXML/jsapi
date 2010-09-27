@@ -45,12 +45,8 @@ public class EngineManager {
         ENGINE_LIST_FACTORIES = new Vector();
 
         InputStream input = null;
-        try {
-            input = Class.forName("javax.speech.EngineManager").getResourceAsStream(
-                "speech.properties");
-        } catch (ClassNotFoundException e1) {
-            e1.printStackTrace();
-        }
+            input = EngineManager.class.getResourceAsStream(
+                    "/speech.properties");
         if (input != null) {
             final Properties props = new Properties();
             try {
