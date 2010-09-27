@@ -41,7 +41,7 @@ public interface Engine {
 
     long RESUMED = 0x020;
 
-    long DEFOCUSED = 0x400;
+    long DEFOCUSED = 0x40;
 
     long FOCUSED = 0x080;
 
