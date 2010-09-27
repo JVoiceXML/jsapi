@@ -41,6 +41,8 @@ This file builds the JSR 113.jar.
   </target>
 
   <target name="clean" description="Remove all compiled and distribution files">
+    <ant dir="../javax.speech" target="clean" inheritall="false"
+        inheritrefs="false"/>
     <delete dir="${build}" />
     <delete file="${dist.jsr113.jar}" />
     <delete file="${dist.jsr113-base.jar}" />
