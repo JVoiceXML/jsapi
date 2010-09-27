@@ -44,8 +44,7 @@ public class EngineManager {
     static {
         ENGINE_LIST_FACTORIES = new Vector();
 
-        InputStream input = null;
-            input = EngineManager.class.getResourceAsStream(
+        final InputStream input = EngineManager.class.getResourceAsStream(
                     "/speech.properties");
         if (input != null) {
             final Properties props = new Properties();
