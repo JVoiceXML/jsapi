@@ -205,8 +205,7 @@ public class Voice {
         final int requiredGender = require.getGender();
         if (requiredGender == GENDER_DONT_CARE) {
           genderMatch = true;
-        }
-        else {
+        } else {
           genderMatch = (gender == requiredGender);
         }
         final boolean localeMatch;
