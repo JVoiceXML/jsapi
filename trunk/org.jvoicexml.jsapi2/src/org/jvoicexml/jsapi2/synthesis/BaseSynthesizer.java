@@ -333,10 +333,10 @@ public abstract class BaseSynthesizer extends BaseEngine
     protected final void baseAllocate() throws EngineStateException,
             EngineException, AudioException, SecurityException {
 
-        // Procceed to real engine allocation
+        // Proceed to real engine allocation
         handleAllocate();
-        long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED | RESUMED
-                | DEFOCUSED);
+        long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED | PAUSED
+                | DEFOCUSED | QUEUE_EMPTY);
 
         // Starts AudioManager
         final AudioManager audioManager = getAudioManager();
