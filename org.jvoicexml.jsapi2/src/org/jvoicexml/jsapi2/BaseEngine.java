@@ -655,6 +655,18 @@ public abstract class BaseEngine implements Engine {
             }
             buf.append("RESUMED");
         }
+        if ((state & Engine.FOCUSED) != 0) {
+            if (buf.length() > 0) {
+                buf.append(' ');
+            }
+            buf.append("FOCUSED");
+        }
+        if ((state & Engine.DEFOCUSED) != 0) {
+            if (buf.length() > 0) {
+                buf.append(' ');
+            }
+            buf.append("DEFOCUSED");
+        }
         return buf.toString();
     }
 
