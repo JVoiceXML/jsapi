@@ -525,13 +525,13 @@ public class QueueManager {
 
             while (!done) {
                 final QueueItem item = getQueueItemToPlay();
-
                 final Object source = item.getSource();
                 final int id = item.getId();
                 final SpeakableListener listener = item.getListener();
-                synthesizer.postSpeakableEvent(new SpeakableEvent(source,
-                        SpeakableEvent.TOP_OF_QUEUE, id), listener);
-
+                if (listener != null) {
+                    synthesizer.postSpeakableEvent(new SpeakableEvent(source,
+                            SpeakableEvent.TOP_OF_QUEUE, id), listener);
+                }
                 while (synthesizer.testEngineState(Synthesizer.PAUSED)) {
                     final SpeakableEvent pausedEvent = new SpeakableEvent(
                                     source, SpeakableEvent.SPEAKABLE_PAUSED,
