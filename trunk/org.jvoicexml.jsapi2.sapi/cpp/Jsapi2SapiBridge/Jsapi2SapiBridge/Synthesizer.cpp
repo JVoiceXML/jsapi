@@ -140,8 +140,7 @@ HRESULT Synthesizer::ListVoices(Voice*& voices, ULONG& num)
         if (SUCCEEDED(hr))
         {
             voices[i].SetName(wBuf);
-            wprintf(L"%s\n", wBuf);
-			fflush(stdout);
+            LOG4CPLUS_DEBUG(logger, wBuf);
             CoTaskMemFree(wBuf);
         }
         else
@@ -153,21 +152,26 @@ HRESULT Synthesizer::ListVoices(Voice*& voices, ULONG& num)
         int index=0;
         for(;;)
         {
-            hr=cpAttribKey->EnumValues(index, &keyName);
-            if (hr!=S_OK)
+            hr = cpAttribKey->EnumValues(index, &keyName);
+            if (FAILED(hr))
             {
-                if (hr==SPERR_NO_MORE_ITEMS)
+                if (hr == SPERR_NO_MORE_ITEMS)
+                {
                     break;
+                }
                 break;
             }
-            wprintf(L"  '%s'", keyName);
-            hr=cpAttribKey->GetStringValue(keyName, &wBuf);
-            if (hr==S_OK)
+            hr = cpAttribKey->GetStringValue(keyName, &wBuf);
+            if (SUCCEEDED(hr))
             {
-                wprintf(L" = '%s'", wBuf);
+                LOG4CPLUS_DEBUG(logger, _T("   ") << keyName << _T(" = '")
+                    << wBuf << _T("'"));
                 CoTaskMemFree(wBuf);
             }
-            wprintf(L"\n");
+            else
+            {
+                LOG4CPLUS_DEBUG(logger, _T("   ") << keyName);
+            }
             CoTaskMemFree(keyName);
             index++;
         }
@@ -235,12 +239,13 @@ HRESULT Synthesizer::Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& 
 
 						//Create pair
 						std::wstring phone(ipaPhoneWChar);
-						std::pair<std::wstring, int> phoneInfo = std::make_pair<std::wstring, int>(phone, duration);
-
+						std::pair<std::wstring, int> phoneInfo =
+                            std::make_pair<std::wstring, int>(phone, duration);
 						phoneInfos.push_back(phoneInfo);
-
-						printf("Phoneme %s id: %d duration: %d\n", to_str(phone).c_str(), event.Phoneme(), duration);
-						fflush(stdout);
+                        LOG4CPLUS_DEBUG(logger, _T("Phoneme '")
+                            << ipaPhoneWChar << _T("' id: ")
+                            << (int) event.Phoneme() << _T(" duration: ")
+                            << duration);
 					}
 					break;
 				case SPEI_WORD_BOUNDARY:
@@ -253,9 +258,8 @@ HRESULT Synthesizer::Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& 
 
 						//And also its start time
 						wordTimes.push_back(event.ullAudioStreamOffset / bytesPerSecond);
-
-						printf("Word %s %f\n", to_str(word).c_str(), event.ullAudioStreamOffset / bytesPerSecond);
-						fflush(stdout);
+                        LOG4CPLUS_DEBUG(logger, _T("Word '") << speakString << _T("' ")
+                            << (float) event.ullAudioStreamOffset / bytesPerSecond);
 					}
 					break;				 
 			};
