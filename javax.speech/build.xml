@@ -47,7 +47,6 @@ The current value is ${midp.home}.
 	<target name="clean" description="Remove all compiled and distribution files">
 		<delete dir="${build}" />
 		<delete file="${dist.jsr113.jar}" />
-		<delete file="${dist.jsr113-base.jar}" />
 	</target>
 
 	<target name="compile" depends="-init" description="Compile the JAVA sources">
