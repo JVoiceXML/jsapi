@@ -3,7 +3,7 @@
 #include "sperror.h"
 #include <string>
 #include <log4cplus/logger.h>
-#include <log4cplus/configurator.h>
+#include "log4cplus/consoleappender.h"
 
 
 HWND hWnd = NULL;
@@ -83,8 +83,9 @@ BOOL APIENTRY DllMain(HINSTANCE hModule, DWORD ul_reason_for_call, LPVOID lpRese
         return TRUE;
     }
     // TODO add this to a configuration file
-    log4cplus::BasicConfigurator config;
-    config.configure();
+    log4cplus::SharedAppenderPtr console(new log4cplus::ConsoleAppender(false, true));
+    console->setName(LOG4CPLUS_TEXT("console"));
+    log4cplus::Logger::getRoot().addAppender(console);
 
     LOG4CPLUS_INFO(logger, _T("Jsapi2SapiBridge successfully loaded"));
 
