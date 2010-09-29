@@ -59,6 +59,7 @@ public final class TestSynthesizer {
             .createEngine(SynthesizerMode.DEFAULT);
         synthesizer.allocate();
         synthesizer.waitEngineState(Engine.ALLOCATED);
+        synthesizer.resume();
     }
 
     /**
