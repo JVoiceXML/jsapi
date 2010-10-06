@@ -24,8 +24,10 @@ final class SapiRecognitionThread extends Thread {
      */
     public void run() {
         final long handle = recognizer.getRecognizerHandle();
-        String utterance = recognizer.sapiRecognize(handle);
-        recognizer.reportResult(utterance);
+        //String utterance = recognizer.sapiRecognize(handle);
+        //recognizer.reportResult(utterance);
+        String result[] = recognizer.sapiRecognize(handle);
+        recognizer.reportResult(result);
     }
 
     /**

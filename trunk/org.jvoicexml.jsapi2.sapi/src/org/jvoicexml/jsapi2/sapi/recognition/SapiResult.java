@@ -51,6 +51,10 @@ public class SapiResult extends BaseResult  {
     public void setInterpretation( Integer number, SsmlInterpretation interp){
         interpretation.put( number, interp);
     }
+    
+    public Hashtable getInterpretation() {
+        return interpretation;
+    }
 
     public void setSsml(String ssml) {
         this.ssml = ssml;
@@ -58,6 +62,10 @@ public class SapiResult extends BaseResult  {
 
     public String getSsml() {
         return ssml;
+    }
+    
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
 
     public String toString() {      
@@ -78,54 +86,43 @@ public class SapiResult extends BaseResult  {
         return result.toString();    
     }
 
-
-
-    @Override
-    public void addResultListener(ResultListener listener) {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    @Override
-    public ResultToken getBestToken(int tokNum) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public ResultToken[] getBestTokens() {
-        
-        String[] token = utterance.split(" ");
-        ResultToken[] tokens = new ResultToken[token.length];
-        for(int i=0; i <token.length; i++){
-            tokens[i] = new BaseResultToken(this, token[i]) ;
+    public boolean createResultTokens() {
+        if (null == utterance) {
+            //there HAS to be some tokens in a result token
+            return false;
+        } else {
+            String[] tokens = utterance.split(" ");
+            ResultToken[] resTokens = new ResultToken[tokens.length];
+            int i = 0;
+            for(String token : tokens) {
+                resTokens[i++] = new BaseResultToken(this, token);
+            }
+            setTokens(resTokens);
+            setNumTokens(resTokens.length);
+            return true;
         }
-        return tokens;
     }
     
-    @Override
-    public Grammar getGrammar() {
-        // TODO Auto-generated method stub
-        return null;
+    public boolean createResultTokens(String utterance) {
+        this.utterance = utterance;
+        return createResultTokens();
     }
-    
-    @Override
-    public int getNumTokens() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-    
+        
+//    @Override
+//    public ResultToken[] getBestTokens() {
+//        
+//        String[] token = utterance.split(" ");
+//        ResultToken[] tokens = new ResultToken[token.length];
+//        for(int i=0; i <token.length; i++){
+//            tokens[i] = new BaseResultToken(this, token[i]) ;
+//        }
+//        return tokens;
+//    }
     
     @Override
     public ResultToken[] getUnfinalizedTokens() {
         // TODO Auto-generated method stub
         return null;
-    }
-    
-    @Override
-    public void removeResultListener(ResultListener listener) {
-        // TODO Auto-generated method stub
-        
     }
         
 }

@@ -1,6 +1,10 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
+import java.io.IOException;
 import java.io.StringReader;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,15 +12,20 @@ import java.util.logging.Logger;
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
+import javax.speech.recognition.FinalResult;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
+import javax.speech.recognition.ResultToken;
+import javax.speech.recognition.RuleSequence;
+import javax.speech.recognition.RuleTag;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
+import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 
 /**
  * A SAPI recognizer.
@@ -107,7 +116,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      * @param handle the recognizer handle
      * @return recognition result
      */
-    native String sapiRecognize(final long handle);
+    native String[] sapiRecognize(final long handle);
 
     public long getRecognizerHandle() {
         return recognizerHandle;
@@ -187,26 +196,36 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         @Override
         public void propertyChangeRequest(EnginePropertyChangeRequestEvent event) {
             // TODO Auto-generated method stub
-
+            System.out.println("Free Beer! \\o/");
         }
     }
     
 
-    public void reportResult( String utterance) {
+    public void reportResult( String[] recoResult) {
        
-       SapiResult result = null;     
+       SapiResult result = null;
        
+       /** initialize our SapiResult */
        try {
             result = new SapiResult();
+            result.setResultState(Result.UNFINALIZED);
+            final ResultEvent created = 
+                new ResultEvent(result, ResultEvent.RESULT_CREATED, 
+                        false, false);
+            postResultEvent(created);
         } catch (GrammarException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
     
-       if (utterance == null ) { 
+        /** cpp-Result == NULL  
+         *      => false recognition in cpp
+         */
+        if (null == recoResult) {
            if(LOGGER.isLoggable(Level.FINE)){
-               LOGGER.fine("No Match Recognized ...");
-           }          
+               LOGGER.fine("No Match Recognized => False Recognition ...");
+           }
+           result.setResultState(FinalResult.MISRECOGNITION);
            final ResultEvent rejected =
                new ResultEvent(result, ResultEvent.RESULT_REJECTED,
                        false, false);
@@ -215,18 +234,21 @@ public final class SapiRecognizer extends JseBaseRecognizer {
            return;          
         }
        
+       String ruleName = recoResult[0];
+       String utterance = recoResult[1];
        if(LOGGER.isLoggable(Level.FINE)){
-           LOGGER.fine("SSML Result String : "+ utterance);
-       } 
-       System.out.println(utterance);
-       result.setSsml(utterance);      
+           LOGGER.fine("SML Result String : " + utterance);
+       }
+       result.setSsml(utterance);
        
-       SMLHandler handler= new SMLHandler(result);
-       StringReader reader = new StringReader(utterance);
+       
+       /** parse our tags from SML */
+       SMLHandler handler = new SMLHandler(result);
+       StringReader readerSML = new StringReader(utterance);
        
        QDParser parser = new QDParser();
        try {
-        parser.parse(handler, reader);
+        parser.parse(handler, readerSML);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -235,7 +257,8 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         if ( utterance.equals("...") ) { 
             if(LOGGER.isLoggable(Level.FINE)){
                 LOGGER.fine("Single Garbage Recognized ...");
-            }          
+            }
+            result.setResultState(Result.REJECTED);
             final ResultEvent rejected =
                 new ResultEvent(result, ResultEvent.RESULT_REJECTED,
                         false, false);
@@ -243,47 +266,99 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             
             return;          
          }
-              
-//        final GrammarManager manager = getGrammarManager();
-//        final Grammar[] grammars = manager.listGrammars();
-//
-//       BaseResult result = null;
-//               
-//        for (Grammar grammar : grammars) {
-//            try {               
-//
-//                result = new BaseResult(grammar, utterance );
-//                           
-//            } catch (GrammarException e) {
-//                LOGGER.error(e.getMessage());
-//                return;
-//            } 
-//            
-//            if (result.getNumTokens() != 0) {                 
-//                break;
-//            }                             
-//        }
-//        
+        
         if(LOGGER.isLoggable(Level.FINE)){
             LOGGER.fine("Recognized utterance : '"+ utterance
                     + "' Confidence : '"+ result.getConfidence() +"'");
         }
         
-        final ResultEvent created = new ResultEvent(result,
-                ResultEvent.RESULT_CREATED, false, false);
-        postResultEvent(created);
+        /** set recognized tokens */
+        String[] utteranceTok = result.getUtterance().split(" ");
+        ResultToken[] rtoken = new ResultToken[utteranceTok.length];
+        for (int i = 0; i < rtoken.length; i++) {
+            rtoken[i] = new BaseResultToken(result, utteranceTok[i]);
+        }
+        result.setTokens(rtoken);
+
+        
+        
+        /** set resultTags */
+        /*********************************************************************/
+        // RS-Constructor creates generic RuleComponents but we specifically need RuleTags
+        //RuleSequence rs = new RuleSequence(utteranceTok);
+        
+        // -- not usable - private func. --
+        //result.applyTags(rtoken, ruleTag, 1);
+        
+        // non-functional
+//        result.setTokens(rt, replaceTags, 1); //<==== what?! óÒ Besser fkt. umgehen ~,~
+//        RuleTag[] rTag = new RuleTag[result.getTags(0).length];
+        /*********************************************************************/
+        
+        /** iterate through tags and set resultTags */
+        Hashtable<Integer, SsmlInterpretation> vInterpretation = result.getInterpretation();
+                               
+        Set<Integer> ksInterpretation = vInterpretation.keySet();
+        Iterator<Integer> it = ksInterpretation.iterator();
+//        RuleTag[] ruleTag = new RuleTag[vInterpretation.size()];
+//        for(int i = 0; it.hasNext(); i++) {
+//            SsmlInterpretation smlInterpretation = vInterpretation.get(it.next());
+//            String tag = smlInterpretation.getTag();
+//            String value = smlInterpretation.getValue();
+//            float confidence = smlInterpretation.getConfidence();
+//            if (value.isEmpty())
+//                ruleTag[i] = new RuleTag(tag); // tags like <tag>FOO</tag>
+//            else
+//                ruleTag[i] = new RuleTag(tag + "=" + value); //tags like <tag>FOO="bar"</tag>
+//        }
+        String[] tags = new String[vInterpretation.size()];
+        for (int i = 0; it.hasNext(); i++) {
+            SsmlInterpretation smlInterpretation = vInterpretation.get(it.next());
+            String tag = smlInterpretation.getTag();
+            String value = smlInterpretation.getValue();
+            float confidence = smlInterpretation.getConfidence();
+            
+            tags[i] = tag; //SRGS-tags like <tag>FOO</tag>
+            if (!value.isEmpty())
+                    tags[i] += "=" + value; //SRGS-tags like <tag>FOO="bar"</tag>
+        }
+        result.setTags(tags);
+        
+        final ResultEvent tokensUpdated = new ResultEvent(result,
+                ResultEvent.RESULT_UPDATED, true, false);
+        postResultEvent(tokensUpdated);
     
+        /** Set the grammar, which led to recognition */
+        GrammarManager manager = getGrammarManager();
+        Grammar gram = manager.getGrammar("grammar:" + ruleName);
+        if (null == gram) {
+            gram = manager.getGrammar(ruleName);
+        }
+        
+        result.setGrammar(gram);
+        if (null == result.getGrammar()) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("Could not find the RuleGrammar");
+            }
+            result.setResultState(Result.REJECTED);
+            final ResultEvent grammarFailed = 
+                new ResultEvent(result, ResultEvent.RESULT_REJECTED, false, false);
+            postResultEvent(grammarFailed);
+            return;
+        }
         final ResultEvent grammarFinalized =
             new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED);
         postResultEvent(grammarFinalized);
         
-        if( result.getConfidence()< 0.4 ){
+        /** if the recognition is too low, reject the result */
+        if( result.getConfidence() < 0.4 ){
             result.setResultState(Result.REJECTED);
             if(LOGGER.isLoggable(Level.FINE)){
-                LOGGER.fine("Result confidence to low, new ResultState: '"+ result.getResultState() +"'");
+                LOGGER.fine("Result confidence too low, new ResultState: '"+ result.getResultState() +"'");
             }
         }
-            
+        
+        /** post the result */
         if (result.getResultState() == Result.REJECTED ) {
             final ResultEvent rejected =
                 new ResultEvent(result, ResultEvent.RESULT_REJECTED,
