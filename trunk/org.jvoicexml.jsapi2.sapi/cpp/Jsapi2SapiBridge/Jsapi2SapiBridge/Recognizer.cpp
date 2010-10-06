@@ -224,7 +224,8 @@ HRESULT Recognizer::DeleteGrammar(LPCWSTR ID){
 	return hr; 
 }
 
-wchar_t* Recognizer::RecognitionHappened()
+//wchar_t** Recognizer::RecognitionHappened()
+HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 {
 	/* Inactivate all Grammars contained in the gramHash */
 	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
@@ -234,7 +235,8 @@ wchar_t* Recognizer::RecognitionHappened()
 	}
 
 	LPWSTR utterance = NULL;
-	BSTR SSML = NULL;
+	BSTR SML = NULL;
+	LPCWSTR ruleName = NULL;
     CSpEvent event;
 	ISpRecoResult* result = NULL;
 
@@ -250,12 +252,30 @@ wchar_t* Recognizer::RecognitionHappened()
 				hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
 					&utterance, NULL);
 
-				/* recieve an XMLRecoResult from the RecoResult */
+				/*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
+				//WCHAR* recoResult[2]; //tst[0]=>ruleName; tst[1] => utterance as SML; 
+				
+				SPPHRASE *pPhrase;
+				hr = result->GetPhrase(&pPhrase);
+				if (FAILED(hr)) {
+					return hr; //could not retrieve the ruleName
+				}
+				ruleName = (pPhrase->Rule.pszName);
+				recoResult[0] = (WCHAR*) ruleName; //retrieve the rootrulename which activated the rule
+				/*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
+
+
+				/* receive an XMLRecoResult from the RecoResult */
 				ISpeechXMLRecoResult* XMLResult;
 				result->QueryInterface( IID_ISpeechXMLRecoResult , (void**)&XMLResult);
 
-				/* recieve an SML String from the XMLRecoResult */				
-				XMLResult->GetXMLResult( SPXRO_SML ,&SSML);
+				/* receive an SML String from the XMLRecoResult */				
+				hr = XMLResult->GetXMLResult( SPXRO_SML ,&SML);
+				if (FAILED(hr)) {
+					return hr; // could not retrieve the SML-Resultstring
+				}
+				recoResult[1] = (WCHAR*) SML; //retrieve the utterance
+
 
 				/* at the moment not knowing what to do so put it out */
 				//std::wcout<< SSML <<std::endl;flush(std::wcout);
@@ -274,8 +294,9 @@ wchar_t* Recognizer::RecognitionHappened()
 
 				gramHash.clear();
 
-				return SSML;//utterance;
-				//break;
+				//return SML;//utterance;
+				//return &recoResult[0]; //ruleName + utterance(SML)
+				return S_OK;
 				
 			case SPEI_FALSE_RECOGNITION:
 
@@ -315,7 +336,8 @@ HRESULT Recognizer::Resume()
     return S_OK;
 }
 
-wchar_t* Recognizer::StartRecognition()
+//wchar_t** Recognizer::StartRecognition()
+HRESULT Recognizer::StartRecognition(WCHAR* result[])
 {	
 	if (gramHash.empty())
     {
@@ -333,7 +355,7 @@ wchar_t* Recognizer::StartRecognition()
         }
 	}
 	
-	/* Set and Win32 Window Event to recieve the recognition Result */
+	/* Set a Win32 Window Event to recieve the recognition Result */
 	hr = cpRecoCtxt->SetNotifyWin32Event();	
 	if (FAILED(hr))
     {
@@ -344,13 +366,14 @@ wchar_t* Recognizer::StartRecognition()
 	continuing = true;
 	hr = S_FALSE;
 
-	/* wait for an event an try to look if it occured every 300ms*/
+	/* wait for an event and try to look if it occured every 300ms*/
 	while( continuing && hr==S_FALSE  )
     {
 		hr = cpRecoCtxt->WaitForNotifyEvent(300);
         if(hr == S_OK)
         {
-            return RecognitionHappened();
+            //return RecognitionHappened();
+			return RecognitionHappened(result);
         }
 	}
 

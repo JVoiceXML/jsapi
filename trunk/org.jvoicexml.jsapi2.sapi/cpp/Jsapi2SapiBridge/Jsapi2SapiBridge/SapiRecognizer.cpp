@@ -193,17 +193,25 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
  * Method:    sapiRecognize
  * Signature: (J)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiRecognize
+JNIEXPORT jobjectArray JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiRecognize
   (JNIEnv *env, jobject object, jlong handle)
 {
 
     Recognizer* recognizer = (Recognizer*) handle;
-    wchar_t* result = recognizer->StartRecognition();
-    if (result == NULL)
-    {
-        return NULL;
-    }
-    return env->NewString((jchar*)result, wcslen(result));
+	WCHAR* resTmp[2];
+	resTmp[0] = NULL; resTmp[1] = NULL;
+	HRESULT hres = recognizer->StartRecognition(resTmp);
+	if (FAILED(hres) || NULL == resTmp[0]) {
+		return NULL;
+	}
+	//return env->NewString((jchar*)result, wcslen(result));
+	jobjectArray result;
+	result = (jobjectArray) env->NewObjectArray(2,
+									env->FindClass("java/lang/String"), 
+									env->NewString((jchar*)&"", 0));
+	env->SetObjectArrayElement(result, 0, env->NewString((jchar*)resTmp[0], wcslen(resTmp[0]))); //ruleName
+	env->SetObjectArrayElement(result, 1, env->NewString((jchar*)resTmp[1], wcslen(resTmp[1]))); //utterance
+    return result;
 }
 
 
