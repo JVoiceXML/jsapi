@@ -55,7 +55,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return 0;
     case WM_RECOEVENT:
         Recognizer* recognizer = (Recognizer*) wParam;
-        recognizer->RecognitionHappened();
+        //recognizer->RecognitionHappened();
         return 0;
 	}
 

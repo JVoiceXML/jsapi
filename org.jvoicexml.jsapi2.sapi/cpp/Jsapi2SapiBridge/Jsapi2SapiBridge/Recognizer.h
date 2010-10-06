@@ -23,9 +23,9 @@ public:
 	
 	HRESULT DeleteGrammar(LPCWSTR ID);
 
-    wchar_t* RecognitionHappened();
+    HRESULT RecognitionHappened(WCHAR* recoResult[]);
 	
-	wchar_t* StartRecognition();
+	HRESULT StartRecognition(WCHAR* result[]);
 
 	void StartDictation();
 
