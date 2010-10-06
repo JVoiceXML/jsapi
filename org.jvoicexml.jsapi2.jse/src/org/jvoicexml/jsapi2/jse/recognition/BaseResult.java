@@ -59,7 +59,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     private int state;
     private int confidenceLevel;
 
-    private String[] tags;
+    protected String[] tags;
     private String   ruleName;
 
     /**
