@@ -192,6 +192,18 @@ public final class MacRecognizer extends JseBaseRecognizer {
         }
     }
 
+	@Override
+	protected void handleReleaseFocus() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void handleRequestFocus() {
+		// TODO Auto-generated method stub
+		
+	}
+
     class MacChangeRequestListener
             implements EnginePropertyChangeRequestListener {
 
@@ -201,5 +213,4 @@ public final class MacRecognizer extends JseBaseRecognizer {
 
         }
     }
-
 }
