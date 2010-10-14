@@ -110,6 +110,8 @@ This file builds the JSR 113.jar.
         inheritall="false"/>
     <ant dir="../org.jvoicexml.jsapi2.sapi" antfile="build.xml"
         inheritall="false" />
+    <ant dir="../org.jvoicexml.jsapi2.mac" antfile="build.xml"
+        inheritall="false" />
     <copy file="../javax.speech/dist/jsr113.jar" todir="${dist}" />
   </target>
 
