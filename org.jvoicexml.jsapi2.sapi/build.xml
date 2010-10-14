@@ -23,6 +23,9 @@ This file builds the JSR 113.jar.
   <property name="optimize" value="off" />
 
   <target name="-init">
+    <condition property="isWindows">
+      <os family="windows"/>
+    </condition>
     <mkdir dir="${build}" />
     <mkdir dir="${dist}" />
   </target>
@@ -75,7 +78,15 @@ This file builds the JSR 113.jar.
     </exec>
   </target>
 
-  <target name="jar" depends="compile"
+  <target name="-copydll" if="isWindows">
+    <copy todir="${dist}">
+      <fileset dir="cpp/Jsapi2SapiBridge/Debug">
+        <include name="*.dll"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="jar" depends="compile,-copydll"
     description="Pack all compiled files into jar files">
     <jar jarfile="${dist.jar}" compress="false">
       <fileset dir="${build}">
@@ -93,10 +104,5 @@ This file builds the JSR 113.jar.
         </section>
       </manifest>
     </jar>
-    <copy todir="${dist}">
-      <fileset dir="cpp/Jsapi2SapiBridge/Debug">
-        <include name="*.dll"/>
-      </fileset>
-    </copy>
   </target>
 </project>
