@@ -418,11 +418,10 @@ void Recognizer::StartDictation()
         if (SUCCEEDED(cpResult->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, 
                                         TRUE, &dstrText, NULL)))
         {
-
 			// ToDo Give back the Dictation Result To Java Code
 			// and create a terminate Method
 			USES_CONVERSION;
-			std::cout<< "I heard: " << W2A(dstrText)<<"\n";fflush(stdout);
+            LOG4CPLUS_DEBUG(logger, _T("I heard: ") << W2A(dstrText));
 			
 			cpResult.Release();   						
         }
