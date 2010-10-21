@@ -51,8 +51,15 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
      * {@inheritDoc}
      */
     public void handleAudioStart() throws AudioException {
-        final String locator = getMediaLocator();
+        // Just convert samples 
+        if (inputStream instanceof AudioInputStream) {
+            AudioInputStream ais = (AudioInputStream)inputStream;
+            targetAudioFormat = ais.getFormat();
+            inputStream = AudioSystem.getAudioInputStream(engineAudioFormat, ais);
+            return;
+        }
 
+        final String locator = getMediaLocator();
         // Open URL described in locator
         final InputStream is;
         if (locator == null) {
@@ -95,7 +102,7 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
                         + ex.getMessage());
             }
         }
-
+        System.err.println(targetAudioFormat);
         final AudioInputStream ais = new AudioInputStream(is,
                     targetAudioFormat, AudioSystem.NOT_SPECIFIED);
         inputStream = AudioSystem.getAudioInputStream(engineAudioFormat, ais);
