@@ -78,13 +78,14 @@ final class RecognitionThread
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("start recognizing ..");
             }
-
-            rec.recognize();
+            while(started) {
+                rec.recognize();
+                recognizer.postEndOfSpeechEvent();
+                recognizer.postListeningEvent();
+            }
         }
         // send end of speech and listening event
         // @todo change this;
-        recognizer.postEndOfSpeechEvent();
-        recognizer.postListeningEvent();
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("stopping recognition thread...");
