@@ -254,6 +254,13 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             e.printStackTrace();
         }
         
+        /** set the confidenceLevel */
+        //map the actual confidence (float) to an Integer-Value in [0;10]
+        int confidenceLevel = Math.round(result.getConfidence() * 10);
+        result.setConfidenceLevel(confidenceLevel);
+        
+        
+        /** Check if the utterance was only noise */
         if ( utterance.equals("...") ) { 
             if(LOGGER.isLoggable(Level.FINE)){
                 LOGGER.fine("Single Garbage Recognized ...");
@@ -319,8 +326,12 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             float confidence = smlInterpretation.getConfidence();
             
             tags[i] = tag; //SRGS-tags like <tag>FOO</tag>
-            if (!value.isEmpty())
+            
+            //for the time being, a help tag is of the form "*.help = 'help'", e.g. "out.help = 'help'"
+            boolean helpTag = (tag.equalsIgnoreCase("help") && value.equalsIgnoreCase("help"));
+            if (!helpTag && !value.isEmpty()) {
                     tags[i] += "=" + value; //SRGS-tags like <tag>FOO="bar"</tag>
+            }
         }
         result.setTags(tags);
         
