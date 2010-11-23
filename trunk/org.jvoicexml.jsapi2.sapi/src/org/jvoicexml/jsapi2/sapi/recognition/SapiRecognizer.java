@@ -16,6 +16,7 @@ import javax.speech.recognition.FinalResult;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.GrammarManager;
+import javax.speech.recognition.RecognizerProperties;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultToken;
@@ -209,6 +210,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
        try {
             result = new SapiResult();
             result.setResultState(Result.UNFINALIZED);
+            result.setConfidenceLevel(0);
             final ResultEvent created = 
                 new ResultEvent(result, ResultEvent.RESULT_CREATED, 
                         false, false);
@@ -231,7 +233,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                        false, false);
            postResultEvent(rejected);
            
-           return;          
+           return;
         }
        
        String ruleName = recoResult[0];
@@ -254,12 +256,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             e.printStackTrace();
         }
         
-        /** set the confidenceLevel */
-        //map the actual confidence (float) to an Integer-Value in [0;10]
-        int confidenceLevel = Math.round(result.getConfidence() * 10);
-        result.setConfidenceLevel(confidenceLevel);
-        
-        
+
         /** Check if the utterance was only noise */
         if ( utterance.equals("...") ) { 
             if(LOGGER.isLoggable(Level.FINE)){
@@ -278,6 +275,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             LOGGER.fine("Recognized utterance : '"+ utterance
                     + "' Confidence : '"+ result.getConfidence() +"'");
         }
+        
         
         /** set recognized tokens */
         String[] utteranceTok = result.getUtterance().split(" ");
@@ -328,8 +326,11 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             tags[i] = tag; //SRGS-tags like <tag>FOO</tag>
             
             //for the time being, a help tag is of the form "*.help = 'help'", e.g. "out.help = 'help'"
-            boolean helpTag = (tag.equalsIgnoreCase("help") && value.equalsIgnoreCase("help"));
-            if (!helpTag && !value.isEmpty()) {
+            boolean specialTag = (
+                        (tag.equalsIgnoreCase("help") && value.equalsIgnoreCase("help")) ||
+                        (tag.equalsIgnoreCase("cancel") && value.equalsIgnoreCase("cancel"))
+                    );
+            if (!specialTag && !value.isEmpty()) {
                     tags[i] += "=" + value; //SRGS-tags like <tag>FOO="bar"</tag>
             }
         }
@@ -360,9 +361,25 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         final ResultEvent grammarFinalized =
             new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED);
         postResultEvent(grammarFinalized);
+
+
+        /** set the confidenceLevel */
+        //map the actual confidence ([0; 1] (float)) to a new Integer-Value in javax.speech's range [MIN_CONFIDENCE; MAX_CONFIDENCE]
+        // e.g. be MAX_CONFIDENCE = 20; MIN_CONFIDENCE = -10;
+        // then, a value of 0.4f from the Recognizer (working in [0; 1]) should be mapped to +2 (in [-10; 20])
+        // [because +2 is 2/5th of the complete RecognizerProperties' range]
         
-        /** if the recognition is too low, reject the result */
-        if( result.getConfidence() < 0.4 ){
+        //get the whole range (in the example above => 20 - -10 = 30;
+        int range = RecognizerProperties.MAX_CONFIDENCE - RecognizerProperties.MIN_CONFIDENCE;
+        
+        //set the value and shift it (again, with the sample above: set the value to +12 from [0; 30] and shift it to +2 [-10; 20]
+        float confTmp = (result.getConfidence() * range) + RecognizerProperties.MIN_CONFIDENCE;
+        int resultconfidenceLevel = Math.round(confTmp);
+        result.setConfidenceLevel(resultconfidenceLevel);
+
+        /** if the actual confidenceLevel is below the required one, reject the result */
+        int minConfidenceLevel = recognizerProperties.getConfidenceThreshold(); 
+        if( resultconfidenceLevel < minConfidenceLevel){
             result.setResultState(Result.REJECTED);
             if(LOGGER.isLoggable(Level.FINE)){
                 LOGGER.fine("Result confidence too low, new ResultState: '"+ result.getResultState() +"'");
