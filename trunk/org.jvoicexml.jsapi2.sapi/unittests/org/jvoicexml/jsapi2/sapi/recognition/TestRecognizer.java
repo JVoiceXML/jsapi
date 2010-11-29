@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Locale;
 
 import javax.speech.Engine;
 import javax.speech.EngineManager;
@@ -56,7 +57,7 @@ public final class TestRecognizer implements ResultListener {
                 Boolean.TRUE.toString());
         EngineManager.registerEngineListFactory(
                 SapiEngineListFactory.class.getCanonicalName());
-        
+//        Locale.setDefault(new Locale("en"));
         
     }
 
@@ -102,8 +103,10 @@ public final class TestRecognizer implements ResultListener {
         recognizer.addResultListener(this);
 
         final GrammarManager grammarManager = recognizer.getGrammarManager();
-        final InputStream in = TestRecognizer.class.getResourceAsStream("hello.xml");
-        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");//iso-8859-1
+        final String name = getLocaleGrammarName("hello");
+        System.out.println(name);
+        final InputStream in = TestRecognizer.class.getResourceAsStream(name);
+        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");
         recognizer.requestFocus();
         recognizer.resume();
         recognizer.waitEngineState(Engine.RESUMED);
@@ -124,6 +127,17 @@ public final class TestRecognizer implements ResultListener {
     }
 
     /**
+     * Retrieves the local grammar name.
+     * @param base base grammar name.
+     * @return localized grammar name.
+     */
+    private String getLocaleGrammarName(final String base) {
+        final Locale locale = Locale.getDefault();
+        final String country = locale.getLanguage();
+        return base + "-" + country + ".xml";
+    }
+
+    /**
      * Pause after the recognizer is ready.
      * 
      * @throws Exception
@@ -132,10 +146,10 @@ public final class TestRecognizer implements ResultListener {
     @Test
     public void testRecognizePause() throws Exception {
         recognizer.addResultListener(this);
-
         final GrammarManager grammarManager = recognizer.getGrammarManager();
-        final InputStream in = TestRecognizer.class.getResourceAsStream("hello.xml");
-        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");//iso-8859-1
+        final String name = getLocaleGrammarName("hello");
+        final InputStream in = TestRecognizer.class.getResourceAsStream(name);
+        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");
         recognizer.requestFocus();
         recognizer.resume();
         recognizer.waitEngineState(Engine.RESUMED);
@@ -172,8 +186,8 @@ public final class TestRecognizer implements ResultListener {
         recognizer.addResultListener(this);
 
         final GrammarManager grammarManager = recognizer.getGrammarManager();
-        final InputStream in =
-            TestRecognizer.class.getResourceAsStream("hello.xml");
+        final String name = getLocaleGrammarName("hello");
+        final InputStream in = TestRecognizer.class.getResourceAsStream(name);
         System.out.println("Try to load Grammar");
         final Grammar hello =
             grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");
@@ -250,10 +264,11 @@ public final class TestRecognizer implements ResultListener {
         recognizer.addResultListener(this);
 
         final GrammarManager grammarManager = recognizer.getGrammarManager();
-        InputStream in = TestRecognizer.class.getResourceAsStream("Licht.xml");
-        grammarManager.loadGrammar("grammar:LIGHT", null, in, "UTF-8");//iso-8859-1
-        in = TestRecognizer.class.getResourceAsStream("hello.xml");
-        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");//iso-8859-1
+        final InputStream in = TestRecognizer.class.getResourceAsStream("Licht.xml");
+        grammarManager.loadGrammar("grammar:LIGHT", null, in, "UTF-8");
+        final String name = getLocaleGrammarName("hello");
+        final InputStream in2 = TestRecognizer.class.getResourceAsStream(name);
+        grammarManager.loadGrammar("grammar:greeting", null, in2, "UTF-8");
 
         recognizer.requestFocus();
         recognizer.resume();
