@@ -18,7 +18,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.speech.EngineManager;
+import javax.speech.synthesis.SpeakableEvent;
+import javax.speech.synthesis.SpeakableListener;
 import javax.speech.synthesis.Synthesizer;
+import javax.speech.synthesis.SynthesizerEvent;
+import javax.speech.synthesis.SynthesizerListener;
 import javax.speech.synthesis.SynthesizerMode;
 
 import org.jvoicexml.jsapi2.jse.synthesis.freetts.FreeTTSEngineListFactory;
@@ -28,7 +32,7 @@ import org.jvoicexml.jsapi2.jse.synthesis.freetts.FreeTTSEngineListFactory;
  * @author Dirk Schnelle-Walka
  * @version $Revision$
  */
-public final class HelloWorldDemo {
+public final class HelloWorldDemo implements SpeakableListener, SynthesizerListener {
     /**
      * Do not create from outside.
      */
@@ -57,15 +61,16 @@ public final class HelloWorldDemo {
             // Create a synthesizer for the default Locale
             Synthesizer synth = (Synthesizer) EngineManager
                     .createEngine(SynthesizerMode.DEFAULT);
-
+            HelloWorldDemo demo = new HelloWorldDemo();
+            synth.addSynthesizerListener(demo);
             // Get it ready to speak
             synth.allocate();
 
             // Speak the "hello world" string
             System.out.println("Speaking 'Hello, world!'...");
-            synth.speak("Hello, world!", null);
+            synth.speak("Hello, world!", demo);
             synth.speakMarkup("<?xml version=\"1.0\"?>"
-                    + "<speak>Goodbye!</speak>", null);
+                    + "<speak>Goodbye!</speak>", demo);
             synth.waitEngineState(Synthesizer.QUEUE_EMPTY);
             System.out.println("done.");
 
@@ -75,5 +80,15 @@ public final class HelloWorldDemo {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void speakableUpdate(SpeakableEvent e) {
+        System.out.println(e);
+    }
+
+    @Override
+    public void synthesizerUpdate(SynthesizerEvent e) {
+        System.out.println(e);
     }
 }
