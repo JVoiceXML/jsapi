@@ -1,0 +1,24 @@
+JSAPI
+=====
+
+Requirements
+------------
+
+Download the JSR 113 release candidate from http://www.conversations.com
+and copy the following jars to this folder:
+- jsapi2.jar
+
+If you have any problems to download the jars from conversay, send a short
+email to dirk (dot) schnelle (at) jvoicexml (dot) org
+
+In order to run the demos you will also need to download the jars from
+- sphinx4 http://cmusphinx.sourceforge.net
+- FreeTTS http://freetts.sourceforge.net
+
+The RTP demos are based on
+- jlibrtp http://jlibrtp.org
+
+jsr-113 Installation
+----------------------
+
+Simply unzip jsr113-base-<version>.zip to extract the jar files.
