@@ -32,7 +32,7 @@ This file builds the JSR 113.jar.
 
   <path id="classpath">
     <pathelement location="../javax.speech/classes"/>
-    <pathelement location="${base-project}/dist/jsr113-base.jar"/>
+    <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
     <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jse.jar"/>
   </path>
 
