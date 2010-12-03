@@ -86,7 +86,7 @@ public class SRGSGrammar extends Grammar {
             Logger.getLogger(Sphinx4Recognizer.class.getName());
 
     /** Sphinx property that defines the location of the JSGF grammar file. */
-    @S4String
+    @S4String(defaultValue = "")
     public final static String PROP_BASE_GRAMMAR_URL = "grammarLocation";
 
     /** Sphinx property that defines the location of the JSGF grammar file. */
