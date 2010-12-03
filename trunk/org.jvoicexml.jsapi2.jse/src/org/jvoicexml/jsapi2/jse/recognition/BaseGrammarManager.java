@@ -106,7 +106,7 @@ public class BaseGrammarManager implements GrammarManager {
             IllegalArgumentException, EngineStateException, EngineException {
 
         //Validate current state
-        insureValidEngineState();
+        ensureValidEngineState();
 
         if (grammars.containsValue(grammarReference)) {
             throw new IllegalArgumentException("Duplicate grammar name: " +
@@ -136,7 +136,7 @@ public class BaseGrammarManager implements GrammarManager {
             EngineStateException {
 
         //Validate current state
-        insureValidEngineState();
+        ensureValidEngineState();
 
         if (!grammars.containsKey(grammar.getReference()))
             throw new IllegalArgumentException("The Grammar is unknown");
@@ -166,7 +166,7 @@ public class BaseGrammarManager implements GrammarManager {
     public Grammar[] listGrammars() throws EngineStateException {
 
         // Validate current state
-        insureValidEngineState();
+        ensureValidEngineState();
 
         // List of all grammars
         ArrayList<Grammar> allGrammars = new ArrayList<Grammar> ();
@@ -197,7 +197,7 @@ public class BaseGrammarManager implements GrammarManager {
             EngineStateException {
 
         // Validate current state
-        insureValidEngineState();
+        ensureValidEngineState();
 
         return grammars.get(grammarReference);
     }
@@ -254,7 +254,7 @@ public class BaseGrammarManager implements GrammarManager {
         }
         
         //Validate current state
-        insureValidEngineState();
+        ensureValidEngineState();
 
         //Make sure that recognizer supports markup
         if (recognizer != null) {
@@ -308,7 +308,7 @@ public class BaseGrammarManager implements GrammarManager {
             LOGGER.fine("Load Grammar : "+ grammarReference + " with media Type:"+ mediaType + " and Reader :"+ reader);
         }
         // Validate current state
-        insureValidEngineState();
+        ensureValidEngineState();
 
         // Make sure that recognizer supports markup
         if (recognizer != null) {
@@ -430,7 +430,7 @@ public class BaseGrammarManager implements GrammarManager {
      * @throws EngineStateException
      *         invalid engine state
      */
-    private void insureValidEngineState() throws EngineStateException {
+    private void ensureValidEngineState() throws EngineStateException {
         if (recognizer == null) {
             return;
         }
