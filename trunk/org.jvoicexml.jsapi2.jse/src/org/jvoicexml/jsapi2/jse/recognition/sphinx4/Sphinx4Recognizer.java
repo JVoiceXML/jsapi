@@ -108,9 +108,12 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
                 "org.jvoicexml.jsapi2.jse.recognition.sphinx4.configPath",
         		"/sphinx4.config.xml");
 
-
         URL url = Sphinx4Recognizer.class.getResource(configFile);
-
+        if (url == null) {
+            LOGGER.info("Using default configuration.");
+            url = Sphinx4Recognizer.class.getResource("default.config.xml");
+        }
+        
         try {
             final ConfigurationManager configuration =
                     new ConfigurationManager(url);
