@@ -78,13 +78,14 @@ final class RecognitionThread extends Thread {
         recognizer.postStartOfSpeechEvent();
         recognizer.postProcessingEvent();
         if (started) {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("start recognizing ..");
-            }
             while (started) {
-                System.err.println("Calling recognize");
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("calling sphinx4 recognize() ..");
+                }
                 rec.recognize();
-                System.err.println("Returned from recognize");
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.fine("returned from sphinx4  recognize() ..");
+                }
                 recognizer.postEndOfSpeechEvent();
                 recognizer.postListeningEvent();
             }
