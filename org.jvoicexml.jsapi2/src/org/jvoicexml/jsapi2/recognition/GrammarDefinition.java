@@ -16,6 +16,7 @@ public class GrammarDefinition {
 
     private String grammar;
     private String name;
+    private boolean changed = false;
 
     public GrammarDefinition() {
         this.grammar = null;
@@ -23,8 +24,13 @@ public class GrammarDefinition {
     }
 
     public GrammarDefinition(String grammar, String name) {
+        this(grammar, name, false);
+    }
+
+    public GrammarDefinition(String grammar, String name, boolean changed) {
         this.grammar = grammar;
         this.name = name;
+        this.changed = changed;
     }
 
     public String getGrammar() {
@@ -33,6 +39,10 @@ public class GrammarDefinition {
 
     public String getName() {
         return name;
+    }
+
+    public boolean hasChanged() {
+        return changed;
     }
 
 }
