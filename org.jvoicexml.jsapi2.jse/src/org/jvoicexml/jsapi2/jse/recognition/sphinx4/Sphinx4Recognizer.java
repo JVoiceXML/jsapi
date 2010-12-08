@@ -50,15 +50,13 @@ import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.jse.recognition.GrammarDefinition;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 
-import com.sun.speech.engine.recognition.BaseRuleGrammar;
-
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.recognizer.Recognizer.State;
+import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
