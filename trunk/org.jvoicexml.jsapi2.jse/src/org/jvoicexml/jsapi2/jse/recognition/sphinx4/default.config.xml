@@ -121,7 +121,7 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     <!-- The Grammar  configuration                               -->
     <!-- ******************************************************** -->
 
-    <component name="srgsGrammar" type="org.mundo.ui.speech.sphinx4.SRGSGrammarContainer">
+    <component name="srgsGrammar" type="org.jvoicexml.jsapi2.jse.recognition.sphinx4.SRGSGrammarContainer">
         <property name="dictionary" value="dictionary"/>
         <property name="logMath" value="logMath"/>
     </component>
@@ -250,7 +250,7 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     </component>
 
     <component name="sphinxInputDataProcessor"
-               type="org.mundo.ui.speech.sphinx4.SphinxInputDataProcessor"/>
+               type="org.jvoicexml.jsapi2.jse.recognition.sphinx4.SphinxInputDataProcessor"/>
     
     <!-- ******************************************************* -->
     <!--  monitors                                               -->
