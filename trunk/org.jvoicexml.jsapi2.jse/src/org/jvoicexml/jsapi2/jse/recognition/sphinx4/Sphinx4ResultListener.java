@@ -24,7 +24,6 @@
  *
  */
 
-
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
 import java.util.StringTokenizer;
@@ -43,23 +42,23 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 
-
 /**
  * Result listener for results from the sphinx recognizer.
- *
+ * 
  * @author Dirk Schnelle
+ * @author Stefan Radomski
  * @version $Revision$
- *
- * <p>
- * Copyright &copy; 2005-2008 JVoiceXML group -
- * <a href="http://jvoicexml.sourceforge.net">
- * http://jvoicexml.sourceforge.net/</a>
- * </p>
+ * 
+ *          <p>
+ *          Copyright &copy; 2005-2008 JVoiceXML group - <a
+ *          href="http://jvoicexml.sourceforge.net">
+ *          http://jvoicexml.sourceforge.net/</a>
+ *          </p>
  */
 class Sphinx4ResultListener implements ResultListener {
     /** Logger for this class. */
-    private static final Logger LOGGER =
-            Logger.getLogger(Sphinx4ResultListener.class.getName());
+    private static final Logger LOGGER = Logger
+            .getLogger(Sphinx4ResultListener.class.getName());
 
     /** The recognizer which is notified when a result is obtained. */
     private final Sphinx4Recognizer recognizer;
@@ -69,7 +68,9 @@ class Sphinx4ResultListener implements ResultListener {
 
     /**
      * Construct a new result listener.
-     * @param rec The recognizer.
+     * 
+     * @param rec
+     *            The recognizer.
      */
     public Sphinx4ResultListener(final Sphinx4Recognizer rec) {
         recognizer = rec;
@@ -77,8 +78,11 @@ class Sphinx4ResultListener implements ResultListener {
 
     /**
      * Creates a vector of ResultToken (jsapi) from a sphinx result.
-     * @param result The Sphinx4 result
-     * @param current The current BaseResult (jsapi)
+     * 
+     * @param result
+     *            The Sphinx4 result
+     * @param current
+     *            The current BaseResult (jsapi)
      * @return ResultToken[]
      */
     private ResultToken[] sphinx4ResultToResultToken(final Result result,
@@ -101,12 +105,13 @@ class Sphinx4ResultListener implements ResultListener {
             res[i] = brt;
         }
         return res;
-   }
-
+    }
 
     /**
      * Method called when a result is generated.
-     * @param result The new result.
+     * 
+     * @param result
+     *            The new result.
      */
     public void newResult(final Result result) {
         LOGGER.info("received result: " + result);
@@ -117,7 +122,14 @@ class Sphinx4ResultListener implements ResultListener {
             return;
         }
 
-        final RuleGrammar grammar = recognizer.getRuleGrammar();
+        /**
+         * For the current implementation with the SRGSGrammarContainer in
+         * Sphinx4, all active grammars are actually a single one. Call the
+         * recognizer with the best token and let him figure out, which grammar
+         * actually produced the result.
+         */
+        final RuleGrammar grammar = recognizer.getRuleGrammar(result
+                .getBestFinalToken());
         try {
             currentResult = new BaseResult(grammar);
         } catch (GrammarException e) {
@@ -132,28 +144,27 @@ class Sphinx4ResultListener implements ResultListener {
         ResultToken[] rt = sphinx4ResultToResultToken(result, currentResult);
         int numTokens = rt.length;
 
-        final ResultEvent grammarFinalized =
-            new ResultEvent(currentResult, ResultEvent.GRAMMAR_FINALIZED);
+        final ResultEvent grammarFinalized = new ResultEvent(currentResult,
+                ResultEvent.GRAMMAR_FINALIZED);
         recognizer.postResultEvent(grammarFinalized);
 
         if (numTokens == 0) {
             currentResult.setResultState(BaseResult.REJECTED);
-            final ResultEvent rejected =
-                new ResultEvent(currentResult, ResultEvent.RESULT_REJECTED,
-                        false, false);
+            final ResultEvent rejected = new ResultEvent(currentResult,
+                    ResultEvent.RESULT_REJECTED, false, false);
             recognizer.postResultEvent(rejected);
         } else {
             currentResult.setResultState(BaseResult.ACCEPTED);
             currentResult.setNumTokens(numTokens);
             currentResult.setTokens(rt);
             final ResultEvent accepted = new ResultEvent(currentResult,
-                        ResultEvent.RESULT_ACCEPTED, false, false);
+                    ResultEvent.RESULT_ACCEPTED, false, false);
             recognizer.postResultEvent(accepted);
         }
     }
 
     @Override
     public void newProperties(final PropertySheet sheet)
-        throws PropertyException {
+            throws PropertyException {
     }
 }

@@ -26,30 +26,34 @@
 
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.speech.Engine;
 
 import edu.cmu.sphinx.recognizer.Recognizer;
 
 /**
  * Recognition thread to run the recognizer in parallel.
- *
+ * 
  * @author Dirk Schnelle-Walka
+ * @author Stefan Radomski
  * @version $Revision$
  */
-final class RecognitionThread
-        extends Thread {
+final class RecognitionThread extends Thread {
     /** Logger for this class. */
-    private static final Logger LOGGER =
-            Logger.getLogger(RecognitionThread.class.getName());
+    private static final Logger LOGGER = Logger
+            .getLogger(RecognitionThread.class.getName());
 
     /** The wrapper for the sphinx4 recognizer. */
     private Sphinx4Recognizer recognizer;
+    private boolean started;
 
     /**
      * Creates a new object.
-     * @param rec The wrapper for the sphinx4 recognizer.
+     * 
+     * @param rec
+     *            The wrapper for the sphinx4 recognizer.
      */
     public RecognitionThread(final Sphinx4Recognizer rec) {
         super("RecognitionThread");
@@ -66,7 +70,6 @@ final class RecognitionThread
         }
 
         final Recognizer rec = recognizer.getRecognizer();
-        final boolean started;
 
         started = true;
 
@@ -78,8 +81,10 @@ final class RecognitionThread
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("start recognizing ..");
             }
-            while(started) {
+            while (started) {
+                System.err.println("Calling recognize");
                 rec.recognize();
+                System.err.println("Returned from recognize");
                 recognizer.postEndOfSpeechEvent();
                 recognizer.postListeningEvent();
             }
@@ -100,7 +105,6 @@ final class RecognitionThread
      * Stop this recognition thread.
      */
     public void stopRecognition() {
-        Thread thread = currentThread();
-        thread.interrupt();
+        started = false;
     }
 }
