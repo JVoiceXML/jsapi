@@ -4,6 +4,7 @@ package org.jvoicexml.jsapi2.jse.recognition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,6 +28,7 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -45,13 +47,21 @@ import org.xml.sax.SAXException;
 public class SrgsRuleGrammarParser {
 
     private XPath xpath;
-
+    private static EntityResolver entityResolver = new EmptyEntityResolver();
     private HashMap<String, String> attributes;
 
+    public static class EmptyEntityResolver implements EntityResolver {
+        @Override
+        public InputSource resolveEntity(String publicId, String systemId)
+                throws SAXException, IOException {
+            return new InputSource(new StringReader(""));
+        }
+    }
 
     public SrgsRuleGrammarParser() {
         // Create a new XPath
         XPathFactory factory = XPathFactory.newInstance();
+
         xpath = factory.newXPath();
         attributes = new HashMap<String,String>();
     }
@@ -68,6 +78,7 @@ public class SrgsRuleGrammarParser {
         try{
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().
                                       newDocumentBuilder();
+            builder.setEntityResolver(entityResolver);
             return parseGrammar(builder.parse(new InputSource(reader)));
         }catch(Exception e){
             e.printStackTrace();
@@ -79,6 +90,7 @@ public class SrgsRuleGrammarParser {
         try{
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().
                                       newDocumentBuilder();
+            builder.setEntityResolver(entityResolver);
             return parseGrammar(builder.parse(new InputSource(stream)));
         }catch(Exception e){
             e.printStackTrace();
@@ -90,6 +102,7 @@ public class SrgsRuleGrammarParser {
     private Rule[] load(InputSource inputSource) {
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            builder.setEntityResolver(entityResolver);
 
             Node grammarNode = (Node) xpath.evaluate("/grammar",
                     builder.parse(inputSource), XPathConstants.NODE);
