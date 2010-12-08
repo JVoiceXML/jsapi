@@ -2,6 +2,7 @@ package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
@@ -102,7 +103,9 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
             sentEnded = true;
             long duration = (long) (((double) totalSamplesRead
                     / (double) sampleRate * 1000.0));
-            System.err.println("Sending end signal");
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("Sending end signal");
+            }
             totalSamplesRead = 0;
             return new DataEndSignal(duration);
         }
@@ -110,13 +113,17 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
         // we are running, but have not sent DataStart yet
         if (running && !sentStarted) {
             sentStarted = true;
-            System.err.println("Sending start signal");
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("Sending start signal");
+            }
             return new DataStartSignal(sampleRate);
         }
 
         // we are not running at all
         if (!running) {
-            System.err.println("Sending null");
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("Sending null");
+            }
             return null;
         }
 
