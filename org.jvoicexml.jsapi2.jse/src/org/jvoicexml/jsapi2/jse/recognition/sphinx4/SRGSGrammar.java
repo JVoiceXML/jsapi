@@ -43,6 +43,7 @@ import javax.speech.recognition.RuleToken;
 import org.jvoicexml.jsapi2.jse.recognition.BaseRuleGrammar;
 import org.jvoicexml.jsapi2.jse.recognition.SrgsRuleGrammarParser;
 
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 import edu.cmu.sphinx.util.LogMath;
@@ -113,6 +114,11 @@ public class SRGSGrammar extends Grammar {
     private GrammarNode firstNode = null;
 
 
+    public SRGSGrammar(boolean showGrammar, boolean optimizeGrammar, boolean addSilenceWords, boolean addFillerWords,
+            Dictionary dictionary) {
+        super(showGrammar, optimizeGrammar, addSilenceWords, addFillerWords, dictionary);
+    }
+
     /*
     * (non-Javadoc)
     *
@@ -127,13 +133,16 @@ public class SRGSGrammar extends Grammar {
 
         try {
             grammarURL = new URL(baseURL.toString() + grammarName);
+            grammarURL.openStream();
         } catch (MalformedURLException ex) {
             ex.printStackTrace();
+        } catch (IOException e) {
+            // there is no grammar at the given location or no location is given
+            return;
         }
 
         loadGrammar = true;
     }
-
 
     /**
      * Returns the RuleGrammar of this SRGSGrammar.
@@ -154,6 +163,9 @@ public class SRGSGrammar extends Grammar {
         baseURL = url;
     }
 
+    public void setGrammarName(String newName) {
+        grammarName = newName;
+    }
 
     /** Returns the name of this grammar. */
     public String getGrammarName() {
@@ -611,6 +623,7 @@ public class SRGSGrammar extends Grammar {
     /** Commit changes to all loaded grammars and all changes of grammar since the last commitChange */
     public void commitChanges() throws IOException {
         try {
+
             SrgsRuleGrammarParser srgsRuleGrammarParser = new SrgsRuleGrammarParser();
 
             Rule rules[];
@@ -659,13 +672,11 @@ public class SRGSGrammar extends Grammar {
                 }
             }
             postProcessGrammar();
-            System.err.println("");
         } catch (GrammarException ge) {
             dumpGrammarException(ge);
             throw new IOException("GrammarException: " + ge);
         } catch (EngineStateException ex) {
         }
-
     }
 
 
