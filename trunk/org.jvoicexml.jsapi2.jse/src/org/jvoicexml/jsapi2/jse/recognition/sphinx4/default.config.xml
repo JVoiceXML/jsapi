@@ -13,7 +13,7 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
 	1 decoder (edu.cmu.sphinx.decoder.Decoder)
 		1 searchManager (edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager)
 			1 pruner (edu.cmu.sphinx.decoder.pruner.SimplePruner)
-			1 scorer (edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer)
+			1 scorer (edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer)
 				1 frontend (edu.cmu.sphinx.frontend.FrontEnd)
 			1 activeListFactory (edu.cmu.sphinx.decoder.search.PartitionActiveListFactory)
 			1 linguist (edu.cmu.sphinx.linguist.flat.FlatLinguist)
@@ -94,6 +94,12 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
                 type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
         <property name="frontend" value="${frontend}"/>
     </component>
+
+		<!-- debugging the Frontend with a SimpleAcousticScorer is way easier -->
+    <!-- component name="threadedScorer" 
+                type="edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer">
+        <property name="frontend" value="${frontend}"/>
+    </component -->
     
     <!-- ******************************************************** -->
     <!-- The linguist  configuration                              -->
@@ -114,8 +120,8 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     <!-- ******************************************************** -->
     <!-- The Grammar  configuration                               -->
     <!-- ******************************************************** -->
-            
-    <component name="srgsGrammar" type="org.jvoicexml.jsapi2.jse.recognition.sphinx4.SRGSGrammar">
+
+    <component name="srgsGrammar" type="org.mundo.ui.speech.sphinx4.SRGSGrammarContainer">
         <property name="dictionary" value="dictionary"/>
         <property name="logMath" value="logMath"/>
     </component>
@@ -244,7 +250,7 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     </component>
 
     <component name="sphinxInputDataProcessor"
-               type="org.jvoicexml.jsapi2.jse.recognition.sphinx4.SphinxInputDataProcessor"/>
+               type="org.mundo.ui.speech.sphinx4.SphinxInputDataProcessor"/>
     
     <!-- ******************************************************* -->
     <!--  monitors                                               -->
