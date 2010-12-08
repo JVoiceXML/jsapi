@@ -459,7 +459,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             if (grammar.isActivatable()) {
                 final GrammarDefinition definition =
                     new GrammarDefinition(grammar.toString(),
-                            grammar.getReference());
+                            grammar.getReference(), existChanges);
                 newGrammars.addElement(definition);
             }
         }
