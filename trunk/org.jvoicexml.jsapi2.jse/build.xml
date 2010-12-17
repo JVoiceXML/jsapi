@@ -18,18 +18,6 @@ This file builds the JSAPI base layer for JSE.
   <!-- distribution files -->
   <property name="component" value="org.jvoicexml.jsapi2.jse" />
   <property name="dist.jar" value="${dist}/${component}.jar" />
-  <property name="dist.impl.jar" value="${dist}/${component}.impl.jar" />
-
-  <property name="debug" value="on" />
-  <property name="optimize" value="off" />
-
-  <fileset dir="." id="dist.files.additional">
-    <include name="AUTHORS" />
-    <include name="COPYING" />
-    <include name="INSTALL" />
-    <include name="README" />
-    <include name="ChangeLog" />
-  </fileset>
 
   <target name="-init">
     <mkdir dir="${build}" />
@@ -37,24 +25,16 @@ This file builds the JSAPI base layer for JSE.
   </target>
 
   <path id="classpath">
-    <pathelement location="../javax.speech/classes"/>
-    <fileset dir="3rdparty\freetts1.2\lib">
-      <include name="cmulex.jar" />
-      <include name="cmu_us_kal.jar" />
-      <include name="en_us.jar" />
-      <include name="freetts.jar" />
-    </fileset>
+    <pathelement location="${base-project}/dist/jsr113.jar"/>
+    <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
     <fileset dir="3rdparty\sphinx4\lib">
       <include name="sphinx4.jar" />
     </fileset>
-    <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
-    <pathelement location="../org.jvoicexml/3rdparty/log4j1.2.16/lib/log4j-1.2.16.jar"/>
   </path>
 
   <target name="clean" description="Remove all compiled and distribution files">
     <delete dir="${build}" />
     <delete file="${dist.jar}" />
-    <delete file="${dist.impl.jar}" />
   </target>
 
   <target name="compile" depends="-init" description="Compile the JAVA sources">
@@ -66,19 +46,12 @@ This file builds the JSAPI base layer for JSE.
       <classpath refid="classpath" />
       <compilerarg value="-Xlint:unchecked" />
     </javac>
-    <copy todir="${build}">
-      <fileset dir="${src}">
-        <include name="**/*.xsl" />
-      </fileset>
-    </copy>
   </target>
 
   <target name="jar" depends="compile" description="Pack all compiled files into jar files">
     <jar jarfile="${dist.jar}" compress="false">
       <fileset dir="${build}">
         <include name="org/jvoicexml/**/*.class" />
-        <exclude name="org/jvoicexml/jsapi2/jse/recognition/sphinx4/**" />
-        <exclude name="org/jvoicexml/jsapi2/jse/synthesis/freetts/**" />
       </fileset>
       <manifest>
         <attribute name="Built-By" value="${user.name}" />
@@ -87,21 +60,6 @@ This file builds the JSAPI base layer for JSE.
             value="JVoiceXML group" />
           <attribute name="Implementation-Title"
             value="Base implementation for JSR 113 vendors for JSE" />
-          <attribute name="Implementation-Version"
-              value="${version}" />
-        </section>
-      </manifest>
-    </jar>
-    <jar jarfile="${dist.impl.jar}" compress="false">
-      <fileset dir="${build}">
-        <include name="org/jvoicexml/jsapi2/jse/recognition/sphinx4/**" />
-        <include name="org/jvoicexml/jsapi2/jse/synthesis/freetts/**" />
-      </fileset>
-      <manifest>
-        <attribute name="Built-By" value="${user.name}" />
-        <section name="common">
-          <attribute name="Implementation-Vendor" value="JVoiceXML group" />
-          <attribute name="Implementation-Title" value="Demo implementation for Sphinx4 and FreeTTS" />
           <attribute name="Implementation-Version"
               value="${version}" />
         </section>

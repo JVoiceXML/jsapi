@@ -55,6 +55,7 @@ import javax.speech.recognition.RecognizerMode;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 
+import org.jvoicexml.jsapi2.jse.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 
 
@@ -124,5 +125,14 @@ public abstract class JseBaseRecognizer extends BaseRecognizer {
             final SpeechEventExecutor executor) {
         final BaseResult base = (BaseResult) result;
         base.postResultEvent(executor, event);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected SpeechEventExecutor createSpeechEventExecutor() {
+        return new ThreadSpeechEventExecutor();
     }
 }
