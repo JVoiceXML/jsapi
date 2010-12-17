@@ -8,8 +8,8 @@ import javax.speech.VocabularyManager;
 import javax.speech.synthesis.Speakable;
 
 import org.jvoicexml.jsapi2.DummyAudioManager;
+import org.jvoicexml.jsapi2.DummySpeechEventExecutor;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
-import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
 
 /**
@@ -76,7 +76,7 @@ public class DummySynthesizer extends BaseSynthesizer {
     }
 
     protected SpeechEventExecutor createSpeechEventExecutor() {
-        return new ThreadSpeechEventExecutor();
+        return new DummySpeechEventExecutor();
     }
 
     protected VocabularyManager createVocabularyManager() {

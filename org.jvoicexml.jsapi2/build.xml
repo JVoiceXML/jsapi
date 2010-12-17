@@ -1,6 +1,6 @@
 <project name="JSR 113" default="jar" basedir=".">
   <description>
-This file builds the JSR 113.jar.
+This file builds the JSAPI2 project.
     </description>
 
   <!-- allow the user to override setting in an own properties file. -->
@@ -45,6 +45,10 @@ This file builds the JSR 113.jar.
     <ant dir="../javax.speech" target="clean" inheritall="false"
         inheritrefs="false"/>
     <ant dir="../org.jvoicexml.jsapi2.jse" target="clean" inheritall="false"
+        inheritrefs="false"/>
+    <ant dir="../org.jvoicexml.jsapi2.jse.freetts" target="clean" inheritall="false"
+        inheritrefs="false"/>
+    <ant dir="../org.jvoicexml.jsapi2.jse.sphinx4" target="clean" inheritall="false"
         inheritrefs="false"/>
     <ant dir="../org.jvoicexml.jsapi2.mac" target="clean" inheritall="false"
         inheritrefs="false"/>
@@ -115,6 +119,10 @@ This file builds the JSR 113.jar.
   <target name="-components" depends="-jar">
     <ant dir="../org.jvoicexml.jsapi2.jse" antfile="build.xml"
         inheritall="false"/>
+    <ant dir="../org.jvoicexml.jsapi2.jse.freetts" target="jar" inheritall="false"
+        inheritrefs="false"/>
+    <ant dir="../org.jvoicexml.jsapi2.jse.sphinx4" target="jar" inheritall="false"
+        inheritrefs="false"/>
     <ant dir="../org.jvoicexml.jsapi2.sapi" antfile="build.xml"
         inheritall="false" />
     <ant dir="../org.jvoicexml.jsapi2.mac" antfile="build.xml"

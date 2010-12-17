@@ -73,7 +73,6 @@ import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
 import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.BaseVocabularyManager;
-import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 
 
 /**
@@ -144,13 +143,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * @return the created grammar manager
      */
     protected abstract GrammarManager createGrammarManager();
-
-    /**
-     * {@inheritDoc}
-     */
-    protected SpeechEventExecutor createSpeechEventExecutor() {
-        return new ThreadSpeechEventExecutor();
-    }
 
     /**
      * {@inheritDoc}

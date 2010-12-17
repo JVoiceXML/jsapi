@@ -19,9 +19,6 @@ This file builds the JSR 113.jar.
   <property name="component" value="org.jvoicexml.jsapi2.mac" />
   <property name="dist.jar" value="${dist}/${component}.jar" />
 
-  <property name="debug" value="on" />
-  <property name="optimize" value="off" />
-
   <!-- taskdef resource="cpptasks.tasks">
     <classpath>
       <pathelement location="lib/cpptasks.jar" />
@@ -37,8 +34,8 @@ This file builds the JSR 113.jar.
   </target>
 
   <path id="classpath">
-    <pathelement location="../javax.speech/classes"/>
-    <pathelement location="${base-project}/dist/jsr113-base.jar"/>
+    <pathelement location="${base-project}/dist/jsr113.jar"/>
+    <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
     <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jse.jar"/>
   </path>
 

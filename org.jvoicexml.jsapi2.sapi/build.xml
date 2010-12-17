@@ -19,9 +19,6 @@ This file builds the JSR 113.jar.
   <property name="component" value="org.jvoicexml.jsapi2.sapi" />
   <property name="dist.jar" value="${dist}/${component}.jar" />
 
-  <property name="debug" value="on" />
-  <property name="optimize" value="off" />
-
   <target name="-init">
     <condition property="isWindows">
       <os family="windows"/>
@@ -31,7 +28,7 @@ This file builds the JSR 113.jar.
   </target>
 
   <path id="classpath">
-    <pathelement location="../javax.speech/classes"/>
+    <pathelement location="${base-project}/dist/jsr113.jar"/>
     <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
     <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jse.jar"/>
   </path>
