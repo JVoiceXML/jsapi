@@ -27,9 +27,6 @@ This file builds the JSAPI base layer for JSE.
   <path id="classpath">
     <pathelement location="${base-project}/dist/jsr113.jar"/>
     <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
-    <fileset dir="3rdparty\sphinx4\lib">
-      <include name="sphinx4.jar" />
-    </fileset>
   </path>
 
   <target name="clean" description="Remove all compiled and distribution files">
