@@ -4,9 +4,9 @@
  * Date:    $LastChangedDate $
  * Author:  $LastChangedBy: schnelle $
  *
- * JSAPI - An base implementation for JSR 113.
+ * JSAPI - A base implementation for JSR 113.
  *
- * Copyright (C) 2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2009-2010 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
 
@@ -65,7 +65,8 @@ public final class InputDemo implements ResultListener {
 
         // Get it ready to speak
         synthesizer.allocate();
-
+        synthesizer.resume();
+        synthesizer.waitEngineState(Engine.RESUMED);
 
         recognizer.allocate();
         recognizer.addResultListener(this);
