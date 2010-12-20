@@ -147,11 +147,9 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
     /**
      * Handles a deallocation request. Cancels all pending items, terminates the
      * output handler, and posts the state changes.
-     *
-     * @throws EngineException
-     *                 if a deallocation error occurs
      */
-    public void handleDeallocate() {
+    public void handleDeallocate() throws EngineStateException,
+        EngineException, AudioException {
         setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
         getQueueManager().cancelAllItems();
         getQueueManager().terminate();
@@ -159,7 +157,11 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
         // Close the audio. This should flush out any queued audio data
 
         if (audioPlayer != null) {
-            audioPlayer.close();
+            try {
+                audioPlayer.close();
+            } catch (IOException e) {
+                throw new AudioException(e.getMessage());
+            }
         }
     }
 
