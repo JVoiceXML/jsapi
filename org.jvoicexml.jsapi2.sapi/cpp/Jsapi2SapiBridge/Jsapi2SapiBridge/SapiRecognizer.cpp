@@ -35,7 +35,7 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognize
         return 0;
     }
 	
-    return (jlong) recognizer;	
+    return (jlong) recognizer;
 }
 
 /*

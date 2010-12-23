@@ -3,12 +3,22 @@
 #include <log4cplus/logger.h>
 #include "log4cplus/consoleappender.h"
 
+#include "jInputStream.h" //IJavaInputStream, CJavaInputStream, Interfaces, ClassFactory
+
 static log4cplus::Logger logger =
     log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.JNI"));
 
 
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
+CClassFactory   g_ClassFactory; // Factory for JInputStream etc.
+DWORD dwRegister; // Token to unregister JInputStream
+JavaVM *jvm; //Handle to the Java Virtual Machine
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm_init, void *reserved)
 {
+	// cache the jvm-handle
+	jvm = jvm_init;
+
+	// inilialize COM
 	HRESULT hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
     if (FAILED(hr))
     {
@@ -18,6 +28,20 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
         LOG4CPLUS_FATAL(logger, buffer);
         return JNI_ERR;
     }
+
+	// register own component IJavaInputStream etc.
+	hr = ::CoRegisterClassObject(CLSID_JInputStream, &g_ClassFactory, 
+		CLSCTX_SERVER, REGCLS_SINGLEUSE, &dwRegister);
+	if (FAILED(hr)) {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Registering component \"JavaInputStream\" failed!",
+            hr);
+        LOG4CPLUS_FATAL(logger, buffer);
+        return JNI_ERR;
+	}
+
+
+
     // TODO add this to a configuration file
     log4cplus::SharedAppenderPtr console(new log4cplus::ConsoleAppender(false, true));
     console->setName(LOG4CPLUS_TEXT("console"));
