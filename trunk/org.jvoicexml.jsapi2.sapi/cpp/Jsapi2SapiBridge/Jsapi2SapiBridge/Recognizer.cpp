@@ -14,6 +14,7 @@ log4cplus::Logger Recognizer::logger =
     log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.Recognizer"));
 
 
+/* Constructor */
 Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 : cpRecognizerEngine(NULL), cpRecoCtxt(NULL), hr(S_OK), jenv(env), jrec(rec)
 {
@@ -30,11 +31,10 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
     {
         // This specifies which of the recognition events are going to trigger
         // notifications.
-        // Here, all we are interested in is when the engine has recognized something
-		// no false recognition
 		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION), SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION) );//|SPFEI(SPEI_FALSE_RECOGNITION)
     }
 
+	/**** Disable the standard AudioIn */
     CComPtr<ISpAudio> cpAudio;
 	if (SUCCEEDED(hr))
 	{
@@ -47,6 +47,8 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 	   // Set the audio input to our object.
 	   hr = cpRecognizerEngine->SetInput(cpAudio, TRUE);
 	}
+	/**** END -- Disable Standard AudioIn */
+
 	if( SUCCEEDED(hr) )
     {
 		hr = cpRecoCtxt->SetAudioOptions(SPAO_RETAIN_AUDIO, NULL, NULL);
@@ -60,7 +62,7 @@ Recognizer::~Recognizer()
 {
     Pause();
 
-	/* Inactivate and Delete all Grammars contained in the gramHash */
+	/* Inactivate and delete all Grammars contained in the gramHash */
 	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
 
 	for( it ; it != gramHash.end(); it++){		
@@ -74,7 +76,7 @@ Recognizer::~Recognizer()
 		grammar.Release();
 	}
 	
-	/*Release the CComPtr */
+	/* Release the CComPtr */
 	cpRecoCtxt.Release();
 	cpRecognizerEngine.Release();
 }
@@ -355,7 +357,7 @@ HRESULT Recognizer::StartRecognition(WCHAR* result[])
         }
 	}
 	
-	/* Set a Win32 Window Event to recieve the recognition Result */
+	/* Set a Win32 Window Event to receive the recognition Result */
 	hr = cpRecoCtxt->SetNotifyWin32Event();	
 	if (FAILED(hr))
     {

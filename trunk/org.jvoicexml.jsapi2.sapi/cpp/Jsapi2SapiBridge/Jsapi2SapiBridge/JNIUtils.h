@@ -2,6 +2,8 @@
 
 #include <jni.h>
 
+extern JavaVM *jvm; //Handle to the Java Virtual Machine
+
 void ThrowJavaException(JNIEnv* env, char* exceptionClassName, char* message);
 
 BOOL GetMethodId(JNIEnv* env, const char* className, const char* methodName,

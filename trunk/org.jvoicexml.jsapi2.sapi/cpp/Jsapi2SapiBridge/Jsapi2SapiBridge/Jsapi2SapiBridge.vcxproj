@@ -74,7 +74,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;C:\Program Files\Microsoft SDKs\Windows\v7.0A\Include;..\3rdparty\jni\include;..\3rdparty\jni\include\win32;..\3rdparty\log4cplus\include;..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_DCOM;_SAPI_VER=0x053;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level1</WarningLevel>
@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="jInputStream.cpp" />
     <ClCompile Include="JNIUtils.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Recognizer.cpp" />
@@ -101,6 +102,7 @@
     <ClCompile Include="Voice.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="jInputStream.h" />
     <ClInclude Include="JNIUtils.h" />
     <ClInclude Include="..\include\org_jvoicexml_jsapi2_sapi_recognition_SapiRecognitionThread.h" />
     <ClInclude Include="..\include\org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer.h" />
