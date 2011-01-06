@@ -82,7 +82,7 @@ CJavaInputStream::QueryInterface(REFIID riid, void** ppv)
  STDMETHODIMP
 CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 {
-	//std::cout << TEXT("IStream:Read") << std::endl;
+	//std::clog << "IStream:Read" << std::endl;
 
 	// if we have no connection to the jvm, return immediately
 	if (jvm == NULL) {
@@ -110,6 +110,7 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 	ULONG available = env->CallIntMethod(inputStream, jAvailable);
 	int readTimeOut = 10; //50ms * 10 = 500ms timeout
 	while (available < cb && readTimeOut > 0) {
+		//std::clog << "Available: " << available << std::endl;
 		//std::cout << "Not enough data! Sleeping...";
 		Sleep(50); //sleep 50ms
 		//std::cout << "and awake!" << std::endl;

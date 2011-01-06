@@ -1,6 +1,6 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -9,6 +9,11 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
@@ -20,11 +25,10 @@ import javax.speech.recognition.RecognizerProperties;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultToken;
-import javax.speech.recognition.RuleSequence;
-import javax.speech.recognition.RuleTag;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
+import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 
@@ -34,6 +38,9 @@ import org.jvoicexml.jsapi2.recognition.BaseResultToken;
  *
  */
 public final class SapiRecognizer extends JseBaseRecognizer {
+    
+    public InputStream inputStream;
+    
     /** Logger for this class. */
     private static final Logger LOGGER =
         Logger.getLogger(SapiRecognizer.class.getName());
@@ -54,6 +61,10 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      */
     public SapiRecognizer(final SapiRecognizerMode mode) {
         super(mode);
+        
+        //prefered AudioFormat 
+        ((JseBaseAudioManager) getAudioManager())
+            .setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, false));
     }
 
     /**
@@ -72,10 +83,71 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     @Override
     public void handleAllocate() throws EngineStateException, EngineException,
             AudioException, SecurityException {
+        // allocate the CPP-Recognizer
         recognizerHandle = sapiAllocate();
+        
+        
+        // Get the source audioStream
+        JseBaseAudioManager audioManager = (JseBaseAudioManager) getAudioManager();
+        audioManager.audioStart();
+        inputStream = audioManager.getInputStream();
+        
+        /* problem: TypeMismatch JSAPI2-AudioFormat <-> JAVAX-AudioFormat */
+        //AudioFormat audioFormat = audioManager.getAudioFormat();
+        // => alternatively: hardcoded streamInfo
+        float sampleRate = 16000;
+        int bitsPerSample = 16;
+        int channels = 1;
+        boolean endian = false;
+        boolean signed = true;
+        
+        /***********************************************************/
+        /* This -TEMPORARY- solution takes the standard mic-in from the system.
+         * 
+         * Proof-of-concept:
+         * From now on, the SAPI-Recognizer gets it's data from an
+         * InputStream on the java side.
+         */
+        TargetDataLine line;
+        AudioFormat format = new AudioFormat(sampleRate, bitsPerSample, channels, signed, endian);
+        try {
+            line = AudioSystem.getTargetDataLine(format);
+        } catch (LineUnavailableException e) {
+            line = null;
+            e.printStackTrace();
+        }
+        inputStream = new AudioInputStream(line);
+        try {
+            line.open();
+        } catch (LineUnavailableException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        line.start();
+        /***********************************************************/
+        
+        sapiSetRecognizerInputStream(recognizerHandle, 
+                    inputStream, 
+                    sampleRate, 
+                    bitsPerSample, 
+                    channels, 
+                    endian, 
+                    signed, 
+                    AudioFormat.Encoding.PCM_SIGNED.toString().toLowerCase()
+                );
     }
 
     private native long sapiAllocate();
+    
+    private native boolean sapiSetRecognizerInputStream(
+            long handle,
+            InputStream in, 
+            float sampleRate, 
+            int bitsPerSec, 
+            int channels, 
+            boolean endian, 
+            boolean signed, 
+            String encoding);
 
     @Override
     public void handleDeallocate() {
@@ -227,7 +299,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
            if(LOGGER.isLoggable(Level.FINE)){
                LOGGER.fine("No Match Recognized => False Recognition ...");
            }
-           result.setResultState(FinalResult.MISRECOGNITION);
+           result.setResultState(FinalResult.REJECTED);
            final ResultEvent rejected =
                new ResultEvent(result, ResultEvent.RESULT_REJECTED,
                        false, false);

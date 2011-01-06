@@ -18,7 +18,6 @@ log4cplus::Logger Recognizer::logger =
 Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 : cpRecognizerEngine(NULL), cpRecoCtxt(NULL), hr(S_OK), jenv(env), jrec(rec)
 {
-    
 	// create a new InprocRecognizer.
     hr = cpRecognizerEngine.CoCreateInstance(CLSID_SpInprocRecognizer);	
     if (SUCCEEDED(hr))
@@ -34,7 +33,6 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION), SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION) );//|SPFEI(SPEI_FALSE_RECOGNITION)
     }
 
-	/**** Disable the standard AudioIn */
     CComPtr<ISpAudio> cpAudio;
 	if (SUCCEEDED(hr))
 	{
@@ -42,12 +40,14 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 	   // Create the default audio input object.
 	   hr = SpCreateDefaultObjectFromCategoryId(SPCAT_AUDIOIN, &cpAudio);
 	}	
+
+	/**** SET standard AudioIn */
 	if (SUCCEEDED(hr))
 	{
 	   // Set the audio input to our object.
 	   hr = cpRecognizerEngine->SetInput(cpAudio, TRUE);
 	}
-	/**** END -- Disable Standard AudioIn */
+	/**** END -- SET standard AudioIn */
 
 	if( SUCCEEDED(hr) )
     {
@@ -55,14 +55,13 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 	}
 
 	cpAudio.Release();
-
 }
 
 Recognizer::~Recognizer()
 {
     Pause();
 
-	/* Inactivate and delete all Grammars contained in the gramHash */
+	/* Deactivate and delete all Grammars contained in the gramHash */
 	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
 
 	for( it ; it != gramHash.end(); it++){		
@@ -81,6 +80,10 @@ Recognizer::~Recognizer()
 	cpRecognizerEngine.Release();
 }
 
+HRESULT Recognizer::setRecognizerInputStream(CComPtr<ISpStream> spStream) 
+{
+	return cpRecognizerEngine->SetInput(spStream, TRUE);
+}
 
 HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 {
@@ -122,7 +125,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 	hr = compiler.CoCreateInstance(CLSID_SpW3CGrammarCompiler); //SRGS-Compiler
     if (FAILED(hr))
     {
-        std::cerr << "CoCreateInstance CLSID_SpW3CGramamrCompiler failed : 0x" << std::hex <<std::uppercase << hr << std::endl;
+        std::cerr << "CoCreateInstance CLSID_SpW3CGramamrCompiler failed : 0x" << std::hex << std::uppercase << hr << std::endl;
 		return hr;
     }
 
@@ -241,6 +244,7 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 	LPCWSTR ruleName = NULL;
     CSpEvent event;
 	ISpRecoResult* result = NULL;
+	ULONG ulTmp = 1; //*TEST*
 
     /* Process all of the recognition events */
 	while ( SUCCEEDED( hr = event.GetFrom(cpRecoCtxt)) && hr!=S_FALSE )//== S_OK
@@ -250,6 +254,8 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 			case SPEI_RECOGNITION:
 
 				result = event.RecoResult();
+
+				//result->SpeakAudio(0, 0, 0, &ulTmp); //*TEST*
 
 				hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
 					&utterance, NULL);
@@ -326,16 +332,23 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 
 HRESULT Recognizer::Pause()
 {
+	hr = S_OK;
+	if (continuing) {
+		hr = cpRecoCtxt->Pause(NULL);
+	}
+	
 	continuing = false;
 
-    //return cpRecoCtxt->Pause(NULL);				
-    return S_OK;
+    return hr;
 }
 
 HRESULT Recognizer::Resume()
 {   
-	//return cpRecoCtxt->Resume(NULL); 
-    return S_OK;
+	hr = S_OK;
+	if (!continuing) {
+		hr = cpRecoCtxt->Resume(NULL);
+	}
+    return hr;
 }
 
 //wchar_t** Recognizer::StartRecognition()
