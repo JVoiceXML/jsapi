@@ -1,5 +1,7 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
+import static org.junit.Assert.*;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,7 +45,7 @@ public final class TestRecognizer implements ResultListener {
 
     /** The recognition result. */
     private Result result;
-
+    
     /**
      * Prepare the test environment for all tests.
      * @throws Exception
@@ -58,11 +60,10 @@ public final class TestRecognizer implements ResultListener {
         EngineManager.registerEngineListFactory(
                 SapiEngineListFactory.class.getCanonicalName());
 //        Locale.setDefault(new Locale("en"));
-        
     }
 
     /**
-     * Set up the test .
+     * Set up the test.
      * @throws Exception
      *         set up failed
      */
@@ -77,14 +78,16 @@ public final class TestRecognizer implements ResultListener {
     }
 
     /**
-     * Tear down the test .
+     * Tear down the test.
      * @throws Exception
      *         tear down failed
      */
     @After
     public void tearDown() throws Exception {
-        System.out.println("Deallocatinge ASR Engine");
+        System.out.println("Deallocating ASR Engine");
         if (recognizer != null) {
+           recognizer.pause();
+           recognizer.waitEngineState(Engine.PAUSED);
            recognizer.deallocate();
            recognizer.waitEngineState(Engine.DEALLOCATED);
         }
@@ -145,34 +148,54 @@ public final class TestRecognizer implements ResultListener {
      */
     @Test
     public void testRecognizePause() throws Exception {
+        /* timeout for enginestate change requests */
+        int timeOut = 3000;
+        
+        // load testGrammar
         recognizer.addResultListener(this);
         final GrammarManager grammarManager = recognizer.getGrammarManager();
         final String name = getLocaleGrammarName("hello");
         final InputStream in = TestRecognizer.class.getResourceAsStream(name);
         grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");
+        
+        // test resume
         recognizer.requestFocus();
         recognizer.resume();
-        recognizer.waitEngineState(Engine.RESUMED);
+        recognizer.waitEngineState(Engine.RESUMED, timeOut);
+        assertTrue("Enginestate should be RESUMED.",
+                    recognizer.testEngineState(Engine.RESUMED)
+                );
+        
         System.out.println("delaying...");
         Thread.sleep(500);
         System.out.println("...delayed");
+        
+        // test pause
         recognizer.pause();
-//        recognizer.waitEngineState(Engine.PAUSED);
+        recognizer.waitEngineState(Engine.PAUSED, timeOut);
+        assertTrue("Enginestate should be PAUSED.",
+                recognizer.testEngineState(Engine.PAUSED)
+            );
+        
+        // test resume after pause
         recognizer.resume();
-        recognizer.waitEngineState(Engine.RESUMED);
-        System.out.println("Say something");
-        synchronized (lock) {
-            lock.wait();
-        }
-        
-        System.out.print("Recognized: ");
-        final ResultToken[] tokens = result.getBestTokens();
-
-        for (int i = 0; i < tokens.length; i++) {
-            System.out.print(tokens[i].getText() + " ");
-        }
-        System.out.println();
-        
+        recognizer.waitEngineState(Engine.RESUMED, timeOut);
+        assertTrue("Enginestate should be RESUMED.",
+                recognizer.testEngineState(Engine.RESUMED)
+            );
+//        
+//        System.out.println("Say something");
+//        synchronized (lock) {
+//            lock.wait();
+//        }
+//        
+//        System.out.print("Recognized: ");
+//        final ResultToken[] tokens = result.getBestTokens();
+//
+//        for (int i = 0; i < tokens.length; i++) {
+//            System.out.print(tokens[i].getText() + " ");
+//        }
+//        System.out.println();
     }
 
     /**

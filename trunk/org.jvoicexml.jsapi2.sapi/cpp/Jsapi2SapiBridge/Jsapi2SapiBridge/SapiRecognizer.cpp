@@ -3,6 +3,8 @@
 #include "Recognizer.h"
 #include "JNIUtils.h"
 
+// wraps a java InputStream in an IStream
+#include "jInputStream.h"
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
@@ -40,11 +42,75 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognize
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
+ * Method:    sapiSetRecognizerInputStream
+ * Signature: (JLjava/io/InputStream;FIIZZLjava/lang/String;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiSetRecognizerInputStream
+  (JNIEnv *env, jobject caller, jlong recognizerHandle, jobject inputStream, 
+	jfloat sampleRate, jint bitsPerSample, jint channels, jboolean endian, jboolean signedData, jstring encoding)  {
+		
+		Recognizer* recognizer = (Recognizer*)recognizerHandle;
+		HRESULT hr;
+
+		/* create instance of JInputStream */
+		CComPtr<IStream> jStream;
+		hr = jStream.CoCreateInstance(CLSID_JInputStream);
+
+		/* query Setter-Interface */
+		CComPtr<IJavaInputStream> jStreamSetter;
+		if (SUCCEEDED(hr)) {
+			hr = jStream->QueryInterface(IID_IJavaInputStream, (void**) &jStreamSetter);
+		}
+		/* setup our IStream with the given Java InputStream as it's source */
+		if (SUCCEEDED(hr)) {
+			hr = jStreamSetter->setJavaInputStream(env, inputStream);
+		}
+
+		/* create ISpStream for the recognizer */
+		CComPtr<ISpStream> cpSpStream;
+		if (SUCCEEDED(hr)) {
+			hr = cpSpStream.CoCreateInstance(CLSID_SpStream);
+		}
+
+		/* set WAVEFORMATEX accordingly */
+		// see http://msdn.microsoft.com/en-us/library/ms720517%28v=VS.85%29.aspx
+		WAVEFORMATEX *format;
+		format = (WAVEFORMATEX*)malloc(sizeof(WAVEFORMATEX));
+		format->wFormatTag = WAVE_FORMAT_PCM;	//constant
+		format->nChannels = channels;			//variable
+		format->nSamplesPerSec = sampleRate;	//variable
+		format->wBitsPerSample = bitsPerSample;	//variable
+		format->nBlockAlign = (format->wBitsPerSample * format->nChannels) / 8;	//constant
+		format->nAvgBytesPerSec = format->nSamplesPerSec * format->nBlockAlign;	//constant
+		format->cbSize = 0;	//constant
+
+		/* set the Java IStream and it's format as the source for the SpeechStream */
+		if (SUCCEEDED(hr)) {
+			hr = cpSpStream->SetBaseStream(jStream, SPDFID_WaveFormatEx, format);
+		}
+
+		/* set the constructed SpeechStream as the new recognizerInput */
+		/* NOTE:
+		 *	The RecognizerContext must be paused before the InputStream-switch.
+		 *	This responsibility lies on the Java-side!
+		 */
+		hr = recognizer->setRecognizerInputStream(cpSpStream);
+
+		if (SUCCEEDED(hr)) {
+			return JNI_TRUE;
+		} else {
+			//insert ERROR-Logging here
+			return JNI_FALSE;
+		}
+}
+ 
+/*
+ * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
  * Method:    nativHandleDeallocate
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiDeallocate
-  (JNIEnv *env, jobject object, jlong recognizerHandle){
+  (JNIEnv *env, jobject object, jlong recognizerHandle) {
 
 	Recognizer* recognizer = (Recognizer*)recognizerHandle;
 	delete recognizer;

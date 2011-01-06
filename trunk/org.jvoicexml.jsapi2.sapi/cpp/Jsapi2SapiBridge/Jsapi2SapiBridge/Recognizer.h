@@ -13,6 +13,8 @@ public:
     Recognizer(HWND hwnd, JNIEnv *env, jobject rec);
     virtual ~Recognizer();
 
+	HRESULT setRecognizerInputStream(CComPtr<ISpStream> spStream);
+
     HRESULT Resume();
 
     HRESULT Pause();
@@ -47,12 +49,12 @@ private:
     CComPtr<ISpRecognizer>		cpRecognizerEngine;
 
     CComPtr<ISpRecoContext>		cpRecoCtxt;
-	
+
     JNIEnv* jenv;
 
     jobject jrec;
 
     /** Logger instance. */
     static log4cplus::Logger logger;
-};		
+};
 
