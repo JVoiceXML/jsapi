@@ -42,7 +42,7 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /** The media locator. */
     private String mediaLocator;
-
+    
     /** The associated engine. */
     private Engine engine;
 
@@ -137,11 +137,16 @@ public abstract class BaseAudioManager implements AudioManager {
             throw new SecurityException(
                     "AudioManager has no permission to access audio resources");
         }
+        
+        if (!(engine.testEngineState(Engine.PAUSED) || engine.testEngineState(Engine.DEALLOCATING_RESOURCES))) {
+            throw new EngineStateException(
+                    "The Engine has not been paused");
+        }
 
         handleAudioStop();
 
         final AudioEvent event = new AudioEvent(engine,
-                AudioEvent.AUDIO_STARTED);
+                AudioEvent.AUDIO_STOPPED);
         postAudioEvent(event);
     }
 
@@ -159,11 +164,6 @@ public abstract class BaseAudioManager implements AudioManager {
     public final void setMediaLocator(final String locator)
         throws AudioException, EngineStateException, IllegalArgumentException,
             SecurityException {
-        // Ensure that engine is DEALLOCATED
-        if (!engine.testEngineState(Engine.DEALLOCATED)) {
-            throw new EngineStateException(
-                    "Engine is not DEALLOCATED. Cannot setMediaLocator");
-        }
 
         if (!isSupportsAudioManagement()) {
             throw new SecurityException(
@@ -176,6 +176,10 @@ public abstract class BaseAudioManager implements AudioManager {
         }
 
         mediaLocator = locator;
+        
+        final AudioEvent event = new AudioEvent(engine,
+                AudioEvent.AUDIO_CHANGED);
+        postAudioEvent(event);
     }
 
     /**
