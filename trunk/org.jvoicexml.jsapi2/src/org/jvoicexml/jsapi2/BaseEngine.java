@@ -81,6 +81,16 @@ public abstract class BaseEngine implements Engine {
      * @see #engineState
      */
     protected Object engineStateLock;
+    
+    /**
+     * A counter keeping track of nested calls to <code>pause</code>
+     * and <code>resume</code>
+     * A value greater than 1 means nested pauses.
+     * If the value is 1 or lower, the Engine can be resumed immediately.
+     * @see #pause()
+     * @see #resume()
+     */
+    protected int P;
 
     /**
      * List of <code>EngineListeners</code> registered for
@@ -130,6 +140,7 @@ public abstract class BaseEngine implements Engine {
         engineListeners = new Vector();
         engineState = DEALLOCATED;
         engineStateLock = new Object();
+        P = 1;
     }
 
     /**
@@ -289,6 +300,7 @@ public abstract class BaseEngine implements Engine {
         // Handle engine allocation
         boolean success = false;
         try {
+            P = 1;
             // Handle allocate
             baseAllocate();
             success = true;
@@ -393,8 +405,13 @@ public abstract class BaseEngine implements Engine {
      * {@inheritDoc}
      */
     public final void pause() {
+        System.out.println("=== pause(): " + P);
         //Validate current state
         if (testEngineState(PAUSED)) {
+            // Increase internal state counter for nested pauses/resumes
+            synchronized(this) {
+                P++;
+            }
             return;
         }
 
@@ -408,6 +425,11 @@ public abstract class BaseEngine implements Engine {
             }
         }
 
+        synchronized(this) {
+            // Increase internal state counter for nested pauses/resumes
+            P++;
+        }
+        
         // Handle pause
         basePause();
 
@@ -421,6 +443,7 @@ public abstract class BaseEngine implements Engine {
      * {@inheritDoc}
      */
     public final boolean resume() throws EngineStateException {
+        System.out.println("=== resume(): " + P);
         //Validate current state
         if (testEngineState(RESUMED)) {
             return true;
@@ -435,13 +458,27 @@ public abstract class BaseEngine implements Engine {
                 return false;
             }
         }
-
-        //Handle resume
-        if (baseResume()) {
-            long[] states = setEngineState(PAUSED, RESUMED);
-            postEngineEvent(states[0], states[1], EngineEvent.ENGINE_RESUMED);
-            return true;
+        
+        boolean resumeNow = false;
+        synchronized (this) {
+            if (P <= 1) {
+                resumeNow = true;
+            }
+            P--;
+        }
+        if (resumeNow) {
+            //Handle resume
+            if (baseResume()) {
+                long[] states = setEngineState(PAUSED, RESUMED);
+                postEngineEvent(states[0], states[1], EngineEvent.ENGINE_RESUMED);
+                return true;
+            } else {
+                return false;
+            }
         } else {
+            // Every pause must be resumed seperately. 
+            // If the code reaches this point, we have a nested resume hence we do 
+            // NOT actually resume, but only decreased the pause-counter further above
             return false;
         }
     }
