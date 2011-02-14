@@ -27,7 +27,9 @@ final class SapiRecognitionThread extends Thread {
     public void run() {
         final long handle = recognizer.getRecognizerHandle();
         //start recognition and get the recognition result
+        System.out.println("--RecognitionThread: Starting recognition process");
         String tmp[] = recognizer.sapiRecognize(handle);
+        System.out.println("++RecognitionThread: Recognitionprocess ended");
         
         //copy the result into a local variable and notify the recognizer
         String result[] = (tmp==null ? null : Arrays.copyOf(tmp, 2));
@@ -38,7 +40,9 @@ final class SapiRecognitionThread extends Thread {
      * Stops the recognition process.
      */
     public void stopRecognition() {
+        System.out.println("--Recognizer: Issuing Interrupt to Recognition-Thread");
         interrupt();
+        System.out.println("++Recognizer: Issuing Interrupt to Recognition-Thread -- DONE!");
         final long handle = recognizer.getRecognizerHandle();
         recognizer.sapiAbortRecognition(handle);
     }

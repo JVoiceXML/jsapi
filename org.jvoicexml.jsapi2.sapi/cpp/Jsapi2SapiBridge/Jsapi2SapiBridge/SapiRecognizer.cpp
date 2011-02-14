@@ -94,12 +94,21 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 		 *	The RecognizerContext must be paused before the InputStream-switch.
 		 *	This responsibility lies on the Java-side!
 		 */
-		hr = recognizer->setRecognizerInputStream(cpSpStream);
+		if (SUCCEEDED(hr)) {
+			hr = recognizer->setRecognizerInputStream(cpSpStream);
+		}
+		int limitSetInput = 5;
+		for (int i = 0; (hr == SPERR_ENGINE_BUSY) && i < limitSetInput; i++) {
+			std::clog << "=> CPP setInputCounter: " << i << std::endl;
+			Sleep(10);
+			hr = recognizer->setRecognizerInputStream(cpSpStream);
+		}
 
 		if (SUCCEEDED(hr)) {
 			return JNI_TRUE;
 		} else {
 			//insert ERROR-Logging here
+			std::cerr << "CPP: Error setting a new InputStream! ErrorCode: 0x" << std::hex << std::uppercase << hr << std::endl;
 			return JNI_FALSE;
 		}
 }
@@ -125,15 +134,16 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
   (JNIEnv *env, jobject object, jlong recognizerHandle){
 		
 	Recognizer* recognizer = (Recognizer*)recognizerHandle;
-	recognizer->Pause();
+	HRESULT hr = recognizer->Pause();
 	
-	if (FAILED(recognizer->hr))
+	if (FAILED(hr))
     {
+		std::cerr << "Could not pause the recognizer!" << std::endl;
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "Pause recognizer failed",
             recognizer->hr);
         ThrowJavaException(env, "javax/speech/EngineException", buffer);
-    }	
+    }
 }
 
 /*
@@ -154,6 +164,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiResume
 (JNIEnv *env, jobject object, jlong handle, jobjectArray grammars, jobjectArray references)
 {
+	std::clog << "SAPI Rec: Resume()" << std::endl;
 
 	Recognizer* recognizer = (Recognizer*)handle;
     jsize size = env->GetArrayLength(grammars);
@@ -293,6 +304,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 	Recognizer* recognizer = (Recognizer*) handle;
 	
 	HRESULT hr = recognizer->AbortRecognition();
+	//HRESULT hr = recognizer->Pause();
     if ( FAILED(hr) )
     {
         char buffer[1024];

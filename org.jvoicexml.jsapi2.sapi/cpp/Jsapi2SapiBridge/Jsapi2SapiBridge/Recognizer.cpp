@@ -75,6 +75,9 @@ Recognizer::~Recognizer()
 		grammar.Release();
 	}
 	
+	// Wait until the recognition-thread has detached itself
+	Sleep(400);
+
 	/* Release the CComPtr */
 	cpRecoCtxt.Release();
 	cpRecognizerEngine.Release();
@@ -82,7 +85,23 @@ Recognizer::~Recognizer()
 
 HRESULT Recognizer::setRecognizerInputStream(CComPtr<ISpStream> spStream) 
 {
+	std::clog << " SAPI Rec: setRecognizerInputStream(): paused = ";
+	if (continuing) {
+		std::clog << "FALSE";
+	} else {
+		std::clog << "TRUE";
+	}
+	std::clog << std::endl;
 	return cpRecognizerEngine->SetInput(spStream, TRUE);
+
+	///* TEST */
+	//if (SUCCEEDED(cpRecognizerEngine->SetInput(spStream, TRUE))) {
+	//	std::clog << "Setting Input to NULL; recheck input" << std::endl;
+	//	return cpRecognizerEngine->SetInput(NULL, TRUE);
+	//} else {
+	//	std::clog << "CPP setRecognizerInputStream(): Could not set inputStream correctly" << std::endl;
+	//	return S_OK;
+	//}
 }
 
 HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
@@ -326,28 +345,30 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
         }
 
     }
-	return NULL;
+	return S_OK;
 } 
 
 
 HRESULT Recognizer::Pause()
 {
 	hr = S_OK;
-	if (continuing) {
-		hr = cpRecoCtxt->Pause(NULL);
-	}
+	//if (continuing) {
+	//	hr = cpRecoCtxt->Pause(NULL);
+	//}
 	
 	continuing = false;
 
-    return hr;
+	return hr;
 }
 
 HRESULT Recognizer::Resume()
 {   
 	hr = S_OK;
-	if (!continuing) {
-		hr = cpRecoCtxt->Resume(NULL);
-	}
+	//if (!continuing) {
+	//	hr = cpRecoCtxt->Resume(NULL);
+	//}
+
+	//continuing = true;
     return hr;
 }
 
@@ -384,21 +405,24 @@ HRESULT Recognizer::StartRecognition(WCHAR* result[])
 	/* wait for an event and try to look if it occured every 300ms*/
 	while( continuing && hr==S_FALSE  )
     {
-		hr = cpRecoCtxt->WaitForNotifyEvent(300);
-        if(hr == S_OK)
-        {
-            //return RecognitionHappened();
-			return RecognitionHappened(result);
-        }
+		if (cpRecoCtxt) {
+			//hr = cpRecoCtxt->WaitForNotifyEvent(300);
+			hr = cpRecoCtxt->WaitForNotifyEvent(20);
+			if(hr == S_OK)
+			{
+				//return RecognitionHappened();
+				return RecognitionHappened(result);
+			}
+		}
 	}
 
 	/* Delete all Grammars contained in the gramHash */
 	/* should be a temporary solution*/
-	for( it ; it != gramHash.end(); it++){	
+	for( it ; it != gramHash.end(); it++) {	
 
 	CComPtr<ISpRecoGrammar>		cpGrammar = it->second ;
 
-	cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );
+	cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
 	cpGrammar->SetGrammarState(SPGS_DISABLED);
 	cpGrammar.Detach();
 	cpGrammar.Release();
