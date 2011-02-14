@@ -37,7 +37,7 @@ public interface Engine {
 
     long DEALLOCATING_RESOURCES = 0x008;
 
-    long PAUSED = 0x010;;
+    long PAUSED = 0x010;
 
     long RESUMED = 0x020;
 

@@ -39,7 +39,7 @@ public class AudioEvent extends SpeechEvent {
 
     public static final int AUDIO_LEVEL = 0x8000008;
 
-    public static final int DEFAULT_MASK = AUDIO_STARTED | AUDIO_STOPPED;
+    public static final int DEFAULT_MASK = AUDIO_STARTED | AUDIO_CHANGED |  AUDIO_STOPPED;
 
     public static final int AUDIO_LEVEL_MIN = 0;
 
@@ -55,9 +55,9 @@ public class AudioEvent extends SpeechEvent {
 
     public AudioEvent(Engine source, int id) {
         super(source, id);
-        if ((id != AUDIO_STARTED) && (id != AUDIO_STOPPED)) {
+        if ((id != AUDIO_STARTED) && (id != AUDIO_CHANGED) && (id != AUDIO_STOPPED)) {
             throw new IllegalArgumentException(
-                    "Id must be AUDIO_STARTED or AUDIO_STOPPED!");
+                    "Id must be AUDIO_STARTED, AUDIO_CHANGED or AUDIO_STOPPED!");
         }
         audioLevel = AUDIO_LEVEL_MIN;
     }
