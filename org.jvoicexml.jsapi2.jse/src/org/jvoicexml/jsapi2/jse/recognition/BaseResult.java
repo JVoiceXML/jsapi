@@ -831,10 +831,21 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
 
     public int getConfidenceLevel(int nBest) throws IllegalArgumentException,
             ResultStateException {
-        if (state != Result.ACCEPTED)
+        //uncommented - see JSAPI2/FinalResult#getConfidenceLevel
+        // quote: "For a REJECTED result, a useful confidence level 
+        //              MAY be returned, but this is application 
+        //              and platform dependent."
+        if (state != FinalResult.ACCEPTED 
+                && state != FinalResult.REJECTED 
+                && state != FinalResult.DONT_KNOW 
+                && state != FinalResult.MISRECOGNITION 
+                && state != FinalResult.USER_CHANGE)
+            //above code could simply check for FinalResult.UNFINALIZED 
+            //but the implementation above is more error prone 
+            //(e.g. if the ResultState was not correctly set to UNFINALIZED)
            throw new ResultStateException();
 
-       if (nBest<0 || nBest>=getNumberAlternatives())
+        if (nBest<0 || nBest>=getNumberAlternatives())
            throw new IllegalArgumentException("nBest out of valid range!");
 
        return confidenceLevel;
