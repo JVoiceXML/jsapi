@@ -6,6 +6,8 @@
 #include <iostream>
 #include <jni.h>
 
+#include <log4cplus/logger.h>
+
 extern JavaVM *jvm;
 
 // %%GUIDs: ------------------------------------------------------------------
@@ -103,7 +105,8 @@ class CJavaInputStream : public IJavaInputStream {
 	STDMETHODIMP setJavaInputStream(JNIEnv *env, jobject object);
     // constructors/destructors
     CJavaInputStream()     { m_cRef = 0; env = NULL;}
-    ~CJavaInputStream()    { ; }
+    //virtual ~CJavaInputStream()    { ; }
+	virtual ~CJavaInputStream();
 
   private:
     LONG        m_cRef;		//reference counter

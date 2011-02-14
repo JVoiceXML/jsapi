@@ -31,7 +31,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm_init, void *reserved)
 
 	// register own component IJavaInputStream etc.
 	hr = ::CoRegisterClassObject(CLSID_JInputStream, &g_ClassFactory, 
-		CLSCTX_SERVER, REGCLS_SINGLEUSE, &dwRegister);
+		CLSCTX_SERVER, REGCLS_MULTIPLEUSE, &dwRegister);
 	if (FAILED(hr)) {
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "Registering component \"JavaInputStream\" failed!",

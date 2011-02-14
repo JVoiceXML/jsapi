@@ -54,6 +54,9 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
     /** Asynchronous recognition. */
     private SapiRecognitionThread recognitionThread;
+    
+    /** Listener for AudioEvents (e.g. <code>AudioEvent.AUDIO_CHANGED</code>) */
+    private SapiRecognizerAudioEventListener SapiAudioEventListener;
 
     /**
      * Constructs a new object.
@@ -62,9 +65,13 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     public SapiRecognizer(final SapiRecognizerMode mode) {
         super(mode);
         
-        //prefered AudioFormat 
-        ((JseBaseAudioManager) getAudioManager())
-            .setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, false));
+        //set prefered AudioFormat
+        JseBaseAudioManager audioManager = (JseBaseAudioManager) getAudioManager();
+        audioManager.setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, false));
+        
+        //register AudioEventListener
+        SapiAudioEventListener = new SapiRecognizerAudioEventListener(this);
+        audioManager.addAudioListener(SapiAudioEventListener);
     }
 
     /**
@@ -86,10 +93,14 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         // allocate the CPP-Recognizer
         recognizerHandle = sapiAllocate();
         
-        
-        // Get the source audioStream
+        // set the InputStream
+        setRecognizerInputStream();
+    }
+    
+    protected boolean setRecognizerInputStream() {
+     // Get the source audioStream
         JseBaseAudioManager audioManager = (JseBaseAudioManager) getAudioManager();
-        audioManager.audioStart();
+        //audioManager.audioStart();
         inputStream = audioManager.getInputStream();
         
         /* problem: TypeMismatch JSAPI2-AudioFormat <-> JAVAX-AudioFormat */
@@ -108,25 +119,25 @@ public final class SapiRecognizer extends JseBaseRecognizer {
          * From now on, the SAPI-Recognizer gets it's data from an
          * InputStream on the java side.
          */
-        TargetDataLine line;
-        AudioFormat format = new AudioFormat(sampleRate, bitsPerSample, channels, signed, endian);
-        try {
-            line = AudioSystem.getTargetDataLine(format);
-        } catch (LineUnavailableException e) {
-            line = null;
-            e.printStackTrace();
-        }
-        inputStream = new AudioInputStream(line);
-        try {
-            line.open();
-        } catch (LineUnavailableException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        line.start();
+//        TargetDataLine line;
+//        AudioFormat format = new AudioFormat(sampleRate, bitsPerSample, channels, signed, endian);
+//        try {
+//            line = AudioSystem.getTargetDataLine(format);
+//        } catch (LineUnavailableException e) {
+//            line = null;
+//            e.printStackTrace();
+//        }
+//        inputStream = new AudioInputStream(line);
+//        try {
+//            line.open();
+//        } catch (LineUnavailableException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        line.start();
         /***********************************************************/
         
-        sapiSetRecognizerInputStream(recognizerHandle, 
+        return sapiSetRecognizerInputStream(recognizerHandle, 
                     inputStream, 
                     sampleRate, 
                     bitsPerSample, 
@@ -151,6 +162,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
     @Override
     public void handleDeallocate() {
+        getAudioManager().removeAudioListener(SapiAudioEventListener);
         sapiDeallocate(recognizerHandle);
     }
 
@@ -175,10 +187,14 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      */
     @Override
     protected void handlePause(final int flags) {
+        System.out.println("--Recognizer: Pause SAPI-Recognizer");
         sapiPause(recognizerHandle, flags);
+        System.out.println("++Recognizer: Pause SAPI-Recognizer -- DONE!");
         if (recognitionThread != null) {
+            System.out.println("--Recognizer: RecognitionThread != null => Stopping RecognitionThread");
             recognitionThread.stopRecognition();
             recognitionThread = null;
+            System.out.println("++Recognizer: RecognitionThread != null => Stopping RecognitionThread -- DONE!");
         }
     }
 

@@ -3,6 +3,15 @@
 #include "jInputStream.h"
 
 // ---------------------------------------------------------------------------
+// %%Deconstructor: CJavaInputStream::~CJavaInputStream()
+// ---------------------------------------------------------------------------
+CJavaInputStream::~CJavaInputStream() {
+	if (this->env != NULL) {
+		env->DeleteWeakGlobalRef(inputStream);
+	}
+}
+
+// ---------------------------------------------------------------------------
 // %%Function: CJavaInputStream::setJavaInputStream
 // ---------------------------------------------------------------------------
  STDMETHODIMP
@@ -108,14 +117,47 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 	// look if enough bytes are available
 	//	if not, wait some time for more data
 	ULONG available = env->CallIntMethod(inputStream, jAvailable);
+	{
+		// the above code may raise an exception in JVM
+		jthrowable exc;
+		exc = env->ExceptionOccurred();
+		if (exc) {
+			std::cerr << "Exception in jInputStream::read(). available()" << std::endl;
+			env->ExceptionDescribe();
+			//Clear the Exception in the JVM
+			env->ExceptionClear();
+			//Close this IStream
+			if (pcbRead) {
+				*pcbRead = 0;
+			}
+			return S_FALSE;
+		}
+	}
+
 	int readTimeOut = 10; //50ms * 10 = 500ms timeout
 	while (available < cb && readTimeOut > 0) {
-		//std::clog << "Available: " << available << std::endl;
+		//std::clog << "Available: " << available << ";requested: " << cb << std::endl;
 		//std::cout << "Not enough data! Sleeping...";
 		Sleep(50); //sleep 50ms
 		//std::cout << "and awake!" << std::endl;
 		readTimeOut--;
 		available = env->CallIntMethod(inputStream, jAvailable);
+		{
+			// the above code may raise an exception in JVM
+			jthrowable exc;
+			exc = env->ExceptionOccurred();
+			if (exc) {
+				std::cerr << "Exception in jInputStream::read(). available()" << std::endl;
+				env->ExceptionDescribe();
+				//Clear the Exception in the JVM
+				env->ExceptionClear();
+				//Close this IStream
+				if (pcbRead) {
+					*pcbRead = 0;
+				}
+				return S_FALSE;
+			}
+		}
 	}
 
 	
@@ -131,6 +173,22 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 	//jint bytesRead = env->CallIntMethodA(inputStream, jReadByteArray, args);
 	//jint cbJInt = (jint)cb;
 	jint bytesRead = env->CallIntMethod(inputStream, jReadByteArray, arr, 0, (jint)cb);
+	{
+		// the above code may raise an exception in JVM
+		jthrowable exc;
+		exc = env->ExceptionOccurred();
+		if (exc) {
+			std::cerr << "Exception in jInputStream::read(). read()" << std::endl;
+			env->ExceptionDescribe();
+			//Clear the Exception in the JVM
+			env->ExceptionClear();
+			//Close this IStream
+			if (pcbRead) {
+				*pcbRead = 0;
+			}
+			return S_FALSE;
+		}
+	}
 
 	// check if we have bytes in our puffer
 	if (bytesRead == -1) {
