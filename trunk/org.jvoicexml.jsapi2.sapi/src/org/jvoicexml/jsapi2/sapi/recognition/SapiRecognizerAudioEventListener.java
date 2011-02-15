@@ -59,6 +59,7 @@ public class SapiRecognizerAudioEventListener implements AudioListener {
                 // tell the recognizer to get the new InputStream and set it as it's new source
                 boolean inputStreamSet = recognizer.setRecognizerInputStream();
                 System.out.println("New InputStream set: " + inputStreamSet);
+                audioChanged = false;
                 if (!(recognizer.testEngineState(Engine.DEALLOCATED) ||
                         recognizer.testEngineState(Engine.DEALLOCATING_RESOURCES))) {
                     recognizer.resume();
