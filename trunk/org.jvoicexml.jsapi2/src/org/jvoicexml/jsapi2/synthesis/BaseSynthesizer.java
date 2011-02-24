@@ -1,3 +1,15 @@
+/*
+ * File:    $HeadURL: https://jsapi.svn.sourceforge.net/svnroot/jsapi/trunk/org.jvoicexml.jsapi2.jse/demo/HelloWorld/src/org/jvoicexml/jsapi2/demo/helloworld/HelloWorldDemo.java $
+ * Version: $LastChangedRevision: 593 $
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy: schnelle $
+ *
+ * JSAPI - A base implementation for JSR 113.
+ *
+ * Copyright (C) 2009-2010 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ */
+
 package org.jvoicexml.jsapi2.synthesis;
 
 import java.util.Enumeration;
@@ -88,15 +100,14 @@ public abstract class BaseSynthesizer extends BaseEngine
         final SynthesizerEvent event = new SynthesizerEvent(this, eventType,
                 oldState, newState, null, false);
         /** @todo Change after adding the queue */
-
         postEngineEvent(event);
     }
 
     protected void postSynthesizerEvent(long oldState, long newState,
             int eventType, boolean changedTopOfQueue) {
         switch (eventType){
-        case SynthesizerEvent.QUEUE_UPDATED :
-        case SynthesizerEvent.QUEUE_EMPTIED :
+        case SynthesizerEvent.QUEUE_UPDATED:
+        case SynthesizerEvent.QUEUE_EMPTIED:
             break;
         default:
             changedTopOfQueue = false;
@@ -109,7 +120,6 @@ public abstract class BaseSynthesizer extends BaseEngine
                 changedTopOfQueue);
 
         postEngineEvent(event);
-
     }
 
     protected void postSpeakableEvent(final SpeakableEvent event,
@@ -396,7 +406,8 @@ public abstract class BaseSynthesizer extends BaseEngine
         return handleResume();
     }
 
-    abstract protected void handleDeallocate();
+    abstract protected void handleDeallocate() throws EngineStateException,
+        EngineException, AudioException;
 
     abstract protected void handlePause();
 
