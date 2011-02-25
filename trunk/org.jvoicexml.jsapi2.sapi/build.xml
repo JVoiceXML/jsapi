@@ -77,7 +77,7 @@ This file builds the JSR 113.jar.
 
   <target name="-copydll" if="isWindows">
     <copy todir="${dist}">
-      <fileset dir="cpp/Jsapi2SapiBridge/Debug">
+      <fileset dir="cpp/Jsapi2SapiBridge/Release">
         <include name="*.dll"/>
       </fileset>
     </copy>
