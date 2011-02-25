@@ -19,7 +19,8 @@ This file builds the JSAPI2 project.
     <property name="dist.jar" value="${dist}/${component}.jar" />
     <property name="dist.src.zip" value="${dist}/jsr-113-${version}-src.zip" />
     <property name="dist.src.libs.zip" value="${dist}/jsr-113-${version}-src-withlibs.zip" />
-    <property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
+  	<property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
+  	<property name="dist.jsr113.jar" value="${dist}/jsr113.jar" />
 
     <path id="midp.lib">
       <pathelement location="${midp.home}/lib/${cldcapi.jar}"/>
@@ -38,7 +39,14 @@ This file builds the JSAPI2 project.
     <mkdir dir="${dist}" />
   </target>
 
-  <target name="clean" description="Remove all compiled and distribution files">
+  <target name="clean" depends="-init" description="Remove all compiled and distribution files">
+    <delete dir="${build}" />
+  	<delete file="${dist.jar}" />
+  	<delete file="${dist.zip}" />
+  	<delete file="${dist.src.zip}" />
+  	<delete file="${dist.src.libs.zip}" />
+    <delete file="${dist.jsr113.jar}" />
+    <delete file="${dist.jsr113-base.jar}" />
     <ant dir="../javax.speech" target="clean" inheritall="false"
         inheritrefs="false"/>
     <ant dir="../org.jvoicexml.jsapi2.jse" target="clean" inheritall="false"
@@ -51,9 +59,6 @@ This file builds the JSAPI2 project.
         inheritrefs="false"/>
     <ant dir="../org.jvoicexml.jsapi2.sapi" target="clean" inheritall="false"
         inheritrefs="false"/>
-    <delete dir="${build}" />
-    <delete file="${dist.jsr113.jar}" />
-    <delete file="${dist.jsr113-base.jar}" />
   </target>
 
   <target name="-dependentComponents">
@@ -114,6 +119,7 @@ This file builds the JSAPI2 project.
   </target>
 
   <target name="-components" depends="-jar">
+    <copy file="../javax.speech/${dist.jsr113.jar}" todir="${dist}" />
     <ant dir="../org.jvoicexml.jsapi2.jse" antfile="build.xml"
         inheritall="false"/>
     <ant dir="../org.jvoicexml.jsapi2.jse.freetts" target="jar" inheritall="false"
@@ -124,7 +130,6 @@ This file builds the JSAPI2 project.
         inheritall="false" />
     <ant dir="../org.jvoicexml.jsapi2.mac" antfile="build.xml"
         inheritall="false" />
-    <copy file="../javax.speech/dist/jsr113.jar" todir="${dist}" />
   </target>
 
   <target name="jar" depends="-jar,-components" />
