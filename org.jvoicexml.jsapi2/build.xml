@@ -27,6 +27,20 @@ This file builds the JSAPI2 project.
       <pathelement location="${midp.home}/lib/${midpapi.jar}"/>
     </path>
 
+    <!-- Properties for components to use -->
+    <condition property="jsapi2.freetts">
+        <istrue value="${jsapi2.freetts}" />
+    </condition>
+    <condition property="jsapi2.sphinx4">
+        <istrue value="${jsapi2.sphinx4}" />
+    </condition>
+    <condition property="jsapi2.sapi">
+        <istrue value="${jsapi2.sapi}" />
+    </condition>
+    <condition property="jsapi2.mac">
+        <istrue value="${jsapi2.mac}" />
+    </condition>
+  	
     <fileset dir="." id="dist.files.additional">
       <include name="AUTHORS"/>
       <include name="COPYING"/>
@@ -116,20 +130,32 @@ This file builds the JSAPI2 project.
         </section>
       </manifest>
     </jar>
-  </target>
-
-  <target name="-components" depends="-jar">
     <copy file="../javax.speech/${dist.jsr113.jar}" todir="${dist}" />
     <ant dir="../org.jvoicexml.jsapi2.jse" antfile="build.xml"
         inheritall="false"/>
-    <ant dir="../org.jvoicexml.jsapi2.jse.freetts" target="jar" inheritall="false"
-        inheritrefs="false"/>
-    <ant dir="../org.jvoicexml.jsapi2.jse.sphinx4" target="jar" inheritall="false"
-        inheritrefs="false"/>
+  </target>
+
+  <target name="-buildFreetts" depends="-init" if="jsapi2.freetts">
+    <ant dir="../org.jvoicexml.jsapi2.jse.freetts" target="jar"
+      inheritall="false" inheritrefs="false"/>
+  </target>
+
+  <target name="-buildSphinx4" depends="-init" if="jsapi2.sphinx4">
+    <ant dir="../org.jvoicexml.jsapi2.jse.sphinx4" target="jar"
+      inheritall="false" inheritrefs="false"/>
+  </target>
+
+  <target name="-buildSapi" depends="-init" if="jsapi2.sapi">
     <ant dir="../org.jvoicexml.jsapi2.sapi" antfile="build.xml"
-        inheritall="false" />
+        inheritall="false" inheritrefs="false" />
+  </target>
+
+  <target name="-buildMac" depends="-init" if="jsapi2.mac">
     <ant dir="../org.jvoicexml.jsapi2.mac" antfile="build.xml"
-        inheritall="false" />
+        inheritall="false" inheritrefs="false"/>
+  </target>
+
+  <target name="-components" depends="-jar,-buildFreetts,-buildSphinx4,-buildSapi,-buildMac">
   </target>
 
   <target name="jar" depends="-jar,-components" />
