@@ -28,16 +28,16 @@ This file builds the JSAPI2 project.
     </path>
 
     <!-- Properties for components to use -->
-    <condition property="jsapi2.freetts">
+    <condition property="jsapi2.freetts.use">
         <istrue value="${jsapi2.freetts}" />
     </condition>
-    <condition property="jsapi2.sphinx4">
+    <condition property="jsapi2.sphinx4.use">
         <istrue value="${jsapi2.sphinx4}" />
     </condition>
-    <condition property="jsapi2.sapi">
+    <condition property="jsapi2.sapi.use">
         <istrue value="${jsapi2.sapi}" />
     </condition>
-    <condition property="jsapi2.mac">
+    <condition property="jsapi2.mac.use">
         <istrue value="${jsapi2.mac}" />
     </condition>
   	
@@ -135,22 +135,22 @@ This file builds the JSAPI2 project.
         inheritall="false"/>
   </target>
 
-  <target name="-buildFreetts" depends="-init" if="jsapi2.freetts">
+  <target name="-buildFreetts" depends="-init" if="jsapi2.freetts.use">
     <ant dir="../org.jvoicexml.jsapi2.jse.freetts" target="jar"
       inheritall="false" inheritrefs="false"/>
   </target>
 
-  <target name="-buildSphinx4" depends="-init" if="jsapi2.sphinx4">
+  <target name="-buildSphinx4" depends="-init" if="jsapi2.sphinx4.use">
     <ant dir="../org.jvoicexml.jsapi2.jse.sphinx4" target="jar"
       inheritall="false" inheritrefs="false"/>
   </target>
 
-  <target name="-buildSapi" depends="-init" if="jsapi2.sapi">
+  <target name="-buildSapi" depends="-init" if="jsapi2.sapi.use">
     <ant dir="../org.jvoicexml.jsapi2.sapi" antfile="build.xml"
         inheritall="false" inheritrefs="false" />
   </target>
 
-  <target name="-buildMac" depends="-init" if="jsapi2.mac">
+  <target name="-buildMac" depends="-init" if="jsapi2.mac.use">
     <ant dir="../org.jvoicexml.jsapi2.mac" antfile="build.xml"
         inheritall="false" inheritrefs="false"/>
   </target>
