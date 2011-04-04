@@ -4,14 +4,16 @@ This file builds the JSR 113.jar.
     </description>
 
 	<!-- allow the user to override setting in an own properties file. -->
-	<property file="personal-props/ant.properties" />
-	<property file="config-props/ant.properties" />
+	<property name="jsapi2.base" value="../org.jvoicexml.jsapi2" />
+    <property name="component" value="javax.speech" />
+	<property file="${jsapi2.base}/personal-props/ant.properties" />
+	<property file="${jsapi2.base}/config-props/ant.properties" />
 
 	<!-- directory structure -->
 	<property name="src" value="src" />
 	<property name="build" value="classes" />
     <property name="preverify" value="preverify" />
-	<property name="dist" value="dist" />
+	<property name="dist" value="${jsapi2.base}/dist" />
 	<property name="apidoc" value="doc/api" />
 	
     <!-- distribution files -->
@@ -37,11 +39,8 @@ This file builds the JSR 113.jar.
 	<target name="-init">
 		<mkdir dir="${build}" />
 		<mkdir dir="${dist}" />
+	    <mkdir dir="preverify"/>
 		<available file="${midp.home}" property="midp.available"/>
-		<fail unless="midp.available">
-You need at to specify midp.home to compile this project.
-The current value is ${midp.home}.
-		</fail>
 	</target>
 
 	<target name="clean" description="Remove all compiled and distribution files">
@@ -49,8 +48,9 @@ The current value is ${midp.home}.
 		<delete file="${dist.jsr113.jar}" />
 	</target>
 
-	<target name="compile" depends="-init" description="Compile the JAVA sources">
-		<echo message="compiling with debug=${debug}, optimize=${optimize}" />
+	<target name="compileJ2ME" depends="-init" if="midp.available"
+	    description="Compile the JAVA sources for J2ME">
+		<echo message="compiling ${component} for J2ME with debug=${debug}, optimize=${optimize}" />
 		<javac bootclasspathref="midp.lib" destdir="${build}" 
 			source="1.2" target="1.1"
 			optimize="${optimize}" debug="${debug}" deprecation="on"
@@ -60,9 +60,21 @@ The current value is ${midp.home}.
 		</javac>
 	</target>
 
-	<target name="rebuild" depends="clean,compile"/>
+    <target name="compileJSE" depends="-init" unless="midp.available"
+        description="Compile the JAVA sources">
+        <echo message="compiling ${component} for JSE with debug=${debug}, optimize=${optimize}" />
+        <javac destdir="${preverify}" 
+            optimize="${optimize}" debug="${debug}" deprecation="on"
+            encoding="iso-8859-1">
+            <src path="${src}" />
+            <compilerarg value="-Xlint:unchecked" />
+        </javac>
+    </target>
+    
+	<target name="rebuild" depends="clean,compileJSE,compileJ2ME"/>
 
-    <target name="preverify" depends="compile">
+    <target name="preverify" depends="compileJ2ME"
+        if="midp.available">
       <mkdir dir="preverify"/>
       <pathconvert property="midp.path" refid="midp.lib"/>
       <exec executable="${midp.home}/bin/preverify">
@@ -75,7 +87,7 @@ The current value is ${midp.home}.
       </exec>
     </target>
 
-	<target name="jar" depends="preverify" 
+	<target name="jar" depends="preverify,compileJSE" 
 	  description="Pack all compiled files into jar files">
 		<jar jarfile="${dist.jsr113.jar}" compress="false">
 			<fileset dir="${preverify}">
