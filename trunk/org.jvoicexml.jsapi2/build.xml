@@ -7,11 +7,12 @@ This file builds the JSAPI2 project.
   <property file="personal-props/ant.properties" />
   <property file="config-props/ant.properties" />
 
-  <target name="-init">
+  <target name="-initVariables">	
     <!-- directory structure -->
     <property name="src" value="src" />
     <property name="build" value="classes" />
     <property name="dist" value="dist" />
+  	<property name="preverify" value="preverify" />
     <property name="apidoc" value="doc/api" />
 
     <!-- distribution files -->
@@ -49,20 +50,26 @@ This file builds the JSAPI2 project.
       <include name="README"/>
       <include name="ChangeLog"/>
     </fileset>
-
+  </target>
+	
+  <target name="-init" depends="-initVariables">
     <mkdir dir="${build}" />
-    <mkdir dir="preverify" />
+    <mkdir dir="${preverify}" />
     <mkdir dir="${dist}" />
   </target>
 
-  <target name="clean" depends="-init" description="Remove all compiled and distribution files">
+  <target name="clean" depends="-initVariables" description="Remove all compiled and distribution files">
     <delete dir="${build}" />
+  	<delete dir="${preverify}" />
+  	<delete dir="${dist}" />
+  	<!-- Not needed anymore as the directories themselves will be deleted
   	<delete file="${dist.jar}" />
   	<delete file="${dist.zip}" />
   	<delete file="${dist.src.zip}" />
   	<delete file="${dist.src.libs.zip}" />
     <delete file="${dist.jsr113.jar}" />
     <delete file="${dist.jsr113-base.jar}" />
+    -->
     <ant dir="../javax.speech" target="clean" inheritall="false"
         inheritrefs="false"/>
     <ant dir="../org.jvoicexml.jsapi2.jse" target="clean" inheritall="false"
