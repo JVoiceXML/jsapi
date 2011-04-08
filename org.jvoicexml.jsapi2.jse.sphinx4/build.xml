@@ -9,29 +9,32 @@ This file builds the JSAPI base layer for JSE.
   <property file="${base-project}/personal-props/ant.properties" />
   <property file="${base-project}/config-props/ant.properties" />
 
-  <!-- directory structure -->
-  <property name="src" value="src" />
-  <property name="build" value="classes" />
-  <property name="apidoc" value="doc/api" />
-  <property name="dist" value="${base-project}/dist" />
-  
-  <!-- distribution files -->
-  <property name="component" value="org.jvoicexml.jsapi2.jse.sphinx4" />
-  <property name="dist.jar" value="${dist}/${component}.jar" />
-
   <target name="-init">
+    <!-- directory structure -->
+    <property name="src" value="src" />
+    <property name="build" value="classes" />
+    <property name="apidoc" value="doc/api" />
+    <property name="dist" value="${base-project}/dist" />
+    
+    <!-- distribution files -->
+    <property name="component" value="org.jvoicexml.jsapi2.jse.sphinx4" />
+    <property name="dist.jar" value="${dist}/${component}.jar" />
+
+    <property name="sphinx4.lib.dir" value="3rdparty/sphinx4/lib" />
+
     <mkdir dir="${build}" />
     <mkdir dir="${dist}" />
+
+    <path id="classpath">
+      <pathelement location="${base-project}/dist/jsr113.jar"/>
+      <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
+      <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jse.jar"/>
+      <fileset dir="${sphinx4.lib.dir}">
+        <include name="sphinx4.jar" />
+      </fileset>
+    </path>
   </target>
 
-  <path id="classpath">
-    <pathelement location="${base-project}/dist/jsr113.jar"/>
-    <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
-    <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jse.jar"/>
-    <fileset dir="3rdparty\sphinx4\lib">
-      <include name="sphinx4.jar" />
-    </fileset>
-  </path>
 
   <target name="clean" description="Remove all compiled and distribution files">
     <delete dir="${build}" />
