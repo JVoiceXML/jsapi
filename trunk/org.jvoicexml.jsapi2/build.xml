@@ -58,30 +58,32 @@ This file builds the JSAPI2 project.
     <mkdir dir="${dist}" />
   </target>
 
-  <target name="clean" depends="-initVariables" description="Remove all compiled and distribution files">
+  <target name="-cleanFreetts" depends="-init" if="jsapi2.freetts.use">
+    <ant dir="../org.jvoicexml.jsapi2.jse.freetts" target="clean"
+      inheritall="false" inheritrefs="false"/>
+  </target>
+
+  <target name="-cleanSphinx4" depends="-init" if="jsapi2.sphinx4.use">
+    <ant dir="../org.jvoicexml.jsapi2.jse.sphinx4" target="clean"
+      inheritall="false" inheritrefs="false"/>
+  </target>
+
+  <target name="-cleanSapi" depends="-init" if="jsapi2.sapi.use">
+    <ant dir="../org.jvoicexml.jsapi2.sapi" antfile="build.xml" target="clean"
+        inheritall="false" inheritrefs="false" />
+  </target>
+
+  <target name="-cleanMac" depends="-init" if="jsapi2.mac.use">
+    <ant dir="../org.jvoicexml.jsapi2.mac" antfile="build.xml" target="clean"
+        inheritall="false" inheritrefs="false"/>
+  </target>
+  
+  <target name="clean"
+    depends="-initVariables,-cleanFreetts,-cleanSphinx4,-cleanSapi,-cleanMac"
+    description="Remove all compiled and distribution files">
     <delete dir="${build}" />
   	<delete dir="${preverify}" />
   	<delete dir="${dist}" />
-  	<!-- Not needed anymore as the directories themselves will be deleted
-  	<delete file="${dist.jar}" />
-  	<delete file="${dist.zip}" />
-  	<delete file="${dist.src.zip}" />
-  	<delete file="${dist.src.libs.zip}" />
-    <delete file="${dist.jsr113.jar}" />
-    <delete file="${dist.jsr113-base.jar}" />
-    -->
-    <ant dir="../javax.speech" target="clean" inheritall="false"
-        inheritrefs="false"/>
-    <ant dir="../org.jvoicexml.jsapi2.jse" target="clean" inheritall="false"
-        inheritrefs="false"/>
-    <ant dir="../org.jvoicexml.jsapi2.jse.freetts" target="clean" inheritall="false"
-        inheritrefs="false"/>
-    <ant dir="../org.jvoicexml.jsapi2.jse.sphinx4" target="clean" inheritall="false"
-        inheritrefs="false"/>
-    <ant dir="../org.jvoicexml.jsapi2.mac" target="clean" inheritall="false"
-        inheritrefs="false"/>
-    <ant dir="../org.jvoicexml.jsapi2.sapi" target="clean" inheritall="false"
-        inheritrefs="false"/>
   </target>
 
   <target name="-dependentComponents">
@@ -112,9 +114,7 @@ This file builds the JSAPI2 project.
         debug="${debug}" deprecation="on"
         encoding="iso-8859-1">
       <src path="${src}" />
-      <classpath>
-        <pathelement location="../javax.speech/classes"/>
-      </classpath>
+      <classpath location="../javax.speech/preverify" />
       <compilerarg value="-Xlint:unchecked" />
     </javac>
   </target>
@@ -156,7 +156,6 @@ This file builds the JSAPI2 project.
         </section>
       </manifest>
     </jar>
-    <copy file="../javax.speech/${dist.jsr113.jar}" todir="${dist}" />
     <ant dir="../org.jvoicexml.jsapi2.jse" antfile="build.xml"
         inheritall="false"/>
   </target>
