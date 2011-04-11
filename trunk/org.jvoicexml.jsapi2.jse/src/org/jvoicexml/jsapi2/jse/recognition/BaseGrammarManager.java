@@ -408,7 +408,9 @@ public class BaseGrammarManager implements GrammarManager {
             IOException,
             EngineStateException,
             EngineException {
-
+        if (byteStream == null) {
+            throw new IOException("Unable to read from a null stream!");
+        }
         final InputStreamReader reader =
             new InputStreamReader(byteStream, encoding);
         return loadGrammar(grammarReference, mediaType, reader);

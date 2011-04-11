@@ -134,9 +134,9 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     <component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
         <property name="dictionaryPath"
-     value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
+            value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
         <property name="fillerPath" 
-     value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/>
+             value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="allowMissingWords" value="false"/>
         <property name="unitManager" value="unitManager"/>
@@ -155,8 +155,8 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
         <property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
         <property name="location" value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
-        <property name="modelDefinition" value="etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"/>
-        <property name="dataLocation" value="cd_continuous_8gau/"/>
+        <!-- property name="modelDefinition" value="etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"/>
+        <property name="dataLocation" value="cd_continuous_8gau/"/-->
     </component>
     
     <!-- ******************************************************** -->
@@ -262,7 +262,7 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
         <property name="showAlignedResults" value="false"/>
         <property name="showRawResults" value="false"/>
     </component>
-    
+
     <component name="memoryTracker" 
                 type="edu.cmu.sphinx.instrumentation.MemoryTracker">
         <property name="recognizer" value="${recognizer}"/>
@@ -274,8 +274,8 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
                 type="edu.cmu.sphinx.instrumentation.SpeedTracker">
         <property name="recognizer" value="${recognizer}"/>
         <property name="frontend" value="${frontend}"/>
-    <property name="showSummary" value="true"/>
-    <property name="showDetails" value="false"/>
+        <property name="showSummary" value="true"/>
+        <property name="showDetails" value="false"/>
     </component>
     
     
