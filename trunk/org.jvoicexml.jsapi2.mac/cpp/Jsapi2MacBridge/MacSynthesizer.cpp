@@ -60,7 +60,9 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_mac_synthesis_MacSynthesizer_m
 //          std::cout << "Set " << currName << std::endl;
           voiceSpec = tmpVSpec;
         }
+        free(currName);
       }
+      free(voiceName);
     }
   }
   
@@ -148,12 +150,10 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_mac_synthesis_MacSynthesi
   SpeechChannel* chan = (SpeechChannel*) handle;
   OSErr ok = noErr;
   OSStatus stat;
-  long size;
   
   const char* file = std::tmpnam(NULL);
-  
-  const char* textBuf = GetStringNativeChars(env, item);
-  size = strlen(textBuf);
+  char* textBuf = GetStringNativeChars(env, item);
+  long size = strlen(textBuf);
   
   CFURLRef url = CFURLCreateWithFileSystemPath(
                                                kCFAllocatorDefault,
@@ -263,9 +263,11 @@ JNIEXPORT jbyteArray JNICALL Java_org_jvoicexml_jsapi2_mac_synthesis_MacSynthesi
   << std::endl;
 */
 
+  // tidy up
   CFRelease(url);
   AudioFileClose(afId);
   remove(file);
+  free(textBuf);
   
   // byte swap
   SInt16* buf = (SInt16*)buffer;
