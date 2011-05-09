@@ -177,9 +177,9 @@ public abstract class BaseAudioManager implements AudioManager {
 
         mediaLocator = locator;
         
-        final AudioEvent event = new AudioEvent(engine,
-                AudioEvent.AUDIO_CHANGED);
-        postAudioEvent(event);
+//        final AudioEvent event = new AudioEvent(engine,
+//                AudioEvent.AUDIO_CHANGED);
+//        postAudioEvent(event);
     }
 
     /**
