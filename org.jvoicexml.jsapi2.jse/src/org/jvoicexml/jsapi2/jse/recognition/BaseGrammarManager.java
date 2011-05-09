@@ -180,8 +180,10 @@ public class BaseGrammarManager implements GrammarManager {
         }
 
         // Add local managed grammars
-        allGrammars.addAll(grammars.values());
-
+        if (grammars != null) {
+            allGrammars.addAll(grammars.values());
+        }
+        
         // Return an array with all know grammars
         return (Grammar[]) allGrammars.toArray(new Grammar[allGrammars.size()]);
     }
