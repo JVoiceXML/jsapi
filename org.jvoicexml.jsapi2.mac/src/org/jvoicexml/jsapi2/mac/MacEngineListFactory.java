@@ -49,10 +49,11 @@ public class MacEngineListFactory implements EngineListFactory {
 					voices.toArray(new Voice[0])) };
 			return new EngineList(features);
 		}
-		if (require instanceof RecognizerMode) {
-			final RecognizerMode[] features = new RecognizerMode[] { new MacRecognizerMode() };
-			return new EngineList(features);
-		}
+		// Mac Recognizer unusable as it is
+//		if (require instanceof RecognizerMode) {
+//			final RecognizerMode[] features = new RecognizerMode[] { new MacRecognizerMode() };
+//			return new EngineList(features);
+//		}
 
 		return null;
 	}

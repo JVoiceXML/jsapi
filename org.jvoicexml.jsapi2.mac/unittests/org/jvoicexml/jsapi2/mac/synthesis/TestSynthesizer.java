@@ -59,9 +59,8 @@ public final class TestSynthesizer {
 		Voice alex = new Voice(null, "Alex", Voice.GENDER_DONT_CARE, Voice.AGE_DONT_CARE, Voice.VARIANT_DONT_CARE);
 		MacSynthesizerMode msm = new MacSynthesizerMode(null, null, null, null, false, new Voice[] { alex });
 		synthesizer = (Synthesizer) EngineManager.createEngine(msm);
-
 		synthesizer.allocate();
-		// synthesizer.waitEngineState(Engine.ALLOCATED);
+		synthesizer.waitEngineState(Engine.ALLOCATED);
 	}
 
 	/**
@@ -86,7 +85,9 @@ public final class TestSynthesizer {
 	 */
 	@Test
 	public void testSpeak() throws Exception {
+		synthesizer.resume();
 		synthesizer.speak("I'll be artificial intelligence complete!", null);
+//		synthesizer.speak("Half past 8", null);
 		// synthesizer.speak("Ups!", null);
 		System.out.println("this is a test output");
 		synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);

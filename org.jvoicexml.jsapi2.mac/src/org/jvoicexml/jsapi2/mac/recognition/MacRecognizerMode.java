@@ -13,7 +13,7 @@ public final class MacRecognizerMode extends RecognizerMode
      * Constructs a new object.
      */
     public MacRecognizerMode() {
-        super("Microsoft SAPI", "SAPI", Boolean.FALSE, Boolean.TRUE,
+        super("Apple MacOSX", "CoreSpeech", Boolean.FALSE, Boolean.TRUE,
                 Boolean.TRUE, RecognizerMode.MEDIUM_SIZE, null, null);
     }
 
