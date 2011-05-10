@@ -9,6 +9,7 @@
 JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_mac_recognition_MacRecognizer_macGetBuildInGrammars
 (JNIEnv* env, jobject object, jlong handle) {
   std::cout << "macGetBuildInGrammars" << std::endl;
+  return NULL;
 }
 
 /*
