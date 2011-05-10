@@ -28,10 +28,10 @@ import javax.sound.sampled.AudioFormat;
  */
 public final class JavaSoundParser {
     /** The default sample rate. */
-    public static final int DEFAULT_SAMPLE_RATE = 8000;
+    public static final int DEFAULT_SAMPLE_RATE = 16000;
 
     /** Number of bits per byte. */
-    private static final int BITS_PER_BYTE = 8;
+    private static final int BITS_PER_BYTE = 16;
 
     /**
      * Prevent construction from outside.

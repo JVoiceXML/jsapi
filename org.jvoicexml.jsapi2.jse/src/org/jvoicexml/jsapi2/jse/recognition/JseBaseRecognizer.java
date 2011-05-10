@@ -100,7 +100,7 @@ public abstract class JseBaseRecognizer extends BaseRecognizer {
      */
     @Override
     protected AudioManager createAudioManager() {
-        final AudioFormat format = new AudioFormat(8000f, 16, 1, true, true);
+        final AudioFormat format = new AudioFormat(16000f, 16, 1, true, false);
         return new BaseRecognizerAudioManager(format);
     }
 
