@@ -200,18 +200,24 @@ public class SrgsRuleGrammarParser {
                 String repeatStr = xpath.evaluate("@repeat", node);
                 String repeatProbStr = xpath.evaluate("@repeat-prob", node);
 
-                if (repeatStr != "") {
-                    String minStr = repeatStr.substring(0,
-                            repeatStr.indexOf('-'));
-                    String maxStr = repeatStr.substring(repeatStr.indexOf('-') +
-                            1);
-                    if (minStr.trim().length() > 0)
-                        repeatMin = Integer.parseInt(minStr);
-                    if (maxStr.trim().length() > 0)
-                        repeatMax = Integer.parseInt(maxStr);
+                if (repeatStr.length() != 0) {
+                    int toIndex = repeatStr.indexOf('-');
+                    if (toIndex < 0) {
+                        repeatMin = Integer.parseInt(repeatStr);
+                        repeatMax = repeatMin;
+                    } else {
+                         String minStr = repeatStr.substring(0, toIndex);
+                         String maxStr = repeatStr.substring(toIndex + 1);
+                         if (minStr.trim().length() > 0) {
+                             repeatMin = Integer.parseInt(minStr);
+                         }
+                         if (maxStr.trim().length() > 0) {
+                                repeatMax = Integer.parseInt(maxStr);
+                         }
+                    }
                 }
 
-                if (repeatProbStr != "") {
+                if (repeatProbStr.length() != 0) {
                     repeatProb = Double.parseDouble(repeatProbStr);
                 }
 
