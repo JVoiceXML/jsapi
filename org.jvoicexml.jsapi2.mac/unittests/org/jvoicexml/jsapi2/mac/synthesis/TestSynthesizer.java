@@ -3,7 +3,6 @@ package org.jvoicexml.jsapi2.mac.synthesis;
 import javax.speech.Engine;
 import javax.speech.EngineManager;
 import javax.speech.synthesis.Synthesizer;
-import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.Voice;
 
 import org.junit.After;

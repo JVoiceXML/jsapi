@@ -34,6 +34,9 @@ public final class MacSynthesizerMode extends SynthesizerMode
 
     /**
      * Constructs a new object.
+     * 
+     * Mac synthesizer does not support ssml
+     * 
      * @param engineName the name of the engine
      * @param modeName the name of the mode
      */
@@ -41,8 +44,8 @@ public final class MacSynthesizerMode extends SynthesizerMode
             final String modeName,
             final Boolean running, final Boolean supportsLetterToSound,
             final Boolean supportsMarkup, final Voice[] voices) {
-        super(engineName, modeName, running, supportsLetterToSound,
-                supportsMarkup, voices);
+    	super(engineName, modeName, running, supportsLetterToSound,
+                false, voices);
     }
 
     /**

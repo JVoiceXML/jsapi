@@ -5,12 +5,10 @@ import java.util.Vector;
 
 import javax.speech.EngineList;
 import javax.speech.EngineMode;
-import javax.speech.recognition.RecognizerMode;
 import javax.speech.spi.EngineListFactory;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.Voice;
 
-import org.jvoicexml.jsapi2.mac.recognition.MacRecognizerMode;
 import org.jvoicexml.jsapi2.mac.synthesis.MacSynthesizerMode;
 
 /**
