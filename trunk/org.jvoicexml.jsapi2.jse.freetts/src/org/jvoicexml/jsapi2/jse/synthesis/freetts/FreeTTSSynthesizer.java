@@ -37,8 +37,7 @@ import com.sun.speech.freetts.audio.AudioPlayer;
  * synthesis system.
  * @author Dirk Schnelle-Walka
  */
-public class FreeTTSSynthesizer extends JseBaseSynthesizer
-    implements EnginePropertyChangeRequestListener {
+public class FreeTTSSynthesizer extends JseBaseSynthesizer {
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(FreeTTSSynthesizer.class.getName());
@@ -315,22 +314,6 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer
 
     public boolean handleCancel() {
         return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void propertyChangeRequest(
-            final EnginePropertyChangeRequestEvent event) {
     }
 
     @Override

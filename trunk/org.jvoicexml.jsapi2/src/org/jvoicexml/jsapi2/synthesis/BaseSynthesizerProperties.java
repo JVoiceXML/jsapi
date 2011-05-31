@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2011 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
 
@@ -107,8 +107,11 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
             throw new IllegalArgumentException("Invalid interruptibiliy level :"
                     + level);
         }
-        postPropertyChangeRequestEvent(INTERRUPTIBILITY,
-                new Integer(this.interruptibility),
+        if (level == interruptibility) {
+            return;
+        }
+        notifyPropertyChangeRequest(INTERRUPTIBILITY,
+                new Integer(interruptibility),
                 new Integer(level));
     }
 
@@ -127,8 +130,11 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
             throw new IllegalArgumentException(
                     "Pitch is not a positive integer:"  + hertz);
         }
-        postPropertyChangeRequestEvent(PITCH,
-                new Integer(this.pitch), new Integer(hertz));
+        if (pitch == hertz) {
+            return;
+        }
+        notifyPropertyChangeRequest(PITCH,
+                new Integer(pitch), new Integer(hertz));
     }
 
     /**
@@ -146,8 +152,11 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
             throw new IllegalArgumentException(
                     "Pitch is a negative integer:"  + hertz);
         }
-        postPropertyChangeRequestEvent(PITCH_RANGE,
-                new Integer(this.pitchRange), new Integer(hertz));
+        if (pitchRange == hertz) {
+            return;
+        }
+        notifyPropertyChangeRequest(PITCH_RANGE,
+                new Integer(pitchRange), new Integer(hertz));
     }
 
     /**
@@ -165,8 +174,11 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
             throw new IllegalArgumentException(
                     "Speaking rate is not a postivie integer:"  + wpm);
         }
-        postPropertyChangeRequestEvent(SPEAKING_RATE,
-                new Integer(this.speakingRate), new Integer(wpm));
+        if (speakingRate == wpm) {
+            return;
+        }
+        notifyPropertyChangeRequest(SPEAKING_RATE,
+                new Integer(speakingRate), new Integer(wpm));
     }
 
     /**
@@ -190,8 +202,8 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
         for (int i = 0; i < voices.length; i++) {
             final Voice current = voices[i];
             if (current.match(voice)) {
-                postPropertyChangeRequestEvent(VOICE,
-                        this.voice, voice);
+                notifyPropertyChangeRequest(VOICE,
+                        this.voice, current);
                 return;
             }
         }
@@ -208,13 +220,16 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
     /**
      * {@inheritDoc}
      */
-    public void setVolume(final int volume) {
-        if ((volume < MIN_VOLUME) || (volume > MAX_VOLUME)) {
+    public void setVolume(final int vol) {
+        if ((vol < MIN_VOLUME) || (vol > MAX_VOLUME)) {
             throw new IllegalArgumentException("Volume is out of range: "
-                    + volume);
+                    + vol);
         }
-        postPropertyChangeRequestEvent(VOLUME,
-                new Integer(this.volume), new Integer(volume));
+        if (volume == vol) {
+            return;
+        }
+        notifyPropertyChangeRequest(VOLUME,
+                new Integer(volume), new Integer(vol));
     }
 
     /**
@@ -273,5 +288,4 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
         }
         return false;
     }
-
 }

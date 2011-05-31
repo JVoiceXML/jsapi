@@ -394,11 +394,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected void setRecognizerProperties(RecognizerProperties
                                         properties) {
         recognizerProperties = properties;
-        if (properties instanceof BaseEngineProperties) {
-            final BaseEngineProperties props =
-                (BaseEngineProperties) properties;
-            addEnginePropertyChangeRequestListener(props);
-        }
     }
 
     /**

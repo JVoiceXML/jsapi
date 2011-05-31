@@ -239,7 +239,10 @@ public class BaseRecognizerProperties
      * {@inheritDoc}
      */
     public void setAdaptation(final int adapt) {
-        postPropertyChangeEvent(ADAPTATION, new Integer(this.adaptation),
+        if (adaptation == adapt) {
+            return;
+        }
+        notifyPropertyChangeRequest(ADAPTATION, new Integer(adaptation),
                                 new Integer(adapt));
     }
 
@@ -252,7 +255,10 @@ public class BaseRecognizerProperties
                     "Invalid completeTimeout: " + value);
         }
 
-        postPropertyChangeEvent(COMPLETE_TIMEOUT,
+        if (completeTimeout == value) {
+            return;
+        }
+        notifyPropertyChangeRequest(COMPLETE_TIMEOUT,
                                 new Integer(completeTimeout),
                                 new Integer(value));
     }
@@ -265,6 +271,9 @@ public class BaseRecognizerProperties
             || (confidenceThreshold < MIN_CONFIDENCE)) {
             throw new IllegalArgumentException("Invalid confidenceThreshold: "
                                                + threshold);
+        }
+        if (confidenceThreshold == threshold) {
+            return;
         }
         postPropertyChangeEvent(CONFIDENCE_THRESHOLD,
                                 new Integer(confidenceThreshold),
@@ -281,7 +290,10 @@ public class BaseRecognizerProperties
             throw new IllegalArgumentException("Invalid endpointStyle: "
                                                + style);
         }
-        postPropertyChangeEvent(ENDPOINT_STYLE,
+        if (endpointStyle == style) {
+            return;
+        }
+        notifyPropertyChangeRequest(ENDPOINT_STYLE,
                                 new Integer(endpointStyle),
                                 new Integer(style));
     }
@@ -294,7 +306,10 @@ public class BaseRecognizerProperties
             throw new IllegalArgumentException("Invalid incompleteTimeout: "
                                                + timeout);
         }
-        postPropertyChangeEvent(INCOMPLETE_TIMEOUT,
+        if (incompleteTimeout == timeout) {
+            return;
+        }
+        notifyPropertyChangeRequest(INCOMPLETE_TIMEOUT,
                                 new Integer(incompleteTimeout),
                                 new Integer(timeout));
     }
@@ -303,8 +318,11 @@ public class BaseRecognizerProperties
      * {@inheritDoc}
      */
     public void setNumResultAlternatives(final int num) {
-        postPropertyChangeEvent(NUM_RESULT_ALTERNATIVES,
-                                new Integer(this.numResultAlternatives),
+        if (numResultAlternatives == num) {
+            return;
+        }
+        notifyPropertyChangeRequest(NUM_RESULT_ALTERNATIVES,
+                                new Integer(numResultAlternatives),
                                 new Integer(num));
     }
 
@@ -317,8 +335,10 @@ public class BaseRecognizerProperties
             throw new IllegalArgumentException("Invalid sensitivity: "
                                                + value);
         }
-
-        postPropertyChangeEvent(SENSITIVITY,
+        if (sensitivity == value) {
+            return;
+        }
+        notifyPropertyChangeRequest(SENSITIVITY,
                                 new Integer(sensitivity),
                                 new Integer(value));
     }
@@ -334,7 +354,10 @@ public class BaseRecognizerProperties
             throw new IllegalArgumentException("Invalid speedVsAccuracy: "
                                                + value);
         }
-        postPropertyChangeEvent(SPEED_VS_ACCURACY,
+        if (speedVsAccuracy == value) {
+            return;
+        }
+        notifyPropertyChangeRequest(SPEED_VS_ACCURACY,
                                 new Integer(speedVsAccuracy),
                                 new Integer(value));
     }
@@ -343,7 +366,10 @@ public class BaseRecognizerProperties
      * {@inheritDoc}
      */
     public void setResultAudioProvided(final boolean value) {
-        postPropertyChangeEvent(RESULT_AUDIO_PROVIDED,
+        if (resultAudioProvided == value) {
+            return;
+        }
+        notifyPropertyChangeRequest(RESULT_AUDIO_PROVIDED,
                                 new Boolean(resultAudioProvided),
                                 new Boolean(value));
     }
@@ -352,7 +378,10 @@ public class BaseRecognizerProperties
      * {@inheritDoc}
      */
     public void setTrainingProvided(final boolean value) {
-        postPropertyChangeEvent(TRAINING_PROVIDED,
+        if (trainingProvided == value) {
+            return;
+        }
+        notifyPropertyChangeRequest(TRAINING_PROVIDED,
                                 new Boolean(trainingProvided),
                                 new Boolean(value));
     }

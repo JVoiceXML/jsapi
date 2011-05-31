@@ -245,14 +245,6 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
      * {@inheritDoc}
      */
     @Override
-    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected AudioFormat getAudioFormat() {
         return sapiGetAudioFormat(synthesizerHandle);
     }
