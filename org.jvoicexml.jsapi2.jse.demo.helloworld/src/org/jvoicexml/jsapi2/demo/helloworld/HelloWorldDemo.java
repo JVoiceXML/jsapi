@@ -4,9 +4,9 @@
  * Date:    $LastChangedDate $
  * Author:  $LastChangedBy: schnelle $
  *
- * JSAPI - An base implementation for JSR 113.
+ * JSAPI - A base implementation for JSR 113.
  *
- * Copyright (C) 2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2009-2010 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
 
@@ -59,23 +59,25 @@ public final class HelloWorldDemo implements SpeakableListener, SynthesizerListe
             System.setProperty("javax.speech.supports.audio.capture",
                     Boolean.TRUE.toString());
             // Create a synthesizer for the default Locale
-            Synthesizer synth = (Synthesizer) EngineManager
+            Synthesizer synthesizer = (Synthesizer) EngineManager
                     .createEngine(SynthesizerMode.DEFAULT);
             HelloWorldDemo demo = new HelloWorldDemo();
-            synth.addSynthesizerListener(demo);
+            synthesizer.addSynthesizerListener(demo);
             // Get it ready to speak
-            synth.allocate();
+            synthesizer.allocate();
+            synthesizer.resume();
+            synthesizer.waitEngineState(Synthesizer.RESUMED);
 
             // Speak the "hello world" string
             System.out.println("Speaking 'Hello, world!'...");
-            synth.speak("Hello, world!", demo);
-            synth.speakMarkup("<?xml version=\"1.0\"?>"
+            synthesizer.speak("Hello, world!", demo);
+            synthesizer.speakMarkup("<?xml version=\"1.0\"?>"
                     + "<speak>Goodbye!</speak>", demo);
-            synth.waitEngineState(Synthesizer.QUEUE_EMPTY);
+            synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
             System.out.println("done.");
 
             // Clean up - includes waiting for the queue to empty
-            synth.deallocate();
+            synthesizer.deallocate();
             System.exit(0);
         } catch (Exception e) {
             e.printStackTrace();

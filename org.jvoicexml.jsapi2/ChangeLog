@@ -1,6 +1,8 @@
 Version 0.4
 ===========
-- Reorganisation of the project structure 
+- Reorganisation of the project structure
+- some code cleanup
+- restructured the way pending property changes are handled. 
 
 Version 0.3
 ===========

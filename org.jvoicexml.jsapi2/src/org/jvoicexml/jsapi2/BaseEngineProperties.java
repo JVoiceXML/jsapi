@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2011 JVoiceXML group - http://jvoicexml.sourceforge.net
  */
 
 package org.jvoicexml.jsapi2;
@@ -29,19 +29,12 @@ import javax.speech.SpeechEventExecutor;
  * </p>
  *
  * <p>
- * Engines are requested to implement the
- * {@link EnginePropertyChangeRequestListener} interface and register
- * to this object via the
- * {@link #addEnginePropertyChangeRequestListener(EnginePropertyChangeRequestListener)}
- * method to get notifications about change requests-
- * Properties are not set directly. Instead the
- * {@link EnginePropertyChangeRequestListener} is notified about a change
- * request.
- * Once a requested property
- * is changed the engine must call the callback method
- * {@link #commitPropertyChange(String, Object, Object)} to have all
- * registered {@link EnginePropertyListener}s notified about the change.
- * </p>
+ * Properties are pending when the corresponding <code>set...</code> method is
+ * called. Notifications about pending requests are sent via
+ * {@link #notifyPropertyChangeRequest(String, Object, Object)}.
+ * They may apply the changes at any time and remove the pending status by
+ * calling {@link #commitPropertyChange(String, Object, Object)}. This also
+ * triggers the posts of the property change request.
  *
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
@@ -122,7 +115,10 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * {@inheritDoc}
      */
     public void setPriority(final int prio) {
-        postPropertyChangeRequestEvent(PRIORITY, new Integer(this.priority),
+        if (prio == priority) {
+            return;
+        }
+        notifyPropertyChangeRequest(PRIORITY, new Integer(priority),
                 new Integer(prio));
     }
 
@@ -130,8 +126,16 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * {@inheritDoc}
      */
     public void setBase(final String uri) {
-        postPropertyChangeRequestEvent(BASE, new Integer(this.priority),
-                new Integer(priority));
+        if (base == null) {
+            if (uri == null) {
+                return;
+            }
+        } else {
+            if (base.equals(uri)) {
+                return;
+            }
+        }
+        notifyPropertyChangeRequest(BASE, base, uri);
     }
 
     /**
@@ -185,10 +189,14 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * Commit the property changes and sets the value.
      * <p>
      * This method is called after the new values are applied to the engine.
+     * If a property is not known by this implementation, it is forwarded
+     * to {@link #setProperty(String, Object)}. If successful, all listeners
+     * are informed about the change.
      * </p>
-     * @param propName
-     * @param oldValue
-     * @param newValue
+     * @param propName name of the property
+     * @param oldValue old value
+     * @param newValue new value
+     * @exception IllegalArgumentException if the property name is not known
      */
     public void commitPropertyChange(final String propName,
             final Object oldValue, final Object newValue) {
@@ -243,6 +251,44 @@ public abstract class BaseEngineProperties implements EngineProperties {
                 = (EnginePropertyChangeRequestListener) e.nextElement();
             listener.propertyChangeRequest(event);
         }
+    }
+
+    /**
+     * Notifies the engine about a property change request. The engine may apply
+     * the request at any time.
+     * @param propName
+     *            the name of the property
+     * @param oldValue
+     *            the old value
+     * @param newValue
+     *            the new value
+     */
+    protected final void notifyPropertyChangeRequest(final String propName,
+            final Object oldValue, final Object newValue) {
+        final boolean set = handlePropertyChangeRequest(propName, oldValue,
+                newValue);
+        if (set) {
+            commitPropertyChange(propName, oldValue, newValue);
+        }
+    }
+
+    /**
+     * Engines should override this method to apply a pending property change
+     * request. If a pending request is not handled within this method, the
+     * engine implementation must take care to call
+     * {@link #commitPropertyChange(String, Object, Object)} after it applied
+     * the change request.
+     * @param propName
+     *            the name of the property
+     * @param oldValue
+     *            the old value
+     * @param newValue
+     *            the new value
+     * @return <code>true</code> if the property hass been set.
+     */
+    protected final boolean handlePropertyChangeRequest(final String propName,
+            final Object oldValue, final Object newValue) {
+        return false;
     }
 
     /**

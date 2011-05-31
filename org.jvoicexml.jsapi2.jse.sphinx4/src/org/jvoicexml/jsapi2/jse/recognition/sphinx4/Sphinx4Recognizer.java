@@ -38,16 +38,13 @@ import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
-import javax.speech.SpeechEventExecutor;
 import javax.speech.recognition.RecognizerEvent;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
-import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
-import org.jvoicexml.jsapi2.jse.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.jse.recognition.GrammarDefinition;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
@@ -77,7 +74,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  * @version $Revision: 611 $
  */
 final class Sphinx4Recognizer extends JseBaseRecognizer
-        implements EnginePropertyChangeRequestListener, StateListener {
+        implements StateListener {
     /** Logger for this class. */
     private static final Logger LOGGER = Logger
             .getLogger(Sphinx4Recognizer.class.getName());
@@ -462,23 +459,6 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
      */
     public void postResultEvent(final ResultEvent resultEvent) {
         super.postResultEvent(resultEvent);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void propertyChangeRequest(EnginePropertyChangeRequestEvent event) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

@@ -227,14 +227,6 @@ public final class MacSynthesizer extends JseBaseSynthesizer {
      * {@inheritDoc}
      */
     @Override
-    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     protected AudioFormat getAudioFormat() {
         return macGetAudioFormat(synthesizerHandle);
     }

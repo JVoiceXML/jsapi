@@ -72,15 +72,6 @@ public class DummyRecognizer extends JseBaseRecognizer {
     }
 
 
-    /* (non-Javadoc)
-     * @see org.jvoicexml.jsapi2.BaseEngine#getChangeRequestListener()
-     */
-    @Override
-    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     @Override
     protected boolean setGrammars(Vector grammarDefinition) {
         // TODO Auto-generated method stub

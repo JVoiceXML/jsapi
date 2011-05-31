@@ -141,11 +141,6 @@ public final class MacRecognizer extends JseBaseRecognizer {
 
     private native boolean macSetGrammar(long handle, String grammarPath);
 
-    @Override
-    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
-        return null;
-    }
-
     void startRecognition() {
         start(recognizerHandle);
     }

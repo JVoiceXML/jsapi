@@ -256,13 +256,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     }
 
     public void setSynthesizerProperties(
-            SynthesizerProperties synthesizerProperties) {
-        this.synthesizerProperties = synthesizerProperties;
-        if (synthesizerProperties instanceof BaseEngineProperties) {
-            final BaseEngineProperties props =
-                (BaseEngineProperties) synthesizerProperties;
-            addEnginePropertyChangeRequestListener(props);
-        }
+            SynthesizerProperties props) {
     }
 
     public void setSpeakableMask(int mask) {
