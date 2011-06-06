@@ -19,12 +19,6 @@ This file builds the JSR 113.jar.
   <property name="component" value="org.jvoicexml.jsapi2.mac" />
   <property name="dist.jar" value="${dist}/${component}.jar" />
 
-  <!-- taskdef resource="cpptasks.tasks">
-    <classpath>
-      <pathelement location="lib/cpptasks.jar" />
-    </classpath>
-  </taskdef -->
-
   <target name="-init">
     <condition property="isMac">
       <os family="mac"/>
