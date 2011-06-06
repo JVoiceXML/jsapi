@@ -26,8 +26,10 @@
 
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -43,7 +45,6 @@ import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 
-import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.jse.recognition.GrammarDefinition;
@@ -114,7 +115,18 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
                 "/sphinx4.config.xml");
 
         URL url = Sphinx4Recognizer.class.getResource(configFile);
-
+        if (url == null) {
+            try {
+                File tmp = new File(configFile);
+                if (tmp.exists()) {
+                    url = tmp.toURI().toURL();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                url = null;
+            }
+        }
+        
         // There is no config, use default config
         if (url == null) {
             LOGGER.info("Sphinx4Recognizer using default configuration.");
