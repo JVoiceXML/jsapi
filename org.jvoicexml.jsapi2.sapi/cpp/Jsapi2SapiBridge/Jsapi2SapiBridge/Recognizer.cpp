@@ -137,7 +137,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
     {
         return hr;
     }
-
+#ifdef FALSE
 	/* GrammarCompiler for conversion in a binary format */
     CComPtr<ISpGrammarCompiler> compiler;
     //hr = compiler.CoCreateInstance(CLSID_SpGrammarCompiler); //SAPI-Compiler
@@ -188,7 +188,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 
 	/* pair the grammarID and the grammar in gramHash */
 	gramHash.insert( std::make_pair( grammarID , cpGrammar ) );
-
+#endif
     return hr;
 }
 
