@@ -29,16 +29,13 @@ package javax.speech.recognition;
 //Comp. 2.0.6
 
 public class RuleTag extends RuleComponent {
-    private String tag;
+    private Object tag;
 
     public RuleTag(Object tag) {
-        if (tag != null) {
-            checkValidGrammarText(tag.toString());
-            this.tag = tag.toString();
-        }
+        this.tag = tag;
     }
 
-    public String getTag() {
+    public Object getTag() {
         return tag;
     }
 
@@ -46,7 +43,9 @@ public class RuleTag extends RuleComponent {
         final StringBuffer str = new StringBuffer();
 
         str.append("<tag>");
-        str.append(tag);
+        if (tag != null) {
+            str.append(tag);
+        }
         str.append("</tag>");
 
         return str.toString();
