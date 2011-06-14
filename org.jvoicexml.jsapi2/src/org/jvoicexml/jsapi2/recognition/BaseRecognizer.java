@@ -71,7 +71,6 @@ import javax.speech.recognition.SpeakerManager;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
-import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.BaseVocabularyManager;
 
 
