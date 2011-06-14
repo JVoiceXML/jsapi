@@ -2,7 +2,9 @@ Version 0.4
 ===========
 - Reorganisation of the project structure
 - some code cleanup
-- restructured the way pending property changes are handled. 
+- restructured the way pending property changes are handled.
+- bugfix: tags in a rule grammar are of type Object rather than Strings
+- 64bit SAPI support 
 
 Version 0.3
 ===========

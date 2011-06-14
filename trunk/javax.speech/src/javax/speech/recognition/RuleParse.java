@@ -40,7 +40,7 @@ public class RuleParse extends RuleComponent {
         this.parse = parse;
     }
 
-    public String[] getTags() {
+    public Object[] getTags() {
         if (parse == null) {
             return null;
         }
@@ -48,7 +48,7 @@ public class RuleParse extends RuleComponent {
         final Vector parseTags = new Vector();
         addTags(parseTags, parse);
 
-        final String[] tags = new String[parseTags.size()];
+        final Object[] tags = new Object[parseTags.size()];
         parseTags.copyInto(tags);
 
         return tags;
@@ -57,7 +57,7 @@ public class RuleParse extends RuleComponent {
     private void addTags(Vector tags, RuleComponent component) {
         if (component instanceof RuleTag) {
             final RuleTag tag = (RuleTag) component;
-            final String tagName = tag.getTag();
+            final Object tagName = tag.getTag();
             tags.addElement(tagName);
         } else if (component instanceof RuleAlternatives) {
             final RuleAlternatives alternatives = (RuleAlternatives) component;
