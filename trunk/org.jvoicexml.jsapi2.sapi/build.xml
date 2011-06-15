@@ -36,6 +36,9 @@ This file builds the JSR 113.jar.
   <target name="clean" description="Remove all compiled and distribution files">
     <delete dir="${build}" />
     <delete file="${dist.jar}" />
+    <delete dir="${dist}">
+      <include name="*.dll" />
+    </delete>
     <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
       osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
@@ -90,11 +93,10 @@ This file builds the JSR 113.jar.
   </target>
 
   <target name="-copydll" if="isWindows">
-    <copy todir="${dist}">
-      <fileset dir="cpp/Jsapi2SapiBridge/Release">
-        <include name="*.dll"/>
-      </fileset>
-    </copy>
+    <copy file="cpp/Jsapi2SapiBridge/Debug/Jsapi2SapiBridge.dll"
+      tofile="${dist}/Jsapi2SapiBridge.dll"/>
+    <copy file="cpp/Jsapi2SapiBridge/Debug_x64/Jsapi2SapiBridge.dll"
+      tofile="${dist}/Jsapi2SapiBridge_x64.dll"/>
   </target>
 
   <target name="jar" depends="compile,-copydll"
