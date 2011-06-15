@@ -90,7 +90,7 @@ public abstract class BaseEngine implements Engine {
      * @see #pause()
      * @see #resume()
      */
-    protected int P;
+    protected int pauses;
 
     /**
      * List of <code>EngineListeners</code> registered for
@@ -140,7 +140,7 @@ public abstract class BaseEngine implements Engine {
         engineListeners = new Vector();
         engineState = DEALLOCATED;
         engineStateLock = new Object();
-        P = 1;
+        pauses = 1;
     }
 
     /**
@@ -271,7 +271,7 @@ public abstract class BaseEngine implements Engine {
         // Handle engine allocation
         boolean success = false;
         try {
-            P = 1;
+            pauses = 1;
             // Handle allocate
             baseAllocate();
             success = true;
@@ -376,12 +376,11 @@ public abstract class BaseEngine implements Engine {
      * {@inheritDoc}
      */
     public final void pause() {
-        System.out.println("=== pause(): " + P);
         //Validate current state
         if (testEngineState(PAUSED)) {
             // Increase internal state counter for nested pauses/resumes
             synchronized(this) {
-                P++;
+                pauses++;
             }
             return;
         }
@@ -398,7 +397,7 @@ public abstract class BaseEngine implements Engine {
 
         synchronized(this) {
             // Increase internal state counter for nested pauses/resumes
-            P++;
+            pauses++;
         }
         
         // Handle pause
@@ -414,7 +413,6 @@ public abstract class BaseEngine implements Engine {
      * {@inheritDoc}
      */
     public final boolean resume() throws EngineStateException {
-        System.out.println("=== resume(): " + P);
         //Validate current state
         if (testEngineState(RESUMED)) {
             return true;
@@ -432,10 +430,10 @@ public abstract class BaseEngine implements Engine {
         
         boolean resumeNow = false;
         synchronized (this) {
-            if (P <= 1) {
+            if (pauses <= 1) {
                 resumeNow = true;
             }
-            P--;
+            pauses--;
         }
         if (resumeNow) {
             //Handle resume
