@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,12 +24,10 @@
 #define _LOG4CPLUS_HELPERS_APPENDER_ATTACHABLE_IMPL_HEADER_
 
 #include <log4cplus/config.hxx>
-#include <log4cplus/layout.h>
 #include <log4cplus/tstring.h>
-#include <log4cplus/helpers/logloguser.h>
 #include <log4cplus/helpers/pointer.h>
-#include <log4cplus/helpers/threads.h>
 #include <log4cplus/spi/appenderattachable.h>
+#include <log4cplus/thread/syncprims.h>
 
 #include <memory>
 #include <vector>
@@ -42,12 +40,11 @@ namespace log4cplus {
          * This Interface is for attaching Appenders to objects.
          */
         class LOG4CPLUS_EXPORT AppenderAttachableImpl 
-                                   : public log4cplus::spi::AppenderAttachable,
-                                     protected log4cplus::helpers::LogLogUser
+            : public log4cplus::spi::AppenderAttachable
         {
         public:
           // Data
-            LOG4CPLUS_MUTEX_PTR_DECLARE appender_list_mutex;
+            thread::Mutex appender_list_mutex;
 
           // Ctors
             AppenderAttachableImpl();
@@ -103,6 +100,10 @@ namespace log4cplus {
           // Data
             /** Array of appenders. */
             ListType appenderList;
+
+        private:
+            AppenderAttachableImpl(AppenderAttachableImpl const &);
+            AppenderAttachableImpl & operator = (AppenderAttachableImpl const &);
         };  // end class AppenderAttachableImpl
 
     } // end namespace helpers

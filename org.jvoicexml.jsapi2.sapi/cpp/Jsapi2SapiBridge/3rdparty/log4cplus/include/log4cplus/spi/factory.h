@@ -27,11 +27,8 @@
 #include <log4cplus/appender.h>
 #include <log4cplus/layout.h>
 #include <log4cplus/tstring.h>
-#include <log4cplus/helpers/property.h>
-#include <log4cplus/helpers/threads.h>
 #include <log4cplus/spi/filter.h>
 #include <log4cplus/spi/objectregistry.h>
-#include <map>
 #include <memory>
 #include <vector>
 
@@ -49,7 +46,7 @@ namespace log4cplus {
             /**
              * Returns the typename of the objects this factory creates.
              */
-            virtual log4cplus::tstring getTypeName() = 0;
+            virtual log4cplus::tstring const & getTypeName() const = 0;
         };
 
 

@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@
 #define _LOG4CPLUS_SPI_ROOT_LOGGER_HEADER_
 
 #include <log4cplus/config.hxx>
-#include <log4cplus/helpers/loglog.h>
 #include <log4cplus/spi/loggerimpl.h>
 
 namespace log4cplus {

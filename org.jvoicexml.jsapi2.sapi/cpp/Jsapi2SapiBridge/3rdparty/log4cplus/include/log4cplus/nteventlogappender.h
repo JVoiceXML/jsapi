@@ -3,7 +3,7 @@
 // Created: 4/2003
 // Author:  Michael CATANZARITI
 //
-// Copyright 2003-2009 Michael CATANZARITI
+// Copyright 2003-2010 Michael CATANZARITI
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,12 +23,10 @@
 #define _LOG4CPLUS_NT_EVENT_LOG_APPENDER_HEADER_
 
 #include <log4cplus/config.hxx>
-#include <log4cplus/appender.h>
+#if defined (LOG4CPLUS_HAVE_NT_EVENT_LOG)
 
-#if defined(_WIN32)
-#  if ! defined (LOG4CPLUS_HAVE_NT_EVENT_LOG)
-#    error "Your platform does not support NT event log."
-#  else
+#include <log4cplus/appender.h>
+#include <log4cplus/config/windowsh-inc.h>
 
 
 namespace log4cplus {
@@ -42,7 +40,7 @@ namespace log4cplus {
         NTEventLogAppender(const log4cplus::tstring& server, 
                            const log4cplus::tstring& log, 
                            const log4cplus::tstring& source);
-        NTEventLogAppender(const log4cplus::helpers::Properties properties);
+        NTEventLogAppender(const log4cplus::helpers::Properties & properties);
 
       // dtor
         virtual ~NTEventLogAppender();
@@ -77,5 +75,4 @@ namespace log4cplus {
 } // end namespace log4cplus
 
 #endif // LOG4CPLUS_HAVE_NT_EVENT_LOG
-#endif // _WIN32
 #endif //_LOG4CPLUS_NT_EVENT_LOG_APPENDER_HEADER_

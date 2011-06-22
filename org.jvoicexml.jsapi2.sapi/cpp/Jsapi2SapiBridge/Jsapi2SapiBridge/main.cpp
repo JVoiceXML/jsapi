@@ -29,6 +29,7 @@
 #include "sperror.h"
 #include <string>
 #include <log4cplus/logger.h>
+#include <log4cplus/loggingmacros.h>
 #include "log4cplus/consoleappender.h"
 
 
@@ -90,7 +91,7 @@ DWORD MessageLoop(void)
     MSG msg;
     while (GetMessage(&msg, hWnd, 0, 0) == TRUE)
     {
-        LOG4CPLUS_DEBUG(logger, msg.hwnd << _T(": ") << msg.message);
+        LOG4CPLUS_DEBUG(logger, (unsigned long) msg.hwnd << _T(": ") << msg.message);
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }

@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2009 Tad E. Smith
+// Copyright 2003-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,27 +24,18 @@
 #define LOG4CPLUS_FSTREAMS_HEADER_
 
 #include <log4cplus/config.hxx>
-
-#include <fstream>
-
-#if defined(__DECCXX) && !defined(__USE_STD_IOSTREAM)
-#  define LOG4CPLUS_FSTREAM_NAMESPACE
-#else
-#  define LOG4CPLUS_FSTREAM_NAMESPACE std
-#endif
+#include <log4cplus/tchar.h>
+#include <iosfwd>
 
 
-#ifdef UNICODE
-    namespace log4cplus {
-        typedef LOG4CPLUS_FSTREAM_NAMESPACE::wofstream tofstream;
-        typedef LOG4CPLUS_FSTREAM_NAMESPACE::wifstream tifstream;
-    }
-#else
-    namespace log4cplus {
-        typedef LOG4CPLUS_FSTREAM_NAMESPACE::ofstream tofstream;
-        typedef LOG4CPLUS_FSTREAM_NAMESPACE::ifstream tifstream;
-    }
-#endif // UNICODE
+namespace log4cplus
+{
+
+
+typedef std::basic_ofstream<tchar> tofstream;
+typedef std::basic_ifstream<tchar> tifstream;
+
+
+}
 
 #endif // LOG4CPLUS_FSTREAMS_HEADER_
-

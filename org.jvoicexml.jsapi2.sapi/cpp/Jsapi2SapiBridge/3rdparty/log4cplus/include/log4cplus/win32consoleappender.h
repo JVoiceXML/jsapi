@@ -29,7 +29,6 @@
 #if defined(_WIN32) && defined (LOG4CPLUS_HAVE_WIN32_CONSOLE)
 
 #include <log4cplus/appender.h>
-#include <log4cplus/helpers/property.h>
 
 
 namespace log4cplus
@@ -60,8 +59,8 @@ namespace log4cplus
     protected:
         virtual void append (spi::InternalLoggingEvent const &);
 
-        void write_handle (HANDLE, tchar const *, size_t);
-        void write_console (HANDLE, tchar const *, size_t);
+        void write_handle (void *, tchar const *, std::size_t);
+        void write_console (void *, tchar const *, std::size_t);
 
         bool alloc_console;
 

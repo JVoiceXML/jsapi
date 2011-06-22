@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -87,6 +87,8 @@ namespace log4cplus {
             virtual void log(LogLevel ll, const log4cplus::tstring& message,
                              const char* file=NULL, int line=-1);
 
+            virtual void log(spi::InternalLoggingEvent const &);
+
             /**
              * Starting from this logger, search the logger hierarchy for a
              * "set" LogLevel and return it. Otherwise, return the LogLevel of the
@@ -118,7 +120,7 @@ namespace log4cplus {
             /**
              * Return the logger name.  
              */
-            log4cplus::tstring getName() const { return name; }
+            log4cplus::tstring const & getName() const { return name; }
 
             /**
              * Get the additivity flag for this Logger instance.
@@ -157,6 +159,8 @@ namespace log4cplus {
                                    const char* file=NULL, 
                                    int line=-1);
 
+            virtual void forcedLog(spi::InternalLoggingEvent const & ev);
+
 
           // Data
             /** The name of this logger */
@@ -170,7 +174,7 @@ namespace log4cplus {
             /**
              * The parent of this logger. All loggers have at least one
              * ancestor which is the root logger. 
-             */ 
+             */
             SharedLoggerImplPtr parent;
 
             /** 

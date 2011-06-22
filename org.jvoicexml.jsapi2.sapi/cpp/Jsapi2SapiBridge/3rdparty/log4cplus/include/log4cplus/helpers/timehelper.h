@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2009 Tad E. Smith
+// Copyright 2003-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ public:
     time_t setTime(tm* t);
 
     /**
-     * Returns this Time as a <code>time_t</code> value.
+     * Returns this Time as a <code>time_t></code> value.
      */
     time_t getTime() const;
 
@@ -133,9 +133,6 @@ public:
     Time& operator*=(long rhs);
 
 private:
-    void build_q_value (log4cplus::tstring & q_str) const;
-    void build_uc_q_value (log4cplus::tstring & uc_q_str) const;
-
   // Data
     time_t tv_sec;  /* seconds */
     long tv_usec;  /* microseconds */

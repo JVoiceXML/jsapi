@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Recognizer.h"
 #include "JNIUtils.h"
+#include <log4cplus/loggingmacros.h>
 
 #include <iostream>
 #include <fstream>
@@ -64,8 +65,8 @@ Recognizer::~Recognizer()
 	/* Deactivate and delete all Grammars contained in the gramHash */
 	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
 
-	for( it ; it != gramHash.end(); it++){		
-
+	for( it ; it != gramHash.end(); it++)
+    {		
 		CComPtr<ISpRecoGrammar>		grammar = it->second ;
 
 		hr = grammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
@@ -92,6 +93,7 @@ HRESULT Recognizer::setRecognizerInputStream(CComPtr<ISpStream> spStream)
 		std::clog << "TRUE";
 	}
 	std::clog << std::endl;
+
 	return cpRecognizerEngine->SetInput(spStream, TRUE);
 
 	///* TEST */
@@ -372,7 +374,6 @@ HRESULT Recognizer::Resume()
     return hr;
 }
 
-//wchar_t** Recognizer::StartRecognition()
 HRESULT Recognizer::StartRecognition(WCHAR* result[])
 {	
 	if (gramHash.empty())
@@ -460,7 +461,7 @@ void Recognizer::StartDictation()
 			// ToDo Give back the Dictation Result To Java Code
 			// and create a terminate Method
 			USES_CONVERSION;
-            LOG4CPLUS_DEBUG(logger, _T("I heard: ") << W2A(dstrText));
+            LOG4CPLUS_DEBUG(logger, "I heard: " << W2A(dstrText));
 			
 			cpResult.Release();   						
         }

@@ -2,9 +2,14 @@
 #include "org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer.h"
 #include "Recognizer.h"
 #include "JNIUtils.h"
+#include <log4cplus/loggingmacros.h>
 
 // wraps a java InputStream in an IStream
 #include "jInputStream.h"
+
+//static initializations
+static log4cplus::Logger logger =
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.SapiRecognizer"));
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
@@ -36,7 +41,7 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognize
         ThrowJavaException(env, "javax/speech/EngineException", buffer);
         return 0;
     }
-	
+    LOG4CPLUS_DEBUG(logger, "allocated");
     return (jlong) recognizer;
 }
 
@@ -99,7 +104,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 		}
 		int limitSetInput = 5;
 		for (int i = 0; (hr == SPERR_ENGINE_BUSY) && i < limitSetInput; i++) {
-			std::clog << "=> CPP setInputCounter: " << i << std::endl;
+            LOG4CPLUS_DEBUG(logger, _T("=> CPP setInputCounter:") << i);
 			Sleep(10);
 			hr = recognizer->setRecognizerInputStream(cpSpStream);
 		}
@@ -164,8 +169,6 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiResume
 (JNIEnv *env, jobject object, jlong handle, jobjectArray grammars, jobjectArray references)
 {
-	std::clog << "SAPI Rec: Resume()" << std::endl;
-
 	Recognizer* recognizer = (Recognizer*)handle;
     jsize size = env->GetArrayLength(grammars);
     if (size == 0)
