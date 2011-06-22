@@ -27,9 +27,7 @@
 #include <log4cplus/layout.h>
 #include <log4cplus/loglevel.h>
 #include <log4cplus/tstring.h>
-#include <log4cplus/helpers/logloguser.h>
 #include <log4cplus/helpers/pointer.h>
-#include <log4cplus/helpers/property.h>
 #include <log4cplus/spi/filter.h>
 
 #include <memory>
@@ -37,26 +35,36 @@
 
 namespace log4cplus {
 
+
+    namespace helpers
+    {
+
+        class Properties;
+
+    }
+
+
     /**
      * This class is used to "handle" errors encountered in an {@link
      * log4cplus::Appender}.
      */
-    class LOG4CPLUS_EXPORT ErrorHandler {
+    class LOG4CPLUS_EXPORT ErrorHandler
+    {
     public:
-        virtual ~ErrorHandler();
+        ErrorHandler ();
+        virtual ~ErrorHandler() = 0;
         virtual void error(const log4cplus::tstring& err) = 0;
         virtual void reset() = 0;
     };
 
 
-
-    class LOG4CPLUS_EXPORT OnlyOnceErrorHandler : public ErrorHandler,
-                                                  protected log4cplus::helpers::LogLogUser
+    class LOG4CPLUS_EXPORT OnlyOnceErrorHandler
+        : public ErrorHandler
     {
     public:
       // Ctor
-        OnlyOnceErrorHandler() : firstTime(true){}
-
+        OnlyOnceErrorHandler();
+        virtual ~OnlyOnceErrorHandler ();
         virtual void error(const log4cplus::tstring& err);
         virtual void reset();
 
@@ -71,13 +79,11 @@ namespace log4cplus {
      */
     class LOG4CPLUS_EXPORT Appender
         : public virtual log4cplus::helpers::SharedObject
-        , protected log4cplus::helpers::LogLogUser
-
     {
     public:
       // Ctor
         Appender();
-        Appender(const log4cplus::helpers::Properties properties);
+        Appender(const log4cplus::helpers::Properties & properties);
 
       // Dtor
         virtual ~Appender();
@@ -98,7 +104,7 @@ namespace log4cplus {
          * delegating actual logging to the subclasses specific {@link
          * #append} method.
          */
-        void doAppend(const log4cplus::spi::InternalLoggingEvent& event);
+        virtual void doAppend(const log4cplus::spi::InternalLoggingEvent& event);
 
         /**
          * Get the name of this appender. The name uniquely identifies the
@@ -180,6 +186,8 @@ namespace log4cplus {
          * @see doAppend method.
          */
         virtual void append(const log4cplus::spi::InternalLoggingEvent& event) = 0;
+
+        tstring & formatEvent (const log4cplus::spi::InternalLoggingEvent& event) const;
 
       // Data
         /** The layout variable does not need to be set if the appender

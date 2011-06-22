@@ -1,4 +1,4 @@
-//   Copyright (C) 2009, Vaclav Haisman. All rights reserved.
+//   Copyright (C) 2010, Vaclav Haisman. All rights reserved.
 //   
 //   Redistribution and use in source and binary forms, with or without modifica-
 //   tion, are permitted provided that the following conditions are met:
@@ -24,32 +24,10 @@
 #ifndef LOG4CPLUS_THREAD_SYNCPRIMS_H
 #define LOG4CPLUS_THREAD_SYNCPRIMS_H
 
-#include <stdexcept>
 #include <log4cplus/config.hxx>
-#if defined (LOG4CPLUS_USE_PTHREADS)
-#  include <errno.h>
-#  include <pthread.h>
-#  include <semaphore.h>
-#  include <log4cplus/helpers/timehelper.h>
-
-#elif defined (LOG4CPLUS_USE_WIN32_THREADS)
-#  undef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
-#  include <windows.h>
-
-#endif
 
 
 namespace log4cplus { namespace thread {
-
-
-namespace detail
-{
-
-LOG4CPLUS_EXPORT void syncprims_throw_exception (char const * const msg,
-    char const * const file, int line);
-
-} // namespace detail
 
 
 template <typename SP>
@@ -75,23 +53,31 @@ private:
 class ManualResetEvent;
 
 
-class Mutex
+class MutexImplBase
+{
+protected:
+    ~MutexImplBase ();
+};
+
+
+class LOG4CPLUS_EXPORT Mutex
 {
 public:
-    Mutex ();
+    enum Type
+    {
+        DEFAULT,
+        RECURSIVE
+    };
+
+    explicit Mutex (Type = RECURSIVE);
     ~Mutex ();
 
     void lock () const;
     void unlock () const;
 
 private:
-#if defined (LOG4CPLUS_USE_PTHREADS)
-    mutable pthread_mutex_t mtx;
-    friend class ManualResetEvent;
-#elif defined (LOG4CPLUS_USE_WIN32_THREADS)
-    mutable CRITICAL_SECTION cs;
-#endif
-    
+    MutexImplBase * mtx;
+
     Mutex (Mutex const &);
     Mutex & operator = (Mutex &);
 };
@@ -100,7 +86,14 @@ private:
 typedef SyncGuard<Mutex> MutexGuard;
 
 
-class Semaphore
+class SemaphoreImplBase
+{
+protected:
+    ~SemaphoreImplBase ();
+};
+
+
+class LOG4CPLUS_EXPORT Semaphore
 {
 public:
     Semaphore (unsigned max, unsigned initial);
@@ -110,11 +103,7 @@ public:
     void unlock () const;
 
 private:
-#if defined (LOG4CPLUS_USE_PTHREADS)
-    mutable sem_t sem;
-#elif defined (LOG4CPLUS_USE_WIN32_THREADS)
-    HANDLE sem;
-#endif
+    SemaphoreImplBase * sem;
 
     Semaphore (Semaphore const &);
     Semaphore & operator = (Semaphore const &);
@@ -124,7 +113,41 @@ private:
 typedef SyncGuard<Semaphore> SemaphoreGuard;
 
 
-class ManualResetEvent
+class FairMutexImplBase
+{
+protected:
+    ~FairMutexImplBase ();
+};
+
+
+class LOG4CPLUS_EXPORT FairMutex
+{
+public:
+    FairMutex ();
+    ~FairMutex ();
+
+    void lock () const;
+    void unlock () const;
+
+private:
+    FairMutexImplBase * mtx;
+
+    FairMutex (FairMutex const &);
+    FairMutex & operator = (FairMutex &);
+};
+
+
+typedef SyncGuard<FairMutex> FairMutexGuard;
+
+
+class ManualResetEventImplBase
+{
+protected:
+    ~ManualResetEventImplBase ();
+};
+
+
+class LOG4CPLUS_EXPORT ManualResetEvent
 {
 public:
     ManualResetEvent (bool = false);
@@ -136,34 +159,67 @@ public:
     void reset () const;
 
 private:
-#if defined (LOG4CPLUS_USE_PTHREADS)
-    mutable pthread_cond_t cv;
-    mutable Mutex mtx;
-    mutable volatile unsigned sigcount;
-    mutable volatile bool signaled;
-#elif defined (LOG4CPLUS_USE_WIN32_THREADS)
-    HANDLE ev;
-#endif
+    ManualResetEventImplBase * ev;
 
     ManualResetEvent (ManualResetEvent const &);
     ManualResetEvent & operator = (ManualResetEvent const &);
 };
 
 
-} } // namespace log4cplus { namespace thread {
+class SharedMutexImplBase
+{
+protected:
+    ~SharedMutexImplBase ();
+};
 
 
-// Include the appropriate implementations of the classes declared
-// above.
+template <typename SP, void (SP:: * lock_func) () const,
+    void (SP:: * unlock_func) () const>
+class SyncGuardFunc
+{
+public:
+    SyncGuardFunc (SP const &);
+    ~SyncGuardFunc ();
 
-#if defined (LOG4CPLUS_USE_PTHREADS)
-#  include <log4cplus/helpers/syncprims-pthreads.h>
-#elif defined (LOG4CPLUS_USE_WIN32_THREADS)
-#  include <log4cplus/helpers/syncprims-win32.h>
-#endif
+    void lock ();
+    void unlock ();
+    void attach (SP const &);
+    void detach ();
+
+private:
+    SP const * sp;
+
+    SyncGuardFunc (SyncGuardFunc const &);
+    SyncGuardFunc & operator = (SyncGuardFunc const &);
+};
 
 
-namespace log4cplus { namespace thread {
+class LOG4CPLUS_EXPORT SharedMutex
+{
+public:
+    SharedMutex ();
+    ~SharedMutex ();
+
+    void rdlock () const;
+    void rdunlock () const;
+
+    void wrlock () const;
+    void wrunlock () const;
+
+private:
+    SharedMutexImplBase * sm;
+
+    SharedMutex (SharedMutex const &);
+    SharedMutex & operator = (SharedMutex const &);
+};
+
+
+typedef SyncGuardFunc<SharedMutex, &SharedMutex::rdlock,
+    &SharedMutex::rdunlock> SharedMutexReaderGuard;
+
+
+typedef SyncGuardFunc<SharedMutex, &SharedMutex::wrlock,
+    &SharedMutex::wrunlock> SharedMutexWriterGuard;
 
 
 //
@@ -224,8 +280,71 @@ SyncGuard<SP>::detach ()
 }
 
 
-} } // namespace log4cplus { namespace thread {
+//
+//
+//
 
+template <typename SP, void (SP:: * lock_func) () const,
+    void (SP:: * unlock_func) () const>
+inline
+SyncGuardFunc<SP, lock_func, unlock_func>::SyncGuardFunc (SP const & m)
+    : sp (&m)
+{
+    (sp->*lock_func) ();
+}
+
+
+template <typename SP, void (SP:: * lock_func) () const,
+    void (SP:: * unlock_func) () const>
+inline
+SyncGuardFunc<SP, lock_func, unlock_func>::~SyncGuardFunc ()
+{
+    if (sp)
+        (sp->*unlock_func) ();
+}
+
+
+template <typename SP, void (SP:: * lock_func) () const,
+    void (SP:: * unlock_func) () const>
+inline
+void
+SyncGuardFunc<SP, lock_func, unlock_func>::lock ()
+{
+    (sp->*lock_func) ();
+}
+
+
+template <typename SP, void (SP:: * lock_func) () const,
+    void (SP:: * unlock_func) () const>
+inline
+void
+SyncGuardFunc<SP, lock_func, unlock_func>::unlock ()
+{
+    (sp->*unlock_func) ();
+}
+
+
+template <typename SP, void (SP:: * lock_func) () const,
+    void (SP:: * unlock_func) () const>
+inline
+void
+SyncGuardFunc<SP, lock_func, unlock_func>::attach (SP const & m)
+{
+    sp = &m;
+}
+
+
+template <typename SP, void (SP:: * lock_func) () const,
+    void (SP:: * unlock_func) () const>
+inline
+void
+SyncGuardFunc<SP, lock_func, unlock_func>::detach ()
+{
+    sp = 0;
+}
+
+
+} } // namespace log4cplus { namespace thread { 
 
 
 #endif // LOG4CPLUS_THREAD_SYNCPRIMS_H

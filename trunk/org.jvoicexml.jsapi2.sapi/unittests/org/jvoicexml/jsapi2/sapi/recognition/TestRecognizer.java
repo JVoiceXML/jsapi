@@ -7,6 +7,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Locale;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.speech.Engine;
 import javax.speech.EngineManager;
@@ -59,7 +63,12 @@ public final class TestRecognizer implements ResultListener {
                 Boolean.TRUE.toString());
         EngineManager.registerEngineListFactory(
                 SapiEngineListFactory.class.getCanonicalName());
-//        Locale.setDefault(new Locale("en"));
+        Locale.setDefault(new Locale("en"));
+        // Enable logging at all levels.
+        Handler handler = new ConsoleHandler();
+        handler.setLevel(Level.ALL);
+        Logger.getLogger("").addHandler(handler);
+        Logger.getLogger("").setLevel(Level.ALL);
     }
 
     /**

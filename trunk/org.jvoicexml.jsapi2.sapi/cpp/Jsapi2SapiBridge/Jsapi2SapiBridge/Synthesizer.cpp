@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "Synthesizer.h"
+#include <log4cplus/loggingmacros.h>
 
 //static initializations
 log4cplus::Logger Synthesizer::logger =

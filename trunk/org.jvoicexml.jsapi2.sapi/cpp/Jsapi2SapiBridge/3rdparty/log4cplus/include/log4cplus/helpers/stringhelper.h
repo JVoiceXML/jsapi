@@ -28,7 +28,6 @@
 
 #include <algorithm>
 #include <limits>
-#include <iterator>
 
 
 namespace log4cplus {
@@ -48,10 +47,10 @@ namespace log4cplus {
 
         /**
          * Tokenize <code>s</code> using <code>c</code> as the delimiter and
-         * put the resulting tokens in <code>_result</code>.  If
+         * put the resulting tokens in <code>_result</code>.  If 
          * <code>collapseTokens</code> is false, multiple adjacent delimiters
          * will result in zero length tokens.
-         *
+         * 
          * <b>Example:</b>
          * <pre>
          *   string s = // Set string with '.' as delimiters
@@ -62,8 +61,8 @@ namespace log4cplus {
         template <class StringType, class OutputIter>
         inline
         void
-        tokenize(const StringType& s, typename StringType::value_type c,
-            OutputIter result, bool collapseTokens = true)
+        tokenize(const StringType& s, typename StringType::value_type c, 
+            OutputIter result, bool collapseTokens = true) 
         {
             typedef typename StringType::size_type size_type;
             size_type const slen = s.length();
@@ -84,7 +83,7 @@ namespace log4cplus {
             if (first != i)
                 *result = StringType (s, first, i - first);
         }
-
+        
 
         template <typename intType, bool isSigned>
         struct ConvertIntegerToStringHelper;
@@ -97,13 +96,11 @@ namespace log4cplus {
             void
             step1 (tchar * & it, intType & value)
             {
-                // The sign of the result of the modulo operator is
-                // implementation defined. That's why we work with
-                // positive counterpart instead. Also, in twos
-                // complement arithmetic the smallest negative number
-                // does not have positive counterpart; the range is
-                // asymetric. That's why we handle the case of value
-                // == min() specially here.
+                // The sign of the result of the modulo operator is implementation
+                // defined. That's why we work with positive counterpart instead.
+                // Also, in twos complement arithmetic the smallest negative number
+                // does not have positive counterpart; the range is asymetric.
+                // That's why we handle the case of value == min() specially here.
                 if (value == (std::numeric_limits<intType>::min) ())
                 {
                     intType const r = value / 10;
@@ -134,16 +131,16 @@ namespace log4cplus {
 
         template<class intType>
         inline
-        void
-        convertIntegerToString (tstring & str, intType value)
+        void 
+        convertIntegerToString (tstring & str, intType value) 
         {
             typedef std::numeric_limits<intType> intTypeLimits;
-            typedef ConvertIntegerToStringHelper<intType,
-                intTypeLimits::is_signed> HelperType;
+            typedef ConvertIntegerToStringHelper<intType, intTypeLimits::is_signed>
+                HelperType;
 
-            const size_t buffer_size
-                = intTypeLimits::digits10 + 2;
-            tchar buffer[buffer_size];
+            const std::size_t buffer_size
+				= intTypeLimits::digits10 + 2;
+            tchar buffer[buffer_size];           
             tchar * it = &buffer[buffer_size];
             tchar const * const buf_end = it;
 
@@ -170,70 +167,23 @@ namespace log4cplus {
                 *it = LOG4CPLUS_TEXT('-');
             }
 
-            str.assign (static_cast<tchar const *>(it), buf_end);
+			str.assign (static_cast<tchar const *>(it), buf_end);
         }
 
-
-        template<class intType>
+		        
+		template<class intType>
         inline
-        tstring
+        tstring 
         convertIntegerToString (intType value)
-        {
-            tstring result;
-            convertIntegerToString (result, value);
-            return result;
-        }
-
-
-
-        /**
-         * This iterator can be used in place of the back_insert_iterator
-         * for compilers that don't have a std::basic_string class that
-         * has the <code>push_back</code> method.
-         */
-        template <class Container>
-        class string_append_iterator
-            : public std::iterator<std::output_iterator_tag, void, void, void,
-                void>
-        {
-        public:
-            typedef Container container_type;
-
-            explicit string_append_iterator(container_type & c)
-                : container(&c)
-            { }
-
-            string_append_iterator<container_type> &
-            operator = (const typename container_type::value_type& value)
-            {
-                *container += value;
-                return *this;
-            }
-
-            string_append_iterator<container_type> &
-            operator * ()
-            {
-                return *this;
-            }
-
-            string_append_iterator<container_type> &
-            operator ++ ()
-            {
-                return *this;
-            }
-
-            string_append_iterator<container_type>
-            operator ++ (int)
-            {
-                return *this;
-            }
-
-        protected:
-            container_type * container;
-        };
+		{
+			tstring result;
+			convertIntegerToString (result, value);
+			return result;
+		}
 
     } // namespace helpers
 
 } // namespace log4cplus
 
 #endif // LOG4CPLUS_HELPERS_STRINGHELPER_HEADER_
+

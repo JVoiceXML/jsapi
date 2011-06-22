@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2009 Tad E. Smith
+// Copyright 2003-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,17 +26,20 @@
 #include <log4cplus/config.hxx>
 #include <log4cplus/appender.h>
 #include <log4cplus/helpers/socket.h>
-#include <log4cplus/helpers/syncprims.h>
+#include <log4cplus/thread/syncprims.h>
+#include <log4cplus/thread/threads.h>
 
+
+namespace log4cplus
+{
+ 
 
 #ifndef UNICODE
-#  define LOG4CPLUS_MAX_MESSAGE_SIZE (8*1024)
+    std::size_t const LOG4CPLUS_MAX_MESSAGE_SIZE = 8*1024;
 #else
-#  define LOG4CPLUS_MAX_MESSAGE_SIZE (2*8*1024)
+    std::size_t const LOG4CPLUS_MAX_MESSAGE_SIZE = 2*8*1024;
 #endif
 
-
-namespace log4cplus {
 
     /**
      * Sends {@link spi::InternalLoggingEvent} objects to a remote a log server.
@@ -75,24 +78,11 @@ namespace log4cplus {
      *   is down, the client will not be blocked when making log requests
      *   but the log events will be lost due to server unavailability.
      * </ul>
-     *
-     * <h3>Properties</h3>
-     * <dl>
-     * <dt><tt>host</tt></dt>
-     * <dd>Remote host name to connect and send events to.</dd>
-     *
-     * <dt><tt>port</tt></dt>
-     * <dd>Port on remote host to send events to.</dd>
-     *
-     * <dt><tt>ServerName</tt></dt>
-     * <dd>Host name of event's origin prepended to each event.</dd>
-     *
-     * </dl>
      */
     class LOG4CPLUS_EXPORT SocketAppender : public Appender {
     public:
       // Ctors
-        SocketAppender(const log4cplus::tstring& host, int port, 
+        SocketAppender(const log4cplus::tstring& host, unsigned short port, 
                        const log4cplus::tstring& serverName = tstring());
         SocketAppender(const log4cplus::helpers::Properties & properties);
 
@@ -110,7 +100,7 @@ namespace log4cplus {
       // Data
         log4cplus::helpers::Socket socket;
         log4cplus::tstring host;
-        int port;
+        unsigned int port;
         log4cplus::tstring serverName;
 
 #if ! defined (LOG4CPLUS_SINGLE_THREADED)
@@ -119,7 +109,6 @@ namespace log4cplus {
 
         class LOG4CPLUS_EXPORT ConnectorThread
             : public thread::AbstractThread
-            , public helpers::LogLogUser
         {
         public:
             ConnectorThread (SocketAppender &);
@@ -148,8 +137,9 @@ namespace log4cplus {
 
     namespace helpers {
         LOG4CPLUS_EXPORT
-        SocketBuffer convertToBuffer(const log4cplus::spi::InternalLoggingEvent& event,
-                                     const log4cplus::tstring& serverName);
+        void convertToBuffer (SocketBuffer & buffer,
+            const log4cplus::spi::InternalLoggingEvent& event,
+            const log4cplus::tstring& serverName);
 
         LOG4CPLUS_EXPORT
         log4cplus::spi::InternalLoggingEvent readFromBuffer(SocketBuffer& buffer);

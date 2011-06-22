@@ -26,11 +26,18 @@
 
 #include <log4cplus/config.hxx>
 #include <log4cplus/helpers/pointer.h>
-#include <log4cplus/helpers/property.h>
-#include <log4cplus/spi/loggingevent.h>
+#include <log4cplus/loglevel.h>
 
 
 namespace log4cplus {
+
+    namespace helpers
+    {
+
+        class Properties;
+
+    }
+
     namespace spi {
 
 
@@ -48,6 +55,7 @@ namespace log4cplus {
 
         // Forward Declarations
         class Filter;
+        class InternalLoggingEvent;
 
 
         /**

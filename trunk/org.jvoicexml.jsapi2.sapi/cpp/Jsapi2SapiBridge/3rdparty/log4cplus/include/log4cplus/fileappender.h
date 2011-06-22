@@ -26,18 +26,15 @@
 #include <log4cplus/config.hxx>
 #include <log4cplus/appender.h>
 #include <log4cplus/fstreams.h>
-#include <log4cplus/helpers/property.h>
 #include <log4cplus/helpers/timehelper.h>
+#include <fstream>
 
-#if defined(__DECCXX)
-#   define LOG4CPLUS_OPEN_MODE_TYPE LOG4CPLUS_FSTREAM_NAMESPACE::ios::open_mode
-#else
-#   define LOG4CPLUS_OPEN_MODE_TYPE LOG4CPLUS_FSTREAM_NAMESPACE::ios::openmode
-#endif
 
-namespace log4cplus {
+namespace log4cplus
+{
 
     /**
+     * Appends log events to a file. 
      * Appends log events to a file.
      * 
      * <h3>Properties</h3>
@@ -54,10 +51,8 @@ namespace log4cplus {
      * instead of being truncated at opening.</dd>
      *
      * <dt><tt>ReopenDelay</tt></dt>
-     * <dd>This property sets a delay after which the appender will
-     * try to reopen log file again, after last logging failure. The
-     * default value is 1 second. Setting the delay to 0 makes the
-     * appender not to try reopening the stream.
+     * <dd>This property sets a delay after which the appender will try
+     * to reopen log file again, after last logging failure.
      * </dd>
      *
      * <dt><tt>BufferSize</tt></dt>
@@ -70,10 +65,10 @@ namespace log4cplus {
     public:
       // Ctors
         FileAppender(const log4cplus::tstring& filename, 
-                     LOG4CPLUS_OPEN_MODE_TYPE mode = LOG4CPLUS_FSTREAM_NAMESPACE::ios::trunc,
+                     std::ios_base::openmode mode = std::ios_base::trunc,
                      bool immediateFlush = true);
         FileAppender(const log4cplus::helpers::Properties& properties,
-                     LOG4CPLUS_OPEN_MODE_TYPE mode = LOG4CPLUS_FSTREAM_NAMESPACE::ios::trunc);
+                     std::ios_base::openmode mode = std::ios_base::trunc);
 
       // Dtor
         virtual ~FileAppender();
@@ -84,7 +79,7 @@ namespace log4cplus {
     protected:
         virtual void append(const spi::InternalLoggingEvent& event);
 
-        void open(LOG4CPLUS_OPEN_MODE_TYPE mode);
+        void open(std::ios_base::openmode mode);
         bool reopen();
 
       // Data
@@ -121,7 +116,7 @@ namespace log4cplus {
 
     private:
         void init(const log4cplus::tstring& filename,
-                  LOG4CPLUS_OPEN_MODE_TYPE mode);
+                  std::ios_base::openmode mode);
 
       // Disallow copying of instances of this class
         FileAppender(const FileAppender&);
@@ -131,6 +126,8 @@ namespace log4cplus {
 
 
     /**
+     * RollingFileAppender extends FileAppender to backup the log files when 
+     * they reach a certain size. 
      * RollingFileAppender extends FileAppender to backup the log
      * files when they reach a certain size.
      *

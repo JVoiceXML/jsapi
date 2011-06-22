@@ -88,7 +88,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             AudioException, SecurityException {
         // allocate the CPP-Recognizer
         recognizerHandle = sapiAllocate();
-        
         // set the InputStream
         setRecognizerInputStream();
     }

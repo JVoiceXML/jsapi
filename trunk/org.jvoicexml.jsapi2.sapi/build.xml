@@ -72,18 +72,21 @@ This file builds the JSR 113.jar.
     </copy>
     <javah destdir="cpp/Jsapi2SapiBridge/include">
       <class name="${component}.SapiEngineListFactory"/>
+      <class name="${component}.logging.Log4CPlus2JavaLoggingAdapter"/>    
       <class name="${component}.recognition.SapiRecognizer"/>
       <class name="${component}.recognition.SapiRecognitionThread"/>
       <class name="${component}.synthesis.SapiSynthesizer"/>  	
       <classpath refid="classpath"/>
       <classpath location="${build}"/>
     </javah>
+    <echo>Building Win32</echo>
     <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
       osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Build"/>
       <arg value="&quot;Debug|Win32&quot;"/>
     </exec>
+      <echo>Building Win64</echo>
       <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
         osfamily="windows">
         <arg value="Jsapi2SapiBridge.sln"/>
@@ -94,9 +97,9 @@ This file builds the JSR 113.jar.
 
   <target name="-copydll" if="isWindows">
     <copy file="cpp/Jsapi2SapiBridge/Debug/Jsapi2SapiBridge.dll"
-      tofile="${dist}/Jsapi2SapiBridge.dll"/>
+      tofile="${dist}/Jsapi2SapiBridge.dll" overwrite="true"/>
     <copy file="cpp/Jsapi2SapiBridge/Debug_x64/Jsapi2SapiBridge.dll"
-      tofile="${dist}/Jsapi2SapiBridge_x64.dll"/>
+      tofile="${dist}/Jsapi2SapiBridge_x64.dll" overwrite="true"/>
   </target>
 
   <target name="jar" depends="compile,-copydll"

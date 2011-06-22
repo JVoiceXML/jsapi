@@ -7,6 +7,7 @@ import javax.speech.spi.EngineListFactory;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.Voice;
 
+import org.jvoicexml.jsapi2.sapi.logging.Log4CPlus2JavaLoggingAdapter;
 import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizerMode;
 import org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizerMode;
 
@@ -20,6 +21,9 @@ import java.util.ArrayList;
 public class SapiEngineListFactory implements EngineListFactory {
     static {
         System.loadLibrary("Jsapi2SapiBridge");
+        Log4CPlus2JavaLoggingAdapter adapter =
+            new Log4CPlus2JavaLoggingAdapter();
+        adapter.start();
     }
 
     /**

@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,9 @@
 #if defined(LOG4CPLUS_HAVE_SYSLOG_H) && !defined(_WIN32)
 #include <log4cplus/appender.h>
 
-namespace log4cplus {
+
+namespace log4cplus
+{
 
     /**
      * Appends log events to a file. 

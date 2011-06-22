@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,9 +25,7 @@
 
 #include <log4cplus/config.hxx>
 #include <log4cplus/logger.h>
-#include <log4cplus/helpers/logloguser.h>
-#include <log4cplus/helpers/pointer.h>
-#include <log4cplus/helpers/threads.h>
+#include <log4cplus/thread/syncprims.h>
 #include <map>
 #include <memory>
 #include <vector>
@@ -56,7 +54,8 @@ namespace log4cplus {
      * to the provision node. Other descendants of the same ancestor add
      * themselves to the previously created provision node.
      */
-    class LOG4CPLUS_EXPORT Hierarchy : protected log4cplus::helpers::LogLogUser {
+    class LOG4CPLUS_EXPORT Hierarchy
+    {
     public:
         // DISABLE_OFF should be set to a value lower than all possible
         // priorities.
@@ -214,7 +213,7 @@ namespace log4cplus {
         /**
          * Returns the default LoggerFactory instance.
          */
-        virtual spi::LoggerFactory* getLoggerFactory() { return defaultFactory.get(); }
+        virtual spi::LoggerFactory* getLoggerFactory();
 
         /**
          * Shutting down a hierarchy will <em>safely</em> close and remove
@@ -271,7 +270,7 @@ namespace log4cplus {
          *
          *    We add 'logger' to the list of children for this potential parent.
          */
-        void updateParents(Logger logger);
+        void updateParents(Logger const & logger);
 
         /**
          * We update the links for all the children that placed themselves
@@ -287,28 +286,31 @@ namespace log4cplus {
          *   Otherwise, we set logger's parent field to c's parent and set
          *   c's parent field to logger.
          */
-        void updateChildren(ProvisionNode& pn, Logger logger);
+        void updateChildren(ProvisionNode& pn, Logger const & logger);
 
-    // Data
-       LOG4CPLUS_MUTEX_PTR_DECLARE hashtable_mutex;
-       std::auto_ptr<spi::LoggerFactory> defaultFactory;
-       ProvisionNodeMap provisionNodes;
-       LoggerMap loggerPtrs;
-       Logger root;
+     // Data
+        thread::Mutex hashtable_mutex;
+        std::auto_ptr<spi::LoggerFactory> defaultFactory;
+        ProvisionNodeMap provisionNodes;
+        LoggerMap loggerPtrs;
+        Logger root;
 
-       int disableValue;
+        int disableValue;
 
-       bool emittedNoAppenderWarning;
-       bool emittedNoResourceBundleWarning;
+        bool emittedNoAppenderWarning;
 
-     // Disallow copying of instances of this class
-       Hierarchy(const Hierarchy&);
-       Hierarchy& operator=(const Hierarchy&);
+        // Disallow copying of instances of this class
+        Hierarchy(const Hierarchy&);
+        Hierarchy& operator=(const Hierarchy&);
 
-    // Friends
-       friend class log4cplus::spi::LoggerImpl;
-       friend class log4cplus::HierarchyLocker;
+     // Friends
+        friend class log4cplus::spi::LoggerImpl;
+        friend class log4cplus::HierarchyLocker;
     };
+
+
+    LOG4CPLUS_EXPORT Hierarchy & getDefaultHierarchy ();
+
 
 } // end namespace log4cplus
 

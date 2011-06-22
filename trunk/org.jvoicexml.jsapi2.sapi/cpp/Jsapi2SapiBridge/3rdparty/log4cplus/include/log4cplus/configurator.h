@@ -25,9 +25,7 @@
 
 #include <log4cplus/config.hxx>
 #include <log4cplus/appender.h>
-#include <log4cplus/hierarchy.h>
 #include <log4cplus/logger.h>
-#include <log4cplus/helpers/logloguser.h>
 #include <log4cplus/helpers/pointer.h>
 #include <log4cplus/helpers/property.h>
 
@@ -36,6 +34,8 @@
 
 namespace log4cplus
 {
+    class Hierarchy;
+
 
     /**
      * Provides configuration from an external file.  See configure() for
@@ -54,7 +54,6 @@ namespace log4cplus
      * the ${variableName} sequence.
      */
     class LOG4CPLUS_EXPORT PropertyConfigurator
-        : protected log4cplus::helpers::LogLogUser
     {
     public:
         enum PCFlags

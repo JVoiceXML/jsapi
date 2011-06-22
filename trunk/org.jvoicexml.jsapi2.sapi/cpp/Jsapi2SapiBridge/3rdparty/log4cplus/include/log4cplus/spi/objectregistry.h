@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2009 Tad E. Smith
+// Copyright 2003-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
 
 #include <log4cplus/config.hxx>
 #include <log4cplus/tstring.h>
-#include <log4cplus/helpers/threads.h>
+#include <log4cplus/thread/syncprims.h>
 #include <map>
 #include <memory>
 #include <vector>
@@ -84,8 +84,12 @@ namespace log4cplus {
             typedef std::map<log4cplus::tstring, void*> ObjectMap;
 
           // Data
-            LOG4CPLUS_MUTEX_PTR_DECLARE mutex;
+            thread::Mutex mutex;
             ObjectMap data;
+
+        private:
+            ObjectRegistryBase (ObjectRegistryBase const &);
+            ObjectRegistryBase & operator = (ObjectRegistryBase const &);
         };
 
     }

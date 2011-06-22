@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "JNIUtils.h"
 #include <log4cplus/logger.h>
+#include <log4cplus/loggingmacros.h>
 #include "log4cplus/consoleappender.h"
-
+#include "JavaLoggingAppender.h"
 #include "jInputStream.h" //IJavaInputStream, CJavaInputStream, Interfaces, ClassFactory
 
 static log4cplus::Logger logger =
@@ -75,7 +76,7 @@ BOOL GetMethodId(JNIEnv* env, const char* className, const char* methodName,
     if (clazz == NULL)
     {
         char msg[512];
-        _snprintf(msg, sizeof(msg), "Unable to %s!", className);
+        _snprintf(msg, sizeof(msg), "Unable to find class %s!", className);
         ThrowJavaException(env, "java/lang/NullPointerException", msg);
         return FALSE;
     }
@@ -87,6 +88,51 @@ BOOL GetMethodId(JNIEnv* env, const char* className, const char* methodName,
         ThrowJavaException(env, "java/lang/NullPointerException", msg);
         return FALSE;
     }
+    return TRUE;
+}
+
+BOOL GetStaticMethodId(JNIEnv* env, const char* className, const char* methodName,
+                 const char* sig, jclass& clazz, jmethodID& methodId)
+{
+    clazz = env->FindClass(className);
+    if (clazz == NULL)
+    {
+        char msg[512];
+        _snprintf(msg, sizeof(msg), "Unable to %s!", className);
+        ThrowJavaException(env, "java/lang/NullPointerException", msg);
+        return FALSE;
+    }
+    methodId = env->GetStaticMethodID(clazz, methodName, sig);
+    if (methodId == NULL)
+    {
+        char msg[1024];
+        _snprintf(msg, sizeof(msg), "Unable to find method '%s(%s)'!", methodName, sig);
+        ThrowJavaException(env, "java/lang/NullPointerException", msg);
+        return FALSE;
+    }
+    return TRUE;
+}
+
+BOOL GetStaticObjectField(JNIEnv* env, const char* className, const char* fieldName,
+                 const char* sig, jobject& object)
+{
+    jclass clazz = env->FindClass(className);
+    if (clazz == NULL)
+    {
+        char msg[512];
+        _snprintf(msg, sizeof(msg), "Unable to %s!", className);
+        ThrowJavaException(env, "java/lang/NullPointerException", msg);
+        return FALSE;
+    }
+    jfieldID fieldId = env->GetStaticFieldID(clazz, fieldName, sig);
+    if (fieldId == NULL)
+    {
+        char msg[1024];
+        _snprintf(msg, sizeof(msg), "Unable to find field '%s(%s)'!", fieldName, sig);
+        ThrowJavaException(env, "java/lang/NullPointerException", msg);
+        return FALSE;
+    }
+    object = env->GetStaticObjectField(clazz, fieldId);
     return TRUE;
 }
 

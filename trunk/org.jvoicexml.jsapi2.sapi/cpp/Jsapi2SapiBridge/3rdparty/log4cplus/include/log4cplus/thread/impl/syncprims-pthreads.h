@@ -27,24 +27,70 @@
 //! include guards because it is only a fragment to be included by
 //! syncprims.h.
 
+#include "log4cplus/thread/threads.h"
 #include <limits>
 #include <algorithm>
 
 
-namespace log4cplus { namespace thread {
+namespace log4cplus { namespace thread { namespace impl {
 
 
-#define LOG4CPLUS_THROW_RTE(msg) \
-    do { detail::syncprims_throw_exception (msg, __FILE__, __LINE__); } while (0)
+struct PthreadMutexAttr
+{
+    PthreadMutexAttr ()
+    {
+        int ret = pthread_mutexattr_init (&attr);
+        if (ret != 0)
+            LOG4CPLUS_THROW_RTE ("PthreadMutexAttr::PthreadMutexAttr");
+    }
+
+
+    ~PthreadMutexAttr ()
+    try
+    {
+        int ret = pthread_mutexattr_destroy (&attr);
+        if (ret != 0)
+            LOG4CPLUS_THROW_RTE ("PthreadMutexAttr::~PthreadMutexAttr");
+    }
+    catch (...)
+    { }
+
+
+    void
+    set_type (log4cplus::thread::Mutex::Type t)
+    {
+        int mutex_type;
+        switch (t)
+        {
+        case log4cplus::thread::Mutex::RECURSIVE:
+            mutex_type = PTHREAD_MUTEX_RECURSIVE;
+            break;
+
+        default:
+            mutex_type = PTHREAD_MUTEX_DEFAULT;
+        }
+
+        int ret = pthread_mutexattr_settype (&attr, mutex_type);
+        if (ret != 0)
+            LOG4CPLUS_THROW_RTE ("PthreadMutexAttr::set_type");
+    }
+
+
+    pthread_mutexattr_t attr;
+};
+
 
 //
 //
 //
 
 inline
-Mutex::Mutex ()
+Mutex::Mutex (log4cplus::thread::Mutex::Type t)
 {
-    int ret = pthread_mutex_init (&mtx, 0);
+    PthreadMutexAttr attr;
+    attr.set_type (t);
+
+    int ret = pthread_mutex_init (&mtx, &attr.attr);
     if (ret != 0)
         LOG4CPLUS_THROW_RTE ("Mutex::Mutex");
 }
@@ -138,9 +184,42 @@ Semaphore::lock () const
 //
 //
 
+
+inline
+FairMutex::FairMutex ()
+    : sem (1, 1)
+{ }
+
+
+inline
+FairMutex::~FairMutex ()
+{ }
+
+
+inline
+void
+FairMutex::lock () const
+{
+    sem.lock ();
+}
+
+
+inline
+void
+FairMutex::unlock () const
+{
+    sem.unlock ();
+}
+
+
+//
+//
+//
+
 inline
 ManualResetEvent::ManualResetEvent (bool sig)
-    : sigcount (0)
+    : mtx (log4cplus::thread::Mutex::DEFAULT)
+    , sigcount (0)
     , signaled (sig)
 {
     int ret = pthread_cond_init (&cv, 0);
@@ -247,7 +326,103 @@ ManualResetEvent::reset () const
 }
 
 
-#undef LOG4CPLUS_THROW_RTE
+//
+//
+//
+
+#if defined (LOG4CPLUS_POOR_MANS_SHAREDMUTEX)
+#include "log4cplus/thread/impl/syncprims-pmsm.h"
+
+#else
+inline
+SharedMutex::SharedMutex ()
+{
+    int ret = pthread_rwlock_init (&rwl, 0);
+    if (ret != 0)
+        LOG4CPLUS_THROW_RTE ("SharedMutex::SharedMutex");    
+}
 
 
-} } // namespace log4cplus { namespace thread {
+inline
+SharedMutex::~SharedMutex ()
+try
+{
+    int ret = pthread_rwlock_destroy (&rwl);
+    if (ret != 0)
+        LOG4CPLUS_THROW_RTE ("SharedMutex::~SharedMutex");    
+}
+catch (...)
+{ }
+
+
+inline
+void
+SharedMutex::rdlock () const
+{
+    int ret;
+
+    do
+    {
+        ret = pthread_rwlock_rdlock (&rwl);
+        switch (ret)
+        {
+        case EAGAIN:
+            // The read lock could not be acquired because the maximum
+            // number of read locks for rwlock has been exceeded.
+
+            log4cplus::thread::yield ();
+            // Fall through.
+
+        case 0:
+            break;
+
+        default:
+            LOG4CPLUS_THROW_RTE ("SharedMutex::rdlock");
+            
+        }
+    }
+    while (ret != 0);
+}
+
+
+inline
+void
+SharedMutex::rdunlock () const
+{
+    unlock ();
+}
+
+
+inline
+void
+SharedMutex::wrlock () const
+{
+    int ret = pthread_rwlock_wrlock (&rwl);
+    if (ret != 0)
+        LOG4CPLUS_THROW_RTE ("SharedMutex::wrlock");
+}
+
+
+inline
+void
+SharedMutex::wrunlock () const
+{
+    unlock ();
+}
+
+
+inline
+void
+SharedMutex::unlock () const
+{
+    int ret = pthread_rwlock_unlock (&rwl);
+    if (ret != 0)
+        LOG4CPLUS_THROW_RTE ("SharedMutex::unlock");
+
+}
+
+
+#endif
+
+
+} } } // namespace log4cplus { namespace thread { namespace impl {
