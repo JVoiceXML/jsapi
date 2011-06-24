@@ -1,6 +1,13 @@
 #pragma once
 
+#include "stdafx.h"
 #include "jInputStream.h"
+
+log4cplus::Logger CJavaInputStream::logger =
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.JavaInputStream"));
+
+log4cplus::Logger CClassFactory::logger =
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.ClassFactory"));
 
 // ---------------------------------------------------------------------------
 // %%Deconstructor: CJavaInputStream::~CJavaInputStream()
@@ -28,22 +35,25 @@ CJavaInputStream::setJavaInputStream(JNIEnv *env, jobject object) {
 	//method header of "int InputStream.read(byte[] b, int off, int len)"
 	// => "([BII)I"
 	jReadByteArray = env->GetMethodID(clazz, "read", "([BII)I");
-	if (jReadByteArray == NULL) {
-		std::cerr << "Method 'int read(byte[], int, int)' not found!" << std::endl;
+	if (jReadByteArray == NULL)
+    {
+        LOG4CPLUS_ERROR(logger, "Method 'int read(byte[], int, int)' not found!");
 		return S_FALSE;
 	}
 
 	//method header of "int InputStream.read()"
 	// => "()I"
 	jReadByte = env->GetMethodID(clazz, "read", "()I");
-	if (jReadByte == NULL) {
-		std::cerr << "Method 'int read()' not found!" << std::endl;
+	if (jReadByte == NULL)
+    {
+		LOG4CPLUS_ERROR(logger,  "Method 'int read()' not found!");
 		return S_FALSE;
 	}
 	
 	jAvailable = env->GetMethodID(clazz, "available", "()I");
-	if (jAvailable == NULL) {
-		std::cerr << "Method 'int available()' not found!" << std::endl;
+	if (jAvailable == NULL)
+    {
+		LOG4CPLUS_ERROR(logger,  "Method 'int available()' not found!");
 		return S_FALSE;
 	}
 
@@ -58,23 +68,28 @@ CJavaInputStream::setJavaInputStream(JNIEnv *env, jobject object) {
 CJavaInputStream::QueryInterface(REFIID riid, void** ppv)
 {
     if (ppv == NULL)
+    {
         return E_INVALIDARG;
-	if (riid == IID_IUnknown) {
-		std::clog << "QueryInterface: IUnknown" << std::endl;
+    }
+	if (riid == IID_IUnknown)
+    {
+        LOG4CPLUS_DEBUG(logger, "QueryInterface: IUnknown");
 		*ppv = static_cast<IUnknown*> (this);
         AddRef();
         return S_OK;
     }
 
-	if (riid == IID_IStream) {
-		std::clog << "QueryInterface: IStream" << std::endl;
+	if (riid == IID_IStream)
+    {
+		LOG4CPLUS_DEBUG(logger, "QueryInterface: IStream");
 		*ppv = static_cast<IStream*> (this);
 		AddRef();
 		return S_OK;
 	}
 
-	if (riid == IID_IJavaInputStream) {
-		std::clog << "QueryInterface: IJavaInputStream" << std::endl;
+	if (riid == IID_IJavaInputStream)
+    {
+		LOG4CPLUS_DEBUG(logger, "QueryInterface: IJavaInputStream");
 		*ppv = static_cast<IJavaInputStream*> (this);
 		AddRef();
 		return S_OK;
@@ -122,7 +137,7 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 		jthrowable exc;
 		exc = env->ExceptionOccurred();
 		if (exc) {
-			std::cerr << "Exception in jInputStream::read(). available()" << std::endl;
+            LOG4CPLUS_ERROR(logger, "Exception in jInputStream::read(). available()");
 			env->ExceptionDescribe();
 			//Clear the Exception in the JVM
 			env->ExceptionClear();
@@ -147,7 +162,7 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 			jthrowable exc;
 			exc = env->ExceptionOccurred();
 			if (exc) {
-				std::cerr << "Exception in jInputStream::read(). available()" << std::endl;
+                LOG4CPLUS_ERROR(logger, "Exception in jInputStream::read(). available()");
 				env->ExceptionDescribe();
 				//Clear the Exception in the JVM
 				env->ExceptionClear();
@@ -178,7 +193,7 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 		jthrowable exc;
 		exc = env->ExceptionOccurred();
 		if (exc) {
-			std::cerr << "Exception in jInputStream::read(). read()" << std::endl;
+            LOG4CPLUS_ERROR(logger, "Exception in jInputStream::read(). read()");
 			env->ExceptionDescribe();
 			//Clear the Exception in the JVM
 			env->ExceptionClear();
@@ -191,10 +206,11 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 	}
 
 	// check if we have bytes in our puffer
-	if (bytesRead == -1) {
+	if (bytesRead == -1)
+    {
 		// InputStream's EOF
 		//	 ref: http://msdn.microsoft.com/en-us/library/aa380011%28v=VS.85%29.aspx
-		std::cout << "discovered EOF!" << std::endl;
+        LOG4CPLUS_DEBUG(logger, "discovered EOF!");
 		env->ReleaseByteArrayElements(arr, NULL, JNI_ABORT);
 		if (pcbRead) {
 			*pcbRead = 0;
@@ -259,12 +275,14 @@ CClassFactory::CreateInstance(LPUNKNOWN punkOuter, REFIID riid, void** ppv)
     if (punkOuter != NULL)
         return CLASS_E_NOAGGREGATION;
 
-	std::cout << "IClassFactory:CreateInstance" << std::endl;
+    LOG4CPLUS_DEBUG(logger, "IClassFactory:CreateInstance");
 
     punk = new CJavaInputStream;
 
     if (punk == NULL)
+    {
         return E_OUTOFMEMORY;
+    }
 
     hr = punk->QueryInterface(riid, ppv);
     return hr;

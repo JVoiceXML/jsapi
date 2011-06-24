@@ -31,7 +31,8 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
     {
         // This specifies which of the recognition events are going to trigger
         // notifications.
-		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION), SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION) );//|SPFEI(SPEI_FALSE_RECOGNITION)
+		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION),
+            SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION) );//|SPFEI(SPEI_FALSE_RECOGNITION)
     }
 
     CComPtr<ISpAudio> cpAudio;
@@ -84,15 +85,9 @@ Recognizer::~Recognizer()
 	cpRecognizerEngine.Release();
 }
 
-HRESULT Recognizer::setRecognizerInputStream(CComPtr<ISpStream> spStream) 
+HRESULT Recognizer::SetRecognizerInputStream(CComPtr<ISpStream> spStream) 
 {
-	std::clog << " SAPI Rec: setRecognizerInputStream(): paused = ";
-	if (continuing) {
-		std::clog << "FALSE";
-	} else {
-		std::clog << "TRUE";
-	}
-	std::clog << std::endl;
+    LOG4CPLUS_DEBUG(logger, "SAPI Rec: setRecognizerInputStream(): paused = " << continuing);
 
 	return cpRecognizerEngine->SetInput(spStream, TRUE);
 
@@ -108,7 +103,9 @@ HRESULT Recognizer::setRecognizerInputStream(CComPtr<ISpStream> spStream)
 
 HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 {
-	/* container for the new grammar */
+    LOG4CPLUS_DEBUG(logger, "loading grammar " << grammar);
+
+    /* container for the new grammar */
 	CComPtr<ISpRecoGrammar> cpGrammar;
     hr = cpRecoCtxt->CreateGrammar( NULL , &cpGrammar);
     if (FAILED(hr))
@@ -146,7 +143,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 	hr = compiler.CoCreateInstance(CLSID_SpW3CGrammarCompiler); //SRGS-Compiler
     if (FAILED(hr))
     {
-        std::cerr << "CoCreateInstance CLSID_SpW3CGramamrCompiler failed : 0x" << std::hex << std::uppercase << hr << std::endl;
+        LOG4CPLUS_ERROR(logger, "CoCreateInstance CLSID_SpW3CGramamrCompiler failed : 0x" << std::hex << std::uppercase << hr);
 		return hr;
     }
 
@@ -170,7 +167,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
     hr = compiler->CompileStream(stream, compiledStream, NULL, NULL, errorLog, 0);
     if (FAILED(hr))
     {
-		std::cerr << "Compile Stream failed : 0x" << std::hex <<std::uppercase << hr << std::endl;
+        LOG4CPLUS_ERROR(logger, "Compile Stream failed : 0x" << std::hex <<std::uppercase << hr);;
 		return hr;
     }
 
@@ -179,7 +176,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
     ::GetHGlobalFromStream(compiledStream, &hGrammar);//compiledStream
     hr = cpGrammar->LoadCmdFromMemory((SPBINARYGRAMMAR *)::GlobalLock(hGrammar), SPLO_DYNAMIC);
 	if (FAILED(hr)) {
-		std::cerr << "Grammar: \"LoadFromMemory\" failed : 0x" << std::hex <<std::uppercase << hr << std::endl;
+		LOG4CPLUS_ERROR(logger, "Grammar: \"LoadFromMemory\" failed : 0x" << std::hex <<std::uppercase << hr);
 		return hr;
 	}
 

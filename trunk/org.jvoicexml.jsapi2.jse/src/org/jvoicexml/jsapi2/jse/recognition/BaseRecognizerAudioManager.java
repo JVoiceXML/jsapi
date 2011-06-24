@@ -24,6 +24,8 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.speech.AudioException;
 import javax.speech.EngineStateException;
@@ -64,7 +66,19 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
         final InputStream is;
         if (locator == null) {
             targetAudioFormat = getEngineAudioFormat();
-            final InputStream source = new LineInputStream(this);
+//            InputStream source = new LineInputStream(this);
+            /*******************************************************/
+            InputStream source;
+            try {
+                TargetDataLine lineLocalMic = AudioSystem.getTargetDataLine(targetAudioFormat);
+                source = new AudioInputStream(lineLocalMic);
+                lineLocalMic.open();
+                lineLocalMic.start();
+            } catch (LineUnavailableException e) {
+                source = null;
+                e.printStackTrace();
+            }
+            /*******************************************************/
             is = new BufferedInputStream(source);
         } else {
             URL url;
@@ -120,6 +134,7 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
                 throw new AudioException(ex.getMessage());
             }
         }
+        inputStream = null;
     }
 
     /**
