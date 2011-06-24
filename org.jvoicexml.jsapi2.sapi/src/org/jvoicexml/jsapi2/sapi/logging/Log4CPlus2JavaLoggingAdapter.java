@@ -6,8 +6,6 @@ package org.jvoicexml.jsapi2.sapi.logging;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer;
-
 /**
  * A simple wrapper for log4cplus or similar native logging frameworks.
  * This thread retrieves the next {@link LogRecord} and forwards it to
