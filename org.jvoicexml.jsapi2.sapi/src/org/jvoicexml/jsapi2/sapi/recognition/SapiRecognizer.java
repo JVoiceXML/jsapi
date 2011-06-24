@@ -34,16 +34,15 @@ import org.jvoicexml.jsapi2.recognition.BaseResultToken;
  *
  */
 public final class SapiRecognizer extends JseBaseRecognizer {
-    
-    public InputStream inputStream;
-    
+    static {
+        System.loadLibrary("Jsapi2SapiBridge");
+    }
+
     /** Logger for this class. */
     private static final Logger LOGGER =
         Logger.getLogger(SapiRecognizer.class.getName());
 
-    static {
-        System.loadLibrary("Jsapi2SapiBridge");
-    }
+    public InputStream inputStream;
 
     /** SAPI recognizer Handle. **/
     private long recognizerHandle;

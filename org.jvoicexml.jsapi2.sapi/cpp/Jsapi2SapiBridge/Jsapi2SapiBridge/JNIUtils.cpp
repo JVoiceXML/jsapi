@@ -41,14 +41,6 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm_init, void *reserved)
         return JNI_ERR;
 	}
 
-
-
-    // TODO add this to a configuration file
-    log4cplus::SharedAppenderPtr console(new log4cplus::ConsoleAppender(false, true));
-    console->setName(LOG4CPLUS_TEXT("console"));
-    log4cplus::Logger::getRoot().addAppender(console);
-
-    LOG4CPLUS_INFO(logger, _T("Jsapi2SapiBridge successfully loaded"));
     return JNI_VERSION_1_6;
 }
 

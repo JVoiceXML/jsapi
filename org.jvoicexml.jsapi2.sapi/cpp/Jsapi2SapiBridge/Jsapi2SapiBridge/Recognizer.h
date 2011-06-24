@@ -13,7 +13,7 @@ public:
     Recognizer(HWND hwnd, JNIEnv *env, jobject rec);
     virtual ~Recognizer();
 
-	HRESULT setRecognizerInputStream(CComPtr<ISpStream> spStream);
+	HRESULT SetRecognizerInputStream(CComPtr<ISpStream> spStream);
 
     HRESULT Resume();
 

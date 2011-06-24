@@ -6,6 +6,7 @@
 #include <iostream>
 #include <jni.h>
 
+#include <log4cplus/loggingmacros.h>
 #include <log4cplus/logger.h>
 
 extern JavaVM *jvm;
@@ -29,20 +30,29 @@ class CClassFactory : public IClassFactory {
     // IClassFactory
     STDMETHODIMP    CreateInstance (LPUNKNOWN punkOuter, REFIID iid, void **ppv);
     STDMETHODIMP    LockServer (BOOL fLock) { return E_FAIL; };
-    };
+private:
+    /** Logger instance. */
+    static log4cplus::Logger logger;
+};
 
 class IJavaInputStream : public IStream {
   public:
 	// IUnknown
-	virtual STDMETHODIMP    QueryInterface (REFIID riid, void** ppv) {
+	virtual STDMETHODIMP    QueryInterface (REFIID riid, void** ppv) 
+    {
 		std::cout << "Call JavaInputStream->QueryInterface()" << std::endl;
-		return 0;};
-    virtual STDMETHODIMP_(ULONG) AddRef(void) {
+		return 0;
+    };
+    virtual STDMETHODIMP_(ULONG) AddRef(void) 
+    {
 		std::cout << "Call JavaInputStream->AddRef()" << std::endl;
-		return 1;};
-    virtual STDMETHODIMP_(ULONG) Release(void) {
+		return 1;
+    };
+    virtual STDMETHODIMP_(ULONG) Release(void) 
+    {
 		std::cout << "Call JavaInputStream->Release()" << std::endl;
-		return 1;};
+		return 1;
+    };
 
 	// IJavaInputStream
 	virtual STDMETHODIMP setJavaInputStream(JNIEnv *env, jobject object) {
@@ -58,48 +68,88 @@ class IJavaInputStream : public IStream {
 };
 
 // Java streaming class supporting a dummy IStream
-class CJavaInputStream : public IJavaInputStream {
+class CJavaInputStream : public IJavaInputStream 
+{
   public:
     // IUnknown
     STDMETHODIMP    QueryInterface (REFIID iid, void **ppv);
-	STDMETHODIMP_(ULONG) AddRef(void)  { std::cout << std::endl << "References: " << (m_cRef+1) << std::endl; return InterlockedIncrement(&m_cRef); };
-	STDMETHODIMP_(ULONG) Release(void) { std::cout << std::endl << "References: " << (m_cRef-1) << std::endl; if (InterlockedDecrement(&m_cRef) == 0) { delete this; return 0; } return 1; }
+	STDMETHODIMP_(ULONG) AddRef(void) 
+    {
+        LOG4CPLUS_DEBUG(logger, "References: " << (m_cRef+1));
+        return InterlockedIncrement(&m_cRef); 
+    };
+	STDMETHODIMP_(ULONG) Release(void)
+    {
+        LOG4CPLUS_DEBUG(logger, "References: " << (m_cRef-1));
+        if (InterlockedDecrement(&m_cRef) == 0)
+        {
+            // Ouch!
+            // TODO Need a better solution
+            delete this;
+            return 0;
+        }
+        return 1;
+    }
 
     // IStream
     STDMETHODIMP    Read(void *pv, ULONG cb, ULONG *pcbRead);
     STDMETHODIMP    Write(VOID const *pv, ULONG cb, ULONG *pcbWritten)
-		{ std::cout << "Call Stream->Write" << std::endl;
-		return E_FAIL; };
+    {
+        LOG4CPLUS_DEBUG(logger, "Call Stream->Write");
+		return E_FAIL;
+    };
     STDMETHODIMP    Seek(LARGE_INTEGER dbMove, DWORD dwOrigin, ULARGE_INTEGER *pbNewPosition)
-		{ std::cout << "Call Stream->Seek" << std::endl;
+	{
+        LOG4CPLUS_DEBUG(logger, "Call Stream->Seek");
 		if (dbMove.HighPart == 0 && dbMove.LowPart == 0)
+        {
 			return S_OK;
+        }
 		else
-			return E_FAIL; };
+        {
+			return E_FAIL;
+        }
+    };
     STDMETHODIMP    SetSize(ULARGE_INTEGER cbNewSize)
-        { std::cout << "Call Stream->SetSize" << std::endl;
-		return E_FAIL; };
+    {
+        LOG4CPLUS_DEBUG(logger, "Call Stream->SetSize");
+		return E_FAIL;
+    };
     STDMETHODIMP    CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten)
-        { std::cout << "Call Stream->CopyTo" << std::endl;
-		return E_FAIL; };
+    {
+        LOG4CPLUS_DEBUG(logger, "Call Stream->CopyTo");
+		return E_FAIL;
+    };
     STDMETHODIMP    Commit(DWORD grfCommitFlags)
-        { std::cout << "Call Stream->Commit" << std::endl;
-		return E_FAIL; };
+    {
+        LOG4CPLUS_DEBUG(logger, "Call Stream->Commit");
+		return E_FAIL;
+    };
     STDMETHODIMP    Revert(void)
-        { std::cout << "Call Stream->Revert" << std::endl;
-		return E_FAIL; };
+    {
+        LOG4CPLUS_DEBUG(logger, "Call Stream->Revert");
+		return E_FAIL;
+    };
     STDMETHODIMP    LockRegion(ULARGE_INTEGER bOffset, ULARGE_INTEGER cb, DWORD dwLockType)
-        { std::cout << "Call Stream->LockRegion" << std::endl;
-		return E_FAIL; };
+    {
+        LOG4CPLUS_DEBUG(logger, "Call Stream->LockRegion");
+		return E_FAIL;
+    };
     STDMETHODIMP    UnlockRegion(ULARGE_INTEGER bOffset, ULARGE_INTEGER cb, DWORD dwLockType)
-        { std::cout << "Call Stream->UnlockRegion" << std::endl;
-		return E_FAIL; };
+    {
+        LOG4CPLUS_DEBUG(logger, "Call Stream->UnlockRegion");
+		return E_FAIL;
+    };
     STDMETHODIMP    Stat(STATSTG *pstatstg, DWORD grfStatFlag)
-        { std::cout << "Call Stream->Stat" << std::endl;
-		return E_FAIL; };
+    {
+        LOG4CPLUS_DEBUG(logger, "Call Stream->Stat");
+		return E_FAIL;
+    };
     STDMETHODIMP    Clone(IStream **ppstm)
-        { std::cout << "Call Stream->Clone" << std::endl;
-		return E_FAIL; };
+    {
+        LOG4CPLUS_DEBUG(logger, "Call Stream->Clone");
+		return E_FAIL;
+    };
 
 	// JavaInputStream
 	STDMETHODIMP setJavaInputStream(JNIEnv *env, jobject object);
@@ -109,5 +159,9 @@ class CJavaInputStream : public IJavaInputStream {
 	virtual ~CJavaInputStream();
 
   private:
-    LONG        m_cRef;		//reference counter
+    /** Reference xounter */
+    LONG        m_cRef;
+
+    /** Logger instance. */
+    static log4cplus::Logger logger;
 };

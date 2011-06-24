@@ -100,20 +100,20 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 		 *	This responsibility lies on the Java-side!
 		 */
 		if (SUCCEEDED(hr)) {
-			hr = recognizer->setRecognizerInputStream(cpSpStream);
+			hr = recognizer->SetRecognizerInputStream(cpSpStream);
 		}
 		int limitSetInput = 5;
 		for (int i = 0; (hr == SPERR_ENGINE_BUSY) && i < limitSetInput; i++) {
             LOG4CPLUS_DEBUG(logger, _T("=> CPP setInputCounter:") << i);
 			Sleep(10);
-			hr = recognizer->setRecognizerInputStream(cpSpStream);
+			hr = recognizer->SetRecognizerInputStream(cpSpStream);
 		}
 
 		if (SUCCEEDED(hr)) {
 			return JNI_TRUE;
 		} else {
 			//insert ERROR-Logging here
-			std::cerr << "CPP: Error setting a new InputStream! ErrorCode: 0x" << std::hex << std::uppercase << hr << std::endl;
+			LOG4CPLUS_ERROR(logger, "CPP: Error setting a new InputStream! ErrorCode: 0x" << std::hex << std::uppercase << hr);
 			return JNI_FALSE;
 		}
 }
@@ -143,7 +143,7 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 	
 	if (FAILED(hr))
     {
-		std::cerr << "Could not pause the recognizer!" << std::endl;
+		LOG4CPLUS_ERROR(logger, "Could not pause the recognizer!");
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "Pause recognizer failed",
             recognizer->hr);

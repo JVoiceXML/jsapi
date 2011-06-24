@@ -24,6 +24,7 @@ public class SapiEngineListFactory implements EngineListFactory {
         Log4CPlus2JavaLoggingAdapter adapter =
             new Log4CPlus2JavaLoggingAdapter();
         adapter.start();
+        adapter.waitStarted();
     }
 
     /**
