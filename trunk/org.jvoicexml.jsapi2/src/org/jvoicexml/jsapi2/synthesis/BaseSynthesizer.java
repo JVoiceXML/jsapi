@@ -33,8 +33,8 @@ import javax.speech.synthesis.SynthesizerListener;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.SynthesizerProperties;
 
+import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
-import org.jvoicexml.jsapi2.BaseEngineProperties;
 
 
 /**
@@ -65,6 +65,9 @@ public abstract class BaseSynthesizer extends BaseEngine
     public BaseSynthesizer(final SynthesizerMode engineMode) {
         super(engineMode);
         speakableListeners = new Vector();
+        final BaseAudioManager audioManager =
+            (BaseAudioManager) getAudioManager();
+        audioManager.setEngine(this);
         final SynthesizerProperties props =
             new BaseSynthesizerProperties(this);
         setSynthesizerProperties(props);
@@ -340,7 +343,7 @@ public abstract class BaseSynthesizer extends BaseEngine
         // Proceed to real engine allocation
         handleAllocate();
         long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED | PAUSED
-                | DEFOCUSED | QUEUE_EMPTY);
+                | DEFOCUSED | QUEUE_EMPTY | RESUMED);
 
         // Starts AudioManager
         final AudioManager audioManager = getAudioManager();
@@ -371,9 +374,11 @@ public abstract class BaseSynthesizer extends BaseEngine
     protected void baseDeallocate() throws EngineStateException,
             EngineException, AudioException {
 
-        // Stops AudioManager
-        final AudioManager audioManager = getAudioManager();
-        audioManager.audioStop();
+        // Stops AudioManager if audio management is supported.
+        if (isSupportsAudioManagement()) {
+            final AudioManager audioManager = getAudioManager();
+            audioManager.audioStop();
+        }
 
         // Procceed to real engine deallocation
         handleDeallocate();

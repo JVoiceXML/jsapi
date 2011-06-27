@@ -7,10 +7,10 @@ import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
 import javax.speech.synthesis.Speakable;
 
-import org.jvoicexml.jsapi2.DummyAudioManager;
-import org.jvoicexml.jsapi2.DummySpeechEventExecutor;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
+import org.jvoicexml.jsapi2.test.DummyAudioManager;
+import org.jvoicexml.jsapi2.test.DummySpeechEventExecutor;
 
 /**
  * 

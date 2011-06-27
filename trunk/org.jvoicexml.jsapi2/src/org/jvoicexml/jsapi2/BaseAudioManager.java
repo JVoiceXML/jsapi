@@ -26,7 +26,7 @@ import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 
 /**
- * Supports the JSAPI 2.0 <code>AudioManager</code>
+ * Supports the JSAPI 2.0 {@link AudioManager}
  * interface.  Actual JSAPI implementations might want to extend
  * or modify this implementation.
  */
@@ -45,6 +45,9 @@ public abstract class BaseAudioManager implements AudioManager {
     
     /** The associated engine. */
     private Engine engine;
+
+    /** <code>true</code> if audio has been started. */
+    private boolean audioStarted;
 
     /**
      * Class constructor.
@@ -114,7 +117,9 @@ public abstract class BaseAudioManager implements AudioManager {
         }
 
         handleAudioStart();
+        audioStarted = true;
 
+        // Notify all listeners.
         final AudioEvent event = new AudioEvent(engine,
                 AudioEvent.AUDIO_STARTED);
         postAudioEvent(event);
@@ -144,7 +149,9 @@ public abstract class BaseAudioManager implements AudioManager {
         }
 
         handleAudioStop();
+        audioStarted = false;
 
+        // Notify all listeners.
         final AudioEvent event = new AudioEvent(engine,
                 AudioEvent.AUDIO_STOPPED);
         postAudioEvent(event);
@@ -157,6 +164,14 @@ public abstract class BaseAudioManager implements AudioManager {
      *         error stopping
      */
     protected abstract void handleAudioStop() throws AudioException;
+
+    /**
+     * Checks if the audio has been started.
+     * @return <code>true</code> if the audio has been started.
+     */
+    protected boolean isAudioStarted() {
+        return audioStarted;
+    }
 
     /**
      * {@inheritDoc}
@@ -175,11 +190,16 @@ public abstract class BaseAudioManager implements AudioManager {
             throw new AudioException("Unsupported locator: " + locator);
         }
 
+        // Ensure that the audio has been stopped.
+        if (audioStarted) {
+            throw new IllegalStateException("Audio has not been stopped!");
+        }
+
         mediaLocator = locator;
         
-//        final AudioEvent event = new AudioEvent(engine,
-//                AudioEvent.AUDIO_CHANGED);
-//        postAudioEvent(event);
+        final AudioEvent event = new AudioEvent(engine,
+                AudioEvent.AUDIO_CHANGED);
+        postAudioEvent(event);
     }
 
     /**
