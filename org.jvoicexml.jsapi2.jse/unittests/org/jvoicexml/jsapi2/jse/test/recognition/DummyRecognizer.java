@@ -10,10 +10,10 @@ import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 
-import org.jvoicexml.jsapi2.DummySpeechEventExecutor;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
+import org.jvoicexml.jsapi2.test.DummySpeechEventExecutor;
 
 /**
  * Dummy implementation of a recognizer for test purposes.
