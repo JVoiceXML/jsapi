@@ -4,6 +4,7 @@ Version 0.4
 - some code cleanup
 - restructured the way pending property changes are handled.
 - bugfix: tags in a rule grammar are of type Object rather than Strings
+- checking for audio stopped when calling the media locator.
 - 64bit SAPI support 
 
 Version 0.3

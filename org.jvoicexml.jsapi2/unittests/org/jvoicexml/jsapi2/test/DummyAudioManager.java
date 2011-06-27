@@ -1,10 +1,18 @@
-package org.jvoicexml.jsapi2;
+package org.jvoicexml.jsapi2.test;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.speech.AudioException;
+import javax.speech.AudioManager;
 
+import org.jvoicexml.jsapi2.AudioFormat;
+import org.jvoicexml.jsapi2.BaseAudioManager;
+
+/**
+ * Dummy implementation of an {@link AudioManager} for test purposes.
+ * @author Dirk SChnelle-Walka
+ */
 public class DummyAudioManager extends BaseAudioManager {
 
     public AudioFormat getAudioFormat() {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.jvoicexml.jsapi2;
+package org.jvoicexml.jsapi2.test;
 
 import javax.speech.SpeechEventExecutor;
 

@@ -470,6 +470,19 @@ public abstract class BaseEngine implements Engine {
     protected abstract AudioManager createAudioManager();
 
     /**
+     * Checks if audio management is supported.
+     * @return <code>true</code> if audio management is supported.
+     */
+    protected final boolean isSupportsAudioManagement() {
+        final String management =
+            System.getProperty("javax.speech.supports.audio.management");
+        if (management == null) {
+            return false;
+        }
+        return management.equals("true");
+    }
+
+    /**
      * {@inheritDoc}
      */
     public final VocabularyManager getVocabularyManager() {
