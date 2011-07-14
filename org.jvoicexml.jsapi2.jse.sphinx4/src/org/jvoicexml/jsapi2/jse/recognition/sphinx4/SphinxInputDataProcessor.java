@@ -99,7 +99,7 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
                 / 1000;
 
         // we are not running anymore, but did not sent DataEnd yet
-        if (!running && !sentEnded) {
+        if (!running && !sentEnded && sentStarted) {
             sentEnded = true;
             long duration = (long) (((double) totalSamplesRead
                     / (double) sampleRate * 1000.0));
@@ -168,9 +168,9 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
         totalSamplesRead += (numBytesRead / sampleSizeInBytes);
 
         // Convert it to double
-        double[] samples = DataUtil.bytesToValues(data, 0, data.length,
+        double[] samples = DataUtil.littleEndianBytesToValues(data, 0, data.length,
                 sampleSizeInBytes, signed);
-
+        
         return new DoubleData(samples, (int) sampleRate, collectTime,
                 firstSampleNumber);
     }
