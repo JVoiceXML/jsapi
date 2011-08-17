@@ -143,7 +143,8 @@ public abstract class BaseAudioManager implements AudioManager {
                     "AudioManager has no permission to access audio resources");
         }
         
-        if (!(engine.testEngineState(Engine.PAUSED) || engine.testEngineState(Engine.DEALLOCATING_RESOURCES))) {
+        if (!(engine.testEngineState(Engine.PAUSED)
+                || engine.testEngineState(Engine.DEALLOCATING_RESOURCES))) {
             throw new EngineStateException(
                     "The Engine has not been paused");
         }

@@ -130,6 +130,7 @@ public abstract class JseBaseRecognizer extends BaseRecognizer {
 
     /**
      * {@inheritDoc}
+     * @return a new instance of {@link ThreadSpeechEventExecutor}.
      */
     @Override
     protected SpeechEventExecutor createSpeechEventExecutor() {

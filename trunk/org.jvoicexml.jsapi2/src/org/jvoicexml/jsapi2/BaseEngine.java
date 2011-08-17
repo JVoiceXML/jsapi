@@ -140,7 +140,7 @@ public abstract class BaseEngine implements Engine {
         engineListeners = new Vector();
         engineState = DEALLOCATED;
         engineStateLock = new Object();
-        pauses = 1;
+        pauses = 0;
     }
 
     /**
@@ -265,20 +265,20 @@ public abstract class BaseEngine implements Engine {
 
         // Update current state
         long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATING_RESOURCES);
-        postEngineEvent(states[0], states[1],
+        postStateTransitionEngineEvent(states[0], states[1],
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES);
 
         // Handle engine allocation
         boolean success = false;
         try {
-            pauses = 1;
+            pauses = 0;
             // Handle allocate
             baseAllocate();
             success = true;
         } finally {
             if (!success) {
                 states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
-                postEngineEvent(states[0], states[1],
+                postStateTransitionEngineEvent(states[0], states[1],
                         EngineEvent.ENGINE_DEALLOCATED);
             }
         }
@@ -286,8 +286,11 @@ public abstract class BaseEngine implements Engine {
 
     /**
      * Called from the {@link #allocate()} method.
-     * @return
-     * @see #allocate()
+     * <p>
+     * Within this method, also the state transition to 
+     * {@link Engine#ALLOCATED} must be posted, since the successive state is
+     * engine dependent.
+     * </p>
      *
      * @throws AudioException
      *          if any audio request fails 
@@ -345,7 +348,7 @@ public abstract class BaseEngine implements Engine {
         //Update current state
         long[] states = setEngineState(CLEAR_ALL_STATE,
                                        DEALLOCATING_RESOURCES);
-        postEngineEvent(states[0], states[1],
+        postStateTransitionEngineEvent(states[0], states[1],
                 EngineEvent.ENGINE_DEALLOCATING_RESOURCES);
         baseDeallocate();
     }
@@ -405,7 +408,8 @@ public abstract class BaseEngine implements Engine {
 
         // Adapt the state
         long[] states = setEngineState(RESUMED, PAUSED);
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
+        postStateTransitionEngineEvent(states[0], states[1],
+                EngineEvent.ENGINE_PAUSED);
     }
 
 
@@ -439,7 +443,8 @@ public abstract class BaseEngine implements Engine {
             //Handle resume
             if (baseResume()) {
                 long[] states = setEngineState(PAUSED, RESUMED);
-                postEngineEvent(states[0], states[1], EngineEvent.ENGINE_RESUMED);
+                postStateTransitionEngineEvent(states[0], states[1],
+                        EngineEvent.ENGINE_RESUMED);
                 return true;
             } else {
                 return false;
@@ -595,10 +600,13 @@ public abstract class BaseEngine implements Engine {
      * @param event the engine event to post.
      */
     protected final void postEngineEvent(final EngineEvent event) {
+        // Filter all events which are not observable due to the engine mask
         final int id = event.getId();
         if ((engineMask & id) != id) {
             return;
         }
+
+        // Post the event in the configured speech event executor
         final Runnable runnable = new Runnable() {
             public void run() {
                 fireEvent(event);
@@ -695,8 +703,11 @@ public abstract class BaseEngine implements Engine {
      * @return the engine name and mode.
      */
     public String toString() {
-        return getEngineMode().getEngineName()
-                + ":" + getEngineMode().getModeName();
+        final EngineMode mode = getEngineMode();
+        if (mode == null) {
+            return super.toString();
+        }
+        return mode.getEngineName() + ":" + mode.getModeName();
     }
 
     /**
@@ -789,6 +800,29 @@ public abstract class BaseEngine implements Engine {
      */
     protected abstract void fireEvent(final EngineEvent event);
 
-    protected abstract void postEngineEvent(final long oldState,
-            final long newState, final int eventType);
+    /**
+     * Notifies all registered listeners about a state transition.
+     * @param oldState the old engine state
+     * @param newState the new engine state.
+     * @param id the event identifier.
+     */
+    protected void postStateTransitionEngineEvent(final long oldState,
+            final long newState, final int id) {
+        final EngineEvent event = createStateTransitionEngineEvent(oldState, newState, id);
+        postEngineEvent(event);
+    }
+
+    /**
+     * Constructs an engine specific state transition event. Since
+     * {@link EngineEvent}s are engine specific for
+     * {@link javax.speech.synthesis.Synthesizer} and
+     * {@link javax.speech.recognition.Recognizer} we need this factory
+     * method.
+     * @param oldState the old engine state
+     * @param newState the new engine state.
+     * @param id the event identifier.
+     * @return created event
+     */
+    protected abstract EngineEvent createStateTransitionEngineEvent(
+            final long oldState, final long newState, final int id);
 }

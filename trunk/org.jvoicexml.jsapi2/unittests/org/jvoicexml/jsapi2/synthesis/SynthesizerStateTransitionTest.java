@@ -22,6 +22,7 @@ public class SynthesizerStateTransitionTest extends TestCase {
      */
     protected void setUp() throws Exception {
         synthesizer = new DummySynthesizer();
+        super.setUp();
     }
 
     /**
@@ -38,7 +39,7 @@ public class SynthesizerStateTransitionTest extends TestCase {
     /**
      * Test cases for the PAUSED-RESUMED transitions
      */
-    public void testSynthesizerPausResume() throws Exception {
+    public void testSynthesizerPauseResume() throws Exception {
         synthesizer.allocate();
         synthesizer.waitEngineState(Engine.ALLOCATED);
         checkState(Synthesizer.RESUMED);
@@ -53,6 +54,32 @@ public class SynthesizerStateTransitionTest extends TestCase {
         checkState(Synthesizer.DEALLOCATED);
         synthesizer.allocate();
         synthesizer.waitEngineState(Engine.ALLOCATED);
+        checkState(Synthesizer.RESUMED);
+        synthesizer.deallocate();
+        synthesizer.waitEngineState(Synthesizer.DEALLOCATED);
+        checkState(Synthesizer.DEALLOCATED);
+    }
+
+    /**
+     * Test cases for nested PAUSED-RESUMED transitions
+     */    
+    public void testSynthesizerNestedPauseResume() throws Exception {
+        synthesizer.allocate();
+        synthesizer.waitEngineState(Engine.ALLOCATED);
+        checkState(Synthesizer.RESUMED);
+        synthesizer.pause();
+        synthesizer.waitEngineState(Synthesizer.PAUSED);
+        checkState(Synthesizer.PAUSED);
+        synthesizer.pause();
+        synthesizer.waitEngineState(Synthesizer.PAUSED);
+        checkState(Synthesizer.PAUSED);
+        synthesizer.resume();
+        checkState(Synthesizer.PAUSED);
+        synthesizer.pause();
+        checkState(Synthesizer.PAUSED);
+        synthesizer.resume();
+        checkState(Synthesizer.PAUSED);
+        synthesizer.resume();
         checkState(Synthesizer.RESUMED);
         synthesizer.deallocate();
         synthesizer.waitEngineState(Synthesizer.DEALLOCATED);

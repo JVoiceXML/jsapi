@@ -23,52 +23,39 @@ import org.jvoicexml.jsapi2.test.DummySpeechEventExecutor;
 public class DummySynthesizer extends BaseSynthesizer {
 
     protected Speakable getSpeakable(String text) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     protected void handleAllocate() throws EngineStateException,
             EngineException, AudioException, SecurityException {
-        // TODO Auto-generated method stub
-        
     }
 
     protected boolean handleCancel() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     protected boolean handleCancel(int id) {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     protected boolean handleCancelAll() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     protected void handleDeallocate() {
-        // TODO Auto-generated method stub
     }
 
     protected void handlePause() {
-        // TODO Auto-generated method stub
     }
 
     protected boolean handleResume() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     protected void handleSpeak(int id, String item) {
-        // TODO Auto-generated method stub
-        
     }
 
     protected void handleSpeak(int id, Speakable item) {
-        // TODO Auto-generated method stub
-        
     }
 
     protected AudioManager createAudioManager() {
@@ -80,12 +67,10 @@ public class DummySynthesizer extends BaseSynthesizer {
     }
 
     protected VocabularyManager createVocabularyManager() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     protected EnginePropertyChangeRequestListener getChangeRequestListener() {
-        // TODO Auto-generated method stub
         return null;
     }
 }

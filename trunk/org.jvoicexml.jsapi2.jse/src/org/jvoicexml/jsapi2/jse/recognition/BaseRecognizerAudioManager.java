@@ -66,7 +66,7 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
         final InputStream is;
         if (locator == null) {
             targetAudioFormat = getEngineAudioFormat();
-//            InputStream source = new LineInputStream(this);
+//            final InputStream source = new LineInputStream(targetAudioFormat);
             /*******************************************************/
             InputStream source;
             try {

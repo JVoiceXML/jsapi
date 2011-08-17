@@ -177,7 +177,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         }
 
         long[] states = setEngineState(DEFOCUSED, FOCUSED);
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_FOCUSED);
+        postStateTransitionEngineEvent(states[0], states[1], EngineEvent.ENGINE_FOCUSED);
 
         notifyGrammarActivation();
         handleRequestFocus();
@@ -202,7 +202,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         }
 
         long[] states = setEngineState(FOCUSED, DEFOCUSED);
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEFOCUSED);
+        postStateTransitionEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEFOCUSED);
 
         notifyGrammarActivation();
         handleReleaseFocus();
@@ -230,7 +230,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         // Handle pause
         basePause(mode);
         long[] states = setEngineState(RESUMED, PAUSED);
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
+        postStateTransitionEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
     }
 
     /**
@@ -273,18 +273,14 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
 
-    public void postEngineEvent(long oldState, long newState, int eventType) {
-        switch (eventType) {
-        case RecognizerEvent.SPEECH_STARTED:
-        case RecognizerEvent.SPEECH_STOPPED:
-        case RecognizerEvent.RECOGNIZER_BUFFERING:
-        case RecognizerEvent.RECOGNIZER_NOT_BUFFERING:
-            postEngineEvent(oldState, newState, eventType, 0); /** @todo DGMR rever este 0; nao faltara o audioposition nos parametros da funcao? o speechstart, o stop o buffering e not buferring passam por aqui? */
-            break;
-        default:
-            postEngineEvent(oldState, newState, eventType,
-                            RecognizerEvent.UNKNOWN_AUDIO_POSITION);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    public EngineEvent createStateTransitionEngineEvent(long oldState, long newState,
+            int eventType) {
+        // TODO: Can we determine the audio position?
+        return new RecognizerEvent(this, eventType, oldState, newState, null,
+                null, RecognizerEvent.UNKNOWN_AUDIO_POSITION);
     }
 
     public void postEngineEvent(long oldState, long newState, int eventType,
@@ -423,13 +419,13 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     public void processGrammars() throws EngineStateException {
 
-        //Flag that indicates if grammars were changed
+        // Flag that indicates if grammars were changed
         boolean existChanges = false;
 
-        //Build a new grammar set, with all enabled grammars
+        // Build a new grammar set, with all enabled grammars
         Vector newGrammars = new Vector();
 
-        //Commit all grammars pending changes
+        // Commit all grammars pending changes
         final Grammar[] grammars = grammarManager.listGrammars();
         for (int i = 0; i < grammars.length; i++) {
             final Grammar grammar = grammars[i];
@@ -453,20 +449,21 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         // Set grammars
         boolean setGrammarsResult = setGrammars(newGrammars);
 
-        //Raise proper events
-        if (existChanges) {
-            if (setGrammarsResult) {
-                postEngineEvent(PAUSED, RESUMED,
-                        RecognizerEvent.CHANGES_COMMITTED);
-                for (int i = 0; i < grammars.length; i++) {
-                    final BaseGrammar baseGrammar = (BaseGrammar) grammars[i];
-                    baseGrammar.postGrammarChangesCommitted();
-                }
-            } else {
-                for (int i = 0; i < grammars.length; i++) {
-                    final BaseGrammar baseGrammar = (BaseGrammar) grammars[i];
-                    baseGrammar.postGrammarChangesRejected();
-                }
+        // Raise proper events
+        if (!existChanges) {
+            return;
+        }
+        if (setGrammarsResult) {
+            postStateTransitionEngineEvent(PAUSED, RESUMED,
+                    RecognizerEvent.CHANGES_COMMITTED);
+            for (int i = 0; i < grammars.length; i++) {
+                final BaseGrammar baseGrammar = (BaseGrammar) grammars[i];
+                baseGrammar.postGrammarChangesCommitted();
+            }
+        } else {
+            for (int i = 0; i < grammars.length; i++) {
+                final BaseGrammar baseGrammar = (BaseGrammar) grammars[i];
+                baseGrammar.postGrammarChangesRejected();
             }
         }
     }
@@ -529,7 +526,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         long[] states = setEngineState(CLEAR_ALL_STATE,
                 ALLOCATED | PAUSED | DEFOCUSED |
                 NOT_BUFFERING);
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
+        postStateTransitionEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
     }
 
     /**
@@ -567,7 +564,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             audioManager.audioStop();
         }
         long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
-        postEngineEvent(states[0], states[1],
+        postStateTransitionEngineEvent(states[0], states[1],
                 EngineEvent.ENGINE_DEALLOCATED);
     }
 
@@ -604,7 +601,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         boolean status = handleResume();
         if (status) {
             setEngineState(0, LISTENING);
-            postEngineEvent(0, LISTENING, RecognizerEvent.RECOGNIZER_LISTENING);
+            postStateTransitionEngineEvent(0, LISTENING,
+                    RecognizerEvent.RECOGNIZER_LISTENING);
             setEngineState(NOT_BUFFERING, BUFFERING);
         }
 

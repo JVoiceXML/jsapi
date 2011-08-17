@@ -93,17 +93,12 @@ public abstract class BaseSynthesizer extends BaseEngine
     }
 
     /**
-     * postEngineEvent
-     *
-     * @param oldState long
-     * @param newState long
-     * @param eventType int
+     * {@inheritDic}
      */
-    public void postEngineEvent(long oldState, long newState, int eventType) {
-        final SynthesizerEvent event = new SynthesizerEvent(this, eventType,
+    public EngineEvent createStateTransitionEngineEvent(long oldState, long newState,
+            int eventType) {
+        return new SynthesizerEvent(this, eventType,
                 oldState, newState, null, false);
-        /** @todo Change after adding the queue */
-        postEngineEvent(event);
     }
 
     protected void postSynthesizerEvent(long oldState, long newState,
@@ -127,18 +122,17 @@ public abstract class BaseSynthesizer extends BaseEngine
 
     protected void postSpeakableEvent(final SpeakableEvent event,
             final SpeakableListener extraSpeakableListener) {
-        if ((getSpeakableMask() & event.getId()) == event.getId()) {
-            try {
-                final SpeechEventExecutor executor = getSpeechEventExecutor();
-                executor.execute(new Runnable() {
-                    public void run() {
-                        fireSpeakableEvent(event, extraSpeakableListener);
-                    }
-                });
-            } catch (RuntimeException ex) {
-                ex.printStackTrace();
-            }
+        final int id = event.getId();
+        if ((speakableMask & id) != id) {
+            return;
         }
+        final Runnable runnable = new Runnable() {
+            public void run() {
+                fireSpeakableEvent(event, extraSpeakableListener);
+            }
+        };
+        final SpeechEventExecutor executor = getSpeechEventExecutor();
+        executor.execute(runnable);
     }
 
     /**
@@ -342,14 +336,15 @@ public abstract class BaseSynthesizer extends BaseEngine
 
         // Proceed to real engine allocation
         handleAllocate();
-        long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED | PAUSED
+        long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED
                 | DEFOCUSED | QUEUE_EMPTY | RESUMED);
 
         // Starts AudioManager
         final AudioManager audioManager = getAudioManager();
         audioManager.audioStart();
 
-        postEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
+        postStateTransitionEngineEvent(states[0], states[1],
+                EngineEvent.ENGINE_ALLOCATED);
     }
 
     /**
@@ -385,7 +380,7 @@ public abstract class BaseSynthesizer extends BaseEngine
         
         // Adapt the state
         long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
-        postEngineEvent(states[0], states[1],
+        postStateTransitionEngineEvent(states[0], states[1],
                 EngineEvent.ENGINE_DEALLOCATED);
     }
 
