@@ -378,7 +378,8 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         /*********************************************************************/
         
         /** iterate through tags and set resultTags */
-        Hashtable<Integer, SsmlInterpretation> vInterpretation = result.getInterpretation();
+        Hashtable<Integer, SsmlInterpretation> vInterpretation =
+            result.getInterpretation();
                                
         Set<Integer> ksInterpretation = vInterpretation.keySet();
         Iterator<Integer> it = ksInterpretation.iterator();
@@ -450,7 +451,8 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         int range = RecognizerProperties.MAX_CONFIDENCE - RecognizerProperties.MIN_CONFIDENCE;
         
         //set the value and shift it (again, with the sample above: set the value to +12 from [0; 30] and shift it to +2 [-10; 20]
-        float confTmp = (result.getConfidence() * range) + RecognizerProperties.MIN_CONFIDENCE;
+        float confTmp = (result.getConfidence() * range)
+            + RecognizerProperties.MIN_CONFIDENCE;
         int resultconfidenceLevel = Math.round(confTmp);
         result.setConfidenceLevel(resultconfidenceLevel);
 
@@ -459,7 +461,8 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         if( resultconfidenceLevel < minConfidenceLevel){
             result.setResultState(Result.REJECTED);
             if(LOGGER.isLoggable(Level.FINE)){
-                LOGGER.fine("Result confidence too low, new ResultState: '"+ result.getResultState() +"'");
+                LOGGER.fine("Result confidence too low, new ResultState: '"
+                        + result.getResultState() +"'");
             }
         }
         
@@ -475,22 +478,20 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                         ResultEvent.RESULT_ACCEPTED, false, false);
             postResultEvent(accepted);
         }
-   }
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void handleRequestFocus() {
-        
-//        if(LOGGER.isDebugEnabled()){
-//            LOGGER.debug("handleRequestFocus : I do nothing ");
-//        }       
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void handleReleaseFocus() {
-//        if(LOGGER.isDebugEnabled()){
-//            LOGGER.debug("handleReleaseFocus : I do nothing ");
-//        }   
-        
     }
     
     native void sapiAbortRecognition(long handle);
