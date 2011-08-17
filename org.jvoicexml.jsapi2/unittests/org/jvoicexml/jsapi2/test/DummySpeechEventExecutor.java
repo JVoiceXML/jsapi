@@ -15,8 +15,11 @@ public class DummySpeechEventExecutor implements SpeechEventExecutor {
     /**
      * {@inheritDoc}
      */
-    public void execute(Runnable command) throws IllegalStateException,
+    public void execute(final Runnable command) throws IllegalStateException,
             NullPointerException {
+        if (command == null) {
+            throw new NullPointerException("command must not be null!");
+        }
         command.run();
     }
 

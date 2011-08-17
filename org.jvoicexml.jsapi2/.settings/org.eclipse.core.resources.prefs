@@ -1,4 +1,4 @@
-#Mon Jun 27 08:25:42 CEST 2011
+#Mon Jun 27 19:50:46 CEST 2011
 eclipse.preferences.version=1
 encoding//.processed/src/org/jvoicexml/jsapi2/AudioFormat.java=Cp1252
 encoding//.processed/src/org/jvoicexml/jsapi2/BaseAudioManager.java=Cp1252
@@ -19,10 +19,14 @@ encoding//.processed/src/org/jvoicexml/jsapi2/synthesis/BaseSynthesizer.java=Cp1
 encoding//.processed/src/org/jvoicexml/jsapi2/synthesis/BaseSynthesizerProperties.java=Cp1252
 encoding//.processed/src/org/jvoicexml/jsapi2/synthesis/QueueItem.java=Cp1252
 encoding//.processed/src/org/jvoicexml/jsapi2/synthesis/QueueManager.java=Cp1252
+encoding//.processed/unittests/org/jvoicexml/jsapi2/BaseEngineStateTransitionTest.java=Cp1252
 encoding//.processed/unittests/org/jvoicexml/jsapi2/synthesis/BaseSynthesizerPropertiesTest.java=Cp1252
 encoding//.processed/unittests/org/jvoicexml/jsapi2/synthesis/QueueManagerTest.java=Cp1252
 encoding//.processed/unittests/org/jvoicexml/jsapi2/synthesis/SynthesizerStateTransitionTest.java=Cp1252
 encoding//.processed/unittests/org/jvoicexml/jsapi2/test/DummyAudioManager.java=Cp1252
+encoding//.processed/unittests/org/jvoicexml/jsapi2/test/DummyEngine.java=Cp1252
+encoding//.processed/unittests/org/jvoicexml/jsapi2/test/DummyEngineEvent.java=Cp1252
 encoding//.processed/unittests/org/jvoicexml/jsapi2/test/DummySpeechEventExecutor.java=Cp1252
+encoding//.processed/unittests/org/jvoicexml/jsapi2/test/EngineEventAccumulator.java=Cp1252
 encoding//.processed/unittests/org/jvoicexml/jsapi2/test/synthesis/DummySpeakableListener.java=Cp1252
 encoding//.processed/unittests/org/jvoicexml/jsapi2/test/synthesis/DummySynthesizer.java=Cp1252

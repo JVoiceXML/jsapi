@@ -14,8 +14,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
-import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
-
 /**
  * An {@link InputStream} that reads the data from the microphone.
  * @author Dirk Schnelle-Walka
@@ -29,22 +27,15 @@ public final class LineInputStream extends InputStream {
     /** The line to read the audio from. */
     private TargetDataLine line;
 
-    /** The audio manager to use. */
-    private final JseBaseAudioManager manager;
-
     /** The audio format. */
     private AudioFormat format;
 
-    private byte[] buf;
-
-    private int bufpos;
-
     /**
      * Constructs a new object.
-     * @param audioManager the audio manger
+     * @param audioFormat the audio format to read from the microphone.
      */
-    public LineInputStream(final JseBaseAudioManager audioManager) {
-        manager = audioManager;
+    public LineInputStream(final AudioFormat audioFormat) {
+        format = audioFormat;
     }
 
     /**
@@ -52,7 +43,7 @@ public final class LineInputStream extends InputStream {
      */
     @Override
     public int read() throws IOException {
-        byte[] buffer = new byte[1];
+        final byte[] buffer = new byte[1];
         return read(buffer, 0, buffer.length);
     }
 
@@ -71,28 +62,17 @@ public final class LineInputStream extends InputStream {
     public int read(final byte[] buffer, final int off, final int len)
         throws IOException {
         if (buffer == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("buffer must not be null");
         } else if (off < 0 || len < 0 || len > buffer.length - off) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException(
+                    "offset and length do not match buffer size");
         } else if (len == 0) {
             return 0;
         }
         if (line == null) {
             getLine();
         }
-        if (bufpos < buf.length) {
-            return buf[bufpos++];
-        }
-        int mod = len % format.getFrameSize();
-        if (mod == 0) {
-            return line.read(buffer, off, len);
-        } else if (len > format.getFrameSize()) {
-            return line.read(buffer, off, len - mod);
-        } else {
-            line.read(buf, 0, buf.length);
-            bufpos = 1;
-            return buf[0];
-        }
+        return line.read(buffer, off, len);
     }
 
 
@@ -102,9 +82,6 @@ public final class LineInputStream extends InputStream {
      *         error opening the line.
      */
     private void getLine() throws IOException {
-        format = manager.getTargetAudioFormat();
-        buf = new byte[format.getFrameSize()];
-        bufpos = buf.length;
         try {
             final DataLine.Info info =
                 new DataLine.Info(TargetDataLine.class, format);
@@ -127,9 +104,9 @@ public final class LineInputStream extends InputStream {
     public void close() throws IOException {
         if (line != null) {
             line.stop();
+            line.close();
             line = null;
         }
         super.close();
     }
-
 }
