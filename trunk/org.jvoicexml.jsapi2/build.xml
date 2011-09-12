@@ -94,7 +94,8 @@ This file builds the JSAPI2 project.
   <target name="compileJ2ME" depends="-init,-dependentComponents"
     description="Compile ${component} for J2ME the JAVA sources for J2ME"
       if="midp.available">
-    <echo message="compiling ${component} for JME with debug=${debug}, optimize=${optimize}" />
+    <mkdir dir="${build}" />
+  	<echo message="compiling ${component} for JME with debug=${debug}, optimize=${optimize}" />
       <javac bootclasspathref="midp.lib" destdir="${build}"
         source="1.2" target="1.1" optimize="${optimize}"
         encoding="iso-8859-1">
@@ -190,9 +191,12 @@ This file builds the JSAPI2 project.
     <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
       <include name="*.jar" />
       <include name="*.dll" />
+        <include name="*.jnilib" />
       <fileset refid="dist.files.additional" />
     </zip>
     <zip basedir=".." destfile="${dist.src.zip}" compress="true">
+      <include name="javax.speech/src/**/*.java" />
+      <include name="javax.speech/build.xml" />
       <include name="org.jvoicexml.jsapi2*/src/**/*.java" />
       <include name="org.jvoicexml.jsapi2*/cpp/**/*.cpp" />
       <include name="org.jvoicexml.jsapi2*/cpp/**/*.h" />
