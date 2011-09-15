@@ -207,24 +207,27 @@ This file builds the JSAPI2 project.
       <include name="org.jvoicexml.jsapi2*/demo/**" />
       <include name="org.jvoicexml.jsapi2*/build.xml" />
       <include name="org.jvoicexml.jsapi2/config-props/**" />
+      <include name="org.jvoicexml.jsapi2/personal-props/README.txt" />
       <include name="org.jvoicexml.jsapi2*/etc/**" />
       <fileset refid="dist.files.additional" />
     </zip>
     <zip basedir=".." destfile="${dist.src.libs.zip}" compress="true">
-      <include name="org.jvoicexml.jsapi2*/src/**/*.java" />
-      <include name="org.jvoicexml.jsapi2*/cpp/**/*.cpp" />
-      <include name="org.jvoicexml.jsapi2*/cpp/**/*.h" />
-      <include name="org.jvoicexml.jsapi2*/cpp/**/*.sln" />
-      <include name="org.jvoicexml.jsapi2*/cpp/**/*.vcp" />
-      <include name="org.jvoicexml.jsapi2*/cpp/**/*.lib" />
-      <include name="org.jvoicexml.jsapi2*/cpp/**/lib*.jnilib" />
-      <include name="org.jvoicexml.jsapi2*/3rdparty/**" />
-      <exclude name="org.jvoicexml.jsapi2/3rdparty/jsapi2/lib/*.jar" />
-      <include name="org.jvoicexml.jsapi2*/demo/**" />
-      <include name="org.jvoicexml.jsapi2*/build.xml" />
-      <include name="org.jvoicexml.jsapi2/config-props/**" />
-      <include name="org.jvoicexml.jsapi2*/etc/**" />
-      <fileset refid="dist.files.additional" />
+        <include name="javax.speech/src/**/*.java" />
+        <include name="javax.speech/build.xml" />
+        <include name="org.jvoicexml.jsapi2*/src/**/*.java" />
+        <include name="org.jvoicexml.jsapi2*/3rdparty/**/*.jar" />
+        <include name="org.jvoicexml.jsapi2*/cpp/**/*.cpp" />
+        <include name="org.jvoicexml.jsapi2*/cpp/**/*.h" />
+        <include name="org.jvoicexml.jsapi2*/cpp/**/*.sln" />
+        <include name="org.jvoicexml.jsapi2*/cpp/**/*.vcp" />
+        <include name="org.jvoicexml.jsapi2*/cpp/**/*.lib" />
+        <include name="org.jvoicexml.jsapi2*/cpp/**/lib*.jnilib" />
+        <include name="org.jvoicexml.jsapi2*/demo/**" />
+        <include name="org.jvoicexml.jsapi2*/build.xml" />
+        <include name="org.jvoicexml.jsapi2/config-props/**" />
+        <include name="org.jvoicexml.jsapi2/personal-props/README.txt" />
+        <include name="org.jvoicexml.jsapi2*/etc/**" />
+        <fileset refid="dist.files.additional" />
     </zip>
   </target>
 </project>
