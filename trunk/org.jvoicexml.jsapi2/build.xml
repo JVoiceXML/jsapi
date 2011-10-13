@@ -112,8 +112,8 @@ This file builds the JSAPI2 project.
       unless="midp.available">
     <echo message="compiling ${component} for JSE with debug=${debug}, optimize=${optimize}" />
       <javac destdir="preverify" optimize="${optimize}"
-        debug="${debug}" deprecation="on"
-        encoding="iso-8859-1">
+        includeantruntime="false"
+        debug="${debug}" deprecation="on">
       <src path="${src}" />
       <classpath location="../javax.speech/preverify" />
       <compilerarg value="-Xlint:unchecked" />
