@@ -34,9 +34,6 @@ import org.jvoicexml.jsapi2.recognition.BaseResultToken;
  *
  */
 public final class SapiRecognizer extends JseBaseRecognizer {
-    static {
-        System.loadLibrary("Jsapi2SapiBridge");
-    }
 
     /** Logger for this class. */
     private static final Logger LOGGER =
@@ -363,20 +360,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         result.setTokens(rtoken);
 
         
-        
-        /** set resultTags */
-        /*********************************************************************/
-        // RS-Constructor creates generic RuleComponents but we specifically need RuleTags
-        //RuleSequence rs = new RuleSequence(utteranceTok);
-        
-        // -- not usable - private func. --
-        //result.applyTags(rtoken, ruleTag, 1);
-        
-        // non-functional
-//        result.setTokens(rt, replaceTags, 1); //<==== what?! óÒ Besser fkt. umgehen ~,~
-//        RuleTag[] rTag = new RuleTag[result.getTags(0).length];
-        /*********************************************************************/
-        
         /** iterate through tags and set resultTags */
         Hashtable<Integer, SsmlInterpretation> vInterpretation =
             result.getInterpretation();
@@ -447,7 +430,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         // then, a value of 0.4f from the Recognizer (working in [0; 1]) should be mapped to +2 (in [-10; 20])
         // [because +2 is 2/5th of the complete RecognizerProperties' range]
         
-        //get the whole range (in the example above => 20 - -10 = 30;
+        //get the whole range (in the example above => 20 - -10 = 30);
         int range = RecognizerProperties.MAX_CONFIDENCE - RecognizerProperties.MIN_CONFIDENCE;
         
         //set the value and shift it (again, with the sample above: set the value to +12 from [0; 30] and shift it to +2 [-10; 20]

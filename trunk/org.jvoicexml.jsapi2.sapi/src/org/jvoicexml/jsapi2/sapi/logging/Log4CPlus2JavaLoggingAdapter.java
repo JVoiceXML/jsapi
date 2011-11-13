@@ -14,9 +14,6 @@ import java.util.logging.Logger;
  *
  */
 public class Log4CPlus2JavaLoggingAdapter extends Thread {
-    static {
-        System.loadLibrary("Jsapi2SapiBridge");
-    }
 
     /** Logger for this class. */
     private static final Logger LOGGER =
