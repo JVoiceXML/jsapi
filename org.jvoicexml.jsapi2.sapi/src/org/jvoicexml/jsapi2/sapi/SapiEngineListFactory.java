@@ -20,7 +20,14 @@ import java.util.ArrayList;
  */
 public class SapiEngineListFactory implements EngineListFactory {
     static {
-        System.loadLibrary("Jsapi2SapiBridge");
+        //Check the processor architecture
+        if (System.getProperty("os.arch").equalsIgnoreCase("x86")) {
+            System.loadLibrary("Jsapi2SapiBridge");
+        } else {
+            System.loadLibrary("Jsapi2SapiBridge_x64");
+        }
+            
+         
         Log4CPlus2JavaLoggingAdapter adapter =
             new Log4CPlus2JavaLoggingAdapter();
         adapter.start();
