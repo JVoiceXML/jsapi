@@ -23,6 +23,12 @@ This file builds the JSR 113.jar.
     <condition property="isWindows">
       <os family="windows"/>
     </condition>
+	<condition property="isDebug">
+		<or>
+			<equals arg1="${debug}" arg2="true" casesensitive="false"/>
+			<equals arg1="${debug}" arg2="on" casesensitive="false"/>
+		</or>
+	</condition>
     <mkdir dir="${build}" />
     <mkdir dir="${dist}" />
   </target>
@@ -121,17 +127,17 @@ This file builds the JSR 113.jar.
     </exec>
   </target>
 
-  <target name="-copyDebugDll" if="debug">
+  <target name="-copyDebugDll" if="isDebug">
     <copy file="cpp/Jsapi2SapiBridge/Debug/Jsapi2SapiBridge.dll"
       tofile="${dist}/Jsapi2SapiBridge.dll" overwrite="true"/>
-    <copy file="cpp/Jsapi2SapiBridge/Debug_x64/Jsapi2SapiBridge.dll"
+    <copy file="cpp/Jsapi2SapiBridge/Debug_x64/Jsapi2SapiBridge_x64.dll"
       tofile="${dist}/Jsapi2SapiBridge_x64.dll" overwrite="true"/>
   </target>
 
-  <target name="-copyReleaseDll" unless="debug">
+  <target name="-copyReleaseDll" unless="isDebug">
     <copy file="cpp/Jsapi2SapiBridge/Release/Jsapi2SapiBridge.dll"
       tofile="${dist}/Jsapi2SapiBridge.dll" overwrite="true"/>
-    <copy file="cpp/Jsapi2SapiBridge/Release_x64/Jsapi2SapiBridge.dll"
+    <copy file="cpp/Jsapi2SapiBridge/Release_x64/Jsapi2SapiBridge_x64.dll"
       tofile="${dist}/Jsapi2SapiBridge_x64.dll" overwrite="true"/>
   </target>
 
