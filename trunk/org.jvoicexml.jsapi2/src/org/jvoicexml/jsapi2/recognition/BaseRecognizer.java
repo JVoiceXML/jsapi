@@ -45,6 +45,7 @@
  */
 package org.jvoicexml.jsapi2.recognition;
 
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -597,8 +598,13 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
         //Process grammars
         processGrammars();
-
-        boolean status = handleResume();
+        AudioManager manager = getAudioManager();
+        InputStream in = null;
+        if (manager instanceof BaseAudioManager) {
+            BaseAudioManager baseManager = (BaseAudioManager) manager;
+            in = baseManager.getInputStream();
+        }
+        boolean status = handleResume(in);
         if (status) {
             setEngineState(0, LISTENING);
             postStateTransitionEngineEvent(0, LISTENING,
@@ -616,7 +622,15 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
     protected abstract void handlePause(int flags);
 
-    protected abstract boolean handleResume() throws EngineStateException;
+    /**
+     * Further handling of resuming the recognizer
+     * @param in the input stream where to read data from.
+     * @return <code>true</code> if the recognizer was resumed
+     * @throws EngineStateException
+     *         error resuming the recognizer
+     */
+    protected abstract boolean handleResume(final InputStream in)
+        throws EngineStateException;
 
     protected abstract boolean setGrammars(Vector grammarDefinition);
 
