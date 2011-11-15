@@ -15,25 +15,12 @@ import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.Configurable;
 
 /**
- * <p>
- * Title: JSAPI2Engines
- * </p>
- * 
- * <p>
- * Description: JSAPI 2.0 Engines implementations
- * </p>
- * 
- * <p>
- * Copyright: Copyright (c) 2007
- * </p>
- * 
- * <p>
- * Company: INESC-ID L2F
- * </p>
+ * A data processor to read the data from a goven input stream and
+ * feed it into the sphinx system.
  * 
  * @author Renato Cassaca
  * @author Stefan Radomski
- * @version 1.0
+ * @author Dirk Schnelle-Walka
  */
 public class SphinxInputDataProcessor extends BaseDataProcessor
         implements Configurable {
@@ -46,17 +33,19 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
 
     private long totalSamplesRead = 0;
 
-    // sent DataStart signal
+    /** sent DataStart signal */
     private boolean sentStarted = false;
 
-    // sent DataEnd signal
+    /** sent DataEnd signal */
     private boolean sentEnded = false;
 
-    // is running
+    /** is running */
     private boolean running = true;
 
+    /**
+     * Constructs a new object.
+     */
     public SphinxInputDataProcessor() {
-        super();
     }
 
     /**
