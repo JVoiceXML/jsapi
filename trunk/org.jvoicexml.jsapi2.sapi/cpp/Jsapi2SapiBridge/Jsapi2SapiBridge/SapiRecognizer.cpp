@@ -17,8 +17,8 @@ static log4cplus::Logger logger =
  * Signature: (J)Ljava/util/Vector;
  */
 JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiGetBuildInGrammars
-  (JNIEnv *env, jobject object, jlong recognizerHandle){
-
+  (JNIEnv *env, jobject object, jlong recognizerHandle)
+{
 	return false;
 }
 
@@ -52,70 +52,77 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognize
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiSetRecognizerInputStream
   (JNIEnv *env, jobject caller, jlong recognizerHandle, jobject inputStream, 
-	jfloat sampleRate, jint bitsPerSample, jint channels, jboolean endian, jboolean signedData, jstring encoding)  {
-		
-		Recognizer* recognizer = (Recognizer*)recognizerHandle;
-		HRESULT hr;
+	jfloat sampleRate, jint bitsPerSample, jint channels, jboolean endian, jboolean signedData, jstring encoding) 
+{
+	
+    Recognizer* recognizer = (Recognizer*)recognizerHandle;
+    HRESULT hr;
 
-		/* create instance of JInputStream */
-		CComPtr<IStream> jStream;
-		hr = jStream.CoCreateInstance(CLSID_JInputStream);
+    /* create instance of JInputStream */
+    CComPtr<IStream> jStream;
+    hr = jStream.CoCreateInstance(CLSID_JInputStream);
 
-		/* query Setter-Interface */
-		CComPtr<IJavaInputStream> jStreamSetter;
-		if (SUCCEEDED(hr)) {
-			hr = jStream->QueryInterface(IID_IJavaInputStream, (void**) &jStreamSetter);
-		}
-		/* setup our IStream with the given Java InputStream as it's source */
-		if (SUCCEEDED(hr)) {
-			hr = jStreamSetter->setJavaInputStream(env, inputStream);
-		}
+    /* query Setter-Interface */
+    CComPtr<IJavaInputStream> jStreamSetter;
+    if (SUCCEEDED(hr)) {
+        hr = jStream->QueryInterface(IID_IJavaInputStream, (void**) &jStreamSetter);
+    }
+    /* setup our IStream with the given Java InputStream as it's source */
+    if (SUCCEEDED(hr)) {
+        hr = jStreamSetter->setJavaInputStream(env, inputStream);
+    }
 
-		/* create ISpStream for the recognizer */
-		CComPtr<ISpStream> cpSpStream;
-		if (SUCCEEDED(hr)) {
-			hr = cpSpStream.CoCreateInstance(CLSID_SpStream);
-		}
+    /* create ISpStream for the recognizer */
+    CComPtr<ISpStream> cpSpStream;
+    if (SUCCEEDED(hr)) {
+        hr = cpSpStream.CoCreateInstance(CLSID_SpStream);
+    }
 
-		/* set WAVEFORMATEX accordingly */
-		// see http://msdn.microsoft.com/en-us/library/ms720517%28v=VS.85%29.aspx
-		WAVEFORMATEX *format;
-		format = (WAVEFORMATEX*)malloc(sizeof(WAVEFORMATEX));
-		format->wFormatTag = WAVE_FORMAT_PCM;	//constant
-		format->nChannels = channels;			//variable
-		format->nSamplesPerSec = sampleRate;	//variable
-		format->wBitsPerSample = bitsPerSample;	//variable
-		format->nBlockAlign = (format->wBitsPerSample * format->nChannels) / 8;	//constant
-		format->nAvgBytesPerSec = format->nSamplesPerSec * format->nBlockAlign;	//constant
-		format->cbSize = 0;	//constant
+    /* set WAVEFORMATEX accordingly */
+    // see http://msdn.microsoft.com/en-us/library/ms720517%28v=VS.85%29.aspx
+    WAVEFORMATEX *format;
+    format = (WAVEFORMATEX*)malloc(sizeof(WAVEFORMATEX));
+    format->wFormatTag = WAVE_FORMAT_PCM;	//constant
+    format->nChannels = channels;			//variable
+    format->nSamplesPerSec = sampleRate;	//variable
+    format->wBitsPerSample = bitsPerSample;	//variable
+    format->nBlockAlign = (format->wBitsPerSample * format->nChannels) / 8;	//constant
+    format->nAvgBytesPerSec = format->nSamplesPerSec * format->nBlockAlign;	//constant
+    format->cbSize = 0;	//constant
 
-		/* set the Java IStream and it's format as the source for the SpeechStream */
-		if (SUCCEEDED(hr)) {
-			hr = cpSpStream->SetBaseStream(jStream, SPDFID_WaveFormatEx, format);
-		}
+    /* set the Java IStream and it's format as the source for the SpeechStream */
+    if (SUCCEEDED(hr))
+    {
+        hr = cpSpStream->SetBaseStream(jStream, SPDFID_WaveFormatEx, format);
+    }
 
-		/* set the constructed SpeechStream as the new recognizerInput */
-		/* NOTE:
-		 *	The RecognizerContext must be paused before the InputStream-switch.
-		 *	This responsibility lies on the Java-side!
-		 */
-		if (SUCCEEDED(hr)) {
-			hr = recognizer->SetRecognizerInputStream(cpSpStream);
-		}
-		int limitSetInput = 5;
-		for (int i = 0; (hr == SPERR_ENGINE_BUSY) && i < limitSetInput; i++) {
-            LOG4CPLUS_DEBUG(logger, _T("=> CPP setInputCounter:") << i);
-			Sleep(10);
-			hr = recognizer->SetRecognizerInputStream(cpSpStream);
-		}
+    /* set the constructed SpeechStream as the new recognizerInput */
+    /* NOTE:
+    *	The RecognizerContext must be paused before the InputStream-switch.
+    *	This responsibility lies on the Java-side!
+    */
+    if (SUCCEEDED(hr)) 
+    {
+        hr = recognizer->SetRecognizerInputStream(cpSpStream);
+    }
+    int limitSetInput = 5;
+    for (int i = 0; (hr == SPERR_ENGINE_BUSY) && i < limitSetInput; i++) 
+    {
+        LOG4CPLUS_DEBUG(logger, _T("=> CPP setInputCounter:") << i);
+        Sleep(10);
+        hr = recognizer->SetRecognizerInputStream(cpSpStream);
+    }
 
-		if (SUCCEEDED(hr)) {
-			return JNI_TRUE;
-		} else {
-			//insert ERROR-Logging here
-			LOG4CPLUS_ERROR(logger, "CPP: Error setting a new InputStream! ErrorCode: 0x" << std::hex << std::uppercase << hr);
-			return JNI_FALSE;
-		}
+    if (SUCCEEDED(hr))
+    {
+        return JNI_TRUE;
+    }
+    else
+    {
+        //insert ERROR-Logging here
+        LOG4CPLUS_ERROR(logger, "CPP: Error setting a new InputStream! ErrorCode: 0x" << std::hex << std::uppercase << hr);
+        return JNI_FALSE;
+    }
 }
  
 /*

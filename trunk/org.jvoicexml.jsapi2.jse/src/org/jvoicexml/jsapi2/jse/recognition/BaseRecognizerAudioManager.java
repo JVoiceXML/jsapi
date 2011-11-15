@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -38,6 +39,11 @@ import org.jvoicexml.jsapi2.jse.protocols.JavaSoundParser;
  * implementations might want to extend or modify this implementation.
  */
 public class BaseRecognizerAudioManager extends JseBaseAudioManager {
+    /** Logger instance. */
+    private final static Logger LOGGER =
+        Logger.getLogger(BaseRecognizerAudioManager.class.getCanonicalName());
+
+
     /** The input stream for the recognizer. */
     private InputStream inputStream;
 
@@ -57,7 +63,8 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
         if (inputStream instanceof AudioInputStream) {
             AudioInputStream ais = (AudioInputStream)inputStream;
             targetAudioFormat = ais.getFormat();
-            inputStream = AudioSystem.getAudioInputStream(engineAudioFormat, ais);
+            inputStream = AudioSystem.getAudioInputStream(
+                    engineAudioFormat, ais);
             return;
         }
 
@@ -70,29 +77,29 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
             /*******************************************************/
             InputStream source;
             try {
-                TargetDataLine lineLocalMic = AudioSystem.getTargetDataLine(targetAudioFormat);
+                TargetDataLine lineLocalMic =
+                    AudioSystem.getTargetDataLine(targetAudioFormat);
                 source = new AudioInputStream(lineLocalMic);
                 lineLocalMic.open();
                 lineLocalMic.start();
             } catch (LineUnavailableException e) {
-                source = null;
-                e.printStackTrace();
+                throw new AudioException(e.getMessage());
             }
             /*******************************************************/
             is = new BufferedInputStream(source);
         } else {
-            URL url;
+            final URL url;
             try {
                 url = new URL(locator);
-            } catch (MalformedURLException e) {
-                throw new AudioException(e.getMessage());
-            }
-            try {
                 final AudioFileFormat format =
                     AudioSystem.getAudioFileFormat(url);
                 targetAudioFormat = format.getFormat();
+            } catch (MalformedURLException e) {
+                throw new AudioException(e.getMessage());
             } catch (UnsupportedAudioFileException e) {
+                throw new AudioException(e.getMessage());
             } catch (IOException e) {
+                throw new AudioException(e.getMessage());
             }
             if (targetAudioFormat == null) {
                 try {
@@ -116,7 +123,7 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
                         + ex.getMessage());
             }
         }
-        System.err.println(targetAudioFormat);
+        LOGGER.fine("using target audio format " + targetAudioFormat);
         final AudioInputStream ais = new AudioInputStream(is,
                     targetAudioFormat, AudioSystem.NOT_SPECIFIED);
         inputStream = AudioSystem.getAudioInputStream(engineAudioFormat, ais);

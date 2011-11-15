@@ -3,6 +3,7 @@ package org.jvoicexml.jsapi2.mac.recognition;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -92,7 +93,7 @@ public final class MacRecognizer extends JseBaseRecognizer {
      * {@inheritDoc}
      */
     @Override
-    protected boolean handleResume() throws EngineStateException {
+    protected boolean handleResume(InputStream in) throws EngineStateException {
         final GrammarManager manager = getGrammarManager();
         final Grammar[] grammars = manager.listGrammars();
         final String[] grammarSources = new String[grammars.length];

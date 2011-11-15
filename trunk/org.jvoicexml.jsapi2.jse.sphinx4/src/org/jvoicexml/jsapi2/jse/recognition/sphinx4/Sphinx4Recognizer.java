@@ -176,12 +176,6 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
             LOGGER.fine("allocating recognizer...");
         }
 
-        // Get and set input
-        InputStream inputStream = ((JseBaseAudioManager) getAudioManager())
-                .getInputStream();
-
-        ((SphinxInputDataProcessor) dataProcessor).setInputStream(inputStream);
-
         // allocate recognizer and wait for State.READY
         recognizer.allocate();
         waitForRecognizerState(State.READY);
@@ -201,7 +195,8 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
     /**
      * Called from the <code>resume</code> method.
      */
-    public boolean handleResume() {
+    @Override
+    public boolean handleResume(InputStream in) {
         if (recognizer == null) {
             LOGGER.warning("no recognizer: cannot resume!");
             return false;
@@ -221,7 +216,9 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
 
         // start data source for sphinx if it is not running
         if (dataProcessor instanceof SphinxInputDataProcessor) {
-            final SphinxInputDataProcessor sidp = (SphinxInputDataProcessor) dataProcessor;
+            final SphinxInputDataProcessor sidp =
+                (SphinxInputDataProcessor) dataProcessor;
+            sidp.setInputStream(in);
             sidp.isRunning(true);
         }
 

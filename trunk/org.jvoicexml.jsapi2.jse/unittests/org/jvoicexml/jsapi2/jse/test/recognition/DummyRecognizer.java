@@ -3,6 +3,7 @@
  */
 package org.jvoicexml.jsapi2.jse.test.recognition;
 
+import java.io.InputStream;
 import java.util.Vector;
 
 import javax.speech.AudioException;
@@ -10,10 +11,8 @@ import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 
-import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
-import org.jvoicexml.jsapi2.test.DummySpeechEventExecutor;
 
 /**
  * Dummy implementation of a recognizer for test purposes.
@@ -66,7 +65,7 @@ public class DummyRecognizer extends JseBaseRecognizer {
      * @see org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer#handleResume()
      */
     @Override
-    protected boolean handleResume() {
+    protected boolean handleResume(InputStream in) {
         // TODO Auto-generated method stub
         return false;
     }

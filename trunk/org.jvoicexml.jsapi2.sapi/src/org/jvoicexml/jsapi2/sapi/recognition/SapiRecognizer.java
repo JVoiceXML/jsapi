@@ -34,12 +34,13 @@ import org.jvoicexml.jsapi2.recognition.BaseResultToken;
  *
  */
 public final class SapiRecognizer extends JseBaseRecognizer {
+    static {
+        System.loadLibrary("Jsapi2SapiBridge");
+    }
 
     /** Logger for this class. */
     private static final Logger LOGGER =
         Logger.getLogger(SapiRecognizer.class.getName());
-
-    public InputStream inputStream;
 
     /** SAPI recognizer Handle. **/
     private long recognizerHandle;
@@ -57,7 +58,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     public SapiRecognizer(final SapiRecognizerMode mode) {
         super(mode);
         
-        //set prefered AudioFormat
+        //set preferred AudioFormat
         JseBaseAudioManager audioManager = (JseBaseAudioManager) getAudioManager();
         audioManager.setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, false));
         
@@ -85,15 +86,26 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         // allocate the CPP-Recognizer
         recognizerHandle = sapiAllocate();
         // set the InputStream
-        setRecognizerInputStream();
+//        setRecognizerInputStream();
     }
     
-    protected boolean setRecognizerInputStream() {
+    /**
+     * Sets the input stream for the recognizer.
+     * @return
+     */
+    private boolean setRecognizerInputStream() {
      // Get the source audioStream
         JseBaseAudioManager audioManager = (JseBaseAudioManager) getAudioManager();
         //audioManager.audioStart();
-        inputStream = audioManager.getInputStream();
-        
+        InputStream in = audioManager.getInputStream();
+        return setRecognizerInputStream(in);
+    }
+
+    /**
+     * Sets the input stream for the recognizer.
+     * @return
+     */
+    private boolean setRecognizerInputStream(InputStream in) {
         /* problem: TypeMismatch JSAPI2-AudioFormat <-> JAVAX-AudioFormat */
         //AudioFormat audioFormat = audioManager.getAudioFormat();
         // => alternatively: hardcoded streamInfo
@@ -102,34 +114,9 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         int channels = 1;
         boolean endian = false;
         boolean signed = true;
-        
-        /***********************************************************/
-        /* This -TEMPORARY- solution takes the standard mic-in from the system.
-         * 
-         * Proof-of-concept:
-         * From now on, the SAPI-Recognizer gets it's data from an
-         * InputStream on the java side.
-         */
-//        TargetDataLine line;
-//        AudioFormat format = new AudioFormat(sampleRate, bitsPerSample, channels, signed, endian);
-//        try {
-//            line = AudioSystem.getTargetDataLine(format);
-//        } catch (LineUnavailableException e) {
-//            line = null;
-//            e.printStackTrace();
-//        }
-//        inputStream = new AudioInputStream(line);
-//        try {
-//            line.open();
-//        } catch (LineUnavailableException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        line.start();
-        /***********************************************************/
-        
+
         return sapiSetRecognizerInputStream(recognizerHandle, 
-                    inputStream, 
+                    in, 
                     sampleRate, 
                     bitsPerSample, 
                     channels, 
@@ -138,7 +125,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                     AudioFormat.Encoding.PCM_SIGNED.toString().toLowerCase()
                 );
     }
-
+    
     private native long sapiAllocate();
     
     private native boolean sapiSetRecognizerInputStream(
@@ -206,7 +193,10 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      * {@inheritDoc}
      */
     @Override
-    protected boolean handleResume() throws EngineStateException {
+    protected boolean handleResume(final InputStream in)
+        throws EngineStateException {
+        setRecognizerInputStream(in);
+
         GrammarManager manager = getGrammarManager();
         Grammar[] grammars = manager.listGrammars();
         final String[] grammarSources = new String[grammars.length];
@@ -232,7 +222,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     }
 
     private native boolean sapiResume(long handle, String[] grammars, String[] references)
-    throws EngineStateException;
+        throws EngineStateException;
 
 
     /**
@@ -255,13 +245,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     }
 
     private native boolean sapiSetGrammarContent(long handle, String grammarPath, String reference);
-        
-    
-    
-    
-    void startRecognition() {
-        start(recognizerHandle);
-    }
 
     private native void start(long handle);
 
@@ -321,7 +304,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
        /** parse our tags from SML */
        SMLHandler handler = new SMLHandler(result);
        StringReader readerSML = new StringReader(utterance);
-       
        QDParser parser = new QDParser();
        try {
         parser.parse(handler, readerSML);
@@ -359,6 +341,20 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         }
         result.setTokens(rtoken);
 
+        
+        
+        /** set resultTags */
+        /*********************************************************************/
+        // RS-Constructor creates generic RuleComponents but we specifically need RuleTags
+        //RuleSequence rs = new RuleSequence(utteranceTok);
+        
+        // -- not usable - private func. --
+        //result.applyTags(rtoken, ruleTag, 1);
+        
+        // non-functional
+//        result.setTokens(rt, replaceTags, 1); //<==== what?! 
+//        RuleTag[] rTag = new RuleTag[result.getTags(0).length];
+        /*********************************************************************/
         
         /** iterate through tags and set resultTags */
         Hashtable<Integer, SsmlInterpretation> vInterpretation =
@@ -430,7 +426,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         // then, a value of 0.4f from the Recognizer (working in [0; 1]) should be mapped to +2 (in [-10; 20])
         // [because +2 is 2/5th of the complete RecognizerProperties' range]
         
-        //get the whole range (in the example above => 20 - -10 = 30);
+        //get the whole range (in the example above => 20 - -10 = 30;
         int range = RecognizerProperties.MAX_CONFIDENCE - RecognizerProperties.MIN_CONFIDENCE;
         
         //set the value and shift it (again, with the sample above: set the value to +12 from [0; 30] and shift it to +2 [-10; 20]

@@ -1,5 +1,7 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
+import java.util.logging.Logger;
+
 import javax.speech.AudioEvent;
 import javax.speech.AudioListener;
 import javax.speech.Engine;
@@ -14,6 +16,9 @@ import javax.speech.Engine;
  *
  */
 public class SapiRecognizerAudioEventListener implements AudioListener {
+    /** Logger instance. */
+    private final static Logger LOGGER =
+        Logger.getLogger(SapiRecognizerAudioEventListener.class.getCanonicalName());
 
     /**
      * The associated recognizer
@@ -28,23 +33,30 @@ public class SapiRecognizerAudioEventListener implements AudioListener {
      */
     private boolean audioChanged;
     
-    public SapiRecognizerAudioEventListener(SapiRecognizer recognizer) {
-        this.recognizer = recognizer;
+    /**
+     * Constructs a new object.
+     * @param rec the recognizer
+     */
+    public SapiRecognizerAudioEventListener(final SapiRecognizer rec) {
+        recognizer = rec;
         audioChanged = false;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void audioUpdate(AudioEvent e) {
         switch(e.getId()) {
             case AudioEvent.AUDIO_CHANGED:
-                System.out.println("AudioEvent: Audio Changed!");
+                LOGGER.fine("AudioEvent: Audio Changed!");
                 if (!audioChanged) {
                     recognizer.pause();
                     audioChanged = true;
                 }
                 break;
             case AudioEvent.AUDIO_STARTED:
-                System.out.println("AudioEvent: Audio Started!");
+                LOGGER.fine("AudioEvent: Audio Started!");
                 
                 if (recognizer.testEngineState(Engine.ALLOCATING_RESOURCES)) {
                     try {
@@ -57,8 +69,6 @@ public class SapiRecognizerAudioEventListener implements AudioListener {
                 }
                 
                 // tell the recognizer to get the new InputStream and set it as it's new source
-                boolean inputStreamSet = recognizer.setRecognizerInputStream();
-                System.out.println("New InputStream set: " + inputStreamSet);
                 audioChanged = false;
                 if (!(recognizer.testEngineState(Engine.DEALLOCATED) ||
                         recognizer.testEngineState(Engine.DEALLOCATING_RESOURCES))) {
