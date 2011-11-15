@@ -2,9 +2,6 @@ package org.jvoicexml.jsapi2.sapi.recognition;
 
 import java.util.Hashtable;
 
-
-
-
 public class SMLHandler implements DocHandler
  {
     

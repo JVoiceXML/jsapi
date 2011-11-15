@@ -31,7 +31,8 @@ import org.jvoicexml.jsapi2.jse.protocols.JavaSoundParser;
  * interface.  Actual JSAPI implementations might want to extend
  * or modify this implementation.
  */
-public abstract class JseBaseAudioManager extends BaseAudioManager implements AudioManager {
+public abstract class JseBaseAudioManager
+    extends BaseAudioManager implements AudioManager {
     protected AudioInputStream ais;
 
     /**

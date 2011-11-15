@@ -3,15 +3,17 @@ package org.jvoicexml.jsapi2.sapi.recognition;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarException;
-import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.ResultToken;
 
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 
 
+/**
+ * A recognition result from the SAPI engine.
+ * @author Dirk Schnelle-Walka
+ */
 @SuppressWarnings("serial")
 public class SapiResult extends BaseResult  {
     public float getConfidence() {

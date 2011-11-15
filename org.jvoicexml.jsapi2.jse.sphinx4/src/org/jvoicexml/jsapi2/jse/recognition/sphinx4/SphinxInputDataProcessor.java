@@ -41,7 +41,9 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
     private static final Logger LOGGER = Logger
             .getLogger(SphinxInputDataProcessor.class.getName());
 
+    /** The input stream from the audio manager. */
     private InputStream inputStream;
+
     private long totalSamplesRead = 0;
 
     // sent DataStart signal
@@ -57,8 +59,12 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
         super();
     }
 
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
+    /**
+     * Sets the input stream to read the audio from.
+     * @param in the input stream.
+     */
+    public void setInputStream(final InputStream in) {
+        inputStream = in;
     }
 
     /**

@@ -32,7 +32,7 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
         // This specifies which of the recognition events are going to trigger
         // notifications.
 		hr = cpRecoCtxt->SetInterest(SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION),
-            SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION) );//|SPFEI(SPEI_FALSE_RECOGNITION)
+            SPFEI(SPEI_RECOGNITION)|SPFEI(SPEI_FALSE_RECOGNITION) );
     }
 
     CComPtr<ISpAudio> cpAudio;
@@ -43,13 +43,11 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 	   hr = SpCreateDefaultObjectFromCategoryId(SPCAT_AUDIOIN, &cpAudio);
 	}	
 
-	/**** SET standard AudioIn */
 	if (SUCCEEDED(hr))
 	{
 	   // Set the audio input to our object.
 	   hr = cpRecognizerEngine->SetInput(cpAudio, TRUE);
 	}
-	/**** END -- SET standard AudioIn */
 
 	if( SUCCEEDED(hr) )
     {
@@ -262,7 +260,6 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 	LPCWSTR ruleName = NULL;
     CSpEvent event;
 	ISpRecoResult* result = NULL;
-	ULONG ulTmp = 1; //*TEST*
 
     /* Process all of the recognition events */
 	while ( SUCCEEDED( hr = event.GetFrom(cpRecoCtxt)) && hr!=S_FALSE )//== S_OK
@@ -273,23 +270,17 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 
 				result = event.RecoResult();
 
-				//result->SpeakAudio(0, 0, 0, &ulTmp); //*TEST*
-
 				hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
 					&utterance, NULL);
 
-				/*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
-				//WCHAR* recoResult[2]; //tst[0]=>ruleName; tst[1] => utterance as SML; 
-				
 				SPPHRASE *pPhrase;
 				hr = result->GetPhrase(&pPhrase);
-				if (FAILED(hr)) {
+				if (FAILED(hr))
+                {
 					return hr; //could not retrieve the ruleName
 				}
 				ruleName = (pPhrase->Rule.pszName);
 				recoResult[0] = (WCHAR*) ruleName; //retrieve the rootrulename which activated the rule
-				/*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*/
-
 
 				/* receive an XMLRecoResult from the RecoResult */
 				ISpeechXMLRecoResult* XMLResult;
@@ -297,21 +288,17 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 
 				/* receive an SML String from the XMLRecoResult */				
 				hr = XMLResult->GetXMLResult( SPXRO_SML ,&SML);
-				if (FAILED(hr)) {
+				if (FAILED(hr))
+                {
 					return hr; // could not retrieve the SML-Resultstring
 				}
 				recoResult[1] = (WCHAR*) SML; //retrieve the utterance
 
-
-				/* at the moment not knowing what to do so put it out */
-				//std::wcout<< SSML <<std::endl;flush(std::wcout);
-
 				/* Delete all Grammars contained in the gramHash */
 				/* should be a temporary solution*/
-				it = gramHash.begin();
-				for( it ; it != gramHash.end(); it++){	
-
-					CComPtr<ISpRecoGrammar>		cpGrammar = it->second ;
+                for(it = gramHash.begin() ; it != gramHash.end(); it++)
+                {	
+					CComPtr<ISpRecoGrammar>	cpGrammar = it->second ;
 
 					cpGrammar->SetGrammarState(SPGS_DISABLED);
 					cpGrammar.Detach();
@@ -328,10 +315,10 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 
 				/* Delete all Grammars contained in the gramHash */
 				/* should be a temporary solution*/
-				it = gramHash.begin();
-				for( it ; it != gramHash.end(); it++){	
+                for(it = gramHash.begin() ; it != gramHash.end(); it++)
+                {	
 
-					CComPtr<ISpRecoGrammar>		cpGrammar = it->second ;
+					CComPtr<ISpRecoGrammar>	cpGrammar = it->second ;
 
 					cpGrammar->SetGrammarState(SPGS_DISABLED);
 					cpGrammar.Detach();
@@ -340,10 +327,9 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 				gramHash.clear();
 
 				return NULL;
-				//break;
         }
-
     }
+
 	return S_OK;
 } 
 
@@ -416,14 +402,14 @@ HRESULT Recognizer::StartRecognition(WCHAR* result[])
 
 	/* Delete all Grammars contained in the gramHash */
 	/* should be a temporary solution*/
-	for( it ; it != gramHash.end(); it++) {	
+	for( it ; it != gramHash.end(); it++) 
+    {	
+	    CComPtr<ISpRecoGrammar>	cpGrammar = it->second ;
 
-	CComPtr<ISpRecoGrammar>		cpGrammar = it->second ;
-
-	cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
-	cpGrammar->SetGrammarState(SPGS_DISABLED);
-	cpGrammar.Detach();
-	cpGrammar.Release();
+	    cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );
+	    cpGrammar->SetGrammarState(SPGS_DISABLED);
+	    cpGrammar.Detach();
+	    cpGrammar.Release();
 	}
 
     return NULL;
