@@ -12,8 +12,10 @@ log4cplus::Logger CClassFactory::logger =
 // ---------------------------------------------------------------------------
 // %%Deconstructor: CJavaInputStream::~CJavaInputStream()
 // ---------------------------------------------------------------------------
-CJavaInputStream::~CJavaInputStream() {
-	if (this->env != NULL) {
+CJavaInputStream::~CJavaInputStream()
+{
+	if (this->env != NULL)
+    {
 		env->DeleteWeakGlobalRef(inputStream);
 	}
 }
@@ -22,7 +24,8 @@ CJavaInputStream::~CJavaInputStream() {
 // %%Function: CJavaInputStream::setJavaInputStream
 // ---------------------------------------------------------------------------
  STDMETHODIMP
-CJavaInputStream::setJavaInputStream(JNIEnv *env, jobject object) {
+CJavaInputStream::setJavaInputStream(JNIEnv *env, jobject object)
+ {
 	/* the java environment */
 	this->env = env;
 
@@ -109,8 +112,10 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 	//std::clog << "IStream:Read" << std::endl;
 
 	// if we have no connection to the jvm, return immediately
-	if (jvm == NULL) {
-		if (pcbRead) {
+	if (jvm == NULL)
+    {
+		if (pcbRead)
+        {
 			*pcbRead = 0;
 		}
 		return S_FALSE;
@@ -122,8 +127,10 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 	int res = jvm->AttachCurrentThreadAsDaemon((void**)&env, NULL);
 
 	//if the java environment has not been set, return immediately
-	if (env == NULL) {
-		if (pcbRead) {
+	if (env == NULL)
+    {
+		if (pcbRead)
+        {
 			*pcbRead = 0;
 		}
 		return S_FALSE;
@@ -136,13 +143,15 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 		// the above code may raise an exception in JVM
 		jthrowable exc;
 		exc = env->ExceptionOccurred();
-		if (exc) {
+		if (exc)
+        {
             LOG4CPLUS_ERROR(logger, "Exception in jInputStream::read(). available()");
 			env->ExceptionDescribe();
 			//Clear the Exception in the JVM
 			env->ExceptionClear();
 			//Close this IStream
-			if (pcbRead) {
+			if (pcbRead)
+            {
 				*pcbRead = 0;
 			}
 			return S_FALSE;
@@ -150,7 +159,8 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 	}
 
 	int readTimeOut = 10; //50ms * 10 = 500ms timeout
-	while (available < cb && readTimeOut > 0) {
+	while (available < cb && readTimeOut > 0)
+    {
 		//std::clog << "Available: " << available << ";requested: " << cb << std::endl;
 		//std::cout << "Not enough data! Sleeping...";
 		Sleep(50); //sleep 50ms
@@ -161,13 +171,15 @@ CJavaInputStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 			// the above code may raise an exception in JVM
 			jthrowable exc;
 			exc = env->ExceptionOccurred();
-			if (exc) {
+			if (exc)
+            {
                 LOG4CPLUS_ERROR(logger, "Exception in jInputStream::read(). available()");
 				env->ExceptionDescribe();
 				//Clear the Exception in the JVM
 				env->ExceptionClear();
 				//Close this IStream
-				if (pcbRead) {
+				if (pcbRead)
+                {
 					*pcbRead = 0;
 				}
 				return S_FALSE;

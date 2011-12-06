@@ -20,10 +20,11 @@ DEFINE_GUID(IID_IJavaInputStream,0xf1d3e19d, 0x8d32, 0x4ef6, 0xa6, 0x56, 0x99, 0
 
 // %%Classes: ----------------------------------------------------------------
 // simple class-factory: only knows how to create CJavaInputStream instances
-class CClassFactory : public IClassFactory {
-  public:
+class CClassFactory : public IClassFactory
+{
+public:
     // IUnknown
-    STDMETHODIMP    QueryInterface (REFIID riid, void** ppv);
+    STDMETHODIMP QueryInterface (REFIID riid, void** ppv);
     STDMETHODIMP_(ULONG) AddRef(void)  { return 1; };
     STDMETHODIMP_(ULONG) Release(void) { return 1; };
 
@@ -35,7 +36,8 @@ private:
     static log4cplus::Logger logger;
 };
 
-class IJavaInputStream : public IStream {
+class IJavaInputStream : public IStream
+{
   public:
 	// IUnknown
 	virtual STDMETHODIMP    QueryInterface (REFIID riid, void** ppv) 
