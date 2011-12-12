@@ -41,7 +41,6 @@ JNIEXPORT jlong JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognize
         ThrowJavaException(env, "javax/speech/EngineException", buffer);
         return 0;
     }
-    LOG4CPLUS_DEBUG(logger, "allocated");
     return (jlong) recognizer;
 }
 
@@ -105,6 +104,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
     {
         hr = recognizer->SetRecognizerInputStream(cpSpStream);
     }
+	/*
     int limitSetInput = 5;
     for (int i = 0; (hr == SPERR_ENGINE_BUSY) && i < limitSetInput; i++) 
     {
@@ -112,6 +112,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
         Sleep(10);
         hr = recognizer->SetRecognizerInputStream(cpSpStream);
     }
+	*/
 
     if (SUCCEEDED(hr))
     {
@@ -120,8 +121,14 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
     else
     {
         //insert ERROR-Logging here
-        LOG4CPLUS_ERROR(logger, "CPP: Error setting a new InputStream! ErrorCode: 0x" << std::hex << std::uppercase << hr);
-        return JNI_FALSE;
+        //LOG4CPLUS_ERROR(logger, "CPP: Error setting a new InputStream! ErrorCode: 0x" << std::hex << std::uppercase << hr);
+		
+		char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Error setting a new InputStream!",
+            hr);
+        ThrowJavaException(env, "javax/speech/EngineException", buffer);
+        
+		return JNI_FALSE;
     }
 }
  
