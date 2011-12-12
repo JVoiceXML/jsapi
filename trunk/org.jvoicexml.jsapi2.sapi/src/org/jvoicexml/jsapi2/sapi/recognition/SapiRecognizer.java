@@ -89,15 +89,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         if (loggingFine) {
             LOGGER.fine("... allocated SAPI-recognizer");
         }
-        
-        // set the InputStream
-        if (loggingFine) {
-            LOGGER.fine("setting default inputStream...");
-        }
-        boolean setInputStream = setRecognizerInputStream();
-        if (loggingFine) {
-            LOGGER.fine("... default inputStream set: " + setInputStream);
-        }
     }
     
     /**
@@ -206,7 +197,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     @Override
     protected boolean handleResume(final InputStream in)
         throws EngineStateException {
-//        setRecognizerInputStream(in);
+        setRecognizerInputStream(in);
 
         GrammarManager manager = getGrammarManager();
         Grammar[] grammars = manager.listGrammars();

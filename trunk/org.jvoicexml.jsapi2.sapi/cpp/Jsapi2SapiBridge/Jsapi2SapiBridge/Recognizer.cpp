@@ -85,18 +85,26 @@ Recognizer::~Recognizer()
 
 HRESULT Recognizer::SetRecognizerInputStream(CComPtr<ISpStream> spStream) 
 {
-    LOG4CPLUS_DEBUG(logger, "SAPI Rec: setRecognizerInputStream(): paused = " << continuing);
-
-	return cpRecognizerEngine->SetInput(spStream, TRUE);
-
-	///* TEST */
-	//if (SUCCEEDED(cpRecognizerEngine->SetInput(spStream, TRUE))) {
-	//	std::clog << "Setting Input to NULL; recheck input" << std::endl;
-	//	return cpRecognizerEngine->SetInput(NULL, TRUE);
-	//} else {
-	//	std::clog << "CPP setRecognizerInputStream(): Could not set inputStream correctly" << std::endl;
-	//	return S_OK;
-	//}
+	LOG4CPLUS_DEBUG(logger, "Setting SAPI-Recognizer to inactive ...");
+	
+	hr = cpRecognizerEngine->SetRecoState(SPRST_INACTIVE);
+	if (SUCCEEDED(hr))
+	{
+		LOG4CPLUS_DEBUG(logger, "... SAPI-recognizer set to inactive");
+		LOG4CPLUS_DEBUG(logger, "Setting SAPI's new InputStream");
+		hr = cpRecognizerEngine->SetInput(spStream, TRUE);
+	}
+	if(SUCCEEDED(hr))
+	{
+		LOG4CPLUS_DEBUG(logger, "... SAPI's new InputStream set");
+		LOG4CPLUS_DEBUG(logger, "Setting SAPI-Recognizer to active ...");
+		hr = cpRecognizerEngine->SetRecoState(SPRST_ACTIVE);
+	}
+	if(SUCCEEDED(hr))
+	{
+		LOG4CPLUS_DEBUG(logger, "... SAPI-Recognizer set to active");
+	}
+	return hr;
 }
 
 HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
@@ -260,6 +268,7 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 	LPCWSTR ruleName = NULL;
     CSpEvent event;
 	ISpRecoResult* result = NULL;
+	//ULONG ulTmp = 1;
 
     /* Process all of the recognition events */
 	while ( SUCCEEDED( hr = event.GetFrom(cpRecoCtxt)) && hr!=S_FALSE )//== S_OK
@@ -269,6 +278,8 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 			case SPEI_RECOGNITION:
 
 				result = event.RecoResult();
+
+				//result->SpeakAudio(0, 0, SPF_DEFAULT, &ulTmp); /* TEST */
 
 				hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
 					&utterance, NULL);
@@ -353,7 +364,7 @@ HRESULT Recognizer::Resume()
 	//	hr = cpRecoCtxt->Resume(NULL);
 	//}
 
-	//continuing = true;
+	continuing = true;
     return hr;
 }
 

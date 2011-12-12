@@ -17,6 +17,7 @@ CJavaInputStream::~CJavaInputStream()
 	if (this->env != NULL)
     {
 		env->DeleteWeakGlobalRef(inputStream);
+		jvm->DetachCurrentThread();
 	}
 }
 
