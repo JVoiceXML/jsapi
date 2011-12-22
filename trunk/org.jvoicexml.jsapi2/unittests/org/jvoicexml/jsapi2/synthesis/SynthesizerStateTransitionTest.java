@@ -9,7 +9,8 @@ import junit.framework.TestCase;
 import org.jvoicexml.jsapi2.test.synthesis.DummySynthesizer;
 
 /**
- * Test cases for state transitions of the {@link Engine}.
+ * Test cases for state transitions of the
+ * {@link javax.speech.synthesis.Synthesizer}.
  * @author Stefan Radomski
  * @author Dirk Schnelle-Walka
  */
