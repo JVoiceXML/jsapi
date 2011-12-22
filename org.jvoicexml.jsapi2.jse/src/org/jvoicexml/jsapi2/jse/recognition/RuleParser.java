@@ -66,7 +66,7 @@ public class RuleParser {
     }
 
     /**
-     * Parse a text string against a particular rule from a particluar grammar
+     * Parse a text string against a particular rule from a particular grammar
      * returning a RuleParse data structure is successful and null otherwise.
      * @param text text to search
      * @param grammarManager the grammar manager
@@ -83,7 +83,7 @@ public class RuleParser {
     }
 
     /**
-     * Parse a set of tokens against a particular rule from a particluar grammar
+     * Parse a set of tokens against a particular rule from a particular grammar
      * returning a RuleParse data structure is successful and null otherwise.
      * @param inputTokens String[]
      * @param grammarManager GrammarManager
@@ -105,7 +105,7 @@ public class RuleParser {
     }
 
     /**
-     * Parse a text against a particular rule from a particluar grammar
+     * Parse a text against a particular rule from a particular grammar
      * returning a RuleParse data structure is successful and null otherwise.
      * @param text String
      * @param grammarManager GrammarManager
@@ -259,18 +259,6 @@ public class RuleParser {
         }
     }
     
-    /**
-     * Creates an sub-graph that represents a ruleref Special.
-     * @param rg the rule grammar
-     * @param r the rule tag
-     * @return GrammarGraph
-     */
-    private GrammarGraph buildGrammarGraph(final RuleGrammar rg,
-                                           final RuleSpecial r) {
-        GrammarNode startNode = new GrammarNode(false, GrammarNode.SPECIAL, r);
-        return new GrammarGraph(startNode, startNode);
-    }
-
     /**
     * Creates an sub-graph that represents a rule reference.
     * @param rg the rule grammar

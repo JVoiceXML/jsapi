@@ -261,11 +261,11 @@ public class SrgsRuleGrammarParser {
                 }
             } else {
                 String uriStr = (String) xpath.evaluate("@uri", node);
-                String ruleName = uriStr.substring(uriStr.indexOf("#") + 1);
-                String grammarName = uriStr.substring(0, uriStr.indexOf("#"));
-                if ((uriStr.indexOf("#") == -1) || (grammarName.length() < 1)) {
-                    ruleComponents.add(new RuleReference(ruleName));
+                if (uriStr.indexOf("#") == -1) {
+                    ruleComponents.add(new RuleReference(uriStr));
                 } else {
+                    String ruleName = uriStr.substring(uriStr.indexOf("#") + 1);
+                    String grammarName = uriStr.substring(0, uriStr.indexOf("#"));
                     String typeStr = (String) xpath.evaluate("@type", node);
                     if (typeStr == "") {
                         ruleComponents.add(new RuleReference(grammarName,
