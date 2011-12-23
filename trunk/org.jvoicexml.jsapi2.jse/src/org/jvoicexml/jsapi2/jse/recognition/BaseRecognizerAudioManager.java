@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -61,7 +62,7 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
     public void handleAudioStart() throws AudioException {
         // Just convert samples 
         if (inputStream instanceof AudioInputStream) {
-            AudioInputStream ais = (AudioInputStream)inputStream;
+            final AudioInputStream ais = (AudioInputStream)inputStream;
             targetAudioFormat = ais.getFormat();
             inputStream = AudioSystem.getAudioInputStream(
                     engineAudioFormat, ais);
@@ -123,7 +124,9 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
                         + ex.getMessage());
             }
         }
-        LOGGER.fine("using target audio format " + targetAudioFormat);
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("using target audio format " + targetAudioFormat);
+        }
         final AudioInputStream ais = new AudioInputStream(is,
                     targetAudioFormat, AudioSystem.NOT_SPECIFIED);
         inputStream = AudioSystem.getAudioInputStream(engineAudioFormat, ais);
