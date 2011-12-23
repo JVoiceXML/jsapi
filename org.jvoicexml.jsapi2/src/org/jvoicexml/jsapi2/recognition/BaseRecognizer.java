@@ -97,7 +97,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected boolean supportsVOID = true;
 
     // used when printing grammars
-    public RuleGrammar currentGrammar;
+    protected RuleGrammar currentGrammar;
 
     // Set to true if recognizer cannot handle partial grammar loading.
     protected boolean reloadAll;
@@ -523,15 +523,28 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         audioManager.audioStart();
 
         // Proceed to real engine allocation
-        handleAllocate();
-        long[] states = setEngineState(CLEAR_ALL_STATE,
-                ALLOCATED | PAUSED | DEFOCUSED |
-                NOT_BUFFERING);
-        postStateTransitionEngineEvent(states[0], states[1], EngineEvent.ENGINE_ALLOCATED);
+        try {
+            handleAllocate();
+            long[] states = setEngineState(CLEAR_ALL_STATE,
+                    ALLOCATED | PAUSED | DEFOCUSED |
+                    NOT_BUFFERING);
+            postStateTransitionEngineEvent(states[0], states[1],
+                    EngineEvent.ENGINE_ALLOCATED);
+        } catch (EngineStateException e) {
+            audioManager.audioStop();
+        } catch (EngineException e) {
+            audioManager.audioStop();
+        } catch (AudioException e) {
+            audioManager.audioStop();
+        } catch (SecurityException e) {
+            audioManager.audioStop();
+        }
     }
 
     /**
-     * Perform the real allocation of the recognizer.
+     * Perform the real allocation of the recognizer. When this
+     * method is called, the {@link javax.speech.AudioManager} has already
+     * been started.
      * @throws AudioException
      *          if any audio request fails 
      * @throws EngineException
@@ -590,29 +603,35 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
 
     /**
-     * Called from the <code>resume</code> method.  Override in subclasses.
+     * Called from the {@link #resume()} method.
      *
+     * @exception EngineStateException
+     *            when not in the standard Conditions for operation
      * @todo Handle grammar updates
      */
     protected final boolean baseResume() throws EngineStateException {
 
         //Process grammars
         processGrammars();
-        AudioManager manager = getAudioManager();
+        final AudioManager manager = getAudioManager();
         InputStream in = null;
         if (manager instanceof BaseAudioManager) {
-            BaseAudioManager baseManager = (BaseAudioManager) manager;
+            final BaseAudioManager baseManager = (BaseAudioManager) manager;
             in = baseManager.getInputStream();
         }
+
         boolean status = handleResume(in);
-        if (status) {
-            setEngineState(0, LISTENING);
-            postStateTransitionEngineEvent(0, LISTENING,
-                    RecognizerEvent.RECOGNIZER_LISTENING);
-            setEngineState(NOT_BUFFERING, BUFFERING);
+        if (!status) {
+            return false;
         }
 
-        return status;
+        // Advance the states
+        setEngineState(0, LISTENING);
+        postStateTransitionEngineEvent(0, LISTENING,
+                RecognizerEvent.RECOGNIZER_LISTENING);
+        setEngineState(NOT_BUFFERING, BUFFERING);
+
+        return true;
     }
 
 
