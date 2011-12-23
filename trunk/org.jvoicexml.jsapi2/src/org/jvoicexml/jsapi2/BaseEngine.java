@@ -64,6 +64,14 @@ import javax.speech.VocabularyManager;
  * Actual JSAPI implementations might want to extend or modify this
  * implementation.
  * </p>
+ * <p>
+ * A base engine has to provide several factory methods:
+ * <ul>
+ * <li>{@link #createAudioManager()} to create an {@link javax.speech.AudioManager}</li>
+ * <li>{@link #createSpeechEventExecutor()} to create the {@link javax.speech.SpeechEventExecutor}</li>
+ * <li>{@link #createVocabularyManager()} to create the {@link javax.speech.VocabularyManager}</li>
+ * </ul>
+ * </p>
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
  * @version $Revision$
@@ -322,8 +330,8 @@ public abstract class BaseEngine implements Engine {
                     }
                 }
             };
-            final Thread thread = new Thread(runnable);
-            thread.start();
+            final SpeechEventExecutor executor = getSpeechEventExecutor();
+            executor.execute(runnable);
         } else if (mode == 0) {
             allocate();
         } else {
@@ -417,7 +425,7 @@ public abstract class BaseEngine implements Engine {
      * {@inheritDoc}
      */
     public final boolean resume() throws EngineStateException {
-        //Validate current state
+        // Do nothing if we are already resumed
         if (testEngineState(RESUMED)) {
             return true;
         }
@@ -431,7 +439,9 @@ public abstract class BaseEngine implements Engine {
                 return false;
             }
         }
-        
+
+        // Check, if we are ready to resume.
+        // This depends on the number of calls to pause()
         boolean resumeNow = false;
         synchronized (this) {
             if (pauses <= 1) {
@@ -450,9 +460,10 @@ public abstract class BaseEngine implements Engine {
                 return false;
             }
         } else {
-            // Every pause must be resumed seperately. 
-            // If the code reaches this point, we have a nested resume hence we do 
-            // NOT actually resume, but only decreased the pause-counter further above
+            // Every pause must be resumed separately. 
+            // If the code reaches this point, we have a nested resume hence we
+            // do NOT actually resume, but only decreased the pause-counter
+            // further above
             return false;
         }
     }
