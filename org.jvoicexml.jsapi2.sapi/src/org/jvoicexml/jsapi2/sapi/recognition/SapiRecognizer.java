@@ -79,14 +79,12 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     @Override
     public void handleAllocate() throws EngineStateException, EngineException,
             AudioException, SecurityException {
-        final boolean loggingFine = LOGGER.isLoggable(Level.FINE);
-        
         // allocate the CPP-Recognizer
-        if (loggingFine) {
+        if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Allocationg SAPI-recognizer...");
         }
         recognizerHandle = sapiAllocate();
-        if (loggingFine) {
+        if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("... allocated SAPI-recognizer");
         }
     }
@@ -117,7 +115,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         final boolean endian = false;
         final boolean signed = true;
 
-        return sapiSetRecognizerInputStream(recognizerHandle, 
+        return sapiSetRecognizerInputStream(recognizerHandle,
                     in, 
                     sampleRate, 
                     bitsPerSample, 
@@ -207,7 +205,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         
         if(LOGGER.isLoggable(Level.FINE)){
             for (Grammar grammar : grammars) {
-            LOGGER.fine("Activate Grammar : "+ grammar.getReference() );
+                LOGGER.fine("Activate Grammar : "+ grammar.getReference() );
             }
         }
         
@@ -220,6 +218,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         sapiResume(recognizerHandle, grammarSources, grammarReferences);
         recognitionThread = new SapiRecognitionThread(this);
         recognitionThread.start();
+
         return true;
     }
 
