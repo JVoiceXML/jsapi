@@ -3,7 +3,7 @@ package org.jvoicexml.jsapi2.jse.recognition;
 /**
  * Represents an arc of a graph.
  *
- * @author David José Rodrigues
+ * @author David Jose Rodrigues
  */
 public class GrammarArc {
     /** the destination node. */
