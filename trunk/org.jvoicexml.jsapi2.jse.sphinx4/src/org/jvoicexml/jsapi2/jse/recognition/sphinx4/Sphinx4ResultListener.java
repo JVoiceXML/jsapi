@@ -27,6 +27,7 @@
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.speech.recognition.GrammarException;
@@ -48,12 +49,6 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  * @author Dirk Schnelle
  * @author Stefan Radomski
  * @version $Revision: 608 $
- * 
- *          <p>
- *          Copyright &copy; 2005-2008 JVoiceXML group - <a
- *          href="http://jvoicexml.sourceforge.net">
- *          http://jvoicexml.sourceforge.net/</a>
- *          </p>
  */
 class Sphinx4ResultListener implements ResultListener {
     /** Logger for this class. */
@@ -114,8 +109,8 @@ class Sphinx4ResultListener implements ResultListener {
      *            The new result.
      */
     public void newResult(final Result result) {
-        LOGGER.info("received result: " + result);
-        LOGGER.info("isFinal: " + result.isFinal());
+        LOGGER.log(Level.INFO, "received result: {0}", result);
+        LOGGER.log(Level.INFO, "isFinal: {0}", result.isFinal());
 
         if (!result.isFinal()) {
             LOGGER.warning("result is not final. forget about it.");
