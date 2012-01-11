@@ -1,12 +1,26 @@
 /*
- * File:    $HeadURL: $
- * Version: $LastChangedRevision: $
+ * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
+ * Version: $LastChangedRevision: 68 $
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: lyncher $
+ * Author:  $LastChangedBy: schnelle $
  *
- * JSAPI - An base implementation for JSR 113.
+ * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -52,8 +66,8 @@ public class BaseGrammar implements Grammar, ResultListener {
     /** Registered listeners for result events. */
     private transient Vector resultListeners;
 
-    /** Name of this grammar. */
-    protected String name;
+    /** Unique reference of this grammar. */
+    protected String reference;
 
     /**
      * <code>true</code> if this grammar is active.
@@ -70,16 +84,22 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * Creates a new BaseGrammar.
      * @param rec the BaseRecognizer for this Grammar.
-     * @param grammarName the name of this Grammar.
+     * @param grammarRefererence the reference of this Grammar.
+     * @exception IllegalArgumentException
+     *            if the grammar reference is null
      */
-    public BaseGrammar(final Recognizer rec, final String grammarName) {
+    public BaseGrammar(final Recognizer rec, final String grammarRefererence) {
+        if (grammarRefererence == null) {
+            throw new IllegalArgumentException(
+                    "grammar reference must not be null");
+        }
         grammarListeners = new Vector();
         resultListeners = new Vector();
         recognizer = rec;
         if (rec != null) {
             recognizer.addResultListener(this);
         }
-        name = grammarName;
+        reference = grammarRefererence;
         grammarActive = false;
         activatable = false;
         activationMode = ACTIVATION_FOCUS;
@@ -96,7 +116,7 @@ public class BaseGrammar implements Grammar, ResultListener {
      * {@inheritDoc}
      */
     public final String getReference() {
-        return name;
+        return reference;
     }
 
     /**
@@ -122,7 +142,8 @@ public class BaseGrammar implements Grammar, ResultListener {
             && (mode != ACTIVATION_MODAL)
             && (mode != ACTIVATION_FOCUS)
             && (mode != ACTIVATION_INDIRECT)) {
-            throw new IllegalArgumentException("Invalid ActivationMode");
+            throw new IllegalArgumentException("Invalid ActivationMode: "
+                    + mode);
         } else if (mode != activationMode) {
             activationMode = mode;
         }
@@ -221,7 +242,8 @@ public class BaseGrammar implements Grammar, ResultListener {
 
     /**
      * Utility function to generate grammar event and post it to the event
-     * queue.
+     * queue. This method uses the {@link  SpeechEventExecutor} to post the
+     * event asyncronously.
      * @param event the event to post
      *
      */
