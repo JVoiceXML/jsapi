@@ -8,7 +8,7 @@ import javax.speech.recognition.RuleComponent;
 /**
  * Represents a node of a graph.
  *
- * @author David José Rodrigues
+ * @author David Jose Rodrigues
  */
 
 public class GrammarNode {
