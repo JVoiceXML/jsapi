@@ -1,3 +1,29 @@
+/*
+ * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
+ * Version: $LastChangedRevision: 68 $
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy: schnelle $
+ *
+ * JSAPI - An independent reference implementation of JSR 113.
+ *
+ * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
 package org.jvoicexml.jsapi2.jse.recognition;
 
 
@@ -108,7 +134,7 @@ public class BaseGrammarManager implements GrammarManager {
         //Validate current state
         ensureValidEngineState();
 
-        if (grammars.containsValue(grammarReference)) {
+        if (grammars.containsKey(grammarReference)) {
             throw new IllegalArgumentException("Duplicate grammar name: " +
                                                grammarReference);
         }
@@ -146,11 +172,11 @@ public class BaseGrammarManager implements GrammarManager {
         
         
         if(LOGGER.isLoggable(Level.FINE)){
-            LOGGER.fine("Removed Grammar :"+ key.getReference());
+            LOGGER.log(Level.FINE, "Removed Grammar :{0}", key.getReference());
             Iterator<String> keys = grammars.keySet().iterator();
             
             while (keys.hasNext()){
-                LOGGER.fine("Grammar :"+ keys.next() );
+                LOGGER.log(Level.FINE, "Grammar :{0}", keys.next());
             }
         }
         
@@ -220,7 +246,8 @@ public class BaseGrammarManager implements GrammarManager {
             EngineStateException, EngineException {
         
         if(LOGGER.isLoggable(Level.FINE)){
-            LOGGER.fine("Load Grammar : "+ grammarReference + " with media Type:"+ mediaType);
+            LOGGER.log(Level.FINE, "Load Grammar : {0} with media Type:{1}",
+                    new Object[]{grammarReference, mediaType});
         }
                
         return loadGrammar(grammarReference, mediaType, true, false, null);
@@ -250,15 +277,19 @@ public class BaseGrammarManager implements GrammarManager {
             IOException, EngineStateException, EngineException {
         
         if(LOGGER.isLoggable(Level.FINE)){
-            LOGGER.fine("Load Grammar : "+ grammarReference + " with media Type:"+ mediaType);
-            LOGGER.fine("loadReferences : "+ loadReferences + " reloadGrammars:"+ reloadGrammars);
-            LOGGER.fine("there are "+ loadedGrammars.size() +" loaded grammars:" );
+            LOGGER.log(Level.FINE, "Load Grammar : {0} with media Type:{1}",
+                    new Object[]{grammarReference, mediaType});
+            LOGGER.log(Level.FINE, "loadReferences : {0} reloadGrammars:{1}",
+                    new Object[]{loadReferences, reloadGrammars});
+            LOGGER.log(Level.FINE, "there are {0} loaded grammars:",
+                    loadedGrammars.size());
         }
         
         //Validate current state
         ensureValidEngineState();
 
-        //Make sure that recognizer supports markup
+        // Make sure that recognizer supports markup
+        // TODO: Is this really correct? Maybe we should change that
         if (recognizer != null) {
             final EngineMode mode = recognizer.getEngineMode();
             if (!mode.getSupportsMarkup()) {
@@ -291,24 +322,35 @@ public class BaseGrammarManager implements GrammarManager {
     /**
      * Creates a RuleGrammar from grammar text provided by a Reader.
      *
-     * @param grammarReference String
-     * @param reader Reader
-     * @return RuleGrammar
+     * @param grammarReference a unique reference to the {@link Grammar} to load
+     * @param mediaType the type of {@link Grammar} to load
+     * @param reader the {@link Reader} from which the {@link Grammar} text is loaded
+     * @return a {@link Grammar} object
      * @throws GrammarException
+     *         if the <code>mediaType</code> is not supported or if any loaded
+     *         grammar text contains an error
      * @throws IllegalArgumentException
+     *         if <code>grammarReference</code> is invalid
      * @throws IOException
+     *         if an I/O error occurs 
      * @throws EngineStateException
+     *         when not in the standard Conditions for Operation
      * @throws EngineException
+     *         if {@link RuleGrammar}s are not supported
+     *
      */
     @SuppressWarnings("unchecked")
-    public Grammar loadGrammar(String grammarReference, String mediaType,
-                               Reader reader) throws
-            GrammarException, IllegalArgumentException, IOException,
-            EngineStateException, EngineException {
+    public Grammar loadGrammar(final String grammarReference,
+                final  String mediaType, final Reader reader)
+                throws  GrammarException, IllegalArgumentException, IOException,
+                    EngineStateException, EngineException {
         
         if(LOGGER.isLoggable(Level.FINE)){
-            LOGGER.fine("Load Grammar : "+ grammarReference + " with media Type:"+ mediaType + " and Reader :"+ reader);
+            LOGGER.log(Level.FINE,
+                    "Load Grammar : {0} with media Type:{1} and Reader :{2}",
+                    new Object[]{grammarReference, mediaType, reader});
         }
+
         // Validate current state
         ensureValidEngineState();
 
@@ -323,24 +365,26 @@ public class BaseGrammarManager implements GrammarManager {
         // Process grammar
         final SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser(); 
 
-        Rule[] rules = srgsParser.load(reader);
+        final Rule[] rules = srgsParser.load(reader);
         if (rules == null) {
-            return null;
+            throw new IOException("Unable to load grammar '" + grammarReference
+                    + "'");
         } 
         
         if(LOGGER.isLoggable(Level.FINE)){
             LOGGER.fine("SrgsRuleGrammarParser parsed rules:" );
             for(Rule rule: rules){               
-                LOGGER.fine( rule.getRuleName() );
+                LOGGER.fine(rule.getRuleName());
             }           
         }
         
         // Initialize rule grammar
-        BaseRuleGrammar brg =
+        final BaseRuleGrammar brg =
             new BaseRuleGrammar(recognizer, grammarReference);
         
         if(LOGGER.isLoggable(Level.FINE)){
-            LOGGER.fine("new BaseRuleGrammar:"+ brg.getReference() );       
+            LOGGER.log(Level.FINE, "new BaseRuleGrammar:{0}",
+                    brg.getReference());
         }       
        
         brg.addRules(rules);
@@ -349,17 +393,11 @@ public class BaseGrammarManager implements GrammarManager {
         final HashMap attributes = srgsParser.getAttributes();
         
         if(LOGGER.isLoggable(Level.FINE)){
-            LOGGER.fine("recieved from srgsParser.getAttributes(), root:"+ attributes.get("root") );       
+            LOGGER.log(Level.FINE,
+                    "recieved from srgsParser.getAttributes(), root:{0}",
+                    attributes.get("root"));
         }   
         
-//        attributes.remove("root");
-//        String[] value = grammarReference.split(":");
-//        
-//        attributes.put("root", value[1].trim() );
-//        if(LOGGER.isDebugEnabled()){
-//            LOGGER.debug("replaced root with:" + value[1]);       
-//        }     
-//        
         brg.setAttributes(attributes);
 
         // Register grammar

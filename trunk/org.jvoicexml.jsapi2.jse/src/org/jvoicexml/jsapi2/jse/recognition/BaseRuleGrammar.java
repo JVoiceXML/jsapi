@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,8 +45,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
             Logger.getLogger(BaseRuleGrammar.class.getName());
     
     protected HashMap<String, InternalRule> rules;
-    protected Vector<RuleGrammarOperation> uncommitedChanges =
-        new Vector<RuleGrammarOperation>();
+    protected List<RuleGrammarOperation> uncommitedChanges =
+        new java.util.ArrayList<RuleGrammarOperation>();
 
     //Attributes of the rule grammar
     protected String root;
@@ -60,17 +61,17 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 
     private int ruleId;
 
-    protected Vector    imports;
-    protected Vector    importedRules;
+    protected List    imports;
+    protected List    importedRules;
 
     /**
      * Create a new BaseRuleGrammar
-     * @param recognizer the BaseRecognizer for this Grammar.
-     * @param name the name of this Grammar.
+     * @param recognizer the BaseRecognizer for this grammar.
+     * @param reference the unique reference of this grammar.
      */
     public BaseRuleGrammar(final JseBaseRecognizer recognizer,
-            final String name) {
-        super(recognizer, name);
+            final String reference) {
+        super(recognizer, reference);
         rules = new HashMap<String, InternalRule>();
 
         //Initialize rule grammar attributes
@@ -245,7 +246,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 //            }
             
             if(LOGGER.isLoggable(Level.FINE)){
-                LOGGER.fine("Set RootRuleName : "+ rootRuleName);
+                LOGGER.log(Level.FINE, "Set RootRuleName : {0}", rootRuleName);
             }
         }
         
@@ -365,7 +366,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         uncommitedChanges.add(rsgo);
         
         if(LOGGER.isLoggable(Level.FINE)){
-            LOGGER.fine("added RootRule : "+ rulename);
+            LOGGER.log(Level.FINE, "added RootRule : {0}", rulename);
         }
         
     }
@@ -373,7 +374,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     protected void setAttributes(HashMap<String, String> attributes) {
         
         if(LOGGER.isLoggable(Level.FINE)){
-            LOGGER.fine("Try to set Attributes for Grammar rule :" + attributes.get("root") );          
+            LOGGER.log(Level.FINE,
+                    "Try to set Attributes for Grammar rule :{0}",
+                    attributes.get("root"));
         }
         
         for (String name: attributes.keySet()) {
