@@ -1,4 +1,4 @@
-<project name="JSR 113" default="jar" basedir=".">
+<project name="org.jvoicexml.jsapi2" default="jar" basedir=".">
   <description>
 This file builds the JSAPI2 project.
     </description>
