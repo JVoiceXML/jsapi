@@ -1,26 +1,26 @@
 /*
- * File:    $HeadURL: https://jsapi.svn.sourceforge.net/svnroot/jsapi/trunk/org.jvoicexml.jsapi2.jse/src/org/jvoicexml/jsapi2/jse/recognition/sphinx4/RecognitionThread.java $
- * Version: $LastChangedRevision: 614 $
- * Date:    $Date: 2010-12-08 16:52:13 +0100 (Mi, 08 Dez 2010) $
- * Author:  $LastChangedBy: sterad $
+ * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
+ * Version: $LastChangedRevision: 68 $
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy: schnelle $
  *
- * JVoiceXML - A free VoiceXML implementation.
+ * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2005-2008 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
- *  You should have received a copy of the GNU Library General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -62,13 +62,14 @@ final class RecognitionThread extends Thread {
     /**
      * Runs this thread.
      */
+    @Override
     public void run() {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("recognition thread started");
         }
 
+        // Start the Sphinx recognizer
         final Recognizer rec = recognizer.getRecognizer();
-
         started = true;
 
         // send start of speech and processing event

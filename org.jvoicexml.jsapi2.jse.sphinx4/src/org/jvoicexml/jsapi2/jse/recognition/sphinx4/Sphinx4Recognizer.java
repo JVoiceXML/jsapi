@@ -1,26 +1,26 @@
 /*
- * File:    $HeadURL: https://jsapi.svn.sourceforge.net/svnroot/jsapi/trunk/org.jvoicexml.jsapi2.jse/src/org/jvoicexml/jsapi2/jse/recognition/sphinx4/Sphinx4Recognizer.java $
- * Version: $LastChangedRevision: 611 $
- * Date:    $Date: 2010-12-08 15:38:52 +0100 (Mi, 08 Dez 2010) $
+ * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
+ * Version: $LastChangedRevision: 68 $
+ * Date:    $LastChangedDate $
  * Author:  $LastChangedBy: schnelle $
  *
- * JVoiceXML - A free VoiceXML implementation.
+ * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2005-2008 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
- *  You should have received a copy of the GNU Library General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -147,9 +147,8 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
             }
 
         } catch (Exception ex) {
-            LOGGER.warning("error creating engine properties "
-                    + ex.getMessage());
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, "error creating engine properties {0}",
+                    ex.getMessage());
         }
 
         // hard-coded audio format
@@ -186,17 +185,17 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("...allocated");
-            LOGGER.fine("state: " + recognizer.getState());
+            LOGGER.log(Level.FINE, "state: {0}", recognizer.getState());
         }
 
         setEngineState(CLEAR_ALL_STATE, ALLOCATED);
     }
 
     /**
-     * Called from the <code>resume</code> method.
+     * {@inheritDoc}
      */
     @Override
-    public boolean handleResume(InputStream in) {
+    public boolean handleResume(final InputStream in) {
         if (recognizer == null) {
             LOGGER.warning("no recognizer: cannot resume!");
             return false;
@@ -208,9 +207,9 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
         }
 
         if (recognizer.getState() != State.READY) {
-            LOGGER
-                    .warning("Cannot resume, recognizer not ready, but in state: "
-                            + recognizer.getState());
+            LOGGER.log(Level.WARNING,
+                    "Cannot resume, recognizer not ready, but in state: {0}",
+                    recognizer.getState());
             return false;
         }
 
@@ -251,7 +250,8 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
             microphone.stopRecording();
         }
         if (dataProcessor instanceof SphinxInputDataProcessor) {
-            final SphinxInputDataProcessor sidp = (SphinxInputDataProcessor) dataProcessor;
+            final SphinxInputDataProcessor sidp =
+                    (SphinxInputDataProcessor) dataProcessor;
             sidp.isRunning(false);
         }
 
@@ -363,7 +363,7 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
      * 
      * @return Active grammar.
      */
-    RuleGrammar getRuleGrammar(Token token) {
+    RuleGrammar getRuleGrammar(final Token token) {
         if (grammar instanceof SRGSGrammar) {
             return ((SRGSGrammar) grammar).getRuleGrammar();
         }
@@ -380,6 +380,7 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
      *            String[]
      * @return boolean
      */
+    @Override
     protected boolean setGrammars(Vector grammarDefinition) {
         if (grammar instanceof SRGSGrammar) {
             // old behavior with only a single active grammar
@@ -432,7 +433,6 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
                 }
             } else {
                 ((ResultListener) el).resultUpdate((ResultEvent) event);
-
             }
         }
     }
@@ -470,16 +470,18 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
         super.postResultEvent(resultEvent);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void handleRequestFocus() {
-        // TODO Auto-generated method stub
-
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void handleReleaseFocus() {
-        // TODO Auto-generated method stub
-
     }
 
     /**
@@ -500,7 +502,7 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
      * @param status
      *            The state of the recognizer to wait for.
      */
-    private synchronized void waitForRecognizerState(State status) {
+    private synchronized void waitForRecognizerState(final State status) {
         while (recognizer.getState() != status) {
             try {
                 wait();
@@ -508,12 +510,14 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
                 e.printStackTrace();
             }
         }
-        LOGGER.info("Sphinx4Recognizer in state: " + status);
+        LOGGER.log(Level.INFO, "Sphinx4Recognizer in state: {0}", status);
     }
 
+    /**
+     * {@inheritDoc}
+     * Not used but for compatibility.
+     */
     @Override
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        // TODO Auto-generated method stub
-
+    public void newProperties(final PropertySheet ps) throws PropertyException {
     }
 }
