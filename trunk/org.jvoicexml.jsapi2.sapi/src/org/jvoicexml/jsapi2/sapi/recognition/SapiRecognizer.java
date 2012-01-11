@@ -1,3 +1,29 @@
+/*
+ * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
+ * Version: $LastChangedRevision: 68 $
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy: schnelle $
+ *
+ * JSAPI - An independent reference implementation of JSR 113.
+ *
+ * Copyright (C) 2010-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
 package org.jvoicexml.jsapi2.sapi.recognition;
 
 import java.io.InputStream;
@@ -56,11 +82,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         
         //set preferred AudioFormat
         JseBaseAudioManager audioManager = (JseBaseAudioManager) getAudioManager();
-        audioManager.setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, false));
-        
-        //register AudioEventListener
-//        SapiAudioEventListener = new SapiRecognizerAudioEventListener(this);
-//        audioManager.addAudioListener(SapiAudioEventListener);
+        audioManager.setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, false));        
     }
 
     /**
@@ -140,7 +162,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
     @Override
     public void handleDeallocate() {
-//        getAudioManager().removeAudioListener(SapiAudioEventListener);
         sapiDeallocate(recognizerHandle);
     }
 
@@ -165,14 +186,10 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      */
     @Override
     protected void handlePause(final int flags) {
-        System.out.println("--Recognizer: Pause SAPI-Recognizer");
         sapiPause(recognizerHandle, flags);
-        System.out.println("++Recognizer: Pause SAPI-Recognizer -- DONE!");
         if (recognitionThread != null) {
-            System.out.println("--Recognizer: RecognitionThread != null => Stopping RecognitionThread");
             recognitionThread.stopRecognition();
             recognitionThread = null;
-            System.out.println("++Recognizer: RecognitionThread != null => Stopping RecognitionThread -- DONE!");
         }
     }
 
@@ -205,7 +222,8 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         
         if(LOGGER.isLoggable(Level.FINE)){
             for (Grammar grammar : grammars) {
-                LOGGER.fine("Activate Grammar : "+ grammar.getReference() );
+                LOGGER.log(Level.FINE, "Activate Grammar : {0}",
+                        grammar.getReference());
             }
         }
         
@@ -222,7 +240,8 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         return true;
     }
 
-    private native boolean sapiResume(long handle, String[] grammars, String[] references)
+    private native boolean sapiResume(long handle, String[] grammars,
+            String[] references)
         throws EngineStateException;
 
 
@@ -254,13 +273,12 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
         @Override
         public void propertyChangeRequest(EnginePropertyChangeRequestEvent event) {
-            // TODO Auto-generated method stub
             System.out.println("Free Beer! \\o/");
         }
     }
     
 
-    public void reportResult( String[] recoResult) {
+    public void reportResult(String[] recoResult) {
        
        SapiResult result = null;
        
@@ -294,23 +312,22 @@ public final class SapiRecognizer extends JseBaseRecognizer {
            return;
         }
        
-       String ruleName = recoResult[0];
-       String utterance = recoResult[1];
-       if(LOGGER.isLoggable(Level.FINE)){
-           LOGGER.fine("SML Result String : " + utterance);
-       }
-       result.setSsml(utterance);
+        String ruleName = recoResult[0];
+        String utterance = recoResult[1];
+        if(LOGGER.isLoggable(Level.FINE)){
+            LOGGER.log(Level.FINE, "SML Result String : {0}", utterance);
+        }
+        result.setSsml(utterance);
        
        
-       /** parse our tags from SML */
-       SMLHandler handler = new SMLHandler(result);
-       StringReader readerSML = new StringReader(utterance);
-       QDParser parser = new QDParser();
-       try {
-        parser.parse(handler, readerSML);
+        /** parse our tags from SML */
+        SMLHandler handler = new SMLHandler(result);
+        StringReader readerSML = new StringReader(utterance);
+        QDParser parser = new QDParser();
+        try {
+            parser.parse(handler, readerSML);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "error parsing SML: {0}", e.getMessage());
         }
         
 
@@ -329,8 +346,9 @@ public final class SapiRecognizer extends JseBaseRecognizer {
          }
         
         if(LOGGER.isLoggable(Level.FINE)){
-            LOGGER.fine("Recognized utterance : '"+ utterance
-                    + "' Confidence : '"+ result.getConfidence() +"'");
+            LOGGER.log(Level.FINE,
+                    "Recognized utterance : ''{0}'' Confidence : ''{1}''",
+                    new Object[]{utterance, result.getConfidence()});
         }
         
         
@@ -427,8 +445,9 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         if( resultconfidenceLevel < minConfidenceLevel){
             result.setResultState(Result.REJECTED);
             if(LOGGER.isLoggable(Level.FINE)){
-                LOGGER.fine("Result confidence too low, new ResultState: '"
-                        + result.getResultState() +"'");
+                LOGGER.log(Level.FINE,
+                        "Result confidence too low, new ResultState: ''{0}''",
+                        result.getResultState());
             }
         }
         
