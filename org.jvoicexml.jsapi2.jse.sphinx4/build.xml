@@ -111,6 +111,7 @@ This file builds the JSAPI base layer for JSE.
            showoutput="yes">
       <classpath location="${build}" />
       <classpath refid="test.classpath" />
+      <formatter type="brief" usefile="false"/>
       <batchtest>
         <fileset dir="${build}">
           <include name="org/jvoicexml/**/*Test.class" />
