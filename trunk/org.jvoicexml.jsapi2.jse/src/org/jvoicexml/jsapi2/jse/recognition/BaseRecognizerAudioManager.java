@@ -1,14 +1,29 @@
 /*
- * File:    $HeadURL$
+ * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
  * Version: $LastChangedRevision$
  * Date:    $LastChangedDate $
  * Author:  $LastChangedBy$
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+
 package org.jvoicexml.jsapi2.jse.recognition;
 
 import java.io.BufferedInputStream;
@@ -57,22 +72,75 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
     }
 
     /**
+     * Retrieves a stream that matches the engine audio format.
+     * @param stream the current stream
+     * @return a converting stream
+     */
+    private AudioInputStream getConvertedStream(final AudioInputStream stream) {
+        targetAudioFormat = stream.getFormat();
+        return AudioSystem.getAudioInputStream(engineAudioFormat, stream);
+    }
+
+    /**
+     * Opens the URL with the given locator
+     * @param locator the URL to open
+     * @return opened connection to the URL
+     * @throws AudioException 
+     *         error opening the stream
+     */
+    private InputStream openUrl(final String locator) throws AudioException {
+        final URL url;
+        try {
+            url = new URL(locator);
+            final AudioFileFormat format =
+                AudioSystem.getAudioFileFormat(url);
+            targetAudioFormat = format.getFormat();
+        } catch (MalformedURLException e) {
+            throw new AudioException(e.getMessage());
+        } catch (UnsupportedAudioFileException e) {
+            throw new AudioException(e.getMessage());
+        } catch (IOException e) {
+            throw new AudioException(e.getMessage());
+        }
+        if (targetAudioFormat == null) {
+            try {
+                targetAudioFormat = JavaSoundParser.parse(url);
+            } catch (URISyntaxException e) {
+                throw new AudioException(e.getMessage());
+            }
+        }
+        final URLConnection urlConnection;
+        try {
+            urlConnection = openURLConnection();
+        } catch (IOException e) {
+            throw new AudioException(e.getMessage());
+        }
+
+        try {
+            final InputStream source  = urlConnection.getInputStream();
+            return new BufferedInputStream(source);
+        } catch (IOException ex) {
+            throw new AudioException("Cannot get InputStream from URL: "
+                    + ex.getMessage());
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void handleAudioStart() throws AudioException {
-        // Just convert samples 
+        // Just convert samples if we already hava the correct stream
         if (inputStream instanceof AudioInputStream) {
-            final AudioInputStream ais = (AudioInputStream)inputStream;
-            targetAudioFormat = ais.getFormat();
-            inputStream = AudioSystem.getAudioInputStream(
-                    engineAudioFormat, ais);
+            final AudioInputStream stream = (AudioInputStream)inputStream;
+            inputStream = getConvertedStream(stream);
             return;
         }
 
         final String locator = getMediaLocator();
+        final InputStream in;
         // Open URL described in locator
-        final InputStream is;
         if (locator == null) {
+            // Use the microphone
             targetAudioFormat = getEngineAudioFormat();
 //            final InputStream source = new LineInputStream(targetAudioFormat);
             /*******************************************************/
@@ -87,64 +155,36 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
                 throw new AudioException(e.getMessage());
             }
             /*******************************************************/
-            is = new BufferedInputStream(source);
+            in = new BufferedInputStream(source);
         } else {
-            final URL url;
-            try {
-                url = new URL(locator);
-                final AudioFileFormat format =
-                    AudioSystem.getAudioFileFormat(url);
-                targetAudioFormat = format.getFormat();
-            } catch (MalformedURLException e) {
-                throw new AudioException(e.getMessage());
-            } catch (UnsupportedAudioFileException e) {
-                throw new AudioException(e.getMessage());
-            } catch (IOException e) {
-                throw new AudioException(e.getMessage());
-            }
-            if (targetAudioFormat == null) {
-                try {
-                    targetAudioFormat = JavaSoundParser.parse(url);
-                } catch (URISyntaxException e) {
-                    throw new AudioException(e.getMessage());
-                }
-            }
-            final URLConnection urlConnection;
-            try {
-                urlConnection = openURLConnection();
-            } catch (IOException e) {
-                throw new AudioException(e.getMessage());
-            }
-
-            try {
-                final InputStream source  = urlConnection.getInputStream();
-                is = new BufferedInputStream(source);
-            } catch (IOException ex) {
-                throw new AudioException("Cannot get InputStream from URL: "
-                        + ex.getMessage());
-            }
+            in = openUrl(locator);
         }
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("using target audio format " + targetAudioFormat);
+            LOGGER.log(Level.FINE, "using target audio format {0}",
+                    targetAudioFormat);
         }
-        final AudioInputStream ais = new AudioInputStream(is,
+        final AudioInputStream stream = new AudioInputStream(in,
                     targetAudioFormat, AudioSystem.NOT_SPECIFIED);
-        inputStream = AudioSystem.getAudioInputStream(engineAudioFormat, ais);
+        inputStream = AudioSystem.getAudioInputStream(engineAudioFormat, stream);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void handleAudioStop() throws AudioException {
-        // Release IO
-        if (inputStream != null) {
-            try {
-                inputStream.close();
-            } catch (IOException ex) {
-                throw new AudioException(ex.getMessage());
-            }
+        if (inputStream == null) {
+            return;
         }
-        inputStream = null;
+
+        // Release IO
+        try {
+            inputStream.close();
+        } catch (IOException ex) {
+            throw new AudioException(ex.getMessage());
+        } finally {
+            inputStream = null;
+        }
     }
 
     /**

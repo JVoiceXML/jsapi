@@ -11,8 +11,10 @@
  */
 package org.jvoicexml.jsapi2.jse;
 
+import java.util.AbstractCollection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
-
 import org.jvoicexml.jsapi2.TerminatableSpeechEventExecutor;
 
 /**
@@ -34,7 +36,7 @@ public final class ThreadSpeechEventExecutor
     private final Thread thread;
 
     /** Commands to execute. */
-    private final Vector commands;
+    private final List<Runnable> commands;
 
     /** <code>false</code> if the executor is terminating. */
     private boolean shouldRun;
@@ -43,7 +45,7 @@ public final class ThreadSpeechEventExecutor
      * Constructs a new object.
      */
     public ThreadSpeechEventExecutor() {
-        commands = new Vector();
+        commands = new java.util.ArrayList<Runnable>();
         thread = new Thread(this);
         shouldRun = true;
         thread.start();
@@ -54,8 +56,10 @@ public final class ThreadSpeechEventExecutor
      *
      * Terminates the execution thread.
      */
-    protected void finalize() {
+    @Override
+    protected void finalize() throws Throwable {
         terminate();
+        super.finalize();
     }
 
     /**
@@ -81,7 +85,7 @@ public final class ThreadSpeechEventExecutor
             throw new IllegalStateException(
                     "SpeechEventExecutor is terminated!");
         }
-        commands.addElement(command);
+        commands.add(command);
         synchronized (commands) {
             commands.notify();
         }
@@ -90,6 +94,7 @@ public final class ThreadSpeechEventExecutor
     /**
      * {@inheritDoc}
      */
+    @Override
     public void run() {
         while (shouldRun) {
             while ((commands.isEmpty()) && (shouldRun)) {
@@ -106,8 +111,8 @@ public final class ThreadSpeechEventExecutor
             }
 
             //Use this thread to run the command
-            final Runnable command = (Runnable) commands.firstElement();
-            commands.removeElementAt(0);
+            final Runnable command = (Runnable) commands.get(0);
+            commands.remove(0);
             command.run();
         }
     }
