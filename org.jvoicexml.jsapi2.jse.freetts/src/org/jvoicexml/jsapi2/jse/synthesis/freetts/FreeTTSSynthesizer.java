@@ -1,9 +1,27 @@
-/**
- * Copyright 2003 Sun Microsystems, Inc.
+/*
+ * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
+ * Version: $LastChangedRevision: 68 $
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy: schnelle $
  *
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL
- * WARRANTIES.
+ * JSAPI - An independent reference implementation of JSR 113.
+ *
+ * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
  */
 
 package org.jvoicexml.jsapi2.jse.synthesis.freetts;
@@ -29,6 +47,7 @@ import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 import com.sun.speech.freetts.FreeTTSSpeakableImpl;
 import com.sun.speech.freetts.audio.AudioPlayer;
+import java.io.OutputStream;
 
 
 
@@ -54,12 +73,6 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
     private final Ssml2JsmlTransformer transformer = new Ssml2JsmlTransformer();
 
     /**
-     * All voice output for this synthesizer goes through this central utterance
-     * queue
-     */
-    // ////////////////////////////////////////////////////////////////////
-    // private OutputQueue outputQueue;
-    /**
      * Creates a new Synthesizer in the DEALLOCATED state.
      *
      * @param desc
@@ -79,8 +92,9 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
      * {@inheritDoc}
      */
     @Override
-    public void handleAllocate()  throws EngineStateException,
-        EngineException, AudioException, SecurityException {
+    public void handleAllocate()
+            throws EngineStateException, EngineException, AudioException,
+            SecurityException {
         boolean ok = false;
         SynthesizerMode synthesizerMode = (SynthesizerMode) getEngineMode();
 
@@ -147,6 +161,7 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
      * Handles a deallocation request. Cancels all pending items, terminates the
      * output handler, and posts the state changes.
      */
+    @Override
     public void handleDeallocate() throws EngineStateException,
         EngineException, AudioException {
         setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
@@ -165,84 +180,9 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
     }
 
     /**
-     * Factory method to create a BaseSynthesizerQueueItem.
-     *
-     * @return a queue item appropriate for this synthesizer
-     */
-    /*
-     * protected BaseSynthesizerQueueItem createQueueItem() { return new
-     * FreeTTSSynthesizerQueueItem(); }
-     */
-
-    /**
-     * Returns an enumeration of the queue.
-     *
-     * @return an enumeration of the contents of the queue. This enumeration
-     *         contains FreeTTSSynthesizerQueueItem objects
-     *
-     * @throws EngineStateError
-     *                 if the engine was not in the proper state
-     */
-    /*
-     * public Enumeration enumerateQueue() throws EngineStateException {
-     * checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES); return
-     * outputHandler.enumerateQueue(); }
-     */
-
-    /**
-     * Places an item on the speaking queue and send the queue update event.
-     *
-     * @param item
-     *                the item to place in the queue
-     */
-    /*
-     * protected void appendQueue(BaseSynthesizerQueueItem item) {
-     * outputHandler.appendQueue((FreeTTSSynthesizerQueueItem) item); }
-     */
-
-    /**
-     * Cancels the item at the top of the queue.
-     *
-     * @throws EngineStateError
-     *                 if the synthesizer is not in the proper state
-     */
-    /*
-     * public void cancel() throws EngineStateException {
-     * checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-     * outputHandler.cancelItem(); }
-     */
-
-    /**
-     * Cancels a specific object on the queue.
-     *
-     * @param source
-     *                the object to cancel
-     *
-     * @throws IllegalArgumentException
-     *                 if the source object is not currently in the queue
-     * @throws EngineStateError
-     *                 the synthesizer is not in the proper state
-     */
-    /*
-     * public void cancel(Object source) throws IllegalArgumentException,
-     * EngineStateException { checkEngineState(DEALLOCATED |
-     * DEALLOCATING_RESOURCES); outputHandler.cancelItem(source); }
-     */
-
-    /**
-     * Cancels all items on the output queue.
-     *
-     * @throws EngineStateError
-     */
-    /*
-     * public void cancelAll() throws EngineStateException {
-     * checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-     * outputHandler.cancelAllItems(); }
-     */
-
-    /**
      * Pauses the output.
      */
+    @Override
     public void handlePause() {
         audioPlayer.pause();
     }
@@ -250,6 +190,7 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
     /**
      * Resumes the output.
      */
+    @Override
     public boolean handleResume() {
         audioPlayer.resume();
         return true;
@@ -296,26 +237,49 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void handleSpeak(int id, Speakable item) {
         handleSpeak(id, new FreeTTSSpeakableImpl(transformer.transform(item.getMarkupText())));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void handleSpeak(int id, String text) {
         handleSpeak(id, new FreeTTSSpeakableImpl(text));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean handleCancelAll() {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean handleCancel(int id) {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean handleCancel() {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected AudioFormat getAudioFormat() {
         return new AudioFormat(8000f, 16, 1, true, true);
