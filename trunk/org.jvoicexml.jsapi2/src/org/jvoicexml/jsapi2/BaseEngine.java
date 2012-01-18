@@ -88,7 +88,7 @@ public abstract class BaseEngine implements Engine {
      * <code>engineState</code>.
      * @see #engineState
      */
-    protected Object engineStateLock;
+    protected final Object engineStateLock;
     
     /**
      * A counter keeping track of nested calls to <code>pause</code>
@@ -377,8 +377,10 @@ public abstract class BaseEngine implements Engine {
                     }
                 }
             }).start();
-        } else {
+        } else if ((mode == 0) || (mode == IMMEDIATE_MODE)) {
             deallocate();
+        } else {
+            throw new IllegalArgumentException("Unsupported mode: " + mode);
         }
     }
 

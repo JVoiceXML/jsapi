@@ -250,12 +250,13 @@ public class BaseGrammar implements Grammar, ResultListener {
     private void postGrammarEvent(final GrammarEvent event) {
         final SpeechEventExecutor executor =
             recognizer.getSpeechEventExecutor();
-        try {
-            executor.execute(new Runnable() {
+        final Runnable runnable = new Runnable() {
                 public void run() {
                     fireGrammarEvent(event);
                 }
-            });
+            };
+        try {
+            executor.execute(runnable);
         } catch (RuntimeException ex) {
             ex.printStackTrace();
         }
