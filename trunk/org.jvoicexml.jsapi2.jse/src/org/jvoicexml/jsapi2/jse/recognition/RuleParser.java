@@ -25,7 +25,6 @@ import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
 import javax.speech.recognition.RuleReference;
 import javax.speech.recognition.RuleSequence;
-import javax.speech.recognition.RuleSpecial;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
 
