@@ -39,15 +39,13 @@ import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SynthesizerMode;
 
-import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
-import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
 import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 import com.sun.speech.freetts.FreeTTSSpeakableImpl;
 import com.sun.speech.freetts.audio.AudioPlayer;
-import java.io.OutputStream;
+import org.w3c.dom.Document;
 
 
 
@@ -133,26 +131,13 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
 
         // Load the voice if it is not loaded.
         if (!freettsVoice.isLoaded()) {
-            // ////////////////////////////////////////////////////////////////
-            // freettsVoice.setOutputQueue(outputQueue);
             freettsVoice.allocate();
-            /*
-             * audio = freettsVoice.getAudioPlayer(); if (audio == null) { audio =
-             * new com.sun.speech.freetts.audio.JavaClipAudioPlayer(); } if
-             * (audio == null) { throw new EngineException("Can't get audio
-             * player"); }
-             */
             freettsVoice.setAudioPlayer(audioPlayer);
         }
 
         if (freettsVoice.isLoaded()) {
             curVoice = voice;
             ok = true;
-            // notify the world of potential property changes
-            // /////////////////////FreeTTSSynthesizerProperties props =
-            // /////////////////////(FreeTTSSynthesizerProperties)
-            // getSynthesizerProperties();
-            // /////////////////////props.checkForPropertyChanges();
         }
         return ok;
     }
@@ -169,7 +154,6 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
         getQueueManager().terminate();
 
         // Close the audio. This should flush out any queued audio data
-
         if (audioPlayer != null) {
             try {
                 audioPlayer.close();
@@ -242,7 +226,11 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
      */
     @Override
     public void handleSpeak(int id, Speakable item) {
-        handleSpeak(id, new FreeTTSSpeakableImpl(transformer.transform(item.getMarkupText())));
+        final String markup = item.getMarkupText();
+        final Document document = transformer.transform(markup);
+        final FreeTTSSpeakableImpl speakable =
+                new FreeTTSSpeakableImpl(document);
+        handleSpeak(id, speakable);
     }
 
     /**
@@ -250,7 +238,9 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
      */
     @Override
     public void handleSpeak(int id, String text) {
-        handleSpeak(id, new FreeTTSSpeakableImpl(text));
+        final FreeTTSSpeakableImpl speakable =
+                new FreeTTSSpeakableImpl(text);
+        handleSpeak(id, speakable);
     }
 
     /**
