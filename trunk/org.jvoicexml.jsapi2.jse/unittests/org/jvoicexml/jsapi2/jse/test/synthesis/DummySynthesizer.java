@@ -1,6 +1,7 @@
 package org.jvoicexml.jsapi2.jse.test.synthesis;
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
+import javax.speech.AudioSegment;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
@@ -57,15 +58,13 @@ public class DummySynthesizer extends JseBaseSynthesizer {
     }
 
     @Override
-    protected void handleSpeak(int id, String item) {
-        // TODO Auto-generated method stub
-        
+    protected AudioSegment handleSpeak(int id, String item) {
+        return null;
     }
 
     @Override
-    protected void handleSpeak(int id, Speakable item) {
-        // TODO Auto-generated method stub
-        
+    protected AudioSegment handleSpeak(int id, Speakable item) {
+        return null;
     }
 
     @Override

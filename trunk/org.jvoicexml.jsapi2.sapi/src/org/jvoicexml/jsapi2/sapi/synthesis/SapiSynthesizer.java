@@ -168,7 +168,7 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
      * {@inheritDoc}
      */
     @Override
-    public void handleSpeak(final int id, final String item) {
+    public AudioSegment handleSpeak(final int id, final String item) {
         final byte[] bytes = sapiHandleSpeak(synthesizerHandle, id, item);
         final JseBaseAudioManager manager = (JseBaseAudioManager) getAudioManager();
         final String locator = manager.getMediaLocator();
@@ -184,7 +184,7 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
         } else {
             segment = new BaseAudioSegment(locator, item, in);
         }
-        setAudioSegment(id, segment);
+        return segment;
     }
 
     /**
@@ -205,7 +205,7 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
      * {@inheritDoc}
      */
     @Override
-    protected void handleSpeak(final int id, final Speakable item) {
+    protected AudioSegment handleSpeak(final int id, final Speakable item) {
         final String markup = item.getMarkupText();
         final byte[] bytes = sapiHandleSpeakSsml(synthesizerHandle, id, markup);
         final JseBaseAudioManager manager = (JseBaseAudioManager) getAudioManager();
@@ -222,7 +222,7 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
         } else {
             segment = new BaseAudioSegment(locator, markup, in);
         }
-        setAudioSegment(id, segment);
+        return segment;
     }
 
     /**
