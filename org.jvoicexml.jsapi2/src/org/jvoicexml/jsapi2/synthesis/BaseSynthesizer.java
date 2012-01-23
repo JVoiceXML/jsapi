@@ -26,8 +26,6 @@
 
 package org.jvoicexml.jsapi2.synthesis;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Vector;
 

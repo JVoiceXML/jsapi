@@ -222,6 +222,13 @@ public class QueueManager {
          */
     }
 
+    /**
+     * Cancels the playback of the speakable with the given id. This is 
+     * done by trying to remove it from the playthread and from
+     * the synthesis thread.
+     * @param id the id of the speakable to cancel
+     * @return <code>true</code> if the spakable could be canceled.
+     */
     protected boolean cancelItem(final int id) {
         final boolean found = playThread.cancelItem(id);
         return found || synthThread.cancelItem(id);
@@ -300,7 +307,7 @@ public class QueueManager {
          */
         public int appendItem(final Speakable speakable,
                 final SpeakableListener listener, final String text) {
-            boolean topOfQueueChanged;
+            final boolean topOfQueueChanged;
             final int addedId;
             synchronized (queue) {
                 addedId = ++queueId;
@@ -310,22 +317,9 @@ public class QueueManager {
                 } else {
                     item = new QueueItem(addedId, speakable, listener, text);
                 }
-                topOfQueueChanged = isQueueEmpty();
-                queue.addElement(item);
-                queue.notifyAll();
+                topOfQueueChanged = append(item);
             }
-
-            final long[] states;
-            if (topOfQueueChanged) {
-                states = synthesizer.setEngineState(Synthesizer.QUEUE_EMPTY,
-                        Synthesizer.QUEUE_NOT_EMPTY);
-            } else {
-                states = synthesizer.setEngineState(Synthesizer.QUEUE_NOT_EMPTY,
-                        Synthesizer.QUEUE_NOT_EMPTY);
-            }
-            synthesizer.postSynthesizerEvent(states[0], states[1],
-                    SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
-
+            adaptSynthesizerState(topOfQueueChanged);
             return addedId;
         }
 
@@ -343,12 +337,31 @@ public class QueueManager {
                 ++queueId;
                 final QueueItem item =
                     new QueueItem(queueId, audioSegment, listener);
-
-                topOfQueueChanged = isQueueEmpty();
-                queue.addElement(item);
-                queue.notifyAll();
+                topOfQueueChanged = append(item);
             }
+            adaptSynthesizerState(topOfQueueChanged);
+            return queueId;
+        }
 
+        /**
+         * Appends the given queue item to the end of the list
+         * @param item the item to append
+         * @return <code>true</code> if the appended item is the only one
+         *      in the queue
+         */
+        private boolean append(final QueueItem item) {
+            final boolean topOfQueueChanged = isQueueEmpty();
+            queue.addElement(item);
+            queue.notifyAll();
+            return topOfQueueChanged;
+        }
+
+        /**
+         * Adapts the synthesizer state after a queue item has been added
+         * @param topOfQueueChanged <code>true</code> if the top of the
+         *      queue changed after the item has been appended
+         */
+        private void adaptSynthesizerState(final boolean topOfQueueChanged) {
             final long[] states;
             if (topOfQueueChanged) {
                 states = synthesizer.setEngineState(Synthesizer.QUEUE_EMPTY,
@@ -359,8 +372,6 @@ public class QueueManager {
             }
             synthesizer.postSynthesizerEvent(states[0], states[1],
                     SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
-
-            return queueId;
         }
 
         /**
@@ -399,8 +410,11 @@ public class QueueManager {
         protected boolean cancelItem(final int id) {
             // search item in queue
             synchronized (queue) {
+                final QueueItem item = getQueueItem(id);
+                if (item == null) {
+                    return false;
+                }
                 for (int i = 0; i < queue.size(); ++i) {
-                    final QueueItem item = (QueueItem) queue.elementAt(i);
                     if (item.getId() == id) {
                         final Object source = item.getSource();
                         final SpeakableListener listener = item.getListener();
@@ -409,6 +423,7 @@ public class QueueManager {
                                 id);
                         synthesizer.postSpeakableEvent(event, listener);
                         queue.removeElementAt(i);
+                        // TODO cancel the playback in the synthesizer
                         return true;
                     }
                 }
@@ -418,7 +433,26 @@ public class QueueManager {
         }
 
         /**
-         * Returns, but does not remove, the first item on the queue.
+         * Retrieves the queue item with the given id.
+         * @param id the id of the queue item to look for
+         * @return found queue item, or <code>null</code> if there is no
+         *      queue item with the given id
+         */
+        public QueueItem getQueueItem(final int id) {
+            synchronized (queue) {
+                for (int i=0; i< queue.size(); i++) {
+                    final QueueItem item = (QueueItem) queue.elementAt(i);
+                    if (item.getId() == id) {
+                        return item;
+                    }
+                }
+            }
+            return null;
+        }
+        
+        /**
+         * Returns, but does not remove, the first item on the queue. Waits
+         * until a queue item has been added if the queue is empty.
          *
          * @return the first queue item
          */
@@ -503,8 +537,12 @@ public class QueueManager {
         /** Buffer size when reading from the audio segment input stream. */
         private static final int BUFFER_LENGTH = 1024;
 
+        /** The items to be played back. */
         private Vector playQueue;
 
+        /**
+         * Constructs a new object.
+         */
         public PlayQueue() {
             playQueue = new Vector();
         }
@@ -732,6 +770,24 @@ public class QueueManager {
         }
 
         /**
+         * Retrieves the queue item with the given id.
+         * @param id the id of the queue item to look for
+         * @return found queue item, or <code>null</code> if there is no
+         *      queue item with the given id
+         */
+        public QueueItem getQueueItem(final int id) {
+            synchronized (playQueue) {
+                for (int i=0; i< playQueue.size(); i++) {
+                    final QueueItem item = (QueueItem) playQueue.elementAt(i);
+                    if (item.getId() == id) {
+                        return item;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /**
          * Return, but do not remove, the first item on the play queue.
          *
          * @return a queue item to play
@@ -801,6 +857,11 @@ public class QueueManager {
             }
         }
 
+        /**
+         * Cancels the playback of the speakable with the given id
+         * @param id the speakable to cancle
+         * @return <code>true</code> if the speakable was canceled
+         */
         protected boolean cancelItem(final int id) {
             boolean found = false;
 
