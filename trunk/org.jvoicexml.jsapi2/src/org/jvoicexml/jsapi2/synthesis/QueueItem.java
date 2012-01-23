@@ -1,12 +1,26 @@
 /*
- * File:    $HeadURL: $
- * Version: $LastChangedRevision: $
+ * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
+ * Version: $LastChangedRevision: 68 $
  * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: lyncher $
+ * Author:  $LastChangedBy: schnelle $
  *
- * JSAPI - An base implementation for JSR 113.
+ * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
 
@@ -18,13 +32,17 @@ import javax.speech.AudioSegment;
 import javax.speech.synthesis.PhoneInfo;
 
 /**
- * An item of the {@link QueueManager}.
+ * An item of the {@link QueueManager}. The data is initialized with the
+ * data from the speak requests and are updated as the synthesis process
+ * is progressing.
  * @author Renato Cassaca
+ * @author Dirk Schnelle-Walka
  * @version $Revision: 1370 $
  */
 public class QueueItem {
-
+    /** The text (or markup) to be synthesized. */
     private Object source;
+
     /** A unique id for this queued item. */
     private final int id;
 
@@ -37,10 +55,18 @@ public class QueueItem {
     /** The associated audio segment. */
     private AudioSegment segment;
 
+    /** the words in the text or markup to be synthesized. */
     private String[] words;
+    
     private float[] wordsStartTimes;
     private PhoneInfo[] phonesInfo;
 
+    /**
+     * Constructs a new object.
+     * @param id the unique id of the speakable
+     * @param speakable the speakable
+     * @param listener a listener to notify about events of this item
+     */
     public QueueItem(final int id, final Speakable speakable,
             final SpeakableListener listener) {
         this.id = id;
@@ -53,12 +79,26 @@ public class QueueItem {
         this.source = speakable;
     }
 
+    /**
+     * Constructs a new object
+     * @param id the unique id of the speakable
+     * @param speakable the speakable
+     * @param listener a listener to notify about events of this item
+     * @param text the text to be spoken, maybe <code>null</code> if the
+     *             speakable contains markup text
+     */
     public QueueItem(int id, Speakable speakable, SpeakableListener listener,
             String text) {
         this(id, speakable, listener);
         this.source = text;
     }
 
+    /**
+     * Constructs a new object.
+     * @param id the unique id of the speakable
+     * @param audioSegment the audio segment to be synthesized
+     * @param listener a listener to notify about events of this item
+     */
     public QueueItem(int id, AudioSegment audioSegment,
             SpeakableListener listener) {
         this.id = id;
@@ -95,6 +135,10 @@ public class QueueItem {
         return id;
     }
 
+    /**
+     * Retrieves the text or markup to be synthesized.
+     * @return the text or markup to be synthesized
+     */
     public Object getSource() {
         return source;
     }
@@ -115,11 +159,19 @@ public class QueueItem {
         segment = audiosegment;
     }
 
+    /**
+     * Retrieves the words in the text or markup to be synthesized.
+     * @return the words in the text or markup to be synthesized.
+     */
     public String[] getWords() {
         return words;
     }
 
-    public void setWords(String[] w) {
+    /**
+     * Sets the words in the text or markup to be synthesized.
+     * @param w words in the text or markup to be synthesized
+     */
+    public void setWords(final String[] w) {
         words = w;
     }
 
