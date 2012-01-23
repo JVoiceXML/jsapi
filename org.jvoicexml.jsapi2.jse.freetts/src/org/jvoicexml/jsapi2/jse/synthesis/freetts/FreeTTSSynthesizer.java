@@ -190,7 +190,7 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
      * @param item
      *                the item to output
      */
-    private void handleSpeak(final int id,
+    private AudioSegment handleSpeak(final int id,
             final FreeTTSSpeakableImpl speakElement) {
         com.sun.speech.freetts.Voice voice = curVoice.getVoice();
         voice.setAudioPlayer(audioPlayer);
@@ -204,7 +204,7 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
                 in = player.getAudioBytes();
             } catch (IOException e) {
                 LOGGER.warning(e.getLocalizedMessage());
-                return;
+                return null;
             } finally {
                 player.reset();
             }
@@ -217,30 +217,31 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
             } else {
                 segment = new BaseAudioSegment(locator, markupText, in);
             }
-            setAudioSegment(id, segment);
+            return segment;
         }
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handleSpeak(int id, Speakable item) {
+    public AudioSegment handleSpeak(int id, Speakable item) {
         final String markup = item.getMarkupText();
         final Document document = transformer.transform(markup);
         final FreeTTSSpeakableImpl speakable =
                 new FreeTTSSpeakableImpl(document);
-        handleSpeak(id, speakable);
+        return handleSpeak(id, speakable);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handleSpeak(int id, String text) {
+    public AudioSegment handleSpeak(int id, String text) {
         final FreeTTSSpeakableImpl speakable =
                 new FreeTTSSpeakableImpl(text);
-        handleSpeak(id, speakable);
+        return handleSpeak(id, speakable);
     }
 
     /**

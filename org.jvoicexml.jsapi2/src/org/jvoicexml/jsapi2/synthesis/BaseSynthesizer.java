@@ -433,8 +433,10 @@ public abstract class BaseSynthesizer extends BaseEngine
      * </p>
      * @param id id of the text to speak
      * @param item the text to speak
+     * @return the audio segment that can be used to play back the audio
      */
-    protected abstract void handleSpeak(final int id, final String item);
+    protected abstract AudioSegment handleSpeak(final int id,
+            final String item);
 
     /**
      * Speak the SSML item with the given id.
@@ -447,8 +449,10 @@ public abstract class BaseSynthesizer extends BaseEngine
      * </p>
      * @param id id of the SSML markup text to speak
      * @param item the SSML markup text to speak
+     * @return the audio segment that can be used to play back the audio
      */
-    protected abstract void handleSpeak(final int id, final Speakable item);
+    protected abstract AudioSegment handleSpeak(final int id,
+            final Speakable item);
 
     /**
      * Returns a <code>String</code> of the names of all the
