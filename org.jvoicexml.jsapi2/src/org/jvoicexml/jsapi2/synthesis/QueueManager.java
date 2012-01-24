@@ -38,7 +38,6 @@ import javax.speech.EngineStateException;
 import javax.speech.synthesis.PhoneInfo;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableEvent;
-import javax.speech.synthesis.SpeakableException;
 import javax.speech.synthesis.SpeakableListener;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerEvent;
@@ -182,7 +181,7 @@ public class QueueManager {
             } catch (IOException e) {
                 throw new EngineStateException(e.getMessage());
             }
-            return playThread.cancelItem();
+            return playThread.cancelItemAtTopOfQueue();
         }
     }
 
@@ -193,17 +192,19 @@ public class QueueManager {
         synthesizer.handleCancelAll();
         boolean found = false;
 
-        if (!playThread.isQueueEmpty()) {
-            cancelItem(); // cancel and remove first item
-            while (!playThread.isQueueEmpty()) {
-                playThread.cancelItem();
-                found = true;
-            }
-        }
-
+        // First remove all pending requests...
         while (!synthThread.isQueueEmpty()) {
             synthThread.cancelItem();
             found = true;
+        }
+
+        // ...then remove all the stuff being played back
+        if (!playThread.isQueueEmpty()) {
+            cancelItem(); // cancel and remove first item
+            while (!playThread.isQueueEmpty()) {
+                playThread.cancelItemAtTopOfQueue();
+                found = true;
+            }
         }
 
         return found;
@@ -623,6 +624,9 @@ public class QueueManager {
                         }
                         final InputStream inputStream =
                                 segment.openInputStream();
+                        if (inputStream == null) {
+                            break;
+                        }
                         bytesRead = inputStream.read(buffer);
                         if (bytesRead < 0)  {
                             break;
@@ -720,7 +724,9 @@ public class QueueManager {
                     }
                 }
 
-                cancelFirstItem = false;
+                synchronized(cancelLock) {
+                    cancelFirstItem = false;
+                }
                 postEventsAfterPlay();
             }
         }
@@ -869,19 +875,21 @@ public class QueueManager {
         }
 
         /**
-         * Cancel the current item.
+         * Cancel the item at the top of the queue
          * @return <code>true</code> if an item was canceled
          * @exception EngineStateException
          *            if the engine is in an invalid state
          */
-        protected boolean cancelItem() throws EngineStateException {
+        protected boolean cancelItemAtTopOfQueue() throws EngineStateException {
             synchronized (playQueue) {
                 if (playQueue.isEmpty()) {
                     return false;
                 }
-                final QueueItem item;
-                item = (QueueItem) playQueue.elementAt(0);
-                if (item.getAudioSegment() == null) {
+                final QueueItem item = (QueueItem) playQueue.elementAt(0);
+                final AudioSegment segment = item.getAudioSegment();
+                // Having an audio segment means that the handleSpeak
+                // method is already being called
+                if (segment == null) {
                     synthesizer.handleCancel();
                     final Object source = item.getSource();
                     final int id = item.getId();
@@ -890,15 +898,15 @@ public class QueueManager {
                             source, SpeakableEvent.SPEAKABLE_CANCELLED, id),
                             listener);
                     playQueue.removeElementAt(0);
-    
-                    return true;
                 } else {
+                    // The SpeakableEvent.SPEAKABLE_CANCELLED is posted in the
+                    // play method
                     playQueue.removeElementAt(0);
-                    synchronized (cancelLock) {
-                        cancelFirstItem = true;
-                    }
-                    return true;
                 }
+                synchronized (cancelLock) {
+                    cancelFirstItem = true;
+                }
+                return true;
             }
         }
 
@@ -914,17 +922,18 @@ public class QueueManager {
             synchronized (playQueue) {
                 for (int i = 0; i < playQueue.size(); ++i) {
                     final QueueItem item = (QueueItem) playQueue.elementAt(i);
-                    if (item.getId() == id) {
+                    final int currentId = item.getId();
+                    if (currentId == id) {
                         if (i == 0) {
-                            found = cancelItem();
+                            found = cancelItemAtTopOfQueue();
                         } else {
                             if (item.getAudioSegment() == null) {
                                 synthesizer.handleCancel(i);
                             }
                             synthesizer.postSpeakableEvent(new SpeakableEvent(item
                                     .getSource(),
-                                    SpeakableEvent.SPEAKABLE_CANCELLED, item
-                                            .getId()), item.getListener());
+                                    SpeakableEvent.SPEAKABLE_CANCELLED, currentId),
+                                    item.getListener());
                             synthesizer.postSynthesizerEvent(synthesizer
                                     .getEngineState(),
                                     synthesizer.getEngineState(),
