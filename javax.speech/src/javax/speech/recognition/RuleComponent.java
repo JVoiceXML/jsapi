@@ -37,7 +37,8 @@ public class RuleComponent {
      */
     protected static void checkValidGrammarText(String text) {
         if ((text == null) || (text.length() == 0)) {
-            throw new IllegalArgumentException(" No text is not a valid for a grammar ");
+            throw new IllegalArgumentException(
+                    "No text is not a valid for a grammar ");
         }
 
         final char[] chars = text.toCharArray();
@@ -45,7 +46,7 @@ public class RuleComponent {
         final char first = chars[0];
         if (!isLetter(first) && (first != '_')) {
             throw new IllegalArgumentException("'" + text
-                    + "' is not a valid grammar text : '"+
+                    + "' is not a valid grammar text: '"+
                         first +"' Element is not a valid first symbol");
         }
         // Following symbols must be a character or a digit.
@@ -54,7 +55,7 @@ public class RuleComponent {
             if (!isLetter(ch) && !Character.isDigit(ch)
                     && (ch != '_')) {
                 throw new IllegalArgumentException("'" + text
-                        + "' is not a valid grammar text : '"+
+                        + "' is not a valid grammar tex: '"+
                         ch +"' Element is not a valid symbol");
             }
         }
@@ -62,7 +63,7 @@ public class RuleComponent {
 
     static boolean isLetter(char ch) {
         return isUpperCase(ch) || isLowerCase(ch) || 
-            (ch >= '\u00c0' && ch != '\u00d7' && ch != '\u00f7');
+            (ch >= '\u00c0' && ch != '\u00d7' && ch != '\u00f7' && ch != '\u0006');
     }
     
     static boolean isUpperCase(char ch) {
