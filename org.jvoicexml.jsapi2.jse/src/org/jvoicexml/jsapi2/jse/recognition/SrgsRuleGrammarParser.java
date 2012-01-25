@@ -54,6 +54,7 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -130,22 +131,23 @@ public class SrgsRuleGrammarParser {
 
     private Rule[] load(final InputSource inputSource) {
         try {
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            final DocumentBuilderFactory factory =
+                DocumentBuilderFactory.newInstance();
+            final DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setEntityResolver(entityResolver);
 
-            Node grammarNode = (Node) xpath.evaluate("/grammar",
+            final Node grammarNode = (Node) xpath.evaluate("/grammar",
                     builder.parse(inputSource), XPathConstants.NODE);
-            Rule[] rules = parseGrammar(grammarNode);
+            final Rule[] rules = parseGrammar(grammarNode);
 
             //Extract header from grammar
-            NamedNodeMap docAttributes = grammarNode.getAttributes();
+            final NamedNodeMap docAttributes = grammarNode.getAttributes();
             for (int i = 0; i < docAttributes.getLength(); i++) {
                 attributes.put(docAttributes.item(i).getNodeName(),
                                docAttributes.item(i).getNodeValue());
             }
 
             return rules;
-
         } catch (XPathExpressionException ex2) {
             ex2.printStackTrace();
             return null;
@@ -206,12 +208,13 @@ public class SrgsRuleGrammarParser {
     }
 
 
-    private ArrayList<RuleComponent> evalNode(Node node) throws
+    private ArrayList<RuleComponent> evalNode(final Node node) throws
             XPathExpressionException {
-        ArrayList<RuleComponent> ruleComponents = new ArrayList<RuleComponent>();
-        String nodeName = node.getNodeName();
+        final ArrayList<RuleComponent> ruleComponents = new ArrayList<RuleComponent>();
+        final String nodeName = node.getNodeName();
         if (nodeName.equalsIgnoreCase("#text")) {
-            String text = node.getNodeValue().trim();
+            final Text textNode = (Text) node;
+            final String text = textNode.getWholeText().trim();
             if (text.length() > 0) {
                 RuleToken ruleToken = new RuleToken(text);
                 ruleComponents.add(ruleToken);
@@ -289,19 +292,27 @@ public class SrgsRuleGrammarParser {
                     ruleComponents.add(RuleSpecial.GARBAGE);
                 }
             } else {
-                String uriStr = (String) xpath.evaluate("@uri", node);
+                final String uriStr = (String) xpath.evaluate("@uri", node).trim();
                 if (uriStr.indexOf("#") == -1) {
-                    ruleComponents.add(new RuleReference(uriStr));
+                    final RuleReference reference = new RuleReference(uriStr);
+                    ruleComponents.add(reference);
                 } else {
-                    String ruleName = uriStr.substring(uriStr.indexOf("#") + 1);
-                    String grammarName = uriStr.substring(0, uriStr.indexOf("#"));
-                    String typeStr = (String) xpath.evaluate("@type", node);
-                    if (typeStr == "") {
-                        ruleComponents.add(new RuleReference(grammarName,
-                                ruleName));
+                    final String ruleName =
+                        uriStr.substring(uriStr.indexOf("#") + 1).trim();;
+                    final String grammarName = uriStr.substring(0, uriStr.indexOf("#"));
+                    final String typeStr = (String) xpath.evaluate("@type", node).trim();
+                    if (grammarName.isEmpty()) {
+                        final RuleReference reference = new RuleReference(
+                                ruleName);
+                        ruleComponents.add(reference);
+                    } else if (typeStr.isEmpty()) {
+                        final RuleReference reference = new RuleReference(
+                                grammarName, ruleName);
+                        ruleComponents.add(reference);
                     } else {
-                        ruleComponents.add(new RuleReference(grammarName,
-                                ruleName, typeStr));
+                        final RuleReference reference = new RuleReference(
+                                grammarName, typeStr);
+                        ruleComponents.add(reference);
                     }
                 }
             }
@@ -324,10 +335,12 @@ public class SrgsRuleGrammarParser {
     private ArrayList<RuleComponent> evalChildNodes(Node nodes) throws
             XPathExpressionException {
         ArrayList<RuleComponent> ruleComponents = new ArrayList<RuleComponent>();
-        NodeList childs = (NodeList) xpath.evaluate("child::node()", nodes,
+        NodeList children = (NodeList) xpath.evaluate("child::node()", nodes,
                 XPathConstants.NODESET);
-        for (int i = 0; i < childs.getLength(); i++) {
-            ruleComponents.addAll(evalNode(childs.item(i)));
+        for (int i = 0; i < children.getLength(); i++) {
+            final Node child = children.item(i);
+            final ArrayList<RuleComponent> components = evalNode(child);
+            ruleComponents.addAll(components);
         }
 
         return ruleComponents;
