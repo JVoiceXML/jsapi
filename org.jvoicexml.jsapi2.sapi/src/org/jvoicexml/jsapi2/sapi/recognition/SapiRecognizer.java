@@ -199,8 +199,10 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      * Start recognition.
      * @param handle the recognizer handle
      * @return recognition result
+     * @exception EngineStateException
+     *            if the regognition process could not be started
      */
-    native String[] sapiRecognize(final long handle);
+    native String[] sapiRecognize(final long handle) throws EngineStateException;
 
     public long getRecognizerHandle() {
         return recognizerHandle;
@@ -214,15 +216,15 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         throws EngineStateException {
         setRecognizerInputStream(in);
 
-        GrammarManager manager = getGrammarManager();
-        Grammar[] grammars = manager.listGrammars();
+        final GrammarManager manager = getGrammarManager();
+        final Grammar[] grammars = manager.listGrammars();
         final String[] grammarSources = new String[grammars.length];
         final String[] grammarReferences = new String[grammars.length];
         int i = 0;
         
         if(LOGGER.isLoggable(Level.FINE)){
             for (Grammar grammar : grammars) {
-                LOGGER.log(Level.FINE, "Activate Grammar : {0}",
+                LOGGER.log(Level.FINE, "Activate Grammar: {0}",
                         grammar.getReference());
             }
         }
@@ -312,8 +314,8 @@ public final class SapiRecognizer extends JseBaseRecognizer {
            return;
         }
        
-        String ruleName = recoResult[0];
-        String utterance = recoResult[1];
+        final String ruleName = recoResult[0];
+        final String utterance = recoResult[1];
         if(LOGGER.isLoggable(Level.FINE)){
             LOGGER.log(Level.FINE, "SML Result String : {0}", utterance);
         }
@@ -321,9 +323,9 @@ public final class SapiRecognizer extends JseBaseRecognizer {
        
        
         /** parse our tags from SML */
-        SMLHandler handler = new SMLHandler(result);
-        StringReader readerSML = new StringReader(utterance);
-        QDParser parser = new QDParser();
+        final SMLHandler handler = new SMLHandler(result);
+        final StringReader readerSML = new StringReader(utterance);
+        final QDParser parser = new QDParser();
         try {
             parser.parse(handler, readerSML);
         } catch (Exception e) {

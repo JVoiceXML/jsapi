@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.speech.EngineStateException;
+
 /**
  * Perform the recognition in an own java process.
  * @author Josua Arndt
@@ -36,9 +38,16 @@ final class SapiRecognitionThread extends Thread {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Starting recognition process");
         }
-        final String tmp[] = recognizer.sapiRecognize(handle);
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("Recognitionprocess ended");
+        final String tmp[];
+        try {
+            tmp = recognizer.sapiRecognize(handle);
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("Recognitionprocess ended");
+            }
+        } catch (EngineStateException e) {
+            LOGGER.log(Level.WARNING, "Error in regognition process: {0}",
+                    e.getMessage());
+            return;
         }
 
         //copy the result into a local variable and notify the recognizer

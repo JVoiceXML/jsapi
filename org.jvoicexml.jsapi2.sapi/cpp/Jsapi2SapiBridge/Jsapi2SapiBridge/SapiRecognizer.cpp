@@ -294,8 +294,18 @@ JNIEXPORT jobjectArray JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRe
     Recognizer* recognizer = (Recognizer*) handle;
 	WCHAR* resTmp[2];
 	resTmp[0] = NULL; resTmp[1] = NULL;
-	HRESULT hres = recognizer->StartRecognition(resTmp);
-	if (FAILED(hres) || NULL == resTmp[0]) {
+	HRESULT hr = recognizer->StartRecognition(resTmp);
+	if (FAILED(hr)) {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer),
+            "Abort Recognition failed",
+            hr);
+        ThrowJavaException(env, "javax/speech/EngineStateException", buffer);
+		return NULL;
+	}
+	if (NULL == resTmp[0]) {
+        ThrowJavaException(env, "javax/speech/EngineStateException",
+			"Unable to match result to a rule name");
 		return NULL;
 	}
 	//return env->NewString((jchar*)result, wcslen(result));
