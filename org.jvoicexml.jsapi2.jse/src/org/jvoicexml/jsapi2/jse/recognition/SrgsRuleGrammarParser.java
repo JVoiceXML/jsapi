@@ -92,20 +92,23 @@ public class SrgsRuleGrammarParser {
         attributes = new HashMap<String,String>();
     }
 
-    public Rule[] load(Reader reader) {
-        return load(new InputSource(reader));
+    public Rule[] load(final Reader reader) {
+        final InputSource source = new InputSource(reader);
+        return load(source);
     }
 
-    public Rule[] load(InputStream stream) {
-        return load(new InputSource(stream));
+    public Rule[] load(final InputStream stream) {
+        final InputSource source = new InputSource(stream);
+        return load(source);
     }
 
-    public Rule[] loadRule(Reader reader) {
+    public Rule[] loadRule(final Reader reader) {
         try{
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().
+            final DocumentBuilder builder = DocumentBuilderFactory.newInstance().
                                       newDocumentBuilder();
             builder.setEntityResolver(entityResolver);
-            return parseGrammar(builder.parse(new InputSource(reader)));
+            final InputSource source = new InputSource(reader);
+            return parseGrammar(builder.parse(source));
         }catch(Exception e){
             e.printStackTrace();
             return null;
