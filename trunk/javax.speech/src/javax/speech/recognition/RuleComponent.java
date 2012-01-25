@@ -61,7 +61,8 @@ public class RuleComponent {
     }
 
     static boolean isLetter(char ch) {
-        return isUpperCase(ch) || isLowerCase(ch);
+        return isUpperCase(ch) || isLowerCase(ch) || 
+            (ch >= '\u00c0' && ch != '\u00d7' && ch != '\u00f7');
     }
     
     static boolean isUpperCase(char ch) {
