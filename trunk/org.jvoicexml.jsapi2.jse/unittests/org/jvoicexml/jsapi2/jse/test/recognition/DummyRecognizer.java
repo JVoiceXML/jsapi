@@ -10,6 +10,7 @@ import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
+import javax.speech.recognition.RecognizerMode;
 
 import org.jvoicexml.jsapi2.jse.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
@@ -20,10 +21,17 @@ import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
  *
  */
 public class DummyRecognizer extends JseBaseRecognizer {
+    /**
+     * Construts a new object.
+     */
+    public DummyRecognizer() {
+        super(new RecognizerMode());
+    }
 
     /* (non-Javadoc)
      * @see org.jvoicexml.jsapi2.jse.recognition.BaseRecognizer#getBuiltInGrammars()
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public Vector getBuiltInGrammars() {
         // TODO Auto-generated method stub

@@ -357,14 +357,14 @@ public class BaseGrammarManager implements GrammarManager {
         // Make sure that recognizer supports markup
         if (recognizer != null) {
             final EngineMode mode = recognizer.getEngineMode();
-            if (!mode.getSupportsMarkup()) {
+            Boolean supportsMarkup = mode.getSupportsMarkup();
+            if (Boolean.FALSE.equals(supportsMarkup)) {
                 throw new EngineException("Engine doesn't support markup");
             }
         }
 
         // Process grammar
         final SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser(); 
-
         final Rule[] rules = srgsParser.load(reader);
         if (rules == null) {
             throw new IOException("Unable to load grammar '" + grammarReference
