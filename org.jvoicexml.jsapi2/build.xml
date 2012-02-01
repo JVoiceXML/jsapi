@@ -187,7 +187,8 @@ This file builds the JSAPI2 project.
   <target name="jar" depends="-jar,-components" />
 
   <target name="distribution" description="Build the distribution files"
-        depends="clean,jar">
+        depends="clean">
+    <antcall target="jar"/>
     <zip basedir="${dist}" destfile="${dist.zip}" compress="true">
       <include name="*.jar" />
       <include name="*.dll" />
