@@ -89,6 +89,9 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
      *         error opening the stream
      */
     private InputStream openUrl(final String locator) throws AudioException {
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.FINE, "opening locator at: '" + locator + "'");
+        }
         final URL url;
         try {
             url = new URL(locator);
@@ -139,7 +142,7 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
         final String locator = getMediaLocator();
         final InputStream in;
         // Open URL described in locator
-        if (locator == null) {
+        if (locator == null || locator.isEmpty()) {
             // Use the microphone
             targetAudioFormat = getEngineAudioFormat();
 //            final InputStream source = new LineInputStream(targetAudioFormat);
