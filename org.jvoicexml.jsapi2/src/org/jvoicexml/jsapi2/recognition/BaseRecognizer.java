@@ -96,10 +96,10 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected boolean supportsNULL = true;
     protected boolean supportsVOID = true;
 
-    // used when printing grammars
+    /** used when printing grammars */
     protected RuleGrammar currentGrammar;
 
-    // Set to true if recognizer cannot handle partial grammar loading.
+    /** Set to true if recognizer cannot handle partial grammar loading. */
     protected boolean reloadAll;
 
     private final SpeakerManager speakerManager;
@@ -415,8 +415,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
 
     /**
-     *
-     * @throws EngineStateException
+     * {@inheritDoc}
      */
     public void processGrammars() throws EngineStateException {
 
@@ -435,7 +434,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
                 updated = processGrammar(grammar);
             } catch (GrammarException e) {
                 updated = false;
-                e.printStackTrace();
             }
             // Update "modified-flag"
             existChanges = existChanges || updated;

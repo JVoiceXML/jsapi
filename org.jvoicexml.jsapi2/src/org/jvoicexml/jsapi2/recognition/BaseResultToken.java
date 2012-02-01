@@ -80,7 +80,8 @@ public class BaseResultToken implements ResultToken {
     public void setConfidenceLevel(final int level) {
         if (level < RecognizerProperties.MIN_CONFIDENCE
                 || level > RecognizerProperties.MAX_CONFIDENCE) {
-            throw new IllegalArgumentException("Confidence must be between MIN_CONFIDENCE and MAX_CONFIDENCE");
+            throw new IllegalArgumentException("Confidence must be between" +
+                    " MIN_CONFIDENCE and MAX_CONFIDENCE");
         }
         confidenceLevel = level;
     }
