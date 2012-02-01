@@ -243,7 +243,7 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * Utility function to generate grammar event and post it to the event
      * queue. This method uses the {@link  SpeechEventExecutor} to post the
-     * event asyncronously.
+     * event asynchronously.
      * @param event the event to post
      *
      */
