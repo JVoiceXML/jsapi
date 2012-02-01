@@ -13,7 +13,21 @@ import java.util.logging.Logger;
  * @author Dirk Schnelle-Walka
  *
  */
-public class Log4CPlus2JavaLoggingAdapter extends Thread {
+public final class Log4CPlus2JavaLoggingAdapter extends Thread {
+    static {
+        //Check the processor architecture
+        if (System.getProperty("os.arch").equalsIgnoreCase("x86")) {
+            System.loadLibrary("Jsapi2SapiBridge");
+        } else {
+            System.loadLibrary("Jsapi2SapiBridge_x64");
+        }
+            
+         
+        Log4CPlus2JavaLoggingAdapter adapter =
+            new Log4CPlus2JavaLoggingAdapter();
+        adapter.start();
+        adapter.waitStarted();
+    }
 
     /** Logger for this class. */
     private static final Logger LOGGER =
@@ -22,6 +36,7 @@ public class Log4CPlus2JavaLoggingAdapter extends Thread {
     /** Handle for the native logging adapter. */
     private long handle;
 
+    /** Sempahore to notifgy about new logging events. */
     private final Object lock;
 
     /**
@@ -70,5 +85,5 @@ public class Log4CPlus2JavaLoggingAdapter extends Thread {
      * @param handle the native handle
      * @return the next log record.
      */
-    public native LogRecord getNextLogRecord(long handle);
+    public native LogRecord getNextLogRecord(final long handle);
 }

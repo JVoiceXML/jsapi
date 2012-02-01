@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * @author Dirk Schnelle-Walka
  *
  */
-public class SapiEngineListFactory implements EngineListFactory {
+public final class SapiEngineListFactory implements EngineListFactory {
     static {
         //Check the processor architecture
         if (System.getProperty("os.arch").equalsIgnoreCase("x86")) {
