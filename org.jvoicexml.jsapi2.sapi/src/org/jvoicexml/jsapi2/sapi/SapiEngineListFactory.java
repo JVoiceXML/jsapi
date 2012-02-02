@@ -28,7 +28,7 @@ public final class SapiEngineListFactory implements EngineListFactory {
         }
             
          
-        Log4CPlus2JavaLoggingAdapter adapter =
+        final Log4CPlus2JavaLoggingAdapter adapter =
             new Log4CPlus2JavaLoggingAdapter();
         adapter.start();
         adapter.waitStarted();
@@ -57,8 +57,7 @@ public final class SapiEngineListFactory implements EngineListFactory {
                 //Update voices array
                 if (selectedVoices.size() > 0) {
                     voices = selectedVoices.toArray(new Voice[] {});
-                }
-                else {
+                } else {
                     //A requested voice was not found...
                     return null;
                 }

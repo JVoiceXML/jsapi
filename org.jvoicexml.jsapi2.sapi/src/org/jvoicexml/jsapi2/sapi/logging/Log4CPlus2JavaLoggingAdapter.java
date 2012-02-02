@@ -6,6 +6,8 @@ package org.jvoicexml.jsapi2.sapi.logging;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.jvoicexml.jsapi2.sapi.SapiEngineListFactory;
+
 /**
  * A simple wrapper for log4cplus or similar native logging frameworks.
  * This thread retrieves the next {@link LogRecord} and forwards it to
@@ -14,21 +16,6 @@ import java.util.logging.Logger;
  *
  */
 public final class Log4CPlus2JavaLoggingAdapter extends Thread {
-    static {
-        //Check the processor architecture
-        if (System.getProperty("os.arch").equalsIgnoreCase("x86")) {
-            System.loadLibrary("Jsapi2SapiBridge");
-        } else {
-            System.loadLibrary("Jsapi2SapiBridge_x64");
-        }
-            
-         
-        Log4CPlus2JavaLoggingAdapter adapter =
-            new Log4CPlus2JavaLoggingAdapter();
-        adapter.start();
-        adapter.waitStarted();
-    }
-
     /** Logger for this class. */
     private static final Logger LOGGER =
         Logger.getLogger(Log4CPlus2JavaLoggingAdapter.class.getName());
