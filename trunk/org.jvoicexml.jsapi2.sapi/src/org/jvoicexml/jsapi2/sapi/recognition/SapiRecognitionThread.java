@@ -1,6 +1,5 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +37,7 @@ final class SapiRecognitionThread extends Thread {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Starting recognition process");
         }
-        final String tmp[];
+        final String[] tmp;
         try {
             tmp = recognizer.sapiRecognize(handle);
             if (LOGGER.isLoggable(Level.FINE)) {
@@ -51,13 +50,15 @@ final class SapiRecognitionThread extends Thread {
         }
 
         //copy the result into a local variable and notify the recognizer
-        final String result[];
+        // cpp-Result == NULL  
+        //      => false recognition in cpp
         if (tmp == null) {
-            result = null;
+            recognizer.reportResultRejected();
         } else {
-            result = Arrays.copyOf(tmp, 2);
+            final String ruleName = tmp[0];
+            final String utterance = tmp[1];
+            recognizer.reportResult(ruleName, utterance);
         }
-        recognizer.reportResult(result);
     }
 
     /**

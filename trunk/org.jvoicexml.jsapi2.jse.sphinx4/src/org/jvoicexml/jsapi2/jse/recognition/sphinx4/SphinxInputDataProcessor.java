@@ -57,6 +57,7 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
     /** The input stream from the audio manager. */
     private InputStream inputStream;
 
+    /** Total number of read samples. */
     private long totalSamplesRead;
 
     /** sent DataStart signal */
@@ -110,6 +111,7 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
      * @throws DataProcessingException
      *             if a data processor error occurs
      */
+    @Override
     public Data getData() throws DataProcessingException {
 
         /** @todo AudioFormat is hardcoded */
@@ -190,8 +192,8 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
         totalSamplesRead += (numBytesRead / sampleSizeInBytes);
 
         // Convert it to double
-        double[] samples = DataUtil.littleEndianBytesToValues(data, 0, data.length,
-                sampleSizeInBytes, signed);
+        double[] samples = DataUtil.littleEndianBytesToValues(data, 0,
+                data.length, sampleSizeInBytes, signed);
         
         return new DoubleData(samples, (int) sampleRate, collectTime,
                 firstSampleNumber);

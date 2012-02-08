@@ -24,7 +24,6 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
     if (SUCCEEDED(hr))
     {
         hr = cpRecognizerEngine->CreateRecoContext(&cpRecoCtxt);		
-		//hr = cpRecoCtxt->Pause(NULL);
     }
 
     if (SUCCEEDED(hr))
@@ -49,7 +48,7 @@ Recognizer::Recognizer(HWND hwnd, JNIEnv *env, jobject rec)
 	   hr = cpRecognizerEngine->SetInput(cpAudio, TRUE);
 	}
 
-	if( SUCCEEDED(hr) )
+	if(SUCCEEDED(hr))
     {
 		hr = cpRecoCtxt->SetAudioOptions(SPAO_RETAIN_AUDIO, NULL, NULL);
 	}
@@ -382,7 +381,7 @@ HRESULT Recognizer::StartRecognition(WCHAR* result[])
 		hr = it->second->SetRuleState(NULL, NULL, SPRS_ACTIVE );
         if (FAILED(hr))
         {
-            return NULL;
+            return hr;
         }
 	}
 	
@@ -390,7 +389,7 @@ HRESULT Recognizer::StartRecognition(WCHAR* result[])
 	hr = cpRecoCtxt->SetNotifyWin32Event();	
 	if (FAILED(hr))
     {
-        return NULL;
+        return hr;
     }	
 
 	/* set continuing to true, its a variable to abort the recognition */
@@ -492,3 +491,4 @@ HRESULT Recognizer::BlockForResult( ISpRecoGrammar* cpGrammar, ISpRecoResult ** 
 
 	return hr;
 }
+

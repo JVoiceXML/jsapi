@@ -126,9 +126,6 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesizer_
 {
 	Synthesizer* synth = (Synthesizer*) handle;	
 	
-	//std::cout << "Pause :: synthesizerHandle from Java:" << synth << std::endl;
-	//fflush(stdout);
-
 	synth->Pause();
     if (FAILED(synth->GetLastHResult()))
     {
@@ -325,13 +322,9 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
     {
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer), "GetAudioFormat failed", hr);
-        jclass exception = env->FindClass("javax/speech/synthesis/SpeakableException");
-        if (exception == 0) /* Unable to find the new exception class, give up. */
-        {
-            std::cerr << buffer << std::endl;
-            return NULL;
-        }
-        env->ThrowNew(exception, buffer);
+        ThrowJavaException(env, "javax/speech/synthesis/SpeakableException",
+            buffer);
+		return NULL;
     }
     jclass clazz = env->FindClass("javax/sound/sampled/AudioFormat");
     if (clazz == NULL)
@@ -354,3 +347,4 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_synthesis_SapiSynthesiz
     return env->NewObject(clazz, constructor, (float)format.nSamplesPerSec,
         (int)format.wBitsPerSample, (int)format.nChannels, JNI_TRUE, JNI_FALSE);
 }
+

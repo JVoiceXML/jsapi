@@ -53,7 +53,6 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
   (JNIEnv *env, jobject caller, jlong recognizerHandle, jobject inputStream, 
 	jfloat sampleRate, jint bitsPerSample, jint channels, jboolean endian, jboolean signedData, jstring encoding) 
 {
-	
     Recognizer* recognizer = (Recognizer*)recognizerHandle;
     HRESULT hr;
 
@@ -197,7 +196,6 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 		jstring reference = (jstring) env->GetObjectArrayElement(references, i);
 		const wchar_t* ref = (const wchar_t*)env->GetStringChars(reference, NULL);	
 
-		//HRESULT hr= recognizer->LoadGrammarFile(gram, ref);
 		HRESULT hr= recognizer->LoadGrammar(gram, ref);
         if ( FAILED(hr) )
         {
@@ -242,14 +240,12 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
  */
 JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiSetGrammarContent
 (JNIEnv *env, jobject object, jlong recognizerHandle, jstring grammarContent, jstring reference)
-{
-		
+{		
 	Recognizer* recognizer = (Recognizer*)recognizerHandle;
     const wchar_t* grammar = (const wchar_t*)env->GetStringChars(grammarContent, NULL);
 	const wchar_t* ref = (const wchar_t*)env->GetStringChars(reference, NULL);	
 	
 	HRESULT hr = recognizer->LoadGrammar(grammar, ref);
-
 	if (SUCCEEDED(hr))
     {
         return JNI_TRUE;
@@ -290,12 +286,12 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 JNIEXPORT jobjectArray JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiRecognize
   (JNIEnv *env, jobject object, jlong handle)
 {
-
     Recognizer* recognizer = (Recognizer*) handle;
-	WCHAR* resTmp[2];
-	resTmp[0] = NULL; resTmp[1] = NULL;
-	HRESULT hr = recognizer->StartRecognition(resTmp);
-	if (FAILED(hr)) {
+	WCHAR* result[2];
+	result[0] = NULL; result[1] = NULL;
+	HRESULT hr = recognizer->StartRecognition(result);
+	if (FAILED(hr))
+    {
         char buffer[1024];
         GetErrorMessage(buffer, sizeof(buffer),
             "Abort Recognition failed",
@@ -303,19 +299,20 @@ JNIEXPORT jobjectArray JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRe
         ThrowJavaException(env, "javax/speech/EngineStateException", buffer);
 		return NULL;
 	}
-	if (NULL == resTmp[0]) {
-        ThrowJavaException(env, "javax/speech/EngineStateException",
-			"Unable to match result to a rule name");
+
+	// Check if the recognition failed
+	if (result[0] == NULL)
+	{
 		return NULL;
 	}
-	//return env->NewString((jchar*)result, wcslen(result));
-	jobjectArray result;
-	result = (jobjectArray) env->NewObjectArray(2,
+
+	jobjectArray ret;
+	ret = (jobjectArray) env->NewObjectArray(2,
 									env->FindClass("java/lang/String"), 
 									env->NewString((jchar*)&"", 0));
-	env->SetObjectArrayElement(result, 0, env->NewString((jchar*)resTmp[0], wcslen(resTmp[0]))); //ruleName
-	env->SetObjectArrayElement(result, 1, env->NewString((jchar*)resTmp[1], wcslen(resTmp[1]))); //utterance
-    return result;
+	env->SetObjectArrayElement(ret, 0, env->NewString((jchar*)result[0], wcslen(result[0]))); //ruleName
+	env->SetObjectArrayElement(ret, 1, env->NewString((jchar*)result[1], wcslen(result[1]))); //utterance
+    return ret;
 }
 
 
@@ -327,11 +324,9 @@ JNIEXPORT jobjectArray JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRe
 JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiAbortRecognition
 (JNIEnv *env, jobject object, jlong handle)
 {
-
 	Recognizer* recognizer = (Recognizer*) handle;
 	
 	HRESULT hr = recognizer->AbortRecognition();
-	//HRESULT hr = recognizer->Pause();
     if ( FAILED(hr) )
     {
         char buffer[1024];
@@ -341,3 +336,4 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
         ThrowJavaException(env, "javax/speech/EngineStateException", buffer);
     }
 }
+

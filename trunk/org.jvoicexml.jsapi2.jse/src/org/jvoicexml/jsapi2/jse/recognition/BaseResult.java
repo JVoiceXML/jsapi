@@ -66,7 +66,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * Create an empty result.
      * @exception GrammarException error evaluating the grammar
      */
-    public BaseResult() throws GrammarException {
+    public BaseResult() {
         this(null);
     }
 
@@ -75,8 +75,11 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * @param gram the grammar
      * @exception GrammarException error evaluating the grammar
      */
-    public BaseResult(final Grammar gram) throws GrammarException {
-        this(gram, null);
+    public BaseResult(final Grammar gram) {
+        resultListeners = new Vector();
+        grammar = gram;
+        confidenceLevel = RecognizerProperties.UNKNOWN_CONFIDENCE;
+        state = Result.UNFINALIZED;
     }
 
     /**
