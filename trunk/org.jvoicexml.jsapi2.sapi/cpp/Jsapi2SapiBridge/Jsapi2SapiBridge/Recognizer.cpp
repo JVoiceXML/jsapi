@@ -271,7 +271,7 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 
     /* Process all of the recognition events */
 	while ( SUCCEEDED( hr = event.GetFrom(cpRecoCtxt)) && hr!=S_FALSE )//== S_OK
-    {	
+    {
 		switch (event.eEventId)
         {
 			case SPEI_RECOGNITION:
@@ -336,11 +336,11 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 				}
 				gramHash.clear();
 
-				return NULL;
+				return SPEI_FALSE_RECOGNITION;
         }
     }
 
-	return S_OK;
+	return S_FALSE;
 } 
 
 
@@ -422,7 +422,7 @@ HRESULT Recognizer::StartRecognition(WCHAR* result[])
 	    cpGrammar.Release();
 	}
 
-    return NULL;
+    return S_FALSE;
 }
 
 HRESULT Recognizer::AbortRecognition()

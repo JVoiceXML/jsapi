@@ -283,9 +283,11 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
  * Method:    sapiRecognize
  * Signature: (J)Ljava/lang/String;
  */
-JNIEXPORT jobjectArray JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiRecognize
-  (JNIEnv *env, jobject object, jlong handle)
+JNIEXPORT jint JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiRecognize
+  (JNIEnv *env, jobject object, jlong handle, jobjectArray returnResult)
 {
+	const jint EVENT_NOMATCH = -1;
+
     Recognizer* recognizer = (Recognizer*) handle;
 	WCHAR* result[2];
 	result[0] = NULL; result[1] = NULL;
@@ -297,22 +299,19 @@ JNIEXPORT jobjectArray JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRe
             "Abort Recognition failed",
             hr);
         ThrowJavaException(env, "javax/speech/EngineException", buffer);
-		return NULL;
+		return hr;
 	}
 
-	// Check if the recognition failed
-	if (result[0] == NULL)
+	// if the recognizer successfully matched something, update the returnResult
+	if (hr == S_OK)
 	{
-		return NULL;
+		jstring ruleName = env->NewString((jchar*)result[0], wcslen(result[0]));
+		jstring utterance = env->NewString((jchar*)result[1], wcslen(result[1]));
+		env->SetObjectArrayElement(returnResult, 0, ruleName); //ruleName
+		env->SetObjectArrayElement(returnResult, 1, utterance); //utterance
 	}
 
-	jobjectArray ret;
-	ret = (jobjectArray) env->NewObjectArray(2,
-									env->FindClass("java/lang/String"), 
-									env->NewString((jchar*)&"", 0));
-	env->SetObjectArrayElement(ret, 0, env->NewString((jchar*)result[0], wcslen(result[0]))); //ruleName
-	env->SetObjectArrayElement(ret, 1, env->NewString((jchar*)result[1], wcslen(result[1]))); //utterance
-    return ret;
+    return hr;
 }
 
 

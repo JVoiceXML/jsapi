@@ -12,6 +12,10 @@ import javax.speech.EngineException;
  *
  */
 final class SapiRecognitionThread extends Thread {
+    final static int RECOGNITION_SUCCESSFULL = 0;       //S_OK
+    final static int RECOGNITION_NOMATCH = 43;          //SPEVENTENUM::SPEI_FALSE_RECOGNITION
+    final static int RECOGNITION_ABORTED = 1;           //S_FALSE
+
     /** Logger for this class. */
     private static final Logger LOGGER =
         Logger.getLogger(SapiRecognitionThread.class.getName());
@@ -37,9 +41,10 @@ final class SapiRecognitionThread extends Thread {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Starting recognition process");
         }
-        final String[] tmp;
+        final String[] tmp = {null, null};
+        int returnValue = -1;
         try {
-            tmp = recognizer.sapiRecognize(handle);
+            returnValue = recognizer.sapiRecognize(handle, tmp);
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("Recognitionprocess ended");
             }
@@ -50,15 +55,21 @@ final class SapiRecognitionThread extends Thread {
             return;
         }
 
-        //copy the result into a local variable and notify the recognizer
-        // cpp-Result == NULL  
-        //      => false recognition in cpp
-        if (tmp == null) {
+        switch (returnValue) {
+        case RECOGNITION_NOMATCH:
             recognizer.reportResultRejected();
-        } else {
+            break;
+        case RECOGNITION_SUCCESSFULL:
             final String ruleName = tmp[0];
             final String utterance = tmp[1];
             recognizer.reportResult(ruleName, utterance);
+            break;
+        case RECOGNITION_ABORTED:
+            break;
+        default:
+            LOGGER.log(Level.FINE, "Unknown returnvalue: {0}",
+                    returnValue);
+            break;
         }
     }
 
