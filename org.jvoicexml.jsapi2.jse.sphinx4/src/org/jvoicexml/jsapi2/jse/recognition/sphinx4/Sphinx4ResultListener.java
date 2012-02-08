@@ -4,9 +4,9 @@
  * Date:    $Date: 2010-12-08 13:15:40 +0100 (Mi, 08 Dez 2010) $
  * Author:  $LastChangedBy: sterad $
  *
- * JVoiceXML - A free VoiceXML implementation.
+ * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2005-2008 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2005-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -30,7 +30,6 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultToken;
 import javax.speech.recognition.RuleGrammar;
@@ -82,16 +81,15 @@ class Sphinx4ResultListener implements ResultListener {
      */
     private ResultToken[] sphinx4ResultToResultToken(final Result result,
             final BaseResult current) {
-        String strRes = result.getBestFinalResultNoFiller();
-        StringTokenizer st = new StringTokenizer(strRes);
-        int nTokens = st.countTokens();
+        final String strRes = result.getBestFinalResultNoFiller();
+        final StringTokenizer st = new StringTokenizer(strRes);
+        final int nTokens = st.countTokens();
 
         final ResultToken[] res = new ResultToken[nTokens];
-
         for (int i = 0; i < nTokens; ++i) {
-            String text = st.nextToken();
+            final String text = st.nextToken();
 
-            BaseResultToken brt = new BaseResultToken(current, text);
+            final BaseResultToken brt = new BaseResultToken(current, text);
             if (current.getResultState() == BaseResult.ACCEPTED) {
                 // @todo set confidenceLevel, startTime and end time,
                 // of each token
@@ -108,6 +106,7 @@ class Sphinx4ResultListener implements ResultListener {
      * @param result
      *            The new result.
      */
+    @Override
     public void newResult(final Result result) {
         LOGGER.log(Level.INFO, "received result: {0}", result);
         LOGGER.log(Level.INFO, "isFinal: {0}", result.isFinal());
@@ -125,19 +124,15 @@ class Sphinx4ResultListener implements ResultListener {
          */
         final RuleGrammar grammar = recognizer.getRuleGrammar(result
                 .getBestFinalToken());
-        try {
-            currentResult = new BaseResult(grammar);
-        } catch (GrammarException e) {
-            LOGGER.warning(e.getMessage());
-            return;
-        }
+        currentResult = new BaseResult(grammar);
 
         final ResultEvent created = new ResultEvent(currentResult,
                 ResultEvent.RESULT_CREATED, false, false);
         recognizer.postResultEvent(created);
 
-        ResultToken[] rt = sphinx4ResultToResultToken(result, currentResult);
-        int numTokens = rt.length;
+        final ResultToken[] rt =
+                sphinx4ResultToResultToken(result, currentResult);
+        final int numTokens = rt.length;
 
         final ResultEvent grammarFinalized = new ResultEvent(currentResult,
                 ResultEvent.GRAMMAR_FINALIZED);
@@ -158,6 +153,10 @@ class Sphinx4ResultListener implements ResultListener {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * unuse.
+     */
     @Override
     public void newProperties(final PropertySheet sheet)
             throws PropertyException {

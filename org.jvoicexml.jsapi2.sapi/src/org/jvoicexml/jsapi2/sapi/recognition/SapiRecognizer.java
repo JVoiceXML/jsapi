@@ -39,9 +39,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
-import javax.speech.recognition.FinalResult;
 import javax.speech.recognition.Grammar;
-import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.RecognizerProperties;
 import javax.speech.recognition.Result;
@@ -279,49 +277,33 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         }
     }
     
+    /**
+     * Callback of the SAPI recognizer if the recognition failed.
+     */
+    public void reportResultRejected() {
+        postResultCreated();
 
-    public void reportResult(String[] recoResult) {
-       
-       SapiResult result = null;
-       
-       /** initialize our SapiResult */
-       try {
-            result = new SapiResult();
-            result.setResultState(Result.UNFINALIZED);
-            result.setConfidenceLevel(0);
-            final ResultEvent created = 
-                new ResultEvent(result, ResultEvent.RESULT_CREATED, 
-                        false, false);
-            postResultEvent(created);
-        } catch (GrammarException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine("No Match Recognized => False Recognition ...");
         }
+        postResultRejected();
+
+        return;
+    }
     
-        /** cpp-Result == NULL  
-         *      => false recognition in cpp
-         */
-        if (null == recoResult) {
-           if(LOGGER.isLoggable(Level.FINE)){
-               LOGGER.fine("No Match Recognized => False Recognition ...");
-           }
-           result.setResultState(FinalResult.REJECTED);
-           final ResultEvent rejected =
-               new ResultEvent(result, ResultEvent.RESULT_REJECTED,
-                       false, false);
-           postResultEvent(rejected);
-           
-           return;
-        }
-       
-        final String ruleName = recoResult[0];
-        final String utterance = recoResult[1];
-        if(LOGGER.isLoggable(Level.FINE)){
+    /**
+     * Callback of the SAPI recognizer if the recognition succeeded.
+     * @param ruleName name of the rule matching the utterance
+     * @param utterance the utterance
+     */
+    public void reportResult(final String ruleName, final String utterance) {
+        postResultCreated();
+        SapiResult result = new SapiResult();
+        if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "SML Result String : {0}", utterance);
         }
         result.setSsml(utterance);
-       
-       
+
         /** parse our tags from SML */
         final SMLHandler handler = new SMLHandler(result);
         final StringReader readerSML = new StringReader(utterance);
@@ -331,38 +313,31 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "error parsing SML: {0}", e.getMessage());
         }
-        
 
-        /** Check if the utterance was only noise */
-        if ( utterance.equals("...") ) { 
-            if(LOGGER.isLoggable(Level.FINE)){
+        // Check if the utterance was only noise 
+        if (utterance.equals("...")) { 
+            if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("Single Garbage Recognized ...");
             }
-            result.setResultState(Result.REJECTED);
-            final ResultEvent rejected =
-                new ResultEvent(result, ResultEvent.RESULT_REJECTED,
-                        false, false);
-            postResultEvent(rejected);
-            
-            return;          
+            postResultRejected(result);
+
+            return;
          }
-        
-        if(LOGGER.isLoggable(Level.FINE)){
+
+        if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE,
                     "Recognized utterance : ''{0}'' Confidence : ''{1}''",
                     new Object[]{utterance, result.getConfidence()});
         }
-        
-        
-        /** set recognized tokens */
-        String[] utteranceTok = result.getUtterance().split(" ");
-        ResultToken[] rtoken = new ResultToken[utteranceTok.length];
+
+        // set recognized tokens
+        final String[] utteranceTok = result.getUtterance().split(" ");
+        final ResultToken[] rtoken = new ResultToken[utteranceTok.length];
         for (int i = 0; i < rtoken.length; i++) {
             rtoken[i] = new BaseResultToken(result, utteranceTok[i]);
         }
         result.setTokens(rtoken);
 
-        
         /** iterate through tags and set resultTags */
         Hashtable<Integer, SsmlInterpretation> vInterpretation =
             result.getInterpretation();
@@ -404,8 +379,8 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                 ResultEvent.RESULT_UPDATED, true, false);
         postResultEvent(tokensUpdated);
     
-        /** Set the grammar, which led to recognition */
-        GrammarManager manager = getGrammarManager();
+        // Set the grammar, which led to recognition
+        final GrammarManager manager = getGrammarManager();
         Grammar gram = manager.getGrammar("grammar:" + ruleName);
         if (null == gram) {
             gram = manager.getGrammar(ruleName);
@@ -416,16 +391,13 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("Could not find the RuleGrammar");
             }
-            result.setResultState(Result.REJECTED);
-            final ResultEvent grammarFailed = 
-                new ResultEvent(result, ResultEvent.RESULT_REJECTED, false, false);
-            postResultEvent(grammarFailed);
+            postResultRejected(result);
+
             return;
         }
         final ResultEvent grammarFinalized =
             new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED);
         postResultEvent(grammarFinalized);
-
 
         /** set the confidenceLevel */
         //map the actual confidence ([0; 1] (float)) to a new Integer-Value in javax.speech's range [MIN_CONFIDENCE; MAX_CONFIDENCE]
@@ -454,17 +426,47 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         }
         
         /** post the result */
-        if (result.getResultState() == Result.REJECTED ) {
-            final ResultEvent rejected =
-                new ResultEvent(result, ResultEvent.RESULT_REJECTED,
-                        false, false);
-            postResultEvent(rejected);
+        if (result.getResultState() == Result.REJECTED) {
+            postResultRejected(result);
         } else {
             result.setResultState(Result.ACCEPTED);
             final ResultEvent accepted = new ResultEvent(result,
                         ResultEvent.RESULT_ACCEPTED, false, false);
             postResultEvent(accepted);
         }
+    }
+
+    /**
+     * Notifies all listeners that a recognition result has been created.
+     */
+    private void postResultCreated() {
+         final SapiResult result = new SapiResult();
+         result.setResultState(Result.UNFINALIZED);
+         result.setConfidenceLevel(0);
+         final ResultEvent created = 
+             new ResultEvent(result, ResultEvent.RESULT_CREATED, 
+                     false, false);
+         postResultEvent(created);
+    }
+
+    /**
+     * Notifies all listeners that a recognition result has been created.
+     */
+    private void postResultRejected() {
+         final SapiResult result = new SapiResult();
+         postResultRejected(result);
+    }
+
+    /**
+     * Notifies all listeners that a recognition result has been created.
+     * @param result the current result.
+     */
+    private void postResultRejected(final SapiResult result) {
+         result.setResultState(Result.REJECTED);
+         final ResultEvent rejected =
+             new ResultEvent(result, ResultEvent.RESULT_REJECTED,
+                     false, false);
+         postResultEvent(rejected);
     }
 
     /**

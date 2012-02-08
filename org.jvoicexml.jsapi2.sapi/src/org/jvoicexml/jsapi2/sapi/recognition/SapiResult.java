@@ -1,35 +1,47 @@
+/*
+ * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
+ * Version: $LastChangedRevision: 68 $
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy: schnelle $
+ *
+ * JSAPI - An independent reference implementation of JSR 113.
+ *
+ * Copyright (C) 2010-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
 package org.jvoicexml.jsapi2.sapi.recognition;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.ResultToken;
 
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.recognition.BaseResultToken;
-
 
 /**
  * A recognition result from the SAPI engine.
  * @author Dirk Schnelle-Walka
  */
 @SuppressWarnings("serial")
-public class SapiResult extends BaseResult  {
-    public float getConfidence() {
-        return confidence;
-    }
-
-    public void setConfidence(float confidence) {
-        this.confidence = confidence;
-    }
-
-    public String getUtterance() {
-        return utterance;
-    }
-
+public final class SapiResult extends BaseResult  {
     /** The semantic interpretation of the utterance. */
-    private Hashtable< Integer,SsmlInterpretation> interpretation;
+    private Hashtable<Integer, SsmlInterpretation> interpretation;
 
     /** The received utterance. */
     private String utterance;
@@ -40,18 +52,33 @@ public class SapiResult extends BaseResult  {
     /** The received utterance. */
     private float confidence;
     
-    
-    public SapiResult() throws GrammarException{
+    /**
+     * Constructs a new object.
+     */
+    public SapiResult() {
         setSsml(null);
         utterance = null;
         interpretation = new Hashtable<Integer, SsmlInterpretation>(3);
     }
-    
-    public void setUtterance( String utterance){
+
+    public float getConfidence() {
+        return confidence;
+    }
+
+    public void setConfidence(final float confidence) {
+        this.confidence = confidence;
+    }
+
+    public String getUtterance() {
+        return utterance;
+    }
+
+    public void setUtterance(final String utterance){
         this.utterance=utterance;
     }
-    public void setInterpretation( Integer number, SsmlInterpretation interp){
-        interpretation.put( number, interp);
+
+    public void setInterpretation(Integer number, SsmlInterpretation interp) {
+        interpretation.put(number, interp);
     }
     
     public Hashtable getInterpretation() {
@@ -70,22 +97,26 @@ public class SapiResult extends BaseResult  {
         this.tags = tags;
     }
 
-    public String toString() {      
-        StringBuffer result = new StringBuffer();
-        result.append("SapiResult : text = '"+ utterance +"' ");
-        result.append("Confidence = '"+ confidence +"' ");
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder result = new StringBuilder();
+        result.append("SapiResult : text = '" + utterance + "' ");
+        result.append("Confidence = '" + confidence + "' ");
         
-        if( !interpretation.isEmpty()){
+        if (!interpretation.isEmpty()) {
             Enumeration<Integer> e = interpretation.keys();
-            while (e.hasMoreElements()){
+            while (e.hasMoreElements()) {
                     Integer i = e.nextElement();
-                    SsmlInterpretation interp =interpretation.get(i);
+                    SsmlInterpretation interp = interpretation.get(i);
                     result.append("tag"+i+" = '"+interp.getTag()+"="+interp.getValue()+"' ");
                     result.append("tag"+i+"Confidence ='"+interp.getConfidence()+"'");
                 }
         }
         
-        return result.toString();    
+        return result.toString();
     }
 
     public boolean createResultTokens() {
@@ -110,21 +141,9 @@ public class SapiResult extends BaseResult  {
         return createResultTokens();
     }
         
-//    @Override
-//    public ResultToken[] getBestTokens() {
-//        
-//        String[] token = utterance.split(" ");
-//        ResultToken[] tokens = new ResultToken[token.length];
-//        for(int i=0; i <token.length; i++){
-//            tokens[i] = new BaseResultToken(this, token[i]) ;
-//        }
-//        return tokens;
-//    }
-    
     @Override
     public ResultToken[] getUnfinalizedTokens() {
         // TODO Auto-generated method stub
         return null;
     }
-        
 }
