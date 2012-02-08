@@ -199,10 +199,10 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      * Start recognition.
      * @param handle the recognizer handle
      * @return recognition result
-     * @exception EngineStateException
-     *            if the regognition process could not be started
+     * @exception EngineException
+     *            if there were errors during recognition
      */
-    native String[] sapiRecognize(final long handle) throws EngineException;
+    native int sapiRecognize(final long handle, String[] result) throws EngineException;
 
     public long getRecognizerHandle() {
         return recognizerHandle;
