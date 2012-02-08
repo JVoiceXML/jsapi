@@ -37,10 +37,12 @@ import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
+import javax.speech.EngineEvent;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarManager;
+import javax.speech.recognition.RecognizerEvent;
 import javax.speech.recognition.RecognizerProperties;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
@@ -200,7 +202,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      * @exception EngineStateException
      *            if the regognition process could not be started
      */
-    native String[] sapiRecognize(final long handle) throws EngineStateException;
+    native String[] sapiRecognize(final long handle) throws EngineException;
 
     public long getRecognizerHandle() {
         return recognizerHandle;
@@ -467,6 +469,22 @@ public final class SapiRecognizer extends JseBaseRecognizer {
              new ResultEvent(result, ResultEvent.RESULT_REJECTED,
                      false, false);
          postResultEvent(rejected);
+    }
+    
+    protected void postEngineException(final EngineException exc) {
+        final long oldEngineState = getEngineState();
+        setEngineState(~CLEAR_ALL_STATE, ERROR_OCCURRED);
+        final long newEngineState = getEngineState();
+
+        final RecognizerEvent event = 
+                new RecognizerEvent(this, 
+                        EngineEvent.ENGINE_ERROR, 
+                        oldEngineState, 
+                        newEngineState, 
+                        exc, 
+                        null, 
+                        RecognizerEvent.UNKNOWN_AUDIO_POSITION);
+        postEngineEvent(event);
     }
 
     /**

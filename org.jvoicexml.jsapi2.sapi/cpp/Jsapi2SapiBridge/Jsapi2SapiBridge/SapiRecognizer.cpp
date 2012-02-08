@@ -296,7 +296,7 @@ JNIEXPORT jobjectArray JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRe
         GetErrorMessage(buffer, sizeof(buffer),
             "Abort Recognition failed",
             hr);
-        ThrowJavaException(env, "javax/speech/EngineStateException", buffer);
+        ThrowJavaException(env, "javax/speech/EngineException", buffer);
 		return NULL;
 	}
 

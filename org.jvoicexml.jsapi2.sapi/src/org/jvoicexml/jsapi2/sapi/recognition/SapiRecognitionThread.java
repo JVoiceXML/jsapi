@@ -3,7 +3,7 @@ package org.jvoicexml.jsapi2.sapi.recognition;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.speech.EngineStateException;
+import javax.speech.EngineException;
 
 /**
  * Perform the recognition in an own java process.
@@ -43,9 +43,10 @@ final class SapiRecognitionThread extends Thread {
             if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.fine("Recognitionprocess ended");
             }
-        } catch (EngineStateException e) {
-            LOGGER.log(Level.WARNING, "Error in regognition process: {0}",
+        } catch (EngineException e) {
+            LOGGER.log(Level.WARNING, "Error in recognition process: {0}",
                     e.getMessage());
+            recognizer.postEngineException(e);
             return;
         }
 
