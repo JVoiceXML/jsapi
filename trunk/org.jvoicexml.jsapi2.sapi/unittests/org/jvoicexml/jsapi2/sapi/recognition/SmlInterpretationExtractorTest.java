@@ -46,8 +46,11 @@ import org.junit.Test;
  *
  */
 public final class SmlInterpretationExtractorTest {
+    /** Maximal diff for parsing the confidence value. */
+    private static final float MAX_CONFIDENCE_DIFF = 0.0001f;
+
     /**
-     * Test case for a compound object.
+     * Test case for a simple recognition process.
      * @exception Exception
      *            test failed
      */
@@ -65,10 +68,39 @@ public final class SmlInterpretationExtractorTest {
         transformer.transform(source, result);
         Assert.assertEquals("Hello Dirk",
                 extractor.getUtterance());
-        Assert.assertEquals(0.5100203, extractor.getConfidence(), 0.0001f);
+        Assert.assertEquals(0.5100203, extractor.getConfidence(),
+                MAX_CONFIDENCE_DIFF);
         final List<SmlInterpretation> interpretations =
                 extractor.getInterpretations();
         Assert.assertEquals(0, interpretations.size());
+        Assert.assertEquals("Hello Dirk", extractor.getUtteranceTag());
+    }
+
+    /**
+     * Test case for a simple recognition process with a single tag.
+     * @exception Exception
+     *            test failed
+     */
+    @Test
+    public void testTag() throws Exception {
+        final TransformerFactory factory = TransformerFactory.newInstance();
+        final Transformer transformer = factory.newTransformer();
+        final InputStream in =
+                SmlInterpretationExtractorTest.class.getResourceAsStream(
+                        "sml-tag.xml");
+        final Source source = new StreamSource(in);
+        final SmlInterpretationExtractor extractor =
+                new SmlInterpretationExtractor();
+        final Result result = new SAXResult(extractor);
+        transformer.transform(source, result);
+        Assert.assertEquals("Good morning Dirk",
+                extractor.getUtterance());
+        Assert.assertEquals(0.7378733, extractor.getConfidence(),
+                MAX_CONFIDENCE_DIFF);
+        final List<SmlInterpretation> interpretations =
+                extractor.getInterpretations();
+        Assert.assertEquals(0, interpretations.size());
+        Assert.assertEquals("Projectmanager", extractor.getUtteranceTag());
     }
 
     /**
@@ -90,22 +122,27 @@ public final class SmlInterpretationExtractorTest {
         transformer.transform(source, result);
         Assert.assertEquals("a small pizza with salami",
                 extractor.getUtterance());
-        Assert.assertEquals(0.8081474f, extractor.getConfidence(), 0.0f);
+        Assert.assertEquals(0.8081474f, extractor.getConfidence(),
+                MAX_CONFIDENCE_DIFF);
         final List<SmlInterpretation> interpretations =
                 extractor.getInterpretations();
         Assert.assertEquals(3, interpretations.size());
         final SmlInterpretation order = interpretations.get(0);
         Assert.assertEquals("order", order.getTag());
         Assert.assertNull(order.getValue());
-        Assert.assertEquals(0.8131593f, order.getConfidence(), 0.0f);
+        Assert.assertEquals(0.8131593f, order.getConfidence(),
+                MAX_CONFIDENCE_DIFF);
         final SmlInterpretation size = interpretations.get(1);
         Assert.assertEquals("order.size", size.getTag());
         Assert.assertEquals("small", size.getValue());
-        Assert.assertEquals(0.8131593f, size.getConfidence(), 0.0f);
+        Assert.assertEquals(0.8131593f, size.getConfidence(),
+                MAX_CONFIDENCE_DIFF);
         final SmlInterpretation topping = interpretations.get(2);
         Assert.assertEquals("order.topping", topping.getTag());
         Assert.assertEquals("salami", topping.getValue());
-        Assert.assertEquals(0.8131593f, topping.getConfidence(), 0.0f);
+        Assert.assertEquals(0.8131593f, topping.getConfidence(),
+                MAX_CONFIDENCE_DIFF);
+        Assert.assertEquals("", extractor.getUtteranceTag());
     }
 
 }
