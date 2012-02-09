@@ -52,6 +52,9 @@ public final class SmlInterpretationExtractor implements ContentHandler {
     /** Intermediately read string between two tags. */
     private StringBuilder str;
 
+    /** Intermediately read string between the SML tags. */
+    private StringBuilder strTag;
+
     /** The current tag prefix. */
     private Stack<String> tagprefixes;
 
@@ -60,6 +63,9 @@ public final class SmlInterpretationExtractor implements ContentHandler {
 
     /** The utterance. */
     private String utterance;
+
+    /** The tag for the utterance. */
+    private String utteranceTag;
 
     /** Confidence in the utterance. */
     private float confidence;
@@ -114,6 +120,7 @@ public final class SmlInterpretationExtractor implements ContentHandler {
             if (conf != null) {
                 confidence = Float.parseFloat(conf);
             }
+            strTag = new StringBuilder();
         } else {
             final StringBuilder tag = new StringBuilder();
             for (int i = 0; i < tagprefixes.size(); i++) {
@@ -147,7 +154,10 @@ public final class SmlInterpretationExtractor implements ContentHandler {
     public void endElement(final String uri, final String localName,
             final String qName)
             throws SAXException {
-        if (str != null) {
+        if (localName.equalsIgnoreCase("SML")) {
+            utteranceTag = strTag.toString().trim();
+            strTag = null;
+        } else  if (str != null) {
             final SmlInterpretation interpretation =
                     findInterpretation(localName);
             if (interpretation != null) {
@@ -183,6 +193,8 @@ public final class SmlInterpretationExtractor implements ContentHandler {
             throws SAXException {
         if (str != null) {
             str.append(ch, start, length);
+        } else if (strTag != null) {
+            strTag.append(ch, start, length);
         }
     }
 
@@ -215,6 +227,14 @@ public final class SmlInterpretationExtractor implements ContentHandler {
      */
     public String getUtterance() {
         return utterance;
+    }
+
+    /**
+     * Retrieves the tag for the utterance.
+     * @return tag for the utterance
+     */
+    public String getUtteranceTag() {
+        return utteranceTag;
     }
 
     /**
