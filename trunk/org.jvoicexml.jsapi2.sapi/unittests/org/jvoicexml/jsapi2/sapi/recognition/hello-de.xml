@@ -1,19 +1,20 @@
 <grammar mode="voice" xml:lang="de" version="1.0" root="greeting" 
-xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics-ms/1.0">
+xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0">
 
 	<rule id="greeting" scope="public">
 		<item repeat="0-1">
 			<one-of>
-				<item> Guten Morgen </item>
-				<item> Hallo </item>
+				<item> Guten Morgen <tag>out.greet = "morning";</tag></item>
+				<item> Hallo <tag>out.greet = "general";</tag></item>
 			</one-of>
 		</item>
 		<item>
 			<one-of>
-				<item> Dirk 	</item>
+				<item> Dirk 	<tag>out.who = "Master";</tag></item>
 				<item> David 	</item>
 				<item> Renato 	</item>
 				<item> Josua 	</item>
+                
 			</one-of>
 		</item>
 	</rule>

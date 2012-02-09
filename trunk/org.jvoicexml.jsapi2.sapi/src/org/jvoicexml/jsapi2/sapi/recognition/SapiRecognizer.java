@@ -341,7 +341,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         result.setTokens(rtoken);
 
         /** iterate through tags and set resultTags */
-        Hashtable<Integer, SsmlInterpretation> vInterpretation =
+        Hashtable<Integer, SmlInterpretation> vInterpretation =
             result.getInterpretation();
                                
         Set<Integer> ksInterpretation = vInterpretation.keySet();
@@ -359,7 +359,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 //        }
         String[] tags = new String[vInterpretation.size()];
         for (int i = 0; it.hasNext(); i++) {
-            SsmlInterpretation smlInterpretation = vInterpretation.get(it.next());
+            SmlInterpretation smlInterpretation = vInterpretation.get(it.next());
             String tag = smlInterpretation.getTag();
             String value = smlInterpretation.getValue();
             float confidence = smlInterpretation.getConfidence();
