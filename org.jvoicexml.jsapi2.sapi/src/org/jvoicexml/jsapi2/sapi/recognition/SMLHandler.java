@@ -58,7 +58,7 @@ public class SMLHandler implements DocHandler {
     public void text(String str) throws Exception {
         if(valueTrue == 1) { 
             result.setInterpretation( Integer.valueOf(count),
-                    new SsmlInterpretation(tag, str, conf));
+                    new SmlInterpretation(tag, str, conf));
             valueTrue = 0;
         }       
     }

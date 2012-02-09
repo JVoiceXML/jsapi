@@ -41,7 +41,7 @@ import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 @SuppressWarnings("serial")
 public final class SapiResult extends BaseResult  {
     /** The semantic interpretation of the utterance. */
-    private Hashtable<Integer, SsmlInterpretation> interpretation;
+    private Hashtable<Integer, SmlInterpretation> interpretation;
 
     /** The received utterance. */
     private String utterance;
@@ -58,7 +58,7 @@ public final class SapiResult extends BaseResult  {
     public SapiResult() {
         setSsml(null);
         utterance = null;
-        interpretation = new Hashtable<Integer, SsmlInterpretation>(3);
+        interpretation = new Hashtable<Integer, SmlInterpretation>(3);
     }
 
     public float getConfidence() {
@@ -77,7 +77,7 @@ public final class SapiResult extends BaseResult  {
         this.utterance=utterance;
     }
 
-    public void setInterpretation(Integer number, SsmlInterpretation interp) {
+    public void setInterpretation(Integer number, SmlInterpretation interp) {
         interpretation.put(number, interp);
     }
     
@@ -110,7 +110,7 @@ public final class SapiResult extends BaseResult  {
             Enumeration<Integer> e = interpretation.keys();
             while (e.hasMoreElements()) {
                     Integer i = e.nextElement();
-                    SsmlInterpretation interp = interpretation.get(i);
+                    SmlInterpretation interp = interpretation.get(i);
                     result.append("tag"+i+" = '"+interp.getTag()+"="+interp.getValue()+"' ");
                     result.append("tag"+i+"Confidence ='"+interp.getConfidence()+"'");
                 }
