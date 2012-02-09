@@ -104,6 +104,43 @@ public final class SmlInterpretationExtractorTest {
     }
 
     /**
+     * Test case for multiple tags.
+     * @exception Exception
+     *            test failed
+     */
+    @Test
+    public void testMultipleTags() throws Exception {
+        final TransformerFactory factory = TransformerFactory.newInstance();
+        final Transformer transformer = factory.newTransformer();
+        final InputStream in =
+                SmlInterpretationExtractorTest.class.getResourceAsStream(
+                        "sml-multiple-tags.xml");
+        final Source source = new StreamSource(in);
+        final SmlInterpretationExtractor extractor =
+                new SmlInterpretationExtractor();
+        final Result result = new SAXResult(extractor);
+        transformer.transform(source, result);
+        Assert.assertEquals("Hello Dirk",
+                extractor.getUtterance());
+        Assert.assertEquals(0.6734907, extractor.getConfidence(),
+                MAX_CONFIDENCE_DIFF);
+        final List<SmlInterpretation> interpretations =
+                extractor.getInterpretations();
+        Assert.assertEquals(2, interpretations.size());
+        final SmlInterpretation greet = interpretations.get(0);
+        Assert.assertEquals("greet", greet.getTag());
+        Assert.assertEquals("general", greet.getValue());
+        Assert.assertEquals(2.069468E-02f, greet.getConfidence(),
+                MAX_CONFIDENCE_DIFF);
+        final SmlInterpretation who = interpretations.get(1);
+        Assert.assertEquals("who", who.getTag());
+        Assert.assertEquals("Projectmanager", who.getValue());
+        Assert.assertEquals(2.069468E-02f, who.getConfidence(),
+                MAX_CONFIDENCE_DIFF);
+        Assert.assertEquals("", extractor.getUtteranceTag());
+    }
+
+    /**
      * Test case for a compound object.
      * @exception Exception
      *            test failed
@@ -144,5 +181,4 @@ public final class SmlInterpretationExtractorTest {
                 MAX_CONFIDENCE_DIFF);
         Assert.assertEquals("", extractor.getUtteranceTag());
     }
-
 }
