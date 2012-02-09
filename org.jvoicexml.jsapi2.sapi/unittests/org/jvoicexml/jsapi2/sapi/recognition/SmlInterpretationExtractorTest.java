@@ -46,6 +46,30 @@ import org.junit.Test;
  *
  */
 public final class SmlInterpretationExtractorTest {
+    /**
+     * Test case for a compound object.
+     * @exception Exception
+     *            test failed
+     */
+    @Test
+    public void testSimple() throws Exception {
+        final TransformerFactory factory = TransformerFactory.newInstance();
+        final Transformer transformer = factory.newTransformer();
+        final InputStream in =
+                SmlInterpretationExtractorTest.class.getResourceAsStream(
+                        "sml-simple.xml");
+        final Source source = new StreamSource(in);
+        final SmlInterpretationExtractor extractor =
+                new SmlInterpretationExtractor();
+        final Result result = new SAXResult(extractor);
+        transformer.transform(source, result);
+        Assert.assertEquals("Hello Dirk",
+                extractor.getUtterance());
+        Assert.assertEquals(0.5100203, extractor.getConfidence(), 0.0001f);
+        final List<SmlInterpretation> interpretations =
+                extractor.getInterpretations();
+        Assert.assertEquals(0, interpretations.size());
+    }
 
     /**
      * Test case for a compound object.
