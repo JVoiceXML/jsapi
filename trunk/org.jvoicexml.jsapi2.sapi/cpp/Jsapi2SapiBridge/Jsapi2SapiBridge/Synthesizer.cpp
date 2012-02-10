@@ -243,7 +243,7 @@ HRESULT Synthesizer::Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& 
 						std::pair<std::wstring, int> phoneInfo =
                             std::make_pair<std::wstring, int>(phone, duration);
 						phoneInfos.push_back(phoneInfo);
-                        LOG4CPLUS_DEBUG(logger, _T("Phoneme '")
+						LOG4CPLUS_TRACE(logger, _T("Phoneme '")
                             << ipaPhoneWChar << _T("' id: ")
                             << (int) event.Phoneme() << _T(" duration: ")
                             << duration);
