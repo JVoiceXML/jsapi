@@ -29,6 +29,8 @@ import javax.speech.recognition.RuleComponent;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleToken;
 
+import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -151,7 +153,7 @@ public final class TestRecognizer implements ResultListener {
      */
     private String getLocaleGrammarName(final String base) {
         final Locale locale = Locale.getDefault();
-        final String country = locale.getLanguage();
+        final String country = "de"; //locale.getLanguage();
         return base + "-" + country + ".xml";
     }
 
@@ -423,6 +425,7 @@ public final class TestRecognizer implements ResultListener {
      */
     @Test
     public void testReportResult() throws Exception {
+        recognizer.addResultListener(this);
         final GrammarManager manager = recognizer.getGrammarManager();
         final String ruleName = "test";
         final RuleGrammar grammar =  manager.createRuleGrammar("grammar:test",
@@ -434,7 +437,16 @@ public final class TestRecognizer implements ResultListener {
         final SapiRecognizer sapiRecognizer = (SapiRecognizer) recognizer;
         recognizer.addResultListener(this);
         sapiRecognizer.reportResult(ruleName, utterance);
-    }
+        synchronized (lock) {
+            lock.wait();
+        }
+        String words = "";
+        final ResultToken[] tokens = result.getBestTokens();
+        for (int i = 0; i < tokens.length; i++) {
+            words += tokens[i].getText() + " ";
+        }
+        Assert.assertEquals("Hello Dirk ", words);
+}
     
     private String load(final String resource) throws IOException {
         final InputStream in = 
