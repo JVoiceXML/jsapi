@@ -166,7 +166,7 @@ public final class SmlInterpretationExtractorTest {
         Assert.assertEquals(3, interpretations.size());
         final SmlInterpretation order = interpretations.get(0);
         Assert.assertEquals("order", order.getTag());
-        Assert.assertNull(order.getValue());
+        Assert.assertEquals("new Object();", order.getValue());
         Assert.assertEquals(0.8131593f, order.getConfidence(),
                 MAX_CONFIDENCE_DIFF);
         final SmlInterpretation size = interpretations.get(1);

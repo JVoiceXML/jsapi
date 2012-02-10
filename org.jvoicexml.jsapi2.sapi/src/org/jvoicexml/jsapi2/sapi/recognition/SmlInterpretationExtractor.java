@@ -37,7 +37,8 @@ import org.xml.sax.SAXException;
 /**
  * Content handler to extract the SML interpretation from SML string.
  * <p>
- * SAPI Semantic markup language. The XML document returned by SAPI 6.0 when an
+ * SML stands for SAPI Semantic markup language which is the XML document
+ * returned by SAPI 6.0 when an
  * utterance is determined to be in-grammar. (SAPI SML is a SAPI-specific return
  * format. SALT interpreters are agnostic to the actual content format of the
  * returned document, provided it is an XML document).
@@ -131,6 +132,16 @@ public final class SmlInterpretationExtractor implements ContentHandler {
                 tag.append(tagprefix);
             }
             if (tag.length() != 0) {
+                SmlInterpretation higherLevelInterpretation =
+                    findInterpretation(tag.toString());
+                if (higherLevelInterpretation == null) {
+                    higherLevelInterpretation =
+                        new SmlInterpretation(tag.toString(), 0.0f);
+                    interpretations.add(higherLevelInterpretation);
+                }
+                if (higherLevelInterpretation.getValue() == null) {
+                    higherLevelInterpretation.setValue("new Object();");
+                }
                 tag.append('.');
             }
             tag.append(localName);
@@ -164,6 +175,8 @@ public final class SmlInterpretationExtractor implements ContentHandler {
                 interpretation.setValue(str.toString());
             }
             str = null;
+        }
+        if (!tagprefixes.isEmpty()) {
             tagprefixes.pop();
         }
     }
