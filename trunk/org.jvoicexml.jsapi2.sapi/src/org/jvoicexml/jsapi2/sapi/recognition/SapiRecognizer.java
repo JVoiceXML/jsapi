@@ -27,9 +27,11 @@
 package org.jvoicexml.jsapi2.sapi.recognition;
 
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -47,6 +49,12 @@ import javax.speech.recognition.RecognizerProperties;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultToken;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
@@ -221,8 +229,8 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         final String[] grammarSources = new String[grammars.length];
         final String[] grammarReferences = new String[grammars.length];
         int i = 0;
-        
-        if(LOGGER.isLoggable(Level.FINE)){
+
+        if (LOGGER.isLoggable(Level.FINE)) {
             for (Grammar grammar : grammars) {
                 LOGGER.log(Level.FINE, "Activate Grammar: {0}",
                         grammar.getReference());
@@ -292,7 +300,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
         return;
     }
-    
+
     /**
      * Callback of the SAPI recognizer if the recognition succeeded.
      * @param ruleName name of the rule matching the utterance
@@ -306,16 +314,17 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         }
         result.setSsml(utterance);
 
-        /** parse our tags from SML */
-        final SMLHandler handler = new SMLHandler(result);
-        final StringReader readerSML = new StringReader(utterance);
-        final QDParser parser = new QDParser();
+        // parse our tags from SML
+        final SmlInterpretationExtractor extractor;
         try {
-            parser.parse(handler, readerSML);
-        } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "error parsing SML: {0}", e.getMessage());
+            extractor = parseSml(utterance);
+        } catch (TransformerException ex) {
+            LOGGER.log(Level.WARNING, "error parsing SML: {0}",
+                    ex.getMessage());
+            final EngineException ee = new EngineException(ex.getMessage());
+            postEngineException(ee);
+            return;
         }
-
         // Check if the utterance was only noise 
         if (utterance.equals("...")) { 
             if (LOGGER.isLoggable(Level.FINE)) {
@@ -333,46 +342,44 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         }
 
         // set recognized tokens
-        final String[] utteranceTok = result.getUtterance().split(" ");
+        final String[] utteranceTok = extractor.getUtterance().split(" ");
         final ResultToken[] rtoken = new ResultToken[utteranceTok.length];
         for (int i = 0; i < rtoken.length; i++) {
             rtoken[i] = new BaseResultToken(result, utteranceTok[i]);
         }
         result.setTokens(rtoken);
 
-        /** iterate through tags and set resultTags */
-        Hashtable<Integer, SmlInterpretation> vInterpretation =
-            result.getInterpretation();
-                               
-        Set<Integer> ksInterpretation = vInterpretation.keySet();
-        Iterator<Integer> it = ksInterpretation.iterator();
-//        RuleTag[] ruleTag = new RuleTag[vInterpretation.size()];
-//        for(int i = 0; it.hasNext(); i++) {
-//            SsmlInterpretation smlInterpretation = vInterpretation.get(it.next());
-//            String tag = smlInterpretation.getTag();
-//            String value = smlInterpretation.getValue();
-//            float confidence = smlInterpretation.getConfidence();
-//            if (value.isEmpty())
-//                ruleTag[i] = new RuleTag(tag); // tags like <tag>FOO</tag>
-//            else
-//                ruleTag[i] = new RuleTag(tag + "=" + value); //tags like <tag>FOO="bar"</tag>
-//        }
-        String[] tags = new String[vInterpretation.size()];
-        for (int i = 0; it.hasNext(); i++) {
-            SmlInterpretation smlInterpretation = vInterpretation.get(it.next());
-            String tag = smlInterpretation.getTag();
-            String value = smlInterpretation.getValue();
-            float confidence = smlInterpretation.getConfidence();
+        // iterate through tags and set resultTags
+        final List<SmlInterpretation> interpretations =
+                extractor.getInterpretations();
+        final String[] tags;
+        int i = 0;
+        final String utteranceTag = extractor.getUtteranceTag();
+        if (extractor.getUtteranceTag().isEmpty()
+                || utteranceTag.equals(utterance)) {
+            tags = new String[interpretations.size()];
+        } else {
+            tags = new String[interpretations.size() + 1];
+            tags[i] = utteranceTag;
+            i++;
+        }
+        for (SmlInterpretation interpretation : interpretations) {
+            final String tag = interpretation.getTag();
+            final String value = interpretation.getValue();
             
-            tags[i] = tag; //SRGS-tags like <tag>FOO</tag>
+            // SRGS-tags like <tag>FOO</tag>
+            tags[i++] = tag; 
             
-            //for the time being, a help tag is of the form "*.help = 'help'", e.g. "out.help = 'help'"
-            boolean specialTag = (
-                        (tag.equalsIgnoreCase("help") && value.equalsIgnoreCase("help")) ||
-                        (tag.equalsIgnoreCase("cancel") && value.equalsIgnoreCase("cancel"))
-                    );
+            // for the time being, a help tag is of the form "*.help = 'help'",
+            // e.g. "out.help = 'help'"
+            boolean specialTag =  
+               (tag.equalsIgnoreCase("help")
+                       && value.equalsIgnoreCase("help"))
+               || (tag.equalsIgnoreCase("cancel")
+                       && value.equalsIgnoreCase("cancel"));
+          // SRGS-tags like <tag>FOO="bar"</tag>
             if (!specialTag && !value.isEmpty()) {
-                    tags[i] += "=" + value; //SRGS-tags like <tag>FOO="bar"</tag>
+                    tags[i] += "=" + value; 
             }
         }
         result.setTags(tags);
@@ -401,26 +408,29 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED);
         postResultEvent(grammarFinalized);
 
-        /** set the confidenceLevel */
+        // set the confidenceLevel
         //map the actual confidence ([0; 1] (float)) to a new Integer-Value in javax.speech's range [MIN_CONFIDENCE; MAX_CONFIDENCE]
         // e.g. be MAX_CONFIDENCE = 20; MIN_CONFIDENCE = -10;
         // then, a value of 0.4f from the Recognizer (working in [0; 1]) should be mapped to +2 (in [-10; 20])
         // [because +2 is 2/5th of the complete RecognizerProperties' range]
         
         //get the whole range (in the example above => 20 - -10 = 30;
-        int range = RecognizerProperties.MAX_CONFIDENCE - RecognizerProperties.MIN_CONFIDENCE;
+        int range = RecognizerProperties.MAX_CONFIDENCE
+                - RecognizerProperties.MIN_CONFIDENCE;
         
-        //set the value and shift it (again, with the sample above: set the value to +12 from [0; 30] and shift it to +2 [-10; 20]
+        //set the value and shift it (again, with the sample above: set the
+        // value to +12 from [0; 30] and shift it to +2 [-10; 20]
         float confTmp = (result.getConfidence() * range)
             + RecognizerProperties.MIN_CONFIDENCE;
         int resultconfidenceLevel = Math.round(confTmp);
         result.setConfidenceLevel(resultconfidenceLevel);
 
-        /** if the actual confidenceLevel is below the required one, reject the result */
+        // if the actual confidenceLevel is below the required one, reject the
+        // result
         int minConfidenceLevel = recognizerProperties.getConfidenceThreshold(); 
-        if( resultconfidenceLevel < minConfidenceLevel){
+        if (resultconfidenceLevel < minConfidenceLevel) {
             result.setResultState(Result.REJECTED);
-            if(LOGGER.isLoggable(Level.FINE)){
+            if (LOGGER.isLoggable(Level.FINE)) {
                 LOGGER.log(Level.FINE,
                         "Result confidence too low, new ResultState: ''{0}''",
                         result.getResultState());
@@ -436,6 +446,26 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                         ResultEvent.RESULT_ACCEPTED, false, false);
             postResultEvent(accepted);
         }
+    }
+
+    /**
+     * Parses the given SML string.
+     * @param sml the SML to parse
+     * @return the parsed information
+     * @throws TransformerException
+     *         error parsing
+     */
+    private SmlInterpretationExtractor parseSml(final String sml)
+            throws TransformerException {
+        final TransformerFactory factory = TransformerFactory.newInstance();
+        final Transformer transformer = factory.newTransformer();
+        final Reader reader = new StringReader(sml);
+        final Source source = new StreamSource(reader);
+        final SmlInterpretationExtractor extractor =
+                new SmlInterpretationExtractor();
+        final javax.xml.transform.Result result = new SAXResult(extractor);
+        transformer.transform(source, result);
+        return extractor;
     }
 
     /**
