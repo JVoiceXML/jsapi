@@ -132,16 +132,6 @@ public final class SmlInterpretationExtractor implements ContentHandler {
                 tag.append(tagprefix);
             }
             if (tag.length() != 0) {
-                SmlInterpretation higherLevelInterpretation =
-                    findInterpretation(tag.toString());
-                if (higherLevelInterpretation == null) {
-                    higherLevelInterpretation =
-                        new SmlInterpretation(tag.toString(), 0.0f);
-                    interpretations.add(higherLevelInterpretation);
-                }
-                if (higherLevelInterpretation.getValue() == null) {
-                    higherLevelInterpretation.setValue("new Object();");
-                }
                 tag.append('.');
             }
             tag.append(localName);
