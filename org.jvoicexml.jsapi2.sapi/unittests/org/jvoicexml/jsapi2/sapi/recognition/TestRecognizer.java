@@ -3,8 +3,11 @@ package org.jvoicexml.jsapi2.sapi.recognition;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOError;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.logging.ConsoleHandler;
@@ -22,6 +25,7 @@ import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.ResultToken;
+import javax.speech.recognition.RuleGrammar;
 
 import org.junit.After;
 import org.junit.Before;
@@ -110,7 +114,7 @@ public final class TestRecognizer implements ResultListener {
      * @throws Exception
      *         test failed.
      */
-    @Test
+//    @Test
     public void testRecognize() throws Exception {
         recognizer.addResultListener(this);
 
@@ -403,10 +407,41 @@ public final class TestRecognizer implements ResultListener {
         }
         if (event.getId() == ResultEvent.RESULT_REJECTED) {
             
-            recognizer.pause();                      
+            recognizer.pause();
             recognizer.requestFocus();
             recognizer.resume();
             System.out.println("Recognition confidence was too low. Please try again ...");            
         }    
+    }
+
+    /**
+     * Test method for {@link SapiRecognizer#reportResult(String, String)}.
+     * @exception Exception
+     *            test failed
+     */
+    @Test
+    public void testReportResult() throws Exception {
+        final GrammarManager manager = recognizer.getGrammarManager();
+        final RuleGrammar grammar =  manager.createRuleGrammar("test", "test");
+        final String rule = "test";
+        final String utterance = load("sml-simple.xml");
+        final SapiRecognizer sapiRecognizer = (SapiRecognizer) recognizer;
+        recognizer.addResultListener(this);
+        sapiRecognizer.reportResult(rule, utterance);
+    }
+    
+    private String load(final String resource) throws IOException {
+        final InputStream in = 
+                TestRecognizer.class.getResourceAsStream("sml-simple.xml");
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int num;
+        byte[] buffer = new byte[1024];
+        do {
+            num = in.read(buffer);
+            if (num > 0) {
+                out.write(buffer, 0, num);
+            }
+        } while (num >= 0);
+        return out.toString();
     }
 }
