@@ -29,10 +29,7 @@ package org.jvoicexml.jsapi2.sapi.recognition;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -362,7 +359,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         final String[] tags;
         int i = 0;
         final String utteranceTag = extractor.getUtteranceTag();
-        if (extractor.getUtteranceTag().isEmpty()
+        if (utteranceTag.isEmpty()
                 || utteranceTag.equals(spokenWords)) {
             tags = new String[interpretations.size()];
         } else {
@@ -375,7 +372,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             final String value = interpretation.getValue();
             
             // SRGS-tags like <tag>FOO</tag>
-            tags[i++] = tag; 
+            tags[i] = tag; 
             
             // for the time being, a help tag is of the form "*.help = 'help'",
             // e.g. "out.help = 'help'"
@@ -384,10 +381,11 @@ public final class SapiRecognizer extends JseBaseRecognizer {
                        && value.equalsIgnoreCase("help"))
                || (tag.equalsIgnoreCase("cancel")
                        && value.equalsIgnoreCase("cancel"));
-          // SRGS-tags like <tag>FOO="bar"</tag>
-            if (!specialTag && !value.isEmpty()) {
+            // SRGS-tags like <tag>FOO="bar"</tag>
+            if (!specialTag && (value != null) && !value.isEmpty()) {
                     tags[i] += "=" + value; 
             }
+            i++;
         }
         result.setTags(tags);
         
