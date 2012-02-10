@@ -102,8 +102,8 @@ final class SapiRecognitionThread extends Thread {
         case RECOGNITION_ABORTED:
             break;
         default:
-            LOGGER.log(Level.WARNING, "Unknown returnvalue: {0}",
-                    returnValue);
+            LOGGER.log(Level.WARNING, "Unknown return value: {0}",
+                   Integer.toHexString(returnValue));
             break;
         }
     }

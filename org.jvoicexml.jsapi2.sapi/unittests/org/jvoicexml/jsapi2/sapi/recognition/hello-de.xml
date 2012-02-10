@@ -4,13 +4,12 @@ xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0">
 	<rule id="greeting" scope="public">
 		<item repeat="0-1">
 			<one-of>
-				<item> Guten Morgen <tag>out.greet = "morning";</tag></item>
-				<item> Hallo <tag>out.greet = "general";</tag></item>
+				<item> Guten Morgen </item>
 			</one-of>
 		</item>
 		<item>
 			<one-of>
-				<item> Dirk 	<tag>out.who = "Master";</tag></item>
+				<item> Dirk 	</item>
 				<item> David 	</item>
 				<item> Renato 	</item>
 				<item> Josua 	</item>
