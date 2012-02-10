@@ -26,13 +26,9 @@
 
 package org.jvoicexml.jsapi2.sapi.recognition;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
-
 import javax.speech.recognition.ResultToken;
 
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
-import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 
 /**
  * A recognition result from the SAPI engine.
@@ -40,25 +36,21 @@ import org.jvoicexml.jsapi2.recognition.BaseResultToken;
  */
 @SuppressWarnings("serial")
 public final class SapiResult extends BaseResult  {
-    /** The semantic interpretation of the utterance. */
-    private Hashtable<Integer, SmlInterpretation> interpretation;
-
     /** The received utterance. */
     private String utterance;
-    
+
     /** The received utterance. */
-    private String ssml;
-    
+    private String sml;
+
     /** The received utterance. */
     private float confidence;
-    
+
     /**
      * Constructs a new object.
      */
     public SapiResult() {
-        setSsml(null);
+        setSml(null);
         utterance = null;
-        interpretation = new Hashtable<Integer, SmlInterpretation>(3);
     }
 
     public float getConfidence() {
@@ -77,20 +69,12 @@ public final class SapiResult extends BaseResult  {
         this.utterance=utterance;
     }
 
-    public void setInterpretation(Integer number, SmlInterpretation interp) {
-        interpretation.put(number, interp);
-    }
-    
-    public Hashtable getInterpretation() {
-        return interpretation;
+    public void setSml(String ssml) {
+        this.sml = ssml;
     }
 
-    public void setSsml(String ssml) {
-        this.ssml = ssml;
-    }
-
-    public String getSsml() {
-        return ssml;
+    public String getSml() {
+        return sml;
     }
     
     public void setTags(String[] tags) {
@@ -102,48 +86,25 @@ public final class SapiResult extends BaseResult  {
      */
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder();
-        result.append("SapiResult : text = '" + utterance + "' ");
-        result.append("Confidence = '" + confidence + "' ");
-        
-        if (!interpretation.isEmpty()) {
-            Enumeration<Integer> e = interpretation.keys();
-            while (e.hasMoreElements()) {
-                    Integer i = e.nextElement();
-                    SmlInterpretation interp = interpretation.get(i);
-                    result.append("tag"+i+" = '"+interp.getTag()+"="+interp.getValue()+"' ");
-                    result.append("tag"+i+"Confidence ='"+interp.getConfidence()+"'");
-                }
-        }
-        
-        return result.toString();
+        final StringBuilder str = new StringBuilder();
+        str.append(SapiResult.class.getCanonicalName());
+        str.append('[');
+        str.append(utterance);
+        str.append(',');
+        str.append(confidence);
+        str.append(',');
+        str.append(sml);
+        str.append(',');
+        str.append(tags);
+        str.append(']');
+        return str.toString();
     }
 
-    public boolean createResultTokens() {
-        if (null == utterance) {
-            //there HAS to be some tokens in a result token
-            return false;
-        } else {
-            String[] tokens = utterance.split(" ");
-            ResultToken[] resTokens = new ResultToken[tokens.length];
-            int i = 0;
-            for(String token : tokens) {
-                resTokens[i++] = new BaseResultToken(this, token);
-            }
-            setTokens(resTokens);
-            setNumTokens(resTokens.length);
-            return true;
-        }
-    }
-    
-    public boolean createResultTokens(String utterance) {
-        this.utterance = utterance;
-        return createResultTokens();
-    }
-        
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResultToken[] getUnfinalizedTokens() {
-        // TODO Auto-generated method stub
         return null;
     }
 }

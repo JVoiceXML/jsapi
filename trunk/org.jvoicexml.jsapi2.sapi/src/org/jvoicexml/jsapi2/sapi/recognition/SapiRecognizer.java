@@ -309,7 +309,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "SML Result String : {0}", utterance);
         }
-        result.setSsml(utterance);
+        result.setSml(utterance);
 
         // parse our tags from SML
         final SmlInterpretationExtractor extractor;
