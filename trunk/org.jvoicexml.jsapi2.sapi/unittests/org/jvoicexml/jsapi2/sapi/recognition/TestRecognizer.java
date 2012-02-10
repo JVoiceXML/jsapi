@@ -6,7 +6,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -25,7 +24,10 @@ import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.ResultToken;
+import javax.speech.recognition.Rule;
+import javax.speech.recognition.RuleComponent;
 import javax.speech.recognition.RuleGrammar;
+import javax.speech.recognition.RuleToken;
 
 import org.junit.After;
 import org.junit.Before;
@@ -114,7 +116,7 @@ public final class TestRecognizer implements ResultListener {
      * @throws Exception
      *         test failed.
      */
-//    @Test
+    @Test
     public void testRecognize() throws Exception {
         recognizer.addResultListener(this);
 
@@ -149,7 +151,7 @@ public final class TestRecognizer implements ResultListener {
      */
     private String getLocaleGrammarName(final String base) {
         final Locale locale = Locale.getDefault();
-        final String country = "de"; //locale.getLanguage();
+        final String country = locale.getLanguage();
         return base + "-" + country + ".xml";
     }
 
@@ -159,7 +161,7 @@ public final class TestRecognizer implements ResultListener {
      * @throws Exception
      *         test failed.
      */
-//    @Test
+    @Test
     public void testRecognizePause() throws Exception {
         /* timeout for enginestate change requests */
         int timeOut = 3000;
@@ -217,7 +219,7 @@ public final class TestRecognizer implements ResultListener {
      * @throws Exception
      *         test failed.
      */
-//    @Test
+    @Test
     public void testRecognizeResume() throws Exception {
         recognizer.addResultListener(this);
 
@@ -295,7 +297,7 @@ public final class TestRecognizer implements ResultListener {
      * @throws Exception
      *         test failed.
      */
-//    @Test
+    @Test
     public void testRecognize2Grammars() throws Exception {
         recognizer.addResultListener(this);
 
@@ -351,7 +353,7 @@ public final class TestRecognizer implements ResultListener {
      * @throws Exception
      *         test failed.
      */
-//    @Test
+    @Test
     public void testSetGrammarContent() throws Exception {
                 
         recognizer.addResultListener(this);
@@ -422,12 +424,16 @@ public final class TestRecognizer implements ResultListener {
     @Test
     public void testReportResult() throws Exception {
         final GrammarManager manager = recognizer.getGrammarManager();
-        final RuleGrammar grammar =  manager.createRuleGrammar("test", "test");
-        final String rule = "test";
+        final String ruleName = "test";
+        final RuleGrammar grammar =  manager.createRuleGrammar("grammar:test",
+                ruleName);
+        final RuleComponent hello = new RuleToken("Hello Dirk");
+        final Rule rule = new Rule("test", hello);
+        grammar.addRule(rule);
         final String utterance = load("sml-simple.xml");
         final SapiRecognizer sapiRecognizer = (SapiRecognizer) recognizer;
         recognizer.addResultListener(this);
-        sapiRecognizer.reportResult(rule, utterance);
+        sapiRecognizer.reportResult(ruleName, utterance);
     }
     
     private String load(final String resource) throws IOException {

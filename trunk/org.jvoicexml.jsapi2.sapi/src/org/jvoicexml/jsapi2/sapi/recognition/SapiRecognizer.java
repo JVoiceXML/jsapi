@@ -325,6 +325,12 @@ public final class SapiRecognizer extends JseBaseRecognizer {
             postEngineException(ee);
             return;
         }
+
+        // Copy basic values
+        final String spokenWords = extractor.getUtterance();
+        result.setUtterance(spokenWords);
+        final float confidence = extractor.getConfidence();
+
         // Check if the utterance was only noise 
         if (utterance.equals("...")) { 
             if (LOGGER.isLoggable(Level.FINE)) {
@@ -342,12 +348,13 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         }
 
         // set recognized tokens
-        final String[] utteranceTok = extractor.getUtterance().split(" ");
-        final ResultToken[] rtoken = new ResultToken[utteranceTok.length];
-        for (int i = 0; i < rtoken.length; i++) {
-            rtoken[i] = new BaseResultToken(result, utteranceTok[i]);
+        result.setConfidence(confidence);
+        final String[] utteranceTok = spokenWords.split(" ");
+        final ResultToken[] token = new ResultToken[utteranceTok.length];
+        for (int i = 0; i < token.length; i++) {
+            token[i] = new BaseResultToken(result, utteranceTok[i]);
         }
-        result.setTokens(rtoken);
+        result.setTokens(token);
 
         // iterate through tags and set resultTags
         final List<SmlInterpretation> interpretations =
@@ -356,7 +363,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
         int i = 0;
         final String utteranceTag = extractor.getUtteranceTag();
         if (extractor.getUtteranceTag().isEmpty()
-                || utteranceTag.equals(utterance)) {
+                || utteranceTag.equals(spokenWords)) {
             tags = new String[interpretations.size()];
         } else {
             tags = new String[interpretations.size() + 1];
