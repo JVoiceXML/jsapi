@@ -27,6 +27,7 @@ import javax.speech.recognition.ResultToken;
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleComponent;
 import javax.speech.recognition.RuleGrammar;
+import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
 
 import junit.framework.Assert;
@@ -446,8 +447,46 @@ public final class TestRecognizer implements ResultListener {
             words += tokens[i].getText() + " ";
         }
         Assert.assertEquals("Hello Dirk ", words);
+    }
+
+    /**
+     * Test method for {@link SapiRecognizer#reportResult(String, String)}.
+     * @exception Exception
+     *            test failed
+     */
+    @Test
+    public void testReportResultMultipleTags() throws Exception {
+        recognizer.addResultListener(this);
+        final GrammarManager manager = recognizer.getGrammarManager();
+        final String ruleName = "test";
+        final RuleGrammar grammar =  manager.createRuleGrammar("grammar:test",
+                ruleName);
+        final RuleComponent hello = new RuleToken("Hello");
+        final RuleTag helloTag = new RuleTag("out=\"general\";");
+        final Rule rule = new Rule("test", hello);
+        grammar.addRule(rule);
+        final String utterance = load("sml-multiple-tags.xml");
+        final SapiRecognizer sapiRecognizer = (SapiRecognizer) recognizer;
+        recognizer.addResultListener(this);
+        sapiRecognizer.reportResult(ruleName, utterance);
+        synchronized (lock) {
+            lock.wait();
+        }
+        String words = "";
+        final ResultToken[] tokens = result.getBestTokens();
+        for (int i = 0; i < tokens.length; i++) {
+            words += tokens[i].getText() + " ";
+        }
+        Assert.assertEquals("Hello Dirk ", words);
 }
     
+    /**
+     * Loads the given resource as a string.
+     * @param resource the name of the resource to load
+     * @return contents of the resource
+     * @throws IOException
+     *         error loading the resource
+     */
     private String load(final String resource) throws IOException {
         final InputStream in = 
                 TestRecognizer.class.getResourceAsStream("sml-simple.xml");
