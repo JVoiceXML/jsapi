@@ -1,5 +1,5 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
+ * File:    $HeadURL$
  * Version: $LastChangedRevision$
  * Date:    $LastChangedDate $
  * Author:  $LastChangedBy$
@@ -89,6 +89,8 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
      *         error opening the stream
      */
     private InputStream openUrl(final String locator) throws AudioException {
+        targetAudioFormat = null;
+        
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "opening locator at: '" + locator + "'");
         }
@@ -107,7 +109,13 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
         }
         if (targetAudioFormat == null) {
             try {
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE, "AudioFormat is unknown. Trying to parse URI query...");
+                
                 targetAudioFormat = JavaSoundParser.parse(url);
+                
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.log(Level.FINE, "... Got AudioFormat: {0}", targetAudioFormat.toString());
             } catch (URISyntaxException e) {
                 throw new AudioException(e.getMessage());
             }
@@ -132,10 +140,11 @@ public class BaseRecognizerAudioManager extends JseBaseAudioManager {
      * {@inheritDoc}
      */
     public void handleAudioStart() throws AudioException {
-        // Just convert samples if we already hava the correct stream
+        // Just convert samples if we already have the correct stream
         if (inputStream instanceof AudioInputStream) {
             final AudioInputStream stream = (AudioInputStream)inputStream;
             inputStream = getConvertedStream(stream);
+            targetAudioFormat = stream.getFormat();
             return;
         }
 
