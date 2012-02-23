@@ -284,7 +284,12 @@ HRESULT Synthesizer::Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& 
         return hr;
     }
     SAFEARRAY* sa = c.parray;
-    SafeArrayGetUBound(sa, 1, &size);
+	long lstart;
+	long lend;
+	SafeArrayGetLBound(sa, 1, &lstart);
+	SafeArrayGetUBound(sa, 1, &lend);
+	size = lend - lstart + 1;
+
     buffer = new byte[size];
     memcpy(buffer, sa->pvData, size * sizeof(byte));
     return S_OK;
