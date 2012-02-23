@@ -31,8 +31,21 @@ public final class JavaSoundParser {
     public static final int DEFAULT_SAMPLE_RATE = 16000;
 
     /** Number of bits per byte. */
-    private static final int BITS_PER_BYTE = 16;
+    private static final int BITS_PER_BYTE = 8;
+    
+    /** Constant for a signed byte stream. */
+    private static final String SIGNED = "signed";
+    
+    /** Constant for an unsigned byte stream. */
+    private static final String UNSIGNED = "unsigned";
+    
+    /** Constant for big-endian byte order. */
+    private static final String BIG_ENDIAN = "big";
+    
+    /** Constant for little-endian byte order. */
+    private static final String LITTLE_ENDIAN = "little";
 
+    
     /**
      * Prevent construction from outside.
      */
@@ -70,7 +83,11 @@ public final class JavaSoundParser {
         // Change default values as specified
         final String signedStr = parameters.get("signed");
         if (signedStr != null) {
-            signed = Boolean.valueOf(signedStr);
+            if (signedStr.equalsIgnoreCase(UNSIGNED) || signedStr.equalsIgnoreCase(Boolean.FALSE.toString()))
+                signed = false;
+            else
+                if (signedStr.equalsIgnoreCase(SIGNED) || Boolean.valueOf(signedStr))
+                    signed = true;
         }
 
         final String encodingStr = parameters.get("encoding");
@@ -108,15 +125,15 @@ public final class JavaSoundParser {
 
         final String endianStr = parameters.get("endian");
         if (endianStr != null) {
-            if (endianStr.equals("little")) {
+            if (endianStr.equalsIgnoreCase(LITTLE_ENDIAN)) {
                 endian = false;
-            } else if (endianStr.equals("big")) {
+            } else if (endianStr.equalsIgnoreCase(BIG_ENDIAN)) {
                 endian = true;
             }
         }
 
         // Construct the AudioFormat
         return new AudioFormat(encoding, sampleRate,
-                bits, channels, bits / BITS_PER_BYTE, sampleRate, endian);
+                bits, channels, channels * bits / BITS_PER_BYTE, sampleRate, endian);
     }
 }
