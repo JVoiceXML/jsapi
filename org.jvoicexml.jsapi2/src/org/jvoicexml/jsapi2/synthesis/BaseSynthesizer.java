@@ -423,7 +423,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     abstract protected boolean handleResume();
 
     /**
-     * Speak the item with the given id.
+     * Speaks the item with the given id.
      * <p>
      * Implementations synthesize the text to speak and make it available
      * via an {@link java.io.InputStream}. This input stream is used to
@@ -439,7 +439,7 @@ public abstract class BaseSynthesizer extends BaseEngine
             final String item);
 
     /**
-     * Speak the SSML item with the given id.
+     * Speaks the SSML item with the given id.
      * <p>
      * Implementations synthesize the text to speak and make it available
      * via an {@link java.io.InputStream}. This input stream is used to
