@@ -28,7 +28,6 @@ package org.jvoicexml.jsapi2.synthesis;
 
 import javax.speech.AudioSegment;
 import javax.speech.synthesis.SpeakableEvent;
-import javax.speech.synthesis.SpeakableListener;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
