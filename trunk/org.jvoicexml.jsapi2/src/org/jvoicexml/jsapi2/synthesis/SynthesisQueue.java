@@ -171,19 +171,19 @@ class SynthesisQueue implements Runnable {
     }
 
     /**
-     * Cancels the current item.
+     * Cancels the first item in the queue.
      * @return <code>true</code> if an item was removed from the queue
      */
-    protected boolean cancelItem() {
-        if (queue.size() != 0) {
-            QueueItem item = (QueueItem) queue.elementAt(0);
-            this.queueManager.synthesizer.postSpeakableEvent(new SpeakableEvent(item
-                    .getSource(), SpeakableEvent.SPEAKABLE_CANCELLED, item
-                    .getId()), item.getListener());
-            queue.removeElementAt(0);
+    protected boolean cancelFirstItem() {
+        synchronized (queue) {
+            if (queue.size() == 0) {
+                return false;
+            }
+            // Get the data of the first item for the notification
+            final QueueItem item = (QueueItem) queue.elementAt(0);
+            cancelItem(item);
             return true;
         }
-        return false;
     }
 
     /**
@@ -198,22 +198,23 @@ class SynthesisQueue implements Runnable {
             if (item == null) {
                 return false;
             }
-            for (int i = 0; i < queue.size(); ++i) {
-                if (item.getId() == id) {
-                    final Object source = item.getSource();
-                    final SpeakableListener listener = item.getListener();
-                    final SpeakableEvent event = new SpeakableEvent(
-                            source, SpeakableEvent.SPEAKABLE_CANCELLED,
-                            id);
-                    this.queueManager.synthesizer.postSpeakableEvent(event, listener);
-                    queue.removeElementAt(i);
-                    // TODO cancel the playback in the synthesizer
-                    return true;
-                }
-            }
+            cancelItem(item);
+            return true;
         }
+    }
 
-        return false;
+    /**
+     * Removes the given item from the queue and sends the corresponding event.
+     * @param item the item to remove.
+     */
+    private void cancelItem(final QueueItem item) {
+        final int id = item.getId();
+        final Object source = item.getSource();
+        final SpeakableListener listener = item.getListener();
+        final SpeakableEvent event = new SpeakableEvent(
+                source, SpeakableEvent.SPEAKABLE_CANCELLED, id);
+        this.queueManager.synthesizer.postSpeakableEvent(event, listener);
+        queue.removeElement(item);
     }
 
     /**
@@ -322,6 +323,6 @@ class SynthesisQueue implements Runnable {
                      item.getClass().getName()));
         }
 
-        this.queueManager.setAudioSegment(id, segment);
+        queueManager.setAudioSegment(id, segment);
     }
 }

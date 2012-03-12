@@ -72,4 +72,55 @@ public class SynthesisQueueTest extends TestCase {
         queue.removeQueueItem(secondItem);
     }
 
+    /**
+     * Test method for {@link SynthesisQueue#getQueueItem(int)}.
+     */
+    public void testGetQueueItem() {
+        final AudioSegment segment1 =
+                new AudioSegment("http://localhost", "test"); 
+        final AudioSegment segment2 =
+                new AudioSegment("http://foreignhost", "test2"); 
+        final int firstId = queue.appendItem(segment1, null);
+        final int secondId = queue.appendItem(segment2, null);
+        final QueueItem item1 = queue.getQueueItem(firstId);
+        Assert.assertEquals(segment1, item1.getAudioSegment());
+        final QueueItem item2 = queue.getQueueItem(secondId);
+        Assert.assertEquals(segment2, item2.getAudioSegment());
+        final QueueItem item3 = queue.getQueueItem(-1);
+        Assert.assertNull(item3);
+    }
+
+    /**
+     * Test method for {@link SynthesisQueue#isQueueEmpty()}.
+     */
+    public void testIsQueueEmpty() {
+        Assert.assertTrue(queue.isQueueEmpty());
+        final AudioSegment segment1 =
+                new AudioSegment("http://localhost", "test");
+        final int id = queue.appendItem(segment1, null);
+        Assert.assertFalse(queue.isQueueEmpty());
+        final QueueItem item = queue.getQueueItem(id);
+        queue.removeQueueItem(item);
+        Assert.assertTrue(queue.isQueueEmpty());
+    }
+
+    /**
+     * Test method for {@link SynthesisQueue#cancelFirstItem()},
+     */
+    public void testCancelFirstItem() {
+        Assert.assertTrue(queue.isQueueEmpty());
+        final AudioSegment segment1 =
+                new AudioSegment("http://localhost", "test"); 
+        final AudioSegment segment2 =
+                new AudioSegment("http://foreignhost", "test2"); 
+        queue.appendItem(segment1, null);
+        final int secondId = queue.appendItem(segment2, null);
+        Assert.assertFalse(queue.isQueueEmpty());
+        Assert.assertTrue(queue.cancelFirstItem());
+        final QueueItem secondItem = queue.getNextQueueItem();
+        Assert.assertEquals(secondId, secondItem.getId());
+        Assert.assertTrue(queue.cancelFirstItem());
+        Assert.assertTrue(queue.isQueueEmpty());
+        Assert.assertFalse(queue.cancelFirstItem());
+    }
 }
