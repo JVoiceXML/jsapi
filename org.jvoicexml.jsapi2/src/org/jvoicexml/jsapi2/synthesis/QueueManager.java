@@ -181,12 +181,12 @@ public class QueueManager {
     }
 
     /**
-     * Cancel the current item.
+     * Cancels the current item.
      * @return <code>true</code> if an item was canceled
      */
     protected boolean cancelItem() throws EngineStateException {
         if (playQueue.isQueueEmpty()) {
-            return synthQueue.cancelItem();
+            return synthQueue.cancelFirstItem();
         } else {
             final BaseAudioManager manager =
                 (BaseAudioManager) synthesizer.getAudioManager();
@@ -201,7 +201,7 @@ public class QueueManager {
     }
 
     /**
-     * Cancel all items in the queue.
+     * Cancels all items in the queue.
      */
     public boolean cancelAllItems() {
         synthesizer.handleCancelAll();
@@ -209,7 +209,7 @@ public class QueueManager {
 
         // First remove all pending requests...
         while (!synthQueue.isQueueEmpty()) {
-            synthQueue.cancelItem();
+            synthQueue.cancelFirstItem();
             found = true;
         }
 
