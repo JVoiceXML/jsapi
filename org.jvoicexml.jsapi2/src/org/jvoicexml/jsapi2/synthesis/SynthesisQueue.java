@@ -57,7 +57,7 @@ class SynthesisQueue implements Runnable {
     /**
      * Constructs a new object.
      * @param queueManager reference to the queue manager
-     * @param playQueue reference to the play queu
+     * @param playQueue reference to the play queue
      */
     public SynthesisQueue(final QueueManager queueManager,
             final PlayQueue playQueue) {
@@ -146,16 +146,17 @@ class SynthesisQueue implements Runnable {
      */
     private void adaptSynthesizerState(final boolean topOfQueueChanged) {
         final long[] states;
+        final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
         if (topOfQueueChanged) {
-            states = queueManager.synthesizer.setEngineState(
+            states = synthesizer.setEngineState(
                     Synthesizer.QUEUE_EMPTY,
                     Synthesizer.QUEUE_NOT_EMPTY);
         } else {
-            states = this.queueManager.synthesizer.setEngineState(
+            states = synthesizer.setEngineState(
                     Synthesizer.QUEUE_NOT_EMPTY,
                     Synthesizer.QUEUE_NOT_EMPTY);
         }
-        queueManager.synthesizer.postSynthesizerEvent(states[0], states[1],
+        synthesizer.postSynthesizerEvent(states[0], states[1],
                 SynthesizerEvent.QUEUE_UPDATED, topOfQueueChanged);
     }
 
@@ -213,7 +214,8 @@ class SynthesisQueue implements Runnable {
         final SpeakableListener listener = item.getListener();
         final SpeakableEvent event = new SpeakableEvent(
                 source, SpeakableEvent.SPEAKABLE_CANCELLED, id);
-        this.queueManager.synthesizer.postSpeakableEvent(event, listener);
+        final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
+        synthesizer.postSpeakableEvent(event, listener);
         queue.removeElement(item);
     }
 
@@ -283,10 +285,12 @@ class SynthesisQueue implements Runnable {
         while (!queueManager.isDone()) {
             final QueueItem item = getNextQueueItem();
             if (item != null) {
+                final BaseSynthesizer synthesizer =
+                        queueManager.getSynthesizer();
                 if (lastFocusEvent == Synthesizer.DEFOCUSED) {
-                    long[] states = this.queueManager.synthesizer.setEngineState(
+                    long[] states = synthesizer.setEngineState(
                             Synthesizer.DEFOCUSED, Synthesizer.FOCUSED);
-                    this.queueManager.synthesizer.postSynthesizerEvent(states[0], states[1],
+                    synthesizer.postSynthesizerEvent(states[0], states[1],
                             SynthesizerEvent.ENGINE_FOCUSED, true);
                     lastFocusEvent = Synthesizer.FOCUSED;
                 }
@@ -310,12 +314,13 @@ class SynthesisQueue implements Runnable {
         final Object itemSource = item.getSource();
         final int id = item.getId();
         final AudioSegment segment;
+        final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
         if (itemSource instanceof String) {
             final String text = (String) itemSource;
-            segment = queueManager.synthesizer.handleSpeak(id, text);
+            segment = synthesizer.handleSpeak(id, text);
         } else if (itemSource instanceof Speakable) {
             final Speakable speakable = (Speakable) itemSource;
-            segment = queueManager.synthesizer.handleSpeak(id, speakable);
+            segment = synthesizer.handleSpeak(id, speakable);
         } else {
             throw new RuntimeException(
                  "WTF! It could only be text or speakable but was "

@@ -96,7 +96,8 @@ class PlayQueue implements Runnable {
             long totalBytesRead = 0;
             final SpeakableEvent startedEvent = new SpeakableEvent(source,
                     SpeakableEvent.SPEAKABLE_STARTED, id);
-            queueManager.synthesizer.postSpeakableEvent(startedEvent, listener);
+            final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
+            synthesizer.postSpeakableEvent(startedEvent, listener);
 
             playIndex = 0;
             wordIndex = 0;
@@ -105,7 +106,7 @@ class PlayQueue implements Runnable {
             timeNextPhone = 0;
             int bytesRead = 0;
             final BaseAudioManager manager =
-                (BaseAudioManager) queueManager.synthesizer.getAudioManager();
+                (BaseAudioManager) synthesizer.getAudioManager();
             final AudioFormat format;
             try {
                 format = manager.getAudioFormat();
@@ -142,7 +143,7 @@ class PlayQueue implements Runnable {
                             final SpeakableEvent cancelledEvent =
                                 new SpeakableEvent(source,
                                     SpeakableEvent.SPEAKABLE_CANCELLED, id);
-                            queueManager.synthesizer.postSpeakableEvent(cancelledEvent,
+                            synthesizer.postSpeakableEvent(cancelledEvent,
                                     listener);
                             break;
                         }
@@ -155,7 +156,7 @@ class PlayQueue implements Runnable {
 
                     synchronized (queueManager.cancelLock) {
                         if (queueManager.cancelFirstItem) {
-                            queueManager.synthesizer.postSpeakableEvent(new SpeakableEvent(
+                            synthesizer.postSpeakableEvent(new SpeakableEvent(
                                     source,
                                     SpeakableEvent.SPEAKABLE_CANCELLED, id),
                                     listener);
@@ -166,7 +167,7 @@ class PlayQueue implements Runnable {
                     while (wordIndex < item.getWords().length
                             && (item.getWordsStartTime()[wordIndex] * sampleRate
                                 <= playIndex * bytesRead)) {
-                        queueManager.synthesizer.postSpeakableEvent(new SpeakableEvent(
+                        synthesizer.postSpeakableEvent(new SpeakableEvent(
                                 source, SpeakableEvent.WORD_STARTED, id,
                                 item.getWords()[wordIndex],
                                     wordStart, wordStart
@@ -179,7 +180,7 @@ class PlayQueue implements Runnable {
                     while (phonemeIndex < item.getPhonesInfo().length
                             && timeNextPhone * sampleRate < playIndex
                                     * bytesRead) {
-                        queueManager.synthesizer.postSpeakableEvent(new SpeakableEvent(
+                        synthesizer.postSpeakableEvent(new SpeakableEvent(
                                 source, SpeakableEvent.PHONEME_STARTED,
                                 id, item.getWords()[wordIndex - 1],
                                 item.getPhonesInfo(), phonemeIndex),
@@ -214,7 +215,7 @@ class PlayQueue implements Runnable {
             }
 
             if (!queueManager.cancelFirstItem) {
-                queueManager.synthesizer.postSpeakableEvent(new SpeakableEvent(
+                synthesizer.postSpeakableEvent(new SpeakableEvent(
                         source, SpeakableEvent.SPEAKABLE_ENDED, id),
                         listener);
 
@@ -241,7 +242,8 @@ class PlayQueue implements Runnable {
         }
         final Object source = item.getSource();
         final int id = item.getId();
-        queueManager.synthesizer.postSpeakableEvent(new SpeakableEvent(source,
+        final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
+        synthesizer.postSpeakableEvent(new SpeakableEvent(source,
                 SpeakableEvent.TOP_OF_QUEUE, id), listener);
     }
 
@@ -260,20 +262,21 @@ class PlayQueue implements Runnable {
      */
     private void delayUntilResumed(final QueueItem item)
             throws InterruptedException {
-        while (this.queueManager.synthesizer.testEngineState(Synthesizer.PAUSED)) {
+        final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
+        while (synthesizer.testEngineState(Synthesizer.PAUSED)) {
             final SpeakableListener listener = item.getListener();
             final Object source = item.getSource();
             final int id = item.getId();
             final SpeakableEvent pausedEvent = new SpeakableEvent(
                             source, SpeakableEvent.SPEAKABLE_PAUSED,
                             id);
-            queueManager.synthesizer.postSpeakableEvent(pausedEvent, listener);
+            synthesizer.postSpeakableEvent(pausedEvent, listener);
 
-            queueManager.synthesizer.waitEngineState(Engine.RESUMED);
+            synthesizer.waitEngineState(Engine.RESUMED);
             final SpeakableEvent resumedEvent =
                 new SpeakableEvent(source,
                         SpeakableEvent.SPEAKABLE_RESUMED, id);
-            queueManager.synthesizer.postSpeakableEvent(resumedEvent, listener);
+            synthesizer.postSpeakableEvent(resumedEvent, listener);
         }
     }
 
@@ -284,16 +287,17 @@ class PlayQueue implements Runnable {
      * are more speakables to process,
      */
     private void postEventsAfterPlay() {
+        final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
         if (isQueueEmpty()) {
-            long[] states = this.queueManager.synthesizer.setEngineState(
+            long[] states = synthesizer.setEngineState(
                   Synthesizer.QUEUE_NOT_EMPTY, Synthesizer.QUEUE_EMPTY);
-            queueManager.synthesizer.postSynthesizerEvent(states[0], states[1],
+            synthesizer.postSynthesizerEvent(states[0], states[1],
                     SynthesizerEvent.QUEUE_EMPTIED, true);
         } else {
-            long[] states = this.queueManager.synthesizer.setEngineState(
+            long[] states = synthesizer.setEngineState(
                     Synthesizer.QUEUE_NOT_EMPTY,
                     Synthesizer.QUEUE_NOT_EMPTY);
-            queueManager.synthesizer.postSynthesizerEvent(states[0], states[1],
+            synthesizer.postSynthesizerEvent(states[0], states[1],
                     SynthesizerEvent.QUEUE_UPDATED, true);
         }
     }
@@ -389,11 +393,13 @@ class PlayQueue implements Runnable {
             // Having an audio segment means that the handleSpeak
             // method is already being called
             if (segment == null) {
-                queueManager.synthesizer.handleCancel();
+                final BaseSynthesizer synthesizer =
+                        queueManager.getSynthesizer();
+                synthesizer.handleCancel();
                 final Object source = item.getSource();
                 final int id = item.getId();
                 final SpeakableListener listener = item.getListener();
-                this.queueManager.synthesizer.postSpeakableEvent(new SpeakableEvent(
+                synthesizer.postSpeakableEvent(new SpeakableEvent(
                         source, SpeakableEvent.SPEAKABLE_CANCELLED, id),
                         listener);
                 playQueue.removeElementAt(0);
@@ -426,16 +432,17 @@ class PlayQueue implements Runnable {
                     if (i == 0) {
                         found = cancelItemAtTopOfQueue();
                     } else {
+                        final BaseSynthesizer synthesizer =
+                                queueManager.getSynthesizer();
                         if (item.getAudioSegment() == null) {
-                            this.queueManager.synthesizer.handleCancel(i);
+                            synthesizer.handleCancel(i);
                         }
-                        this.queueManager.synthesizer.postSpeakableEvent(new SpeakableEvent(item
+                        synthesizer.postSpeakableEvent(new SpeakableEvent(item
                                 .getSource(),
                                 SpeakableEvent.SPEAKABLE_CANCELLED, currentId),
                                 item.getListener());
-                        this.queueManager.synthesizer.postSynthesizerEvent(this.queueManager.synthesizer
-                                .getEngineState(),
-                                this.queueManager.synthesizer.getEngineState(),
+                        synthesizer.postSynthesizerEvent(synthesizer.getEngineState(),
+                                synthesizer.getEngineState(),
                                 SynthesizerEvent.QUEUE_UPDATED, false);
                         playQueue.removeElementAt(i);
                         found = true;

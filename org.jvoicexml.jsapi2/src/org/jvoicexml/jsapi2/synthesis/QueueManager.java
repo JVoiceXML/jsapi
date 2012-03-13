@@ -35,6 +35,7 @@ import javax.speech.SpeechEventExecutor;
 import javax.speech.synthesis.PhoneInfo;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableListener;
+import javax.speech.synthesis.Synthesizer;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 
@@ -50,7 +51,7 @@ import org.jvoicexml.jsapi2.BaseAudioManager;
  */
 public class QueueManager {
     /** Reference to the synthesizer. */
-    BaseSynthesizer synthesizer;
+    private BaseSynthesizer synthesizer;
     /** Queued play items. */
     private SynthesisQueue synthQueue;
     /** Synthesized play items. */
@@ -83,6 +84,14 @@ public class QueueManager {
      */
     SynthesisQueue getSynthesisQueue() {
         return synthQueue;
+    }
+
+    /**
+     * Retrieves the synthesizer.
+     * @return the synthesizer
+     */
+    BaseSynthesizer getSynthesizer() {
+        return synthesizer;
     }
 
     /**

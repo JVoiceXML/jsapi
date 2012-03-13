@@ -123,4 +123,24 @@ public class SynthesisQueueTest extends TestCase {
         Assert.assertTrue(queue.isQueueEmpty());
         Assert.assertFalse(queue.cancelFirstItem());
     }
+
+    /**
+     * Test method for {@link SynthesisQueue#cancelItem(int)},
+     */
+    public void testCancelItem() {
+        Assert.assertTrue(queue.isQueueEmpty());
+        final AudioSegment segment1 =
+                new AudioSegment("http://localhost", "test"); 
+        final AudioSegment segment2 =
+                new AudioSegment("http://foreignhost", "test2"); 
+        final int firstId = queue.appendItem(segment1, null);
+        final int secondId = queue.appendItem(segment2, null);
+        Assert.assertFalse(queue.isQueueEmpty());
+        Assert.assertTrue(queue.cancelItem(secondId));
+        final QueueItem firstItem = queue.getNextQueueItem();
+        Assert.assertEquals(firstId, firstItem.getId());
+        Assert.assertTrue(queue.cancelItem(firstId));
+        Assert.assertTrue(queue.isQueueEmpty());
+        Assert.assertFalse(queue.cancelItem(-1));
+    }
 }
