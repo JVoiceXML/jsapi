@@ -503,17 +503,6 @@ public abstract class BaseSynthesizer extends BaseEngine
         throws EngineStateException;
 
     /**
-     * Sets AudioSegment in a queueItem.
-     *
-     * @param id current id
-     * @param audioSegment the audio segment.
-     */
-    protected void setAudioSegment(final int id,
-            final AudioSegment audioSegment) {
-        queueManager.setAudioSegment(id, audioSegment);
-    }
-
-    /**
      * Utility method to set words in a queue item.
      *
      * @param itemId the id of the queued item

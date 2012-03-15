@@ -35,7 +35,6 @@ import javax.speech.SpeechEventExecutor;
 import javax.speech.synthesis.PhoneInfo;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableListener;
-import javax.speech.synthesis.Synthesizer;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 
@@ -79,11 +78,20 @@ public class QueueManager {
         executor.execute(playQueue);
     }
 
-    /*+
+    /**
      * Retrieves the synthesis queue.
+     * @return the synthesis queue
      */
     SynthesisQueue getSynthesisQueue() {
         return synthQueue;
+    }
+
+    /**
+     * Retrieves the play queue.
+     * @return the play queue
+     */
+    PlayQueue getPlayQueue() {
+        return playQueue;
     }
 
     /**
@@ -154,18 +162,6 @@ public class QueueManager {
      */
     public int appendItem(AudioSegment audioSegment, SpeakableListener listener) {
         return synthQueue.appendItem(audioSegment, listener);
-    }
-
-    /**
-     * Utility method to associate the given audio segment with the
-     * queued item with the given id.
-     * @param id id of the queue item
-     * @param audioSegment the new audio segment
-     */
-    public void setAudioSegment(final int id, final AudioSegment audioSegment) {
-        if (audioSegment != null) {
-            playQueue.setAudioSegment(id, audioSegment);
-        }
     }
 
     public void setWords(final int itemId, final String[] words) {
