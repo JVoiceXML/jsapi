@@ -348,9 +348,8 @@ class PlayQueue implements Runnable {
      */
     protected QueueItem getNextQueueItem() {
         synchronized (playQueue) {
-            while (playQueue.isEmpty()
-                    || (((QueueItem) playQueue.elementAt(0)).getAudioSegment())
-                        == null && !queueManager.isDone()) {
+            while ((playQueue.isEmpty() || !isSynthesized(0))
+                    && !queueManager.isDone()) {
                 try {
                     playQueue.wait();
                 } catch (InterruptedException e) {
@@ -364,6 +363,18 @@ class PlayQueue implements Runnable {
         }
     }
 
+    /**
+     * Checks if the queue item at the given index has already been synthesized
+     * @param index the index to look for the queue item
+     * @return <code>true</code> if the item at the given index has been
+     *           synthesized
+     */
+    private boolean isSynthesized(int index) {
+        synchronized (playQueue) {
+            final QueueItem item = (QueueItem) playQueue.elementAt(index);
+            return item.isSynthesized();
+        }
+    }
 
     /**
      * Determines if the input queue is empty.
@@ -389,10 +400,7 @@ class PlayQueue implements Runnable {
                 return false;
             }
             final QueueItem item = (QueueItem) playQueue.elementAt(0);
-            final AudioSegment segment = item.getAudioSegment();
-            // Having an audio segment means that the handleSpeak
-            // method is already being called
-            if (segment == null) {
+            if (!item.isSynthesized()) {
                 final BaseSynthesizer synthesizer =
                         queueManager.getSynthesizer();
                 synthesizer.handleCancel();
@@ -402,12 +410,9 @@ class PlayQueue implements Runnable {
                 synthesizer.postSpeakableEvent(new SpeakableEvent(
                         source, SpeakableEvent.SPEAKABLE_CANCELLED, id),
                         listener);
-                playQueue.removeElementAt(0);
-            } else {
-                // The SpeakableEvent.SPEAKABLE_CANCELLED is posted in the
-                // play method
-                playQueue.removeElementAt(0);
             }
+            // TODO handle the case that the item is currently played back
+            playQueue.removeElementAt(0);
             synchronized (this.queueManager.cancelLock) {
                 queueManager.cancelFirstItem = true;
             }
@@ -434,7 +439,7 @@ class PlayQueue implements Runnable {
                     } else {
                         final BaseSynthesizer synthesizer =
                                 queueManager.getSynthesizer();
-                        if (item.getAudioSegment() == null) {
+                        if (!item.isSynthesized()) {
                             synthesizer.handleCancel(i);
                         }
                         synthesizer.postSpeakableEvent(new SpeakableEvent(item
@@ -453,30 +458,14 @@ class PlayQueue implements Runnable {
         return found;
     }
 
-    /**
-     * Utility method to associate the given audio segment with the
-     * queued item with the given id.
-     * @param id id of the queue item
-     * @param audioSegment the new audio segment
-     */
-    public void setAudioSegment(final int id,
-            final AudioSegment audioSegment) {
-        synchronized (playQueue) {
-            final QueueItem item = getQueueItem(id);
-            if (item != null) {
-                item.setAudioSegment(audioSegment);
-            }
-            playQueue.notifyAll();
-        }
-    }
-
     public void setWords(final int id, final String[] words) {
         synchronized (playQueue) {
             final QueueItem item = getQueueItem(id);
-            if (item != null) {
-                item.setWords(words);
+            if (item == null) {
+                return;
             }
-            playQueue.notifyAll();
+            item.setWords(words);
+            itemChanged(item);
         }
     }
 
@@ -484,10 +473,11 @@ class PlayQueue implements Runnable {
             final float[] starttimes) {
         synchronized (playQueue) {
             final QueueItem item = getQueueItem(itemId);
-            if (item != null) {
-                item.setWordsStartTimes(starttimes);
+            if (item == null) {
+                return;
             }
-            playQueue.notifyAll();
+            item.setWordsStartTimes(starttimes);
+            itemChanged(item);
         }
     }
 
@@ -495,10 +485,11 @@ class PlayQueue implements Runnable {
             final PhoneInfo[] phonesinfo) {
         synchronized (playQueue) {
             final QueueItem item = getQueueItem(itemId);
-            if (item != null) {
-                item.setPhonesInfo(phonesinfo);
+            if (item == null) {
+                return;
             }
-            playQueue.notifyAll();
+            item.setPhonesInfo(phonesinfo);
+            itemChanged(item);
         }
     }
 }

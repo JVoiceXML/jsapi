@@ -314,6 +314,7 @@ class SynthesisQueue implements Runnable {
         final Object itemSource = item.getSource();
         final int id = item.getId();
         final AudioSegment segment;
+        // TODO this won't work for queued audio segments
         final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
         if (itemSource instanceof String) {
             final String text = (String) itemSource;
@@ -328,6 +329,7 @@ class SynthesisQueue implements Runnable {
                      item.getClass().getName()));
         }
 
-        queueManager.setAudioSegment(id, segment);
+        item.setAudioSegment(segment);
+        item.setSynthesized(true);
     }
 }

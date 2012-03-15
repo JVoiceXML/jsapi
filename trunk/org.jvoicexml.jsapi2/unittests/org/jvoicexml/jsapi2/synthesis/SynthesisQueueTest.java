@@ -44,6 +44,8 @@ public class SynthesisQueueTest extends TestCase {
 
     /**
      * Set up the test environment.
+     * @exception Exception
+     *            error setting up the test environment
      */
     protected void setUp() throws Exception {
         super.setUp();

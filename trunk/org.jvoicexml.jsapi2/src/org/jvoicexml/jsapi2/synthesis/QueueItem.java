@@ -62,6 +62,12 @@ public class QueueItem {
     private PhoneInfo[] phonesInfo;
 
     /**
+     *  <code>true</code> if this queue item has already been passed to the
+     *  synthesizer.
+     */
+    private boolean synthesized;
+
+    /**
      * Constructs a new object.
      * @param id the unique id of the speakable
      * @param speakable the speakable
@@ -109,6 +115,23 @@ public class QueueItem {
         this.wordsStartTimes = new float[0];
         this.phonesInfo = new PhoneInfo[0];
         this.source = audioSegment.getMarkupText();
+    }
+
+    /**
+     * Checks, if this queue item has already been passed to the synthesizer.
+     * @return <code>true</code> if this queue item is already synthesizer.
+     */
+    public boolean isSynthesized() {
+        return synthesized;
+    }
+
+    /**
+     * Modifies the synthesized state of this queue item.
+     * @param synthesized <code>true</code> if this queue item has been
+     *          synthesized
+     */
+    public void setSynthesized(boolean synthesized) {
+        this.synthesized = synthesized;
     }
 
     /**
