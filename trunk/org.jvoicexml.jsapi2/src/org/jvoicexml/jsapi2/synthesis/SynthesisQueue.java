@@ -72,7 +72,7 @@ class SynthesisQueue implements Runnable {
      */
     public void terminate() {
         synchronized (queue) {
-            queue.clear();
+            queue.removeAllElements();
             queueManager.done();
             queue.notifyAll();
         }
