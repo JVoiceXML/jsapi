@@ -97,8 +97,8 @@ This file builds the JSAPI2 project.
     <mkdir dir="${build}" />
   	<echo message="compiling ${component} for JME with debug=${debug}, optimize=${optimize}" />
       <javac bootclasspathref="midp.lib" destdir="${build}"
-        source="1.2" target="1.1" optimize="${optimize}"
-        encoding="iso-8859-1">
+        includeantruntime="false"
+        source="1.2" target="1.1" optimize="${optimize}">
       <src path="${src}" />
       <classpath>
         <pathelement location="../javax.speech/classes"/>
