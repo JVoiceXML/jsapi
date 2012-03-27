@@ -267,13 +267,15 @@ public class BaseRecognizerProperties
      * {@inheritDoc}
      */
     public void setConfidenceThreshold(final int threshold) {
-        if ((confidenceThreshold > MAX_CONFIDENCE)
-            || (confidenceThreshold < MIN_CONFIDENCE)) {
+        if ((threshold > MAX_CONFIDENCE)
+            || (threshold < MIN_CONFIDENCE)) {
             throw new IllegalArgumentException("Invalid confidenceThreshold: "
                                                + threshold);
         }
         if (confidenceThreshold == threshold) {
             return;
+        } else {
+            confidenceThreshold = threshold;
         }
         postPropertyChangeEvent(CONFIDENCE_THRESHOLD,
                                 new Integer(confidenceThreshold),
