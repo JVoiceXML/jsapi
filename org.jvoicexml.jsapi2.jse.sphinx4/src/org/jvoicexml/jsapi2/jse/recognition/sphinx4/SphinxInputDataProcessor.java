@@ -31,6 +31,8 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.sound.sampled.AudioFormat;
+
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
@@ -105,6 +107,15 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
     }
 
     /**
+     * Retrieves the audio format.
+     * @return the audio format used by this data processor.
+     */
+    public AudioFormat getAudioFormat() {
+        /** @todo AudioFormat is hardcoded */
+        return new AudioFormat(16000, 2, 1, true, false);
+    }
+
+    /**
      * Returns the processed Data output.
      * 
      * @return an Data object that has been processed by this DataProcessor
@@ -113,12 +124,11 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
      */
     @Override
     public Data getData() throws DataProcessingException {
-
-        /** @todo AudioFormat is hardcoded */
-        int channels = 1;
-        int sampleSizeInBytes = 2;
+        final AudioFormat format = getAudioFormat();
+        int channels = format.getChannels();;
+        int sampleSizeInBytes = format.getSampleSizeInBits();
         boolean signed = true;
-        int sampleRate = 16000;
+        int sampleRate = (int) format.getSampleRate();
         int frameSizeInBytes = sampleRate * sampleSizeInBytes * channels * 10
                 / 1000;
 

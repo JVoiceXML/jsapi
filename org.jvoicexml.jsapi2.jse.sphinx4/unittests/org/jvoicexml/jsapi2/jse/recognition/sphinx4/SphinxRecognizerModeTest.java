@@ -14,6 +14,11 @@ import org.junit.Test;
  * @author Dirk Schnelle-Walka
  */
 public class SphinxRecognizerModeTest {
+    /**
+     * Test metod to create an engine.
+     * @throws Exception
+     *         test failed
+     */        
     @Test
     public void testCreateEngine() throws Exception {
         final SphinxRecognizerMode mode = new SphinxRecognizerMode();

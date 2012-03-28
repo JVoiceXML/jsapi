@@ -62,6 +62,7 @@ import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 /**
  * A SAPI recognizer.
  * @author Dirk Schnelle-Walka
+ * @author Markus Baumgart
  *
  */
 public final class SapiRecognizer extends JseBaseRecognizer {
@@ -76,7 +77,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     private SapiRecognitionThread recognitionThread;
     
     /** Listener for AudioEvents (e.g. <code>AudioEvent.AUDIO_CHANGED</code>) */
-    private SapiRecognizerAudioEventListener SapiAudioEventListener;
+    private SapiRecognizerAudioEventListener listener;
 
     /**
      * Constructs a new object.
@@ -84,10 +85,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      */
     public SapiRecognizer(final SapiRecognizerMode mode) {
         super(mode);
-        
-        //set preferred AudioFormat
-        JseBaseAudioManager audioManager = (JseBaseAudioManager) getAudioManager();
-        audioManager.setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, false));        
     }
 
     /**
@@ -537,4 +534,19 @@ public final class SapiRecognizer extends JseBaseRecognizer {
     }
     
     native void sapiAbortRecognition(long handle);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected AudioFormat getAudioFormat() {
+        return sapiGetAudioFormat(recognizerHandle);
+    }
+
+    /**
+     * Retrieves the default audio format.
+     * @param handle recognizer handle.
+     * @return native audio format
+     */
+    private native AudioFormat sapiGetAudioFormat(final long handle);
 }
