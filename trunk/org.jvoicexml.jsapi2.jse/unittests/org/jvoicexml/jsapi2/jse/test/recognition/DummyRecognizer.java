@@ -6,6 +6,7 @@ package org.jvoicexml.jsapi2.jse.test.recognition;
 import java.io.InputStream;
 import java.util.Vector;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
@@ -105,4 +106,9 @@ public class DummyRecognizer extends JseBaseRecognizer {
         return new ThreadSpeechEventExecutor();
     }
 
+    @Override
+    protected AudioFormat getAudioFormat() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

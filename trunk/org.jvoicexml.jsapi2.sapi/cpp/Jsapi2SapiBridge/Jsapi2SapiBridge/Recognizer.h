@@ -14,6 +14,7 @@ public:
     virtual ~Recognizer();
 
 	HRESULT SetRecognizerInputStream(CComPtr<ISpStream> spStream);
+    static HRESULT GetAudioFormat(WAVEFORMATEX& format);
 
     HRESULT Resume();
 

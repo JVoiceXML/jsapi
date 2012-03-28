@@ -82,27 +82,68 @@ Recognizer::~Recognizer()
 	cpRecognizerEngine.Release();
 }
 
+HRESULT Recognizer::GetAudioFormat(WAVEFORMATEX& f)
+{
+    CComPtr<ISpeechMemoryStream> stream;
+    HRESULT hr = stream.CoCreateInstance(CLSID_SpMemoryStream);
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+
+    CComPtr<ISpeechAudioFormat> format;
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+    hr = stream->get_Format(&format);
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+    CComPtr<ISpeechWaveFormatEx> waveFormat;
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+    hr = format->GetWaveFormatEx(&waveFormat);
+    if(FAILED(hr))
+	{
+        return hr;
+	}
+    
+    waveFormat->get_AvgBytesPerSec((long*)&f.nAvgBytesPerSec);
+    waveFormat->get_BitsPerSample((short*)&f.wBitsPerSample);
+    waveFormat->get_Channels((short*)&f.nChannels);
+    waveFormat->get_FormatTag((short*)&f.wFormatTag);
+    waveFormat->get_SamplesPerSec((long*)&f.nSamplesPerSec);
+    return S_OK;
+}
+
 HRESULT Recognizer::SetRecognizerInputStream(CComPtr<ISpStream> spStream) 
 {
 	LOG4CPLUS_DEBUG(logger, "Setting SAPI-Recognizer to inactive ...");
 	
 	hr = cpRecognizerEngine->SetRecoState(SPRST_INACTIVE);
-	if (SUCCEEDED(hr))
+	if (FAILED(hr))
 	{
-		LOG4CPLUS_DEBUG(logger, "... SAPI-recognizer set to inactive");
-		LOG4CPLUS_DEBUG(logger, "Setting SAPI's new InputStream");
-		hr = cpRecognizerEngine->SetInput(spStream, TRUE);
+		return hr;
 	}
-	if(SUCCEEDED(hr))
+	LOG4CPLUS_DEBUG(logger, "... SAPI-recognizer set to inactive");
+	LOG4CPLUS_DEBUG(logger, "Setting SAPI's new InputStream");
+	hr = cpRecognizerEngine->SetInput(spStream, TRUE);
+	if (FAILED(hr))
 	{
-		LOG4CPLUS_DEBUG(logger, "... SAPI's new InputStream set");
-		LOG4CPLUS_DEBUG(logger, "Setting SAPI-Recognizer to active ...");
-		hr = cpRecognizerEngine->SetRecoState(SPRST_ACTIVE);
+		return hr;
 	}
-	if(SUCCEEDED(hr))
+	LOG4CPLUS_DEBUG(logger, "... SAPI's new InputStream set");
+	LOG4CPLUS_DEBUG(logger, "Setting SAPI-Recognizer to active ...");
+	hr = cpRecognizerEngine->SetRecoState(SPRST_ACTIVE);
+	if (FAILED(hr))
 	{
-		LOG4CPLUS_DEBUG(logger, "... SAPI-Recognizer set to active");
+		return hr;
 	}
+	LOG4CPLUS_DEBUG(logger, "... SAPI-Recognizer set to active");
 	return hr;
 }
 
@@ -230,8 +271,8 @@ HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath,LPCWSTR grammarID )
 	return hr;	
 }
 
-HRESULT Recognizer::DeleteGrammar(LPCWSTR ID){
-
+HRESULT Recognizer::DeleteGrammar(LPCWSTR ID)
+{
 	/* find specified Grammar in gramHash*/
 	std::map< std::wstring , CComPtr<ISpRecoGrammar> >::iterator it = gramHash.find(ID);
 	

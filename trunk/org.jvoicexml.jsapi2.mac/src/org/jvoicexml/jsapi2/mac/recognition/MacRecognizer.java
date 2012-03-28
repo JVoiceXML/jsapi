@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
@@ -206,7 +207,14 @@ public final class MacRecognizer extends JseBaseRecognizer {
         @Override
         public void propertyChangeRequest(EnginePropertyChangeRequestEvent event) {
             // TODO Auto-generated method stub
-
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected AudioFormat getAudioFormat() {
+        return new AudioFormat(16000, 2, 1, true, false);
     }
 }

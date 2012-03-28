@@ -46,6 +46,7 @@
 package org.jvoicexml.jsapi2.jse.recognition;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
 import javax.speech.AudioManager;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.recognition.Grammar;
@@ -96,11 +97,17 @@ public abstract class JseBaseRecognizer extends BaseRecognizer {
     }
 
     /**
+     * Retrieves the audio format that is produced by this recognizer.
+     * @return audio format.
+     */
+    protected abstract AudioFormat getAudioFormat();
+
+    /**
      * {@inheritDoc}
      */
     @Override
     protected AudioManager createAudioManager() {
-        final AudioFormat format = new AudioFormat(16000f, 16, 1, true, false);
+        final AudioFormat format = getAudioFormat();
         return new BaseRecognizerAudioManager(format);
     }
 

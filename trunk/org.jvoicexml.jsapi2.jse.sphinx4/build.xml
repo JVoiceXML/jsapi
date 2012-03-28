@@ -44,7 +44,7 @@ This file builds the JSAPI base layer for JSE.
 
   <target name="compile" depends="-init" description="Compile the JAVA sources">
     <echo message="compiling with debug=${debug}, optimize=${optimize}" />
-    <javac destdir="${build}" source="1.6" target="1.6"
+    <javac destdir="${build}"
       optimize="${optimize}" debug="${debug}" deprecation="on"
       includeantruntime="false">
       <src path="${src}" />

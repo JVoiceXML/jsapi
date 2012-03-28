@@ -520,4 +520,9 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
     @Override
     public void newProperties(final PropertySheet ps) throws PropertyException {
     }
+
+    @Override
+    protected AudioFormat getAudioFormat() {
+       return new AudioFormat(16000f, 16, 1, true, false);
+    }
 }

@@ -336,3 +336,34 @@ JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
     }
 }
 
+JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiGetAudioFormat
+  (JNIEnv *env, jobject object, jlong handle)
+{
+    WAVEFORMATEX format;
+	HRESULT hr = Recognizer::GetAudioFormat(format);
+    if (FAILED(hr))
+    {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "GetAudioFormat failed", hr);
+        ThrowJavaException(env, "javax/speech/synthesis/SpeakableException",
+            buffer);
+		return NULL;
+    }
+    jclass clazz = env->FindClass("javax/sound/sampled/AudioFormat");
+    if (clazz == NULL)
+    {
+        ThrowJavaException(env, "javax/sound/sampled/AudioFormat",
+            "Unable to create javax/sound/sampled/AudioFormat!");
+        return NULL;
+    }
+    jmethodID constructor = env->GetMethodID(clazz, "<init>", "(FIIZZ)V");
+    if (constructor == NULL)
+    {
+        ThrowJavaException(env, "java/lang/NullPointerException",
+            "Constructor for javax/sound/sampled/AudioFormat not found!");
+        return NULL;
+    }
+
+    return env->NewObject(clazz, constructor, (float)format.nSamplesPerSec,
+        (int)format.wBitsPerSample, (int)format.nChannels, JNI_TRUE, JNI_FALSE);
+}
