@@ -31,7 +31,6 @@ import java.io.OutputStream;
 
 import javax.speech.AudioSegment;
 import javax.speech.EngineStateException;
-import javax.speech.SpeechEventExecutor;
 import javax.speech.synthesis.PhoneInfo;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableListener;
@@ -73,9 +72,10 @@ public class QueueManager {
         playQueue = new PlayQueue(this);
         synthQueue = new SynthesisQueue(this, playQueue);
 
-        final SpeechEventExecutor executor = synth.getSpeechEventExecutor();
-        executor.execute(synthQueue);
-        executor.execute(playQueue);
+        final Thread synthThread = new Thread(synthQueue);
+        synthThread.start();
+        final Thread playThread = new Thread(playQueue);
+        playThread.start();
     }
 
     /**

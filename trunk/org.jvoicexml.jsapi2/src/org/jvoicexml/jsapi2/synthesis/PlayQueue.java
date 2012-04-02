@@ -71,7 +71,6 @@ class PlayQueue implements Runnable {
      * {@inheritDoc}
      */
     public void run() {
-
         int playIndex = 0;
         int wordIndex = 0;
         int wordStart = 0;
@@ -93,10 +92,9 @@ class PlayQueue implements Runnable {
                 return;
             }
 
-            long totalBytesRead = 0;
+            final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
             final SpeakableEvent startedEvent = new SpeakableEvent(source,
                     SpeakableEvent.SPEAKABLE_STARTED, id);
-            final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
             synthesizer.postSpeakableEvent(startedEvent, listener);
 
             playIndex = 0;
@@ -120,24 +118,17 @@ class PlayQueue implements Runnable {
             bps *= sampleRate;
             bps *= (format.getSampleSizeInBits() / 8);
             try {
-                while (true) {
-                    final AudioSegment segment = item.getAudioSegment();
-                    if ((segment == null) || !segment.isGettable()) {
-                        throw new SecurityException(
-                            "The platform does not allow to access the input "
-                                + "stream!");
-                    }
-                    final InputStream inputStream =
-                            segment.openInputStream();
-                    if (inputStream == null) {
-                        break;
-                    }
-                    bytesRead = inputStream.read(buffer);
-                    if (bytesRead < 0)  {
-                        break;
-                    }
-
-                    totalBytesRead += bytesRead;
+                final AudioSegment segment = item.getAudioSegment();
+                if ((segment == null) || !segment.isGettable()) {
+                    throw new SecurityException(
+                        "The platform does not allow to access the input "
+                            + "stream!");
+                }
+                final InputStream inputStream = segment.openInputStream();
+                if (inputStream == null) {
+                    break;
+                }
+                while((bytesRead = inputStream.read(buffer)) >= 0) {
                     synchronized (queueManager.cancelLock) {
                         if (queueManager.cancelFirstItem) {
                             final SpeakableEvent cancelledEvent =
@@ -219,15 +210,23 @@ class PlayQueue implements Runnable {
                         source, SpeakableEvent.SPEAKABLE_ENDED, id),
                         listener);
 
-                synchronized (playQueue) {
-                    playQueue.removeElement(item);
-                }
+                removeQueueItem(item);
             }
 
             synchronized(this.queueManager.cancelLock) {
                 queueManager.cancelFirstItem = false;
             }
             postEventsAfterPlay();
+        }
+    }
+
+    /**
+     * Removes the given item from the play queue.
+     * @param item the item to remove
+     */
+    private void removeQueueItem(final QueueItem item) {
+        synchronized (playQueue) {
+            playQueue.removeElement(item);
         }
     }
 
