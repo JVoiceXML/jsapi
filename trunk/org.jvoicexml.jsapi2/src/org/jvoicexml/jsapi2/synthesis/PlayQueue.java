@@ -53,7 +53,7 @@ class PlayQueue implements Runnable {
     private final QueueManager queueManager;
 
     /** Buffer size when reading from the audio segment input stream. */
-    private static final int BUFFER_LENGTH = 1024;
+    private static final int BUFFER_LENGTH = 256;
 
     /** The items to be played back. */
     private Vector playQueue;
@@ -400,8 +400,7 @@ class PlayQueue implements Runnable {
             }
             final QueueItem item = (QueueItem) playQueue.elementAt(0);
             if (!item.isSynthesized()) {
-                final BaseSynthesizer synthesizer =
-                        queueManager.getSynthesizer();
+                final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
                 synthesizer.handleCancel();
                 final Object source = item.getSource();
                 final int id = item.getId();
