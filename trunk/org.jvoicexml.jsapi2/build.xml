@@ -198,6 +198,7 @@ This file builds the JSAPI2 project.
     <zip basedir=".." destfile="${dist.src.zip}" compress="true">
       <include name="javax.speech/src/**/*.java" />
       <include name="javax.speech/build.xml" />
+      <include name="org.jvoicexml.jsapi2*/build.xml" />
       <include name="org.jvoicexml.jsapi2*/src/**/*.java" />
       <include name="org.jvoicexml.jsapi2*/cpp/**/*.cpp" />
       <include name="org.jvoicexml.jsapi2*/cpp/**/*.h" />
