@@ -37,16 +37,9 @@ public class RuleToken extends RuleComponent {
                     + " is not a valid grammar text");
         }
 
-        final char[] chars = text.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            final char ch = chars[i];
-            if (!RuleComponent.isLetter(ch) && !Character.isDigit(ch)
-                    && !RuleComponent.isWhitespace(ch)) {
-                throw new IllegalArgumentException("'" + text
-                        + "' is not a valid grammar text");
-            }
-        }
+        // TODO Check causes for IllegalArgumentsException
 
+        final char[] chars = text.toCharArray();
         StringBuffer str = new StringBuffer();
         int pos = 0;
         do {
