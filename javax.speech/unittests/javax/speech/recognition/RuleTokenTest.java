@@ -45,8 +45,8 @@ public class RuleTokenTest extends TestCase {
         final RuleToken token2 = new RuleToken("  New    York   ");
         assertEquals("New York", token2.getText());
 
-        final RuleToken token3 = new RuleToken("m‰ˆ¸ﬂA÷‹");
-        assertEquals("m‰ˆ¸ﬂA÷‹", token3.getText());
+        final RuleToken token3 = new RuleToken("m√∂a√ºA√ñ√ú√ü?!");
+        assertEquals("m√∂a√ºA√ñ√ú√ü?!", token3.getText());
         
         Exception failure = null;
         try {
@@ -58,7 +58,7 @@ public class RuleTokenTest extends TestCase {
 
         failure = null;
         try {
-            new RuleToken("<text>contents<text>");
+            new RuleToken("");
         } catch (IllegalArgumentException e) {
             failure = e;
         }
