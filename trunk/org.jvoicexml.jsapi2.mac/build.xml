@@ -41,7 +41,31 @@ This file builds the JSR 113.jar.
     </delete>
   </target>
 
-  <target name="compile" depends="-init" description="Compile the JAVA sources" if="isMac">
+  <target name="-compile-cpp" if="isMac">
+    <!-- Build the whole cpp shebang -->
+    <delete dir="cpp/build"/>
+    <mkdir dir="cpp/build"/>
+    <exec executable="pwd" dir="cpp/Jsapi2MacBridge" />
+    <exec executable="g++" dir="cpp/Jsapi2MacBridge">
+      <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers JNIUtils.cpp -o ../build/JNIUtils.o" />
+    </exec>
+    <exec executable="g++" dir="cpp/Jsapi2MacBridge">
+      <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacEngineListFactory.cpp -o ../build/MacEngineListFactory.o" />
+    </exec>
+    <exec executable="g++" dir="cpp/Jsapi2MacBridge">
+      <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers -I/Developer/Extras/CoreAudio/PublicUtility -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacSynthesizer.cpp -o ../build/MacSynthesizer.o" />
+    </exec>
+    <exec executable="g++" dir="cpp/Jsapi2MacBridge">
+      <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacRecognizer.cpp -o ../build/MacRecognizer.o" />
+    </exec>
+  	
+    <!-- Bind it together -->
+    <exec executable="g++" dir="cpp/build">
+      <arg line="-dynamiclib -o libJsapi2MacBridge.jnilib MacEngineListFactory.o MacRecognizer.o MacSynthesizer.o JNIUtils.o -framework JavaVM -framework ApplicationServices -framework AudioToolbox" />
+    </exec>
+  </target>
+
+  <target name="compile" depends="-init" description="Compile the JAVA sources">
     <echo message="compiling with debug=${debug}, optimize=${optimize}" />
     <javac destdir="${build}" source="1.6" target="1.6"
       optimize="${optimize}" debug="${debug}" deprecation="on"
@@ -62,28 +86,7 @@ This file builds the JSR 113.jar.
       <classpath refid="classpath"/>
       <classpath location="${build}"/>
     </javah>
-
-    <!-- Build the whole cpp shebang -->
-  	<delete dir="cpp/build"/>
-  	<mkdir dir="cpp/build"/>
-  	<exec executable="pwd" dir="cpp/Jsapi2MacBridge" />
-  	<exec executable="g++" dir="cpp/Jsapi2MacBridge">
-  	  <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers JNIUtils.cpp -o ../build/JNIUtils.o" />
-  	</exec>
-  	<exec executable="g++" dir="cpp/Jsapi2MacBridge">
-  	  <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacEngineListFactory.cpp -o ../build/MacEngineListFactory.o" />
-  	</exec>
-  	<exec executable="g++" dir="cpp/Jsapi2MacBridge">
-  	  <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers -I/Developer/Extras/CoreAudio/PublicUtility -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacSynthesizer.cpp -o ../build/MacSynthesizer.o" />
-  	</exec>
-  	<exec executable="g++" dir="cpp/Jsapi2MacBridge">
-  	  <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacRecognizer.cpp -o ../build/MacRecognizer.o" />
-  	</exec>
-  	
-  	<!-- Bind it together -->
-  	<exec executable="g++" dir="cpp/build">
-	  <arg line="-dynamiclib -o libJsapi2MacBridge.jnilib MacEngineListFactory.o MacRecognizer.o MacSynthesizer.o JNIUtils.o -framework JavaVM -framework ApplicationServices -framework AudioToolbox" />
-  	</exec>
+    <antcall target="-compile-cpp"/>
   </target>
 
   <target name="-copyjnilib" if="isMac">
@@ -94,7 +97,8 @@ This file builds the JSR 113.jar.
     </copy>
   </target>
 
-  <target name="jar" depends="compile, -copyjnilib" description="Pack all compiled files into jar files">
+  <target name="jar" depends="compile, -copyjnilib"
+      description="Pack all compiled files into jar files">
     <jar jarfile="${dist.jar}" compress="false">
       <fileset dir="${build}">
         <include name="org/jvoicexml/**/*.class" />
