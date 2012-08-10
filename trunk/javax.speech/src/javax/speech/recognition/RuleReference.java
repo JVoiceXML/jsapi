@@ -54,7 +54,6 @@ public class RuleReference extends RuleComponent {
 
     public RuleReference(String grammarReference, String ruleName,
             String mediaType) throws IllegalArgumentException {
-        checkValidGrammarText(grammarReference);
         checkValidGrammarText(ruleName);
 
         // TODO According to the specification, we must check the media type
