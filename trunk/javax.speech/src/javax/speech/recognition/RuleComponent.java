@@ -46,8 +46,8 @@ public class RuleComponent {
         final char first = chars[0];
         if (!isLetter(first) && (first != '_')) {
             throw new IllegalArgumentException("'" + text
-                    + "' is not a valid grammar text: '"+
-                        first +"' Element is not a valid first symbol");
+                    + "' is not a valid grammar text: '"
+                    + first + "' Element is not a valid first symbol");
         }
         // Following symbols must be a character or a digit.
         for (int i = 1; i < chars.length; i++) {
@@ -55,8 +55,8 @@ public class RuleComponent {
             if (!isLetter(ch) && !Character.isDigit(ch)
                     && (ch != '_')) {
                 throw new IllegalArgumentException("'" + text
-                        + "' is not a valid grammar tex: '"+
-                        ch +"' Element is not a valid symbol");
+                        + "' is not a valid grammar tex: '"
+                        + ch + "' Element is not a valid symbol");
             }
         }
     }
