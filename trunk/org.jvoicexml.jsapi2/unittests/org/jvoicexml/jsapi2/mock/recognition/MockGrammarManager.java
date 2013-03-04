@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.jvoicexml.jsapi2.test.recognition;
+package org.jvoicexml.jsapi2.mock.recognition;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ import javax.speech.recognition.RuleGrammar;
  * @author Dirk Schnelle-Walka
  *
  */
-public class DummyGrammarManager implements GrammarManager {
+public class MockGrammarManager implements GrammarManager {
 
     /**
      * {@inheritDoc}

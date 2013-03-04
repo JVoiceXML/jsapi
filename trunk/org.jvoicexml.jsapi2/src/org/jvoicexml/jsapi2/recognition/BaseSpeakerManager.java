@@ -1,10 +1,12 @@
 package org.jvoicexml.jsapi2.recognition;
 
+import java.util.Collection;
 import java.util.Vector;
-import javax.speech.recognition.SpeakerManager;
-import javax.speech.recognition.SpeakerProfile;
-import javax.speech.recognition.SpeakerManagerUI;
+
 import javax.speech.EngineStateException;
+import javax.speech.recognition.SpeakerManager;
+import javax.speech.recognition.SpeakerManagerUI;
+import javax.speech.recognition.SpeakerProfile;
 
 /**
  * Basic implementation of a speaker manager.
@@ -13,12 +15,12 @@ import javax.speech.EngineStateException;
  */
 public class BaseSpeakerManager implements SpeakerManager {
 
-    private Vector speakerProfiles;
+    private Collection<SpeakerProfile> speakerProfiles;
 
     private SpeakerProfile currentSpeaker;
 
     public BaseSpeakerManager() {
-        speakerProfiles = new Vector();
+        speakerProfiles = new java.util.ArrayList<SpeakerProfile>();
         currentSpeaker = null;
     }
 
@@ -28,7 +30,7 @@ public class BaseSpeakerManager implements SpeakerManager {
      * @param speaker SpeakerProfile
      */
     public void createSpeaker(final SpeakerProfile speaker) {
-        speakerProfiles.addElement(speaker);
+        speakerProfiles.add(speaker);
     }
 
     /**
@@ -37,7 +39,7 @@ public class BaseSpeakerManager implements SpeakerManager {
      * @param speaker SpeakerProfile
      */
     public void deleteSpeaker(SpeakerProfile speaker) {
-        speakerProfiles.removeElement(speaker);
+        speakerProfiles.remove(speaker);
     }
 
     /**
@@ -64,14 +66,10 @@ public class BaseSpeakerManager implements SpeakerManager {
      * @return SpeakerProfile[]
      */
     public SpeakerProfile[] listKnownSpeakers() {
-        if (speakerProfiles.size() < 1) return new SpeakerProfile[]{};
-
-        SpeakerProfile[] profiles = new SpeakerProfile[speakerProfiles.size()];
-        for (int i = 0; i < speakerProfiles.size(); i++) {
-            profiles[i] = (SpeakerProfile)speakerProfiles.elementAt(i);
-        }
+        final SpeakerProfile[] profiles =
+                new SpeakerProfile[speakerProfiles.size()];
+        speakerProfiles.toArray(profiles);
         return profiles;
-
     }
 
     /**

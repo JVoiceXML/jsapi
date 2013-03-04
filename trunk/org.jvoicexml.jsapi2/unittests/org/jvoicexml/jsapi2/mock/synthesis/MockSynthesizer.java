@@ -24,7 +24,7 @@
  *
  */
 
-package org.jvoicexml.jsapi2.test.synthesis;
+package org.jvoicexml.jsapi2.mock.synthesis;
 
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
@@ -36,16 +36,16 @@ import javax.speech.VocabularyManager;
 import javax.speech.synthesis.Speakable;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
+import org.jvoicexml.jsapi2.mock.MockAudioManager;
+import org.jvoicexml.jsapi2.mock.MockSpeechEventExecutor;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
-import org.jvoicexml.jsapi2.test.DummyAudioManager;
-import org.jvoicexml.jsapi2.test.DummySpeechEventExecutor;
 
 /**
  * Dummy implementation of a {@link javax.spech.synthesis.Synthesizer}
  * for test purposes.
  * @author Dirk Schnelle-Walka
  */
-public class DummySynthesizer extends BaseSynthesizer {
+public class MockSynthesizer extends BaseSynthesizer {
 
     /**
      * {@inheritDoc}
@@ -124,14 +124,14 @@ public class DummySynthesizer extends BaseSynthesizer {
      * {@inheritDoc}
      */
     protected AudioManager createAudioManager() {
-        return new DummyAudioManager();
+        return new MockAudioManager();
     }
 
     /**
      * {@inheritDoc}
      */
     protected SpeechEventExecutor createSpeechEventExecutor() {
-        return new DummySpeechEventExecutor();
+        return new MockSpeechEventExecutor();
     }
 
     /**

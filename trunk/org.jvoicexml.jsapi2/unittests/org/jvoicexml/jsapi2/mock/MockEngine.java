@@ -24,7 +24,7 @@
  *
  */
 
-package org.jvoicexml.jsapi2.test;
+package org.jvoicexml.jsapi2.mock;
 
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
@@ -40,8 +40,8 @@ import org.jvoicexml.jsapi2.BaseEngine;
  * An engine for test purposes.
  * @author Dirk Schnelle-Walka
  */
-public class DummyEngine extends BaseEngine {
-    public DummyEngine() {
+public class MockEngine extends BaseEngine {
+    public MockEngine() {
         super(null);
     }
 
@@ -56,7 +56,7 @@ public class DummyEngine extends BaseEngine {
      * {@inheritDoc}
      */
     protected AudioManager createAudioManager() {
-        return new DummyAudioManager();
+        return new MockAudioManager();
     }
 
     /**
@@ -70,7 +70,7 @@ public class DummyEngine extends BaseEngine {
      * {@inheritDoc}
      */
     protected SpeechEventExecutor createSpeechEventExecutor() {
-        return new DummySpeechEventExecutor();
+        return new MockSpeechEventExecutor();
     }
 
     /**
@@ -104,6 +104,6 @@ public class DummyEngine extends BaseEngine {
      */
     protected EngineEvent createStateTransitionEngineEvent(long oldState, long newState,
             int id) {
-        return new DummyEngineEvent(this, id, oldState, newState, null);
+        return new MockEngineEvent(this, id, oldState, newState, null);
     }
 }

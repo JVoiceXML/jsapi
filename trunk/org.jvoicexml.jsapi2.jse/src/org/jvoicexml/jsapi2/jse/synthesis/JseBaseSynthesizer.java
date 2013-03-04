@@ -34,7 +34,7 @@ import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
 
 import org.jvoicexml.jsapi2.BaseVocabularyManager;
-import org.jvoicexml.jsapi2.jse.ThreadSpeechEventExecutor;
+import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
 
 

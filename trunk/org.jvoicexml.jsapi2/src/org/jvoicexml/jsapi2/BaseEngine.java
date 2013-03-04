@@ -45,7 +45,7 @@
  */
 package org.jvoicexml.jsapi2;
 
-import java.util.Vector;
+import java.util.Collection;
 
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
@@ -109,7 +109,7 @@ public abstract class BaseEngine implements Engine {
      * and for a recognizer only
      * {@link javax.speech.recognition.RecognizerListener}s.
      */
-    protected final Vector engineListeners;
+    protected final Collection<EngineListener> engineListeners;
 
     /**
      * The <code>AudioManager</code> for this <code>Engine</code>.
@@ -145,7 +145,7 @@ public abstract class BaseEngine implements Engine {
      */
     public BaseEngine(final EngineMode mode) {
         engineMode = mode;
-        engineListeners = new Vector();
+        engineListeners = new java.util.ArrayList<EngineListener>();
         engineState = DEALLOCATED;
         engineStateLock = new Object();
         pauses = 0;
@@ -576,7 +576,7 @@ public abstract class BaseEngine implements Engine {
     protected final void addEngineListener(final EngineListener listener) {
         synchronized (engineListeners) {
             if (!engineListeners.contains(listener)) {
-                engineListeners.addElement(listener);
+                engineListeners.add(listener);
             }
         }
     }
@@ -589,7 +589,7 @@ public abstract class BaseEngine implements Engine {
      */
     protected final void removeEngineListener(final EngineListener listener) {
         synchronized (engineListeners) {
-            engineListeners.removeElement(listener);
+            engineListeners.remove(listener);
         }
     }
 

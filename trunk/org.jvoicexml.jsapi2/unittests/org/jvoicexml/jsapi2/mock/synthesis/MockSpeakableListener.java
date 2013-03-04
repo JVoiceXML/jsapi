@@ -24,7 +24,7 @@
  *
  */
 
-package org.jvoicexml.jsapi2.test.synthesis;
+package org.jvoicexml.jsapi2.mock.synthesis;
 
 import java.util.Vector;
 
@@ -36,7 +36,7 @@ import javax.speech.synthesis.SpeakableListener;
  * @author Dirk Schnelle-Walka
  *
  */
-public class DummySpeakableListener implements SpeakableListener {
+public class MockSpeakableListener implements SpeakableListener {
     /** Received speakable events. */
     private final Vector events;
 
@@ -46,7 +46,7 @@ public class DummySpeakableListener implements SpeakableListener {
     /**
      * Constructs a new object.
      */
-    public DummySpeakableListener() {
+    public MockSpeakableListener() {
         events = new Vector();
         lock = new Object();
     }

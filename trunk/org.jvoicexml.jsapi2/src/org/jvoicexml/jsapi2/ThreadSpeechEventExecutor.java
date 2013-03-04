@@ -9,7 +9,7 @@
  * Copyright (C) 2007 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
-package org.jvoicexml.jsapi2.jse;
+package org.jvoicexml.jsapi2;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;

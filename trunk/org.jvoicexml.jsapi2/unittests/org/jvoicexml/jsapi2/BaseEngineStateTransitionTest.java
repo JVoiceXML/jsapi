@@ -8,8 +8,8 @@ import javax.speech.EngineEvent;
 
 import junit.framework.TestCase;
 
-import org.jvoicexml.jsapi2.test.EngineEventAccumulator;
-import org.jvoicexml.jsapi2.test.synthesis.DummySynthesizer;
+import org.jvoicexml.jsapi2.mock.EngineEventAccumulator;
+import org.jvoicexml.jsapi2.mock.synthesis.MockSynthesizer;
 
 /**
  * State transition test cases for {@link BaseEngine}.
@@ -28,7 +28,7 @@ public class BaseEngineStateTransitionTest extends TestCase {
      * @exception Exception set up failed
      */
     protected void setUp() throws Exception {
-        final DummySynthesizer syn = new DummySynthesizer();
+        final MockSynthesizer syn = new MockSynthesizer();
         syn.setEngineMask(EngineEvent.DEFAULT_MASK
                 | EngineEvent.ENGINE_ALLOCATING_RESOURCES
                 | EngineEvent.ENGINE_DEALLOCATING_RESOURCES);

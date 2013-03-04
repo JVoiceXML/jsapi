@@ -34,6 +34,7 @@ import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
 import javax.speech.EngineEvent;
 import javax.speech.EngineException;
+import javax.speech.EngineListener;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.synthesis.PhoneInfo;
@@ -97,11 +98,9 @@ public abstract class BaseSynthesizer extends BaseEngine
         synchronized (engineListeners) {
             final SynthesizerEvent synthesizerEvent =
                 (SynthesizerEvent) event;
-            Enumeration enumeration = engineListeners.elements();
-            while (enumeration.hasMoreElements()) {
-                final SynthesizerListener listener =
-                    (SynthesizerListener) enumeration.nextElement();
-                listener.synthesizerUpdate(synthesizerEvent);
+            for (EngineListener listener : engineListeners) {
+                SynthesizerListener synthesizerListener = (SynthesizerListener) listener;
+                synthesizerListener.synthesizerUpdate(synthesizerEvent);
             }
         }
     }

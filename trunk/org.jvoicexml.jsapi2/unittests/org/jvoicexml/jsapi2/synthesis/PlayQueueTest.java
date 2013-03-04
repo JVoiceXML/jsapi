@@ -5,7 +5,7 @@ package org.jvoicexml.jsapi2.synthesis;
 
 import javax.speech.AudioSegment;
 
-import org.jvoicexml.jsapi2.test.synthesis.DummySynthesizer;
+import org.jvoicexml.jsapi2.mock.synthesis.MockSynthesizer;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -26,7 +26,7 @@ public class PlayQueueTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        final BaseSynthesizer synthesizer = new DummySynthesizer();
+        final BaseSynthesizer synthesizer = new MockSynthesizer();
         final QueueManager manager = new QueueManager(synthesizer);
         queue = manager.getPlayQueue();
     }
