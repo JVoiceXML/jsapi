@@ -32,8 +32,8 @@ import javax.speech.synthesis.SpeakableEvent;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.jvoicexml.jsapi2.test.synthesis.DummySpeakableListener;
-import org.jvoicexml.jsapi2.test.synthesis.DummySynthesizer;
+import org.jvoicexml.jsapi2.mock.synthesis.MockSpeakableListener;
+import org.jvoicexml.jsapi2.mock.synthesis.MockSynthesizer;
 
 /**
  * Test cases for {@link QueueManager}.
@@ -48,7 +48,7 @@ public final class QueueManagerTest extends TestCase {
      * Set up the test environment.
      */
     public void setUp() {
-        synthesizer = new DummySynthesizer();
+        synthesizer = new MockSynthesizer();
     }
 
     /**
@@ -59,7 +59,7 @@ public final class QueueManagerTest extends TestCase {
     public void testAppendItemSpeakableSpeakableListener() throws Exception {
         QueueManager manager = synthesizer.getQueueManager();
         AudioSegment segment = new AudioSegment("http://nowhere", "test");
-        DummySpeakableListener listener = new DummySpeakableListener();
+        MockSpeakableListener listener = new MockSpeakableListener();
         manager.appendItem(segment, listener);
         QueueItem item = manager.getQueueItem();
         Assert.assertNotNull(item);

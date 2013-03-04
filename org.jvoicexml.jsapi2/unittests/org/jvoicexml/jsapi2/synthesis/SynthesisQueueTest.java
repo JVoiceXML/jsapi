@@ -31,7 +31,7 @@ import javax.speech.AudioSegment;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.jvoicexml.jsapi2.test.synthesis.DummySynthesizer;
+import org.jvoicexml.jsapi2.mock.synthesis.MockSynthesizer;
 
 /**
  * Test cases for {@link SynthesisQueue}.
@@ -49,7 +49,7 @@ public class SynthesisQueueTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        final BaseSynthesizer synthesizer = new DummySynthesizer();
+        final BaseSynthesizer synthesizer = new MockSynthesizer();
         final QueueManager manager = new QueueManager(synthesizer);
         queue = manager.getSynthesisQueue();
     }

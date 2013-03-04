@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.jvoicexml.jsapi2.test;
+package org.jvoicexml.jsapi2.mock;
 
 import java.util.Vector;
 

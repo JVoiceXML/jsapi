@@ -4,7 +4,7 @@ import javax.speech.Engine;
 import javax.speech.recognition.Recognizer;
 import javax.speech.synthesis.Synthesizer;
 
-import org.jvoicexml.jsapi2.test.recognition.DummyRecognizer;
+import org.jvoicexml.jsapi2.mock.recognition.MockRecognizer;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -26,7 +26,7 @@ public class RecognizerStateTransitionTest extends TestCase {
                 Boolean.TRUE.toString());
         System.setProperty("javax.speech.supports.audio.capture",
                 Boolean.TRUE.toString());
-        recognizer = new DummyRecognizer();
+        recognizer = new MockRecognizer();
         super.setUp();
     }
     

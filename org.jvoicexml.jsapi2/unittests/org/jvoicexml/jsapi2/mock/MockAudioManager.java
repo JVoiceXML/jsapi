@@ -1,4 +1,4 @@
-package org.jvoicexml.jsapi2.test;
+package org.jvoicexml.jsapi2.mock;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,7 +13,7 @@ import org.jvoicexml.jsapi2.BaseAudioManager;
  * Dummy implementation of an {@link AudioManager} for test purposes.
  * @author Dirk SChnelle-Walka
  */
-public class DummyAudioManager extends BaseAudioManager {
+public class MockAudioManager extends BaseAudioManager {
 
     /**
      * {@inheritDoc}

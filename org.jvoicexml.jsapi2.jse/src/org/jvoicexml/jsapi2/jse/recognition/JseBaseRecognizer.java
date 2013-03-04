@@ -46,7 +46,6 @@
 package org.jvoicexml.jsapi2.jse.recognition;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
 import javax.speech.AudioManager;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.recognition.Grammar;
@@ -56,7 +55,7 @@ import javax.speech.recognition.RecognizerMode;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 
-import org.jvoicexml.jsapi2.jse.ThreadSpeechEventExecutor;
+import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 
 

@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
-import org.jvoicexml.jsapi2.test.synthesis.DummySynthesizer;
+import org.jvoicexml.jsapi2.mock.synthesis.MockSynthesizer;
 
 /**
  * Test cases for {@link BaseSynthesizerProperties}.
@@ -44,7 +44,7 @@ public final class BaseSynthesizerPropertiesTest extends TestCase
      *         setup failed
      */
     public void setUp() throws Exception {
-        final Synthesizer synthesizer = new DummySynthesizer();
+        final Synthesizer synthesizer = new MockSynthesizer();
         props = new BaseSynthesizerProperties(synthesizer);
         props.addEnginePropertyChangeRequestListener(this);
         props.addEnginePropertyListener(this);

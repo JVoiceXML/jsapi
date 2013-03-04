@@ -6,7 +6,7 @@ import javax.speech.synthesis.Synthesizer;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.jvoicexml.jsapi2.test.synthesis.DummySynthesizer;
+import org.jvoicexml.jsapi2.mock.synthesis.MockSynthesizer;
 
 /**
  * Test cases for state transitions of the
@@ -22,7 +22,7 @@ public class SynthesizerStateTransitionTest extends TestCase {
      * Set up the test environment.
      */
     protected void setUp() throws Exception {
-        synthesizer = new DummySynthesizer();
+        synthesizer = new MockSynthesizer();
         super.setUp();
     }
 

@@ -11,6 +11,9 @@
 
 package org.jvoicexml.jsapi2;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -51,13 +54,13 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * List of <code>PropertyChangeListeners</code> registered for
      * <code>PropertyChangeEvents</code> on this object.
      */
-    private final Vector propertyChangeListeners;
+    private final Collection<EnginePropertyListener> propertyChangeListeners;
 
     /**
      * List of {@link EnginePropertyChangeRequestListener} registered for
      * {@link EnginePropertyChangeRequestEvent} on this object.
      */
-    private final Vector propertyChangeRequestListeners;
+    private final Collection<EnginePropertyChangeRequestListener> propertyChangeRequestListeners;
 
     /** The engine for which these properties apply. */
     private final Engine engine;
@@ -151,7 +154,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
     public void addEnginePropertyListener(
             final EnginePropertyListener listener) {
         if (!propertyChangeListeners.contains(listener)) {
-            propertyChangeListeners.addElement(listener);
+            propertyChangeListeners.add(listener);
         }
     }
 
@@ -160,7 +163,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
      */
     public void removeEnginePropertyListener(
             final EnginePropertyListener listener) {
-        propertyChangeListeners.removeElement(listener);
+        propertyChangeListeners.remove(listener);
     }
 
     /**
@@ -173,7 +176,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
     public void addEnginePropertyChangeRequestListener(
             final EnginePropertyChangeRequestListener listener) {
         if (!propertyChangeRequestListeners.contains(listener)) {
-            propertyChangeRequestListeners.addElement(listener);
+            propertyChangeRequestListeners.add(listener);
         }
     }
 
@@ -182,7 +185,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
      */
     public void removeEnginePropertyChangeRequestListener(
             final EnginePropertyChangeRequestListener listener) {
-        propertyChangeRequestListeners.removeElement(listener);
+        propertyChangeRequestListeners.remove(listener);
     }
 
     /**
@@ -245,10 +248,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
         final EnginePropertyChangeRequestEvent event =
             new EnginePropertyChangeRequestEvent(
                 this, propName, oldValue, newValue);
-        final Enumeration e = propertyChangeRequestListeners.elements();
-        while (e.hasMoreElements()) {
-            final EnginePropertyChangeRequestListener listener
-                = (EnginePropertyChangeRequestListener) e.nextElement();
+        for (EnginePropertyChangeRequestListener listener : propertyChangeRequestListeners) {
             listener.propertyChangeRequest(event);
         }
     }
@@ -346,10 +346,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * @see #dispatchSpeechEvent
      */
     public void firePropertyChangeEvent(final EnginePropertyEvent event) {
-        final Enumeration e = propertyChangeListeners.elements();
-        while (e.hasMoreElements()) {
-            final EnginePropertyListener listener = (EnginePropertyListener) e
-                    .nextElement();
+        for (EnginePropertyListener listener : propertyChangeListeners) {
             listener.propertyUpdate(event);
         }
     }

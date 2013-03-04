@@ -46,13 +46,14 @@
 package org.jvoicexml.jsapi2.recognition;
 
 import java.io.InputStream;
-import java.util.Enumeration;
+import java.util.Collection;
 import java.util.Vector;
 
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
 import javax.speech.EngineEvent;
 import javax.speech.EngineException;
+import javax.speech.EngineListener;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
@@ -82,14 +83,14 @@ import org.jvoicexml.jsapi2.BaseVocabularyManager;
  * can load grammars and simulate a recognizer recognizing
  * some text, etc.
  *
- * <P>
- *
+ * <p>
  * Actual JSAPI recognizer implementations might want to extend or
  * modify this implementation.
+ * </p>
  *
  */
 public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
-    protected Vector resultListeners;
+    protected Collection<ResultListener> resultListeners;
 
     protected boolean hasModalGrammars;
 
@@ -128,7 +129,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         final BaseAudioManager audioManager =
             (BaseAudioManager) getAudioManager();
         audioManager.setEngine(this);
-        resultListeners = new Vector();
+        resultListeners = new java.util.ArrayList<ResultListener>();
         speakerManager = new BaseSpeakerManager();
         final RecognizerProperties props =
             new BaseRecognizerProperties(this);
@@ -264,11 +265,9 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         synchronized (engineListeners) {
             final RecognizerEvent recognizerEvent =
                 (RecognizerEvent) event;
-            Enumeration enumeration = engineListeners.elements();
-            while (enumeration.hasMoreElements()) {
-                final RecognizerListener listener =
-                    (RecognizerListener) enumeration.nextElement();
-                listener.recognizerUpdate(recognizerEvent);
+            for (EngineListener listener : engineListeners) {
+                RecognizerListener recognizerListener = (RecognizerListener) listener;
+                recognizerListener.recognizerUpdate(recognizerEvent);
             }
         }
     }
@@ -332,10 +331,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             SpeechEventExecutor executor);
 
     public void fireResultEvent(final ResultEvent event) {
-        Enumeration listeners = resultListeners.elements();
-        while (listeners.hasMoreElements()) {
-            ResultListener el = (ResultListener) listeners.nextElement();
-            ((ResultListener) el).resultUpdate((ResultEvent) event);
+        for (ResultListener listener : resultListeners) {
+            listener.resultUpdate(event);
         }
     }
 
@@ -362,7 +359,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     public void addResultListener(final ResultListener listener) {
         if (!resultListeners.contains(listener)) {
-            resultListeners.addElement(listener);
+            resultListeners.add(listener);
         }
     }
 
@@ -372,7 +369,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * @param listener the listener to remove.
      */
     public void removeResultListener(ResultListener listener) {
-        resultListeners.removeElement(listener);
+        resultListeners.remove(listener);
     }
 
     /**

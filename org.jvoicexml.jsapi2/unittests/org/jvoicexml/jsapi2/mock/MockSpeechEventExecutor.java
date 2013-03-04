@@ -24,7 +24,7 @@
  *
  */
 
-package org.jvoicexml.jsapi2.test;
+package org.jvoicexml.jsapi2.mock;
 
 import javax.speech.SpeechEventExecutor;
 
@@ -33,7 +33,7 @@ import javax.speech.SpeechEventExecutor;
  * @author Dirk Schnelle-Walka
  *
  */
-public class DummySpeechEventExecutor implements SpeechEventExecutor {
+public class MockSpeechEventExecutor implements SpeechEventExecutor {
 
     /**
      * {@inheritDoc}

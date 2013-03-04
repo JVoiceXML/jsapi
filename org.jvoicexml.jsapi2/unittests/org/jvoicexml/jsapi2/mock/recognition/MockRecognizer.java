@@ -1,4 +1,4 @@
-package org.jvoicexml.jsapi2.test.recognition;
+package org.jvoicexml.jsapi2.mock.recognition;
 
 import java.io.InputStream;
 import java.util.Vector;
@@ -14,22 +14,22 @@ import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 
+import org.jvoicexml.jsapi2.mock.MockAudioManager;
+import org.jvoicexml.jsapi2.mock.MockSpeechEventExecutor;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
-import org.jvoicexml.jsapi2.test.DummyAudioManager;
-import org.jvoicexml.jsapi2.test.DummySpeechEventExecutor;
 
 /**
  * Dummy implementation of a {@link javax.spech.recognition.Recognizer}
  * for test purposes.
  * @author Dirk Schnelle-Walka
  */
-public class DummyRecognizer extends BaseRecognizer {
+public class MockRecognizer extends BaseRecognizer {
 
     /**
      * {@inheritDoc}
      */
     protected GrammarManager createGrammarManager() {
-        return new DummyGrammarManager();
+        return new MockGrammarManager();
     }
 
     /**
@@ -110,13 +110,13 @@ public class DummyRecognizer extends BaseRecognizer {
      * {@inheritDoc}
      */
     protected AudioManager createAudioManager() {
-        return new DummyAudioManager();
+        return new MockAudioManager();
     }
 
     /**
      * {@inheritDoc}
      */
     protected SpeechEventExecutor createSpeechEventExecutor() {
-        return new DummySpeechEventExecutor();
+        return new MockSpeechEventExecutor();
     }
 }

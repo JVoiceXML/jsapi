@@ -54,7 +54,7 @@ public class BaseSpeakable implements Speakable {
     }
 
     public String toString() {
-        final StringBuffer str = new StringBuffer();
+        final StringBuilder str = new StringBuilder();
         str.append(getClass().getName());
         str.append("[");
         if (markup != null) {

@@ -419,20 +419,18 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
     }
 
     public void fireResultEvent(final ResultEvent event) {
-        Enumeration listeners = resultListeners.elements();
-        while (listeners.hasMoreElements()) {
-            ResultListener el = (ResultListener) listeners.nextElement();
+        for (ResultListener listener : resultListeners) {
             // only notify result listeners for the given grammar
-            if (RuleGrammar.class.isAssignableFrom(el.getClass())
+            if (RuleGrammar.class.isAssignableFrom(listener.getClass())
                     && event.getSource().getClass().isAssignableFrom(
                             BaseResult.class)) {
-                if (((RuleGrammar) el).getReference().equals(
+                if (((RuleGrammar) listener).getReference().equals(
                         ((BaseResult) event.getSource()).getGrammar()
                                 .getReference())) {
-                    ((ResultListener) el).resultUpdate((ResultEvent) event);
+                    ((ResultListener) listener).resultUpdate((ResultEvent) event);
                 }
             } else {
-                ((ResultListener) el).resultUpdate((ResultEvent) event);
+                listener.resultUpdate((ResultEvent) event);
             }
         }
     }

@@ -28,8 +28,7 @@ package org.jvoicexml.jsapi2;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.Collection;
 
 import javax.speech.AudioEvent;
 import javax.speech.AudioException;
@@ -49,7 +48,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * List of <code>AudioListeners</code> registered for
      * <code>AudioEvents</code> on this object.
      */
-    private final Vector audioListeners;
+    private final Collection<AudioListener> audioListeners;
 
     /**  Mask to filter events. */ 
     private int audioMask;
@@ -67,7 +66,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * Class constructor.
      */
     public BaseAudioManager() {
-        audioListeners = new Vector();
+        audioListeners = new java.util.ArrayList<AudioListener>();
         audioMask = AudioEvent.DEFAULT_MASK;
     }
 
@@ -88,7 +87,7 @@ public abstract class BaseAudioManager implements AudioManager {
     public final void addAudioListener(final AudioListener listener) {
         synchronized (audioListeners) {
             if (!audioListeners.contains(listener)) {
-                audioListeners.addElement(listener);
+                audioListeners.add(listener);
             }
         }
     }
@@ -101,7 +100,7 @@ public abstract class BaseAudioManager implements AudioManager {
      */
     public final void removeAudioListener(final AudioListener listener) {
         synchronized (audioListeners) {
-            audioListeners.removeElement(listener);
+            audioListeners.remove(listener);
         }
     }
 
@@ -288,11 +287,7 @@ public abstract class BaseAudioManager implements AudioManager {
             final Runnable runnable = new Runnable() {
                 public void run() {
                     synchronized (audioListeners) {
-                        final Enumeration enumeration =
-                            audioListeners.elements();
-                        while (enumeration.hasMoreElements()) {
-                            final AudioListener listener =
-                                (AudioListener) enumeration.nextElement();
+                        for (AudioListener listener : audioListeners) {
                             listener.audioUpdate(event);
                         }
                     }
