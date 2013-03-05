@@ -29,8 +29,8 @@ package org.jvoicexml.jsapi2.sapi.recognition;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,9 +55,10 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
-import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
+import org.jvoicexml.jsapi2.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.BaseResultToken;
+import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 /**
  * A SAPI recognizer.
@@ -91,11 +92,11 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      * {@inheritDoc}
      */
     @Override
-    public Vector<?> getBuiltInGrammars() {
+    public Collection<Grammar> getBuiltInGrammars() {
         return sapiGetBuildInGrammars(recognizerHandle);
     }
 
-    private native Vector<?> sapiGetBuildInGrammars(long handle);
+    private native Collection<Grammar> sapiGetBuildInGrammars(long handle);
 
     /**
      * {@inheritDoc}
@@ -254,7 +255,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      */
     @Override
     protected boolean setGrammars(
-            @SuppressWarnings("rawtypes") final Vector grammarDefinition) {
+            Collection<GrammarDefinition> grammarDefinition) {
         return false;
     }
 

@@ -12,7 +12,6 @@ This file builds the JSAPI2 project.
     <property name="src" value="src" />
     <property name="build" value="classes" />
     <property name="dist" value="dist" />
-  	<property name="preverify" value="preverify" />
     <property name="apidoc" value="doc/api" />
 
     <!-- distribution files -->
@@ -22,12 +21,6 @@ This file builds the JSAPI2 project.
     <property name="dist.src.libs.zip" value="${dist}/jsr-113-${version}-src-withlibs.zip" />
   	<property name="dist.zip" value="${dist}/jsr-113-${version}.zip" />
   	<property name="dist.jsr113.jar" value="${dist}/jsr113.jar" />
-
-    <available file="${midp.home}" property="midp.available"/>
-    <path id="midp.lib">
-      <pathelement location="${midp.home}/lib/${cldcapi.jar}"/>
-      <pathelement location="${midp.home}/lib/${midpapi.jar}"/>
-    </path>
 
     <!-- Properties for components to use -->
     <condition property="jsapi2.freetts.use">
@@ -54,7 +47,6 @@ This file builds the JSAPI2 project.
 	
   <target name="-init" depends="-initVariables">
     <mkdir dir="${build}" />
-    <mkdir dir="${preverify}" />
     <mkdir dir="${dist}" />
   </target>
 
@@ -82,7 +74,6 @@ This file builds the JSAPI2 project.
     depends="-initVariables,-cleanFreetts,-cleanSphinx4,-cleanSapi,-cleanMac"
     description="Remove all compiled and distribution files">
     <delete dir="${build}" />
-  	<delete dir="${preverify}" />
   	<delete dir="${dist}" />
   </target>
 
@@ -91,27 +82,11 @@ This file builds the JSAPI2 project.
         inheritall="false" inheritrefs="false"/>
   </target>
   
-  <target name="compileJ2ME" depends="-init,-dependentComponents"
-    description="Compile ${component} for J2ME the JAVA sources for J2ME"
-      if="midp.available">
-    <mkdir dir="${build}" />
-  	<echo message="compiling ${component} for JME with debug=${debug}, optimize=${optimize}" />
-      <javac bootclasspathref="midp.lib" destdir="${build}"
-        includeantruntime="false"
-        source="1.2" target="1.1" optimize="${optimize}">
-      <src path="${src}" />
-      <classpath>
-        <pathelement location="../javax.speech/classes"/>
-      </classpath>
-      <compilerarg value="-Xlint:unchecked" />
-    </javac>
-  </target>
-
-  <target name="compileJSE" depends="-init,-dependentComponents"
+  <target name="compile" depends="-init,-dependentComponents"
     description="Compile the JAVA sources for JSE"
       unless="midp.available">
     <echo message="compiling ${component} for JSE with debug=${debug}, optimize=${optimize}" />
-      <javac destdir="preverify" optimize="${optimize}"
+      <javac destdir="${build}" optimize="${optimize}"
         includeantruntime="false"
         debug="${debug}" deprecation="on">
       <src path="${src}" />
@@ -120,29 +95,12 @@ This file builds the JSAPI2 project.
     </javac>
   </target>
     
-  <target name="rebuild" depends="clean,compileJSE,compileJ2ME"/>
+  <target name="rebuild" depends="clean,compile"/>
 
-  <target name="preverify" depends="compileJ2ME" if="midp.available">
-    <mkdir dir="preverify"/>
-    <path id="preverify.path">
-      <path refid="midp.lib"/>
-      <pathelement location="../javax.speech/classes"/>
-    </path>
-    <pathconvert property="midp.path" refid="preverify.path"/>
-    <exec executable="${midp.home}/bin/preverify">
-      <arg value="-classpath"/>
-      <arg value="${midp.path}"/>
-      <arg value="-d"/>
-      <arg value="preverify"/>
-      <arg value="${build}"/>
-      <arg value="-cldc1.0" />
-    </exec>
-  </target>
-  
-  <target name="-jar" depends="preverify,compileJSE"
+  <target name="-jar" depends="compile"
     description="Pack all compiled files into jar files">
     <jar jarfile="${dist.jar}" compress="false">
-      <fileset dir="preverify">
+      <fileset dir="${build}">
         <include name="**/*.class" />
       </fileset>
       <manifest>

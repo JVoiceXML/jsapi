@@ -39,8 +39,8 @@ import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SynthesizerMode;
 
-import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
-import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
+import org.jvoicexml.jsapi2.BaseAudioSegment;
+import org.jvoicexml.jsapi2.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 import com.sun.speech.freetts.FreeTTSSpeakableImpl;

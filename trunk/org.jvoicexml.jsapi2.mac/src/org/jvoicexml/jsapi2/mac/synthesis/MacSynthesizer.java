@@ -37,7 +37,7 @@ import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.Voice;
 
-import org.jvoicexml.jsapi2.jse.BaseAudioSegment;
+import org.jvoicexml.jsapi2.BaseAudioSegment;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 /**
