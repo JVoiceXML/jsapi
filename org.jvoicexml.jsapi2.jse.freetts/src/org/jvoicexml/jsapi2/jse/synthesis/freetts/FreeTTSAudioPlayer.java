@@ -32,8 +32,8 @@ import java.io.InputStream;
 
 import javax.sound.sampled.AudioFormat;
 
-import org.jvoicexml.jsapi2.jse.AudioFormatConverter;
-import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
+import org.jvoicexml.jsapi2.AudioFormatConverter;
+import org.jvoicexml.jsapi2.JseBaseAudioManager;
 
 import com.sun.speech.freetts.audio.AudioPlayer;
 

@@ -646,7 +646,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected abstract boolean handleResume(final InputStream in)
         throws EngineStateException;
 
-    protected abstract boolean setGrammars(Vector grammarDefinition);
+    protected abstract boolean setGrammars(Collection<GrammarDefinition> grammarDefinition);
 
     protected abstract void handleRequestFocus();
 
@@ -656,6 +656,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * Returns a list of engine built-in grammars.
      * @return list of buildtin grammars
      */
-    public abstract Vector getBuiltInGrammars();
+    public abstract Collection<Grammar> getBuiltInGrammars();
 
 }

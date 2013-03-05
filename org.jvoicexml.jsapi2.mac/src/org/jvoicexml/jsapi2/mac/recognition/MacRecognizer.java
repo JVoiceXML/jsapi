@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Vector;
+import java.util.Collection;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
@@ -22,6 +22,7 @@ import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
+import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 /**
  * A SAPI recognizer.
@@ -52,11 +53,11 @@ public final class MacRecognizer extends JseBaseRecognizer {
      * {@inheritDoc}
      */
     @Override
-    public Vector<?> getBuiltInGrammars() {
+    public Collection<Grammar> getBuiltInGrammars() {
         return macGetBuildInGrammars(recognizerHandle);
     }
 
-    private native Vector<?> macGetBuildInGrammars(long handle);
+    private native Collection<Grammar> macGetBuildInGrammars(long handle);
 
     /**
      * {@inheritDoc}
@@ -133,7 +134,7 @@ public final class MacRecognizer extends JseBaseRecognizer {
      */
     @Override
     protected boolean setGrammars(
-            @SuppressWarnings("rawtypes") final Vector grammarDefinition) {
+            Collection<GrammarDefinition> grammarDefinition) {
         return false;
     }
 

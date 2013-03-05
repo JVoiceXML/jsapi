@@ -13,6 +13,7 @@ package org.jvoicexml.jsapi2;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -81,8 +82,10 @@ public abstract class BaseEngineProperties implements EngineProperties {
      *            the engine for which these properties apply.
      */
     protected BaseEngineProperties(final Engine eng) {
-        propertyChangeListeners = new Vector();
-        propertyChangeRequestListeners = new Vector();
+        propertyChangeListeners =
+                new java.util.ArrayList<EnginePropertyListener>();
+        propertyChangeRequestListeners =
+                new java.util.ArrayList<EnginePropertyChangeRequestListener>();
         engine = eng;
         priority = EngineProperties.NORM_TRUSTED_PRIORITY;
         base = "";

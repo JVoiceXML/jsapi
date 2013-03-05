@@ -1,20 +1,15 @@
 package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
 
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.speech.recognition.GrammarEvent;
-import javax.speech.recognition.GrammarListener;
-import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.jse.recognition.BaseRuleGrammar;
@@ -94,12 +89,11 @@ public class SRGSGrammarContainer extends Grammar {
      *            The set of all grammars from the GrammarManager
      * @throws IOException
      */
-    public synchronized void loadGrammars(Vector grammarDefinitions)
+    public synchronized void loadGrammars(Collection<org.jvoicexml.jsapi2.recognition.GrammarDefinition> grammarDefinitions)
             throws IOException {
         grammarDefs.clear();
-        for (Object obj : grammarDefinitions) {
-            GrammarDefinition gd = (GrammarDefinition) obj;
-            grammarDefs.put(gd.getName(), gd);
+        for (GrammarDefinition definition : grammarDefinitions) {
+            grammarDefs.put(definition.getName(), definition);
         }
         commitChanges();
     }

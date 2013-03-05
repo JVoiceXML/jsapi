@@ -1,7 +1,7 @@
 package org.jvoicexml.jsapi2.mock.recognition;
 
 import java.io.InputStream;
-import java.util.Vector;
+import java.util.Collection;
 
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
@@ -17,6 +17,7 @@ import javax.speech.recognition.ResultEvent;
 import org.jvoicexml.jsapi2.mock.MockAudioManager;
 import org.jvoicexml.jsapi2.mock.MockSpeechEventExecutor;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
+import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 /**
  * Dummy implementation of a {@link javax.spech.recognition.Recognizer}
@@ -83,13 +84,6 @@ public class MockRecognizer extends BaseRecognizer {
     /**
      * {@inheritDoc}
      */
-    protected boolean setGrammars(Vector grammarDefinition) {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     protected void handleRequestFocus() {
     }
 
@@ -102,7 +96,7 @@ public class MockRecognizer extends BaseRecognizer {
     /**
      * {@inheritDoc}
      */
-    public Vector getBuiltInGrammars() {
+    public Collection<Grammar> getBuiltInGrammars() {
         return null;
     }
 
@@ -118,5 +112,12 @@ public class MockRecognizer extends BaseRecognizer {
      */
     protected SpeechEventExecutor createSpeechEventExecutor() {
         return new MockSpeechEventExecutor();
+    }
+
+    @Override
+    protected boolean setGrammars(
+            Collection<GrammarDefinition> grammarDefinition) {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

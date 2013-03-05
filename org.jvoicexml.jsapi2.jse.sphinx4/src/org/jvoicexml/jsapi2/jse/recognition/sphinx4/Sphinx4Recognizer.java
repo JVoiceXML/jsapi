@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
+import java.util.Collection;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,10 +45,10 @@ import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 
-import org.jvoicexml.jsapi2.jse.JseBaseAudioManager;
+import org.jvoicexml.jsapi2.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
-import org.jvoicexml.jsapi2.jse.recognition.GrammarDefinition;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
+import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.DataProcessor;
@@ -381,14 +381,14 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
      * @return boolean
      */
     @Override
-    protected boolean setGrammars(Vector grammarDefinition) {
+    protected boolean setGrammars(Collection<GrammarDefinition> grammarDefinition) {
         if (grammar instanceof SRGSGrammar) {
             // old behavior with only a single active grammar
             if (grammarDefinition.size() == 1) {
                 try {
+                    final org.jvoicexml.jsapi2.recognition.GrammarDefinition definition = grammarDefinition.iterator().next();
                     ((SRGSGrammar) grammar)
-                            .loadSRGS(((GrammarDefinition) grammarDefinition
-                                    .get(0)).getGrammar());
+                            .loadSRGS(definition.getGrammar());
                 } catch (IOException ex) {
                     return false;
                 }
