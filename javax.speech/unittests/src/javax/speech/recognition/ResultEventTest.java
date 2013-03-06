@@ -26,7 +26,7 @@
 
 package javax.speech.recognition;
 
-import javax.speech.test.recognition.TestResult;
+import javax.speech.mock.recognition.MockResult;
 
 import junit.framework.TestCase;
 
@@ -45,7 +45,7 @@ public class ResultEventTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        result = new TestResult();
+        result = new MockResult();
     }
 
     /**

@@ -1,27 +1,27 @@
 /**
  * 
  */
-package javax.speech.test;
+package javax.speech.mock;
 
 import javax.speech.EngineList;
 import javax.speech.EngineMode;
+import javax.speech.mock.recognition.MockRecognizerFactory;
 import javax.speech.recognition.RecognizerMode;
 import javax.speech.spi.EngineListFactory;
-import javax.speech.test.recognition.TestRecognizerFactory;
 
 /**
  * EngineListFactory for test purposes.
  * 
  * @author Dirk Schnelle
  */
-public class TestRecognizerEngineListFactory implements EngineListFactory {
+public class MockRecognizerEngineListFactory implements EngineListFactory {
     /**
      * {@inheritDoc}
      */
     public EngineList createEngineList(EngineMode require)
             throws SecurityException {
         if ((require == null) || (require instanceof RecognizerMode)) {
-            final EngineMode[] modes = new EngineMode[] { new TestRecognizerFactory() };
+            final EngineMode[] modes = new EngineMode[] { new MockRecognizerFactory() };
 
             return new EngineList(modes);
         }

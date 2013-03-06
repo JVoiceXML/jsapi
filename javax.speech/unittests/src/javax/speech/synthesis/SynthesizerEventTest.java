@@ -26,7 +26,7 @@
 
 package javax.speech.synthesis;
 
-import javax.speech.test.synthesis.TestSynthesizer;
+import javax.speech.mock.synthesis.MockSynthesizer;
 
 import junit.framework.TestCase;
 
@@ -46,7 +46,7 @@ public class SynthesizerEventTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        synthesizer = new TestSynthesizer();
+        synthesizer = new MockSynthesizer();
     }
 
     /**

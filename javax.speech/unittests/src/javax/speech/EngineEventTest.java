@@ -25,7 +25,7 @@
  */
 package javax.speech;
 
-import javax.speech.test.TestEngine;
+import javax.speech.mock.MockEngine;
 
 import junit.framework.TestCase;
 
@@ -45,7 +45,7 @@ public class EngineEventTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        engine = new TestEngine();
+        engine = new MockEngine();
     }
 
     /**
@@ -53,7 +53,8 @@ public class EngineEventTest extends TestCase {
      */
     public void testGetNewEngineState() {
         final Throwable problem = new Exception();
-        final EngineEvent event = new EngineEvent(engine, 43,
+        final EngineEvent event = new EngineEvent(engine,
+                EngineEvent.ENGINE_ERROR,
                 EngineEvent.ENGINE_DEALLOCATED,
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES, problem);
         assertEquals(EngineEvent.ENGINE_ALLOCATING_RESOURCES, event
@@ -65,7 +66,8 @@ public class EngineEventTest extends TestCase {
      */
     public void testGetOldEngineState() {
         final Throwable problem = new Exception();
-        final EngineEvent event = new EngineEvent(engine, 43,
+        final EngineEvent event = new EngineEvent(engine,
+                EngineEvent.ENGINE_ERROR,
                 EngineEvent.ENGINE_DEALLOCATED,
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES, problem);
         assertEquals(EngineEvent.ENGINE_DEALLOCATED, event.getOldEngineState());
@@ -76,9 +78,10 @@ public class EngineEventTest extends TestCase {
      */
     public void testGetEngineError() {
         final Throwable problem = new Exception();
-        final EngineEvent event = new EngineEvent(engine, 43,
+        final EngineEvent event = new EngineEvent(engine,
+                EngineEvent.ENGINE_ALLOCATED,
                 EngineEvent.ENGINE_DEALLOCATED,
-                EngineEvent.ENGINE_ALLOCATING_RESOURCES, problem);
+                EngineEvent.ENGINE_ALLOCATING_RESOURCES, null);
         assertNull(event.getEngineError());
 
         final EngineEvent event2 = new EngineEvent(engine,

@@ -24,7 +24,7 @@
  *
  */
 
-package javax.speech.test;
+package javax.speech.mock;
 
 import javax.speech.EngineMode;
 
@@ -32,15 +32,15 @@ import javax.speech.EngineMode;
  * An engine mode for test purpose.
  * @author Dirk Schnelle-Walka
  */
-public class DummyEngineMode extends EngineMode {
+public class MockEngineMode extends EngineMode {
     /**
      * Constructs a new object.
      */
-    public DummyEngineMode() {
+    public MockEngineMode() {
         super();
     }
 
-    public DummyEngineMode(String engineName, String modeName, Boolean running,
+    public MockEngineMode(String engineName, String modeName, Boolean running,
             Boolean supportsLetterToSound, Boolean supportsMarkup) {
         super(engineName, modeName, running, supportsLetterToSound, supportsMarkup);
     }

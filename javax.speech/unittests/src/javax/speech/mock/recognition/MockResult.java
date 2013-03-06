@@ -24,7 +24,7 @@
  *
  */
 
-package javax.speech.test.recognition;
+package javax.speech.mock.recognition;
 
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.Result;
@@ -36,7 +36,7 @@ import javax.speech.recognition.ResultToken;
  * 
  * @author Dirk Schnelle
  */
-public class TestResult implements Result {
+public class MockResult implements Result {
 
     /**
      * {@inheritDoc}

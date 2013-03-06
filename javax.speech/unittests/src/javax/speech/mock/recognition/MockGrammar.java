@@ -24,7 +24,7 @@
  *
  */
 
-package javax.speech.test.recognition;
+package javax.speech.mock.recognition;
 
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarListener;
@@ -36,7 +36,7 @@ import javax.speech.recognition.ResultListener;
  * 
  * @author Dirk Schnelle-Walka
  */
-public class TestGrammar implements Grammar {
+public class MockGrammar implements Grammar {
 
     public void addGrammarListener(GrammarListener listener) {
         // TODO Auto-generated method stub

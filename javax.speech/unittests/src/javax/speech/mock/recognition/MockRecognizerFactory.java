@@ -1,7 +1,7 @@
 /**
  * 
  */
-package javax.speech.test.recognition;
+package javax.speech.mock.recognition;
 
 import javax.speech.Engine;
 import javax.speech.EngineException;
@@ -13,13 +13,13 @@ import javax.speech.spi.EngineFactory;
  * 
  * @author Dirk Schnelle
  */
-public class TestRecognizerFactory extends RecognizerMode implements
+public class MockRecognizerFactory extends RecognizerMode implements
         EngineFactory {
     /**
      * {@inheritDoc}
      */
     public Engine createEngine() throws EngineException {
-        return new TestRecognizer();
+        return new MockRecognizer();
     }
 
 }

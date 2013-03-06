@@ -1,7 +1,7 @@
 /**
  * 
  */
-package javax.speech.test.synthesis;
+package javax.speech.mock.synthesis;
 
 import javax.speech.Engine;
 import javax.speech.EngineException;
@@ -13,14 +13,14 @@ import javax.speech.synthesis.SynthesizerMode;
  * 
  * @author Dirk Schnelle
  */
-public class TestSynthesizerFactory extends SynthesizerMode implements
+public class MockSynthesizerFactory extends SynthesizerMode implements
         EngineFactory {
     /**
      * {@inheritDoc}
      */
     public Engine createEngine() throws IllegalArgumentException,
             EngineException, SecurityException {
-        return new TestSynthesizer();
+        return new MockSynthesizer();
     }
 
 }

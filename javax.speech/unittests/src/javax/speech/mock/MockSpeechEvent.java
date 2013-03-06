@@ -24,7 +24,7 @@
  *
  */
 
-package javax.speech.test;
+package javax.speech.mock;
 
 import javax.speech.SpeechEvent;
 
@@ -33,13 +33,13 @@ import javax.speech.SpeechEvent;
  * @author Dirk Schnelle-Walka
  *
  */
-public class DummySpeechEvent extends SpeechEvent {
+public class MockSpeechEvent extends SpeechEvent {
     /**
      * Constructs a new object.
      * @param source the source of this event
      * @param id the event id
      */
-    public DummySpeechEvent(final Object source, final int id) {
+    public MockSpeechEvent(final Object source, final int id) {
         super(source, id);
     }
 

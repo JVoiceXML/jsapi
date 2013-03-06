@@ -89,6 +89,17 @@ public class GrammarEvent extends SpeechEvent {
     /**
      * {@inheritDoc}
      */
+    protected void id2String(StringBuffer str) {
+        maybeAddId(str, GRAMMAR_ACTIVATED, "GRAMMAR_ACTIVATED");
+        maybeAddId(str, GRAMMAR_CHANGES_COMMITTED, "GRAMMAR_CHANGES_COMMITTED");
+        maybeAddId(str, GRAMMAR_CHANGES_REJECTED, "GRAMMAR_CHANGES_REJECTED");
+        maybeAddId(str, GRAMMAR_DEACTIVATED, "GRAMMAR_DEACTIVATED");
+        super.id2String(str);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected Vector getParameters() {
         final Vector parameters = super.getParameters();
 
