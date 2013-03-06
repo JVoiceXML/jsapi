@@ -30,7 +30,7 @@ import java.util.Locale;
 
 import javax.speech.EngineMode;
 import javax.speech.SpeechLocale;
-import javax.speech.test.DummyEngineMode;
+import javax.speech.mock.MockEngineMode;
 
 import junit.framework.TestCase;
 
@@ -140,7 +140,7 @@ public class RecognizerModeTest extends TestCase {
         assertFalse(mode1.equals("test"));
         assertTrue(mode1.equals(mode1));
 
-        final EngineMode engineMode = new DummyEngineMode();
+        final EngineMode engineMode = new MockEngineMode();
         assertTrue(mode1.match(engineMode));
 
         final RecognizerMode mode2 = new RecognizerMode();

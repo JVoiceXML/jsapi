@@ -2,6 +2,8 @@ Version 0.5
 ===========
 - Minor bugfixes
 - Supporting only Java SE
+- bugfix: RecognizerEvent falsely reported an IllegalArgumentExcpetion for
+  CHANGES_REJECTED
 
 
 Version 0.4

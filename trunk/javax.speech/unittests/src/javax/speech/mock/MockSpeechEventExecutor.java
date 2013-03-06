@@ -1,7 +1,7 @@
 /**
  * 
  */
-package javax.speech.test;
+package javax.speech.mock;
 
 import javax.speech.SpeechEventExecutor;
 
@@ -10,7 +10,7 @@ import javax.speech.SpeechEventExecutor;
  * 
  * @author Dirk Schnelle
  */
-public class TestSpeechEventExecutor implements SpeechEventExecutor {
+public class MockSpeechEventExecutor implements SpeechEventExecutor {
     /**
      * {@inheritDoc}
      */

@@ -26,8 +26,8 @@
 
 package javax.speech;
 
+import javax.speech.mock.MockEngineMode;
 import javax.speech.synthesis.SynthesizerMode;
-import javax.speech.test.DummyEngineMode;
 
 import junit.framework.TestCase;
 
@@ -42,16 +42,16 @@ public class EngineModeTest extends TestCase {
      * Test method for {@link javax.speech.EngineMode#hashCode()}.
      */
     public void testHashCode() {
-        final EngineMode mode1 = new DummyEngineMode();
-        final EngineMode mode2 = new DummyEngineMode();
-        assertTrue(mode1.hashCode() != mode2.hashCode());
+        final EngineMode mode1 = new MockEngineMode();
+        final EngineMode mode2 = new MockEngineMode();
+        assertEquals(mode1.hashCode(), mode2.hashCode());
     }
 
     /**
      * Test method for {@link javax.speech.EngineMode#getEngineName()}.
      */
     public void testGetEngineName() {
-        final EngineMode mode1 = new DummyEngineMode();
+        final EngineMode mode1 = new MockEngineMode();
         assertNull(mode1.getEngineName());
 
         String engineName1 = "name1";
@@ -59,7 +59,7 @@ public class EngineModeTest extends TestCase {
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.TRUE;
         Boolean markupSupport1 = Boolean.TRUE;
-        final EngineMode mode2 = new DummyEngineMode(engineName1, modeName1,
+        final EngineMode mode2 = new MockEngineMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1);
         assertEquals(engineName1, mode2.getEngineName());
 
@@ -68,7 +68,7 @@ public class EngineModeTest extends TestCase {
         Boolean running2 = Boolean.TRUE;
         Boolean supportsLetterToSound2 = Boolean.TRUE;
         Boolean markupSupport2 = Boolean.TRUE;
-        final EngineMode mode3 = new DummyEngineMode(engineName2, modeName2,
+        final EngineMode mode3 = new MockEngineMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2);
         assertNull(mode3.getEngineName());
     }
@@ -77,7 +77,7 @@ public class EngineModeTest extends TestCase {
      * Test method for {@link javax.speech.EngineMode#getSupportsMarkup()}.
      */
     public void testGetSupportsMarkup() {
-        final EngineMode mode1 = new DummyEngineMode();
+        final EngineMode mode1 = new MockEngineMode();
         assertNull(mode1.getSupportsMarkup());
 
         String engineName1 = "name1";
@@ -85,7 +85,7 @@ public class EngineModeTest extends TestCase {
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.TRUE;
         Boolean markupSupport1 = Boolean.TRUE;
-        final EngineMode mode2 = new DummyEngineMode(engineName1, modeName1,
+        final EngineMode mode2 = new MockEngineMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1);
         assertEquals(Boolean.TRUE, mode2.getSupportsMarkup());
 
@@ -94,7 +94,7 @@ public class EngineModeTest extends TestCase {
         Boolean running2 = Boolean.TRUE;
         Boolean supportsLetterToSound2 = Boolean.TRUE;
         Boolean markupSupport2 = Boolean.FALSE;
-        final EngineMode mode3 = new DummyEngineMode(engineName2, modeName2,
+        final EngineMode mode3 = new MockEngineMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2);
         assertEquals(Boolean.FALSE, mode3.getSupportsMarkup());
 
@@ -103,7 +103,7 @@ public class EngineModeTest extends TestCase {
         Boolean running3 = Boolean.TRUE;
         Boolean supportsLetterToSound3 = Boolean.TRUE;
         Boolean markupSupport3 = null;
-        final EngineMode mode4 = new DummyEngineMode(engineName3, modeName3,
+        final EngineMode mode4 = new MockEngineMode(engineName3, modeName3,
                 running3, supportsLetterToSound3, markupSupport3);
         assertNull(mode4.getSupportsMarkup());
     }
@@ -112,7 +112,7 @@ public class EngineModeTest extends TestCase {
      * Test method for {@link javax.speech.EngineMode#getModeName()}.
      */
     public void testGetModeName() {
-        final EngineMode mode1 = new DummyEngineMode();
+        final EngineMode mode1 = new MockEngineMode();
         assertNull(mode1.getModeName());
 
         String engineName1 = "name1";
@@ -120,7 +120,7 @@ public class EngineModeTest extends TestCase {
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.TRUE;
         Boolean markupSupport1 = Boolean.TRUE;
-        final EngineMode mode2 = new DummyEngineMode(engineName1, modeName1,
+        final EngineMode mode2 = new MockEngineMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1);
         assertEquals(modeName1, mode2.getModeName());
 
@@ -129,7 +129,7 @@ public class EngineModeTest extends TestCase {
         Boolean running2 = Boolean.TRUE;
         Boolean supportsLetterToSound2 = Boolean.TRUE;
         Boolean markupSupport2 = Boolean.TRUE;
-        final EngineMode mode3 = new DummyEngineMode(engineName2, modeName2,
+        final EngineMode mode3 = new MockEngineMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2);
         assertNull(mode3.getModeName());
     }
@@ -138,7 +138,7 @@ public class EngineModeTest extends TestCase {
      * Test method for {@link javax.speech.EngineMode#getRunning()}.
      */
     public void testGetRunning() {
-        final EngineMode mode1 = new DummyEngineMode();
+        final EngineMode mode1 = new MockEngineMode();
         assertNull(mode1.getRunning());
 
         String engineName1 = "name1";
@@ -146,7 +146,7 @@ public class EngineModeTest extends TestCase {
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.TRUE;
         Boolean markupSupport1 = Boolean.TRUE;
-        final EngineMode mode2 = new DummyEngineMode(engineName1, modeName1,
+        final EngineMode mode2 = new MockEngineMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1);
         assertEquals(Boolean.TRUE, mode2.getRunning());
 
@@ -155,7 +155,7 @@ public class EngineModeTest extends TestCase {
         Boolean running2 = Boolean.FALSE;
         Boolean supportsLetterToSound2 = Boolean.TRUE;
         Boolean markupSupport2 = Boolean.TRUE;
-        final EngineMode mode3 = new DummyEngineMode(engineName2, modeName2,
+        final EngineMode mode3 = new MockEngineMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2);
         assertEquals(Boolean.FALSE, mode3.getRunning());
 
@@ -164,7 +164,7 @@ public class EngineModeTest extends TestCase {
         Boolean running3 = null;
         Boolean supportsLetterToSound3 = Boolean.TRUE;
         Boolean markupSupport3 = null;
-        final EngineMode mode4 = new DummyEngineMode(engineName3, modeName3,
+        final EngineMode mode4 = new MockEngineMode(engineName3, modeName3,
                 running3, supportsLetterToSound3, markupSupport3);
         assertNull(mode4.getRunning());
     }
@@ -174,7 +174,7 @@ public class EngineModeTest extends TestCase {
      * {@link javax.speech.EngineMode#getSupportsLetterToSound()}.
      */
     public void testGetSupportsLetterToSound() {
-        final EngineMode mode1 = new DummyEngineMode();
+        final EngineMode mode1 = new MockEngineMode();
         assertNull(mode1.getSupportsLetterToSound());
 
         String engineName1 = "name1";
@@ -182,7 +182,7 @@ public class EngineModeTest extends TestCase {
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.TRUE;
         Boolean markupSupport1 = Boolean.TRUE;
-        final EngineMode mode2 = new DummyEngineMode(engineName1, modeName1,
+        final EngineMode mode2 = new MockEngineMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1);
         assertEquals(Boolean.TRUE, mode2.getSupportsLetterToSound());
 
@@ -191,7 +191,7 @@ public class EngineModeTest extends TestCase {
         Boolean running2 = Boolean.TRUE;
         Boolean supportsLetterToSound2 = Boolean.FALSE;
         Boolean markupSupport2 = Boolean.TRUE;
-        final EngineMode mode3 = new DummyEngineMode(engineName2, modeName2,
+        final EngineMode mode3 = new MockEngineMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2);
         assertEquals(Boolean.FALSE, mode3.getSupportsLetterToSound());
 
@@ -200,7 +200,7 @@ public class EngineModeTest extends TestCase {
         Boolean running3 = Boolean.TRUE;
         Boolean supportsLetterToSound3 = null;
         Boolean markupSupport3 = null;
-        final EngineMode mode4 = new DummyEngineMode(engineName3, modeName3,
+        final EngineMode mode4 = new MockEngineMode(engineName3, modeName3,
                 running3, supportsLetterToSound3, markupSupport3);
         assertNull(mode4.getSupportsLetterToSound());
     }
@@ -210,10 +210,10 @@ public class EngineModeTest extends TestCase {
      * {@link javax.speech.EngineMode#match(javax.speech.EngineMode)}.
      */
     public void testMatch() {
-        final EngineMode mode1 = new DummyEngineMode();
+        final EngineMode mode1 = new MockEngineMode();
         assertTrue(mode1.match((EngineMode) null));
 
-        final EngineMode mode2 = new DummyEngineMode();
+        final EngineMode mode2 = new MockEngineMode();
         assertTrue(mode1.match(mode2));
 
         final SynthesizerMode synthesizerMode = new SynthesizerMode();
@@ -224,7 +224,7 @@ public class EngineModeTest extends TestCase {
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.TRUE;
         Boolean markupSupport1 = Boolean.TRUE;
-        final EngineMode mode3 = new DummyEngineMode(engineName1, modeName1,
+        final EngineMode mode3 = new MockEngineMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1);
         assertTrue(mode3.match(mode1));
         assertFalse(mode1.match(mode3));
@@ -234,7 +234,7 @@ public class EngineModeTest extends TestCase {
         Boolean running2 = Boolean.TRUE;
         Boolean supportsLetterToSound2 = Boolean.TRUE;
         Boolean markupSupport2 = Boolean.TRUE;
-        final EngineMode mode4 = new DummyEngineMode(engineName2, modeName2,
+        final EngineMode mode4 = new MockEngineMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2);
         assertTrue(mode3.match(mode4));
 
@@ -243,7 +243,7 @@ public class EngineModeTest extends TestCase {
         Boolean running3 = Boolean.TRUE;
         Boolean supportsLetterToSound3 = Boolean.TRUE;
         Boolean markupSupport3 = Boolean.TRUE;
-        final EngineMode mode5 = new DummyEngineMode(engineName3, modeName3,
+        final EngineMode mode5 = new MockEngineMode(engineName3, modeName3,
                 running3, supportsLetterToSound3, markupSupport3);
         assertFalse(mode3.match(mode5));
     }
@@ -252,10 +252,10 @@ public class EngineModeTest extends TestCase {
      * Test method for {@link javax.speech.EngineMode#equals(java.lang.Object)}.
      */
     public void testEqualsObject() {
-        final EngineMode mode1 = new DummyEngineMode();
+        final EngineMode mode1 = new MockEngineMode();
         assertFalse(mode1.equals("test"));
 
-        final EngineMode mode2 = new DummyEngineMode();
+        final EngineMode mode2 = new MockEngineMode();
         assertTrue(mode1.equals(mode2));
 
         String engineName1 = "name1";
@@ -263,7 +263,7 @@ public class EngineModeTest extends TestCase {
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.TRUE;
         Boolean markupSupport1 = Boolean.TRUE;
-        final EngineMode mode3 = new DummyEngineMode(engineName1, modeName1,
+        final EngineMode mode3 = new MockEngineMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1);
         assertFalse(mode1.equals(mode3));
 
@@ -272,7 +272,7 @@ public class EngineModeTest extends TestCase {
         Boolean running2 = Boolean.TRUE;
         Boolean supportsLetterToSound2 = Boolean.TRUE;
         Boolean markupSupport2 = Boolean.TRUE;
-        final EngineMode mode4 = new DummyEngineMode(engineName2, modeName2,
+        final EngineMode mode4 = new MockEngineMode(engineName2, modeName2,
                 running2, supportsLetterToSound2, markupSupport2);
         assertTrue(mode3.equals(mode4));
 
@@ -281,7 +281,7 @@ public class EngineModeTest extends TestCase {
         Boolean running3 = Boolean.TRUE;
         Boolean supportsLetterToSound3 = Boolean.TRUE;
         Boolean markupSupport3 = Boolean.TRUE;
-        final EngineMode mode5 = new DummyEngineMode(engineName3, modeName3,
+        final EngineMode mode5 = new MockEngineMode(engineName3, modeName3,
                 running3, supportsLetterToSound3, markupSupport3);
         assertFalse(mode3.equals(mode5));
     }
@@ -290,7 +290,7 @@ public class EngineModeTest extends TestCase {
      * Test method for {@link javax.speech.EngineMode#toString()}.
      */
     public void testToString() {
-        final EngineMode mode1 = new DummyEngineMode();
+        final EngineMode mode1 = new MockEngineMode();
         assertNotNull(mode1.toString());
 
         String engineName1 = "name1";
@@ -298,7 +298,7 @@ public class EngineModeTest extends TestCase {
         Boolean running1 = Boolean.TRUE;
         Boolean supportsLetterToSound1 = Boolean.TRUE;
         Boolean markupSupport1 = Boolean.TRUE;
-        final EngineMode mode2 = new DummyEngineMode(engineName1, modeName1,
+        final EngineMode mode2 = new MockEngineMode(engineName1, modeName1,
                 running1, supportsLetterToSound1, markupSupport1);
         assertEquals(Boolean.TRUE, mode2.getSupportsLetterToSound());
         String str2 = mode2.toString();

@@ -26,7 +26,7 @@
 
 package javax.speech;
 
-import javax.speech.test.TestEngine;
+import javax.speech.mock.MockEngine;
 
 import junit.framework.TestCase;
 
@@ -40,7 +40,7 @@ public class AudioEventTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        engine = new TestEngine();
+        engine = new MockEngine();
     }
 
     /**

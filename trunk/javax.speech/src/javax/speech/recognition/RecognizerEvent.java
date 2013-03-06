@@ -66,9 +66,9 @@ public class RecognizerEvent extends EngineEvent {
             GrammarException grammarException, long audioPosition) 
         throws IllegalArgumentException {
         super(source, id, oldEngineState, newEngineState, problem);
-        if ((id != ENGINE_ERROR) && (problem != null)) {
+        if ((id != CHANGES_REJECTED) && (grammarException != null)) {
             throw new IllegalArgumentException(
-                    "A problem can only be specified for ENGINE_ERROR");
+              "A grammar exception can only be specified for CHANGES_REJECTED");
         }
         if ((id == SPEECH_STARTED) || (id == SPEECH_STOPPED)
                 || (id == RECOGNIZER_BUFFERING)

@@ -26,7 +26,7 @@
 
 package javax.speech.recognition;
 
-import javax.speech.test.recognition.TestGrammar;
+import javax.speech.mock.recognition.MockGrammar;
 
 import junit.framework.TestCase;
 
@@ -45,7 +45,7 @@ public class GrammarEventTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        grammar = new TestGrammar();
+        grammar = new MockGrammar();
     }
 
     /**
@@ -57,14 +57,15 @@ public class GrammarEventTest extends TestCase {
         assertNull(event.getGrammarException());
 
         final GrammarException grammarException = new GrammarException();
-        final GrammarEvent event2 = new GrammarEvent(grammar, 44, true, true,
+        final GrammarEvent event2 = new GrammarEvent(grammar,
+                GrammarEvent.GRAMMAR_CHANGES_REJECTED, true, true,
                 grammarException);
-        assertNull(event2.getGrammarException());
+        assertEquals(grammarException, event2.getGrammarException());
 
         final GrammarEvent event3 = new GrammarEvent(grammar,
                 GrammarEvent.GRAMMAR_CHANGES_COMMITTED, true, true,
-                grammarException);
-        assertNotNull(event3.getGrammarException());
+                null);
+        assertNull(event3.getGrammarException());
     }
 
     /**
@@ -76,13 +77,14 @@ public class GrammarEventTest extends TestCase {
         assertFalse(event.isDefinitionChanged());
 
         final GrammarException grammarException = new GrammarException();
-        final GrammarEvent event2 = new GrammarEvent(grammar, 44, true, true,
+        final GrammarEvent event2 = new GrammarEvent(grammar, 
+                GrammarEvent.GRAMMAR_CHANGES_REJECTED, true, true,
                 grammarException);
         assertTrue(event2.isDefinitionChanged());
 
-        final GrammarException grammarException3 = new GrammarException();
-        final GrammarEvent event3 = new GrammarEvent(grammar, 44, true, false,
-                grammarException3);
+        final GrammarEvent event3 = new GrammarEvent(grammar, 
+                GrammarEvent.GRAMMAR_CHANGES_COMMITTED, true, false,
+                null);
         assertFalse(event3.isDefinitionChanged());
     }
 
@@ -95,13 +97,14 @@ public class GrammarEventTest extends TestCase {
         assertFalse(event.isActivableChanged());
 
         final GrammarException grammarException = new GrammarException();
-        final GrammarEvent event2 = new GrammarEvent(grammar, 44, true, true,
+        final GrammarEvent event2 = new GrammarEvent(grammar, 
+                GrammarEvent.GRAMMAR_CHANGES_REJECTED, true, true,
                 grammarException);
         assertTrue(event2.isActivableChanged());
 
-        final GrammarException grammarException3 = new GrammarException();
-        final GrammarEvent event3 = new GrammarEvent(grammar, 44, false, true,
-                grammarException3);
+        final GrammarEvent event3 = new GrammarEvent(grammar, 
+                GrammarEvent.GRAMMAR_ACTIVATED, false, true,
+                null);
         assertFalse(event3.isActivableChanged());
     }
 
@@ -114,10 +117,12 @@ public class GrammarEventTest extends TestCase {
         assertTrue("id not found in toString", str.indexOf("43") >= 0);
 
         final GrammarException grammarException = new GrammarException();
-        final GrammarEvent event2 = new GrammarEvent(grammar, 44, true, true,
+        final GrammarEvent event2 = new GrammarEvent(grammar, 
+                GrammarEvent.GRAMMAR_CHANGES_REJECTED, true, true,
                 grammarException);
         final String str2 = event2.paramString();
-        assertTrue("id not found in toString", str2.indexOf("44") >= 0);
+        assertTrue("id not found in toString",
+                str2.indexOf("GRAMMAR_CHANGES_REJECTED") >= 0);
     }
 
     /**
@@ -133,10 +138,12 @@ public class GrammarEventTest extends TestCase {
                 str.length() > paramString.length());
 
         final GrammarException grammarException = new GrammarException();
-        final GrammarEvent event2 = new GrammarEvent(grammar, 44, true, true,
+        final GrammarEvent event2 = new GrammarEvent(grammar, 
+                GrammarEvent.GRAMMAR_CHANGES_REJECTED, true, true,
                 grammarException);
         final String str2 = event2.toString();
-        assertTrue("id not found in toString", str2.indexOf("44") >= 0);
+        assertTrue("id not found in toString",
+                str2.indexOf("GRAMMAR_CHANGES_REJECTED") >= 0);
 
         String paramString2 = event.paramString();
         assertTrue("toString not longer than paramString",

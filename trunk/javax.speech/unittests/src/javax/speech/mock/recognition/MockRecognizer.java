@@ -24,7 +24,7 @@
  *
  */
 
-package javax.speech.test.recognition;
+package javax.speech.mock.recognition;
 
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
@@ -45,7 +45,7 @@ import javax.speech.recognition.SpeakerManager;
  *
  * @author Dirk Schnelle-Walka
  */
-public class TestRecognizer implements Recognizer {
+public class MockRecognizer implements Recognizer {
 
     public void allocate() throws AudioException, EngineException,
             EngineStateException, SecurityException {

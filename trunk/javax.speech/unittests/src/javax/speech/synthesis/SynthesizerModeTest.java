@@ -28,7 +28,7 @@ package javax.speech.synthesis;
 
 import javax.speech.EngineMode;
 import javax.speech.SpeechLocale;
-import javax.speech.test.DummyEngineMode;
+import javax.speech.mock.MockEngineMode;
 
 import junit.framework.TestCase;
 
@@ -101,7 +101,7 @@ public class SynthesizerModeTest extends TestCase {
         final SynthesizerMode mode2 = new SynthesizerMode();
         assertTrue(mode1.match(mode2));
 
-        final EngineMode engineMode = new DummyEngineMode();
+        final EngineMode engineMode = new MockEngineMode();
         assertTrue(mode1.match(engineMode));
 
         String engineName1 = "name1";
