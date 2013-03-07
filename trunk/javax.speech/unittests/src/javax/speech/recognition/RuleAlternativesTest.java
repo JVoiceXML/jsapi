@@ -17,7 +17,8 @@ public class RuleAlternativesTest extends TestCase {
      * {@link javax.speech.recognition.RuleAlternatives#toString()}.
      */
     public void testToString() {
-        final RuleComponent[] components1 = null;
+        final RuleComponent[] components1 =
+                new RuleComponent[] {};
         final RuleAlternatives alternatives1 = new RuleAlternatives(components1);
         final String str1 = alternatives1.toString();
         assertEquals(RuleSpecial.VOID.toString(), str1);
@@ -61,7 +62,10 @@ public class RuleAlternativesTest extends TestCase {
         final String str7 = alternatives7.toString();
         assertEquals("<one-of><item weight=\"0.0\">token</item>"
                 + "<item weight=\"1.0\"><tag>tag</tag></item>"
-                + "<item weight=\"2.0\">otherToken</item></one-of>", str7);
+                + "<item weight=\""
+                + (float) RuleAlternatives.MAX_WEIGHT 
+                    / RuleAlternatives.NORM_WEIGHT
+                + "\">otherToken</item></one-of>", str7);
 
         final RuleComponent[] components8 = new RuleComponent[] {
                 new RuleToken("token"), new RuleTag("tag"),
@@ -130,9 +134,10 @@ public class RuleAlternativesTest extends TestCase {
      * {@link javax.speech.recognition.RuleAlternatives#getRuleComponents()}.
      */
     public void testGetRuleComponents() {
-        final RuleComponent[] components1 = null;
+        final RuleComponent[] components1 = new RuleComponent[] {};
         final RuleAlternatives alternatives1 = new RuleAlternatives(components1);
-        assertNull(alternatives1.getRuleComponents());
+        assertEquals(components1,
+                alternatives1.getRuleComponents());
 
         final RuleComponent[] components2 = new RuleComponent[0];
         final RuleAlternatives alternatives2 = new RuleAlternatives(components2);
@@ -188,7 +193,7 @@ public class RuleAlternativesTest extends TestCase {
      * {@link javax.speech.recognition.RuleAlternatives#getWeights()}.
      */
     public void testGetWeights() {
-        final RuleComponent[] components1 = null;
+        final RuleComponent[] components1 = new RuleComponent[] {};
         final RuleAlternatives alternatives1 = new RuleAlternatives(components1);
         assertNull(alternatives1.getWeights());
 

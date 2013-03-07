@@ -290,7 +290,7 @@ public class RecognizerModeTest extends TestCase {
     public void testHashCode() {
         final RecognizerMode mode1 = new RecognizerMode();
         final RecognizerMode mode2 = new RecognizerMode();
-        assertTrue(mode1.hashCode() != mode2.hashCode());
+        assertEquals(mode1.hashCode(), mode2.hashCode());
     }
 
     /**
