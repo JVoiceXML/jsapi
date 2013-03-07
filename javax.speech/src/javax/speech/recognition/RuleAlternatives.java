@@ -101,7 +101,8 @@ public class RuleAlternatives extends RuleComponent {
             if (weights != null) {
                 str.append(" weight=\"");
                 final int weight = weights[i];
-                str.append(weight);
+                // Use a float representation
+                str.append((float) weight / NORM_WEIGHT);
                 str.append("\"");
             }
             str.append('>');
