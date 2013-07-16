@@ -9,11 +9,10 @@ extern "C" {
 #endif
 #undef org_jvoicexml_jsapi2_mac_recognition_MacRecognizer_CLEAR_ALL_STATE
 #define org_jvoicexml_jsapi2_mac_recognition_MacRecognizer_CLEAR_ALL_STATE -1LL
-/* Inaccessible static: LOGGER */
 /*
  * Class:     org_jvoicexml_jsapi2_mac_recognition_MacRecognizer
  * Method:    macGetBuildInGrammars
- * Signature: (J)Ljava/util/Vector;
+ * Signature: (J)Ljava/util/Collection;
  */
 JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_mac_recognition_MacRecognizer_macGetBuildInGrammars
   (JNIEnv *, jobject, jlong);

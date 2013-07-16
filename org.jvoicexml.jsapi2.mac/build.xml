@@ -47,16 +47,16 @@ This file builds the JSR 113.jar.
     <mkdir dir="cpp/build"/>
     <exec executable="pwd" dir="cpp/Jsapi2MacBridge" />
     <exec executable="g++" dir="cpp/Jsapi2MacBridge">
-      <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers JNIUtils.cpp -o ../build/JNIUtils.o" />
+      <arg line="-c -Wno-write-strings -IPublicUtility -I/System/Library/Frameworks/JavaVM.framework/Headers JNIUtils.cpp -o ../build/JNIUtils.o" />
     </exec>
     <exec executable="g++" dir="cpp/Jsapi2MacBridge">
-      <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacEngineListFactory.cpp -o ../build/MacEngineListFactory.o" />
+      <arg line="-c -Wno-write-strings -IPublicUtility -I/System/Library/Frameworks/JavaVM.framework/Headers -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacEngineListFactory.cpp -o ../build/MacEngineListFactory.o" />
     </exec>
     <exec executable="g++" dir="cpp/Jsapi2MacBridge">
-      <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers -I/Developer/Extras/CoreAudio/PublicUtility -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacSynthesizer.cpp -o ../build/MacSynthesizer.o" />
+      <arg line="-c -Wno-write-strings -IPublicUtility -I/System/Library/Frameworks/JavaVM.framework/Headers -I/Developer/Extras/CoreAudio/PublicUtility -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacSynthesizer.cpp -o ../build/MacSynthesizer.o" />
     </exec>
     <exec executable="g++" dir="cpp/Jsapi2MacBridge">
-      <arg line="-c -Wno-write-strings -I/System/Library/Frameworks/JavaVM.framework/Headers -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacRecognizer.cpp -o ../build/MacRecognizer.o" />
+      <arg line="-c -Wno-write-strings -IPublicUtility -I/System/Library/Frameworks/JavaVM.framework/Headers -I/System/Library/Frameworks/ApplicationServices.framework/Headers MacRecognizer.cpp -o ../build/MacRecognizer.o" />
     </exec>
   	
     <!-- Bind it together -->
