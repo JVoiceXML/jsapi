@@ -9,7 +9,6 @@ extern "C" {
 #endif
 #undef org_jvoicexml_jsapi2_mac_synthesis_MacSynthesizer_CLEAR_ALL_STATE
 #define org_jvoicexml_jsapi2_mac_synthesis_MacSynthesizer_CLEAR_ALL_STATE -1LL
-/* Inaccessible static: LOGGER */
 /*
  * Class:     org_jvoicexml_jsapi2_mac_synthesis_MacSynthesizer
  * Method:    macHandleAllocate
