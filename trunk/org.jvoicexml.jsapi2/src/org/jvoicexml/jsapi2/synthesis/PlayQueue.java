@@ -29,7 +29,7 @@ package org.jvoicexml.jsapi2.synthesis;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Vector;
+import java.util.List;
 
 import javax.speech.AudioException;
 import javax.speech.AudioSegment;
@@ -56,7 +56,7 @@ class PlayQueue implements Runnable {
     private static final int BUFFER_LENGTH = 256;
 
     /** The items to be played back. */
-    private Vector playQueue;
+    private List<QueueItem> playQueue;
 
     /**
      * Constructs a new object.
@@ -64,7 +64,7 @@ class PlayQueue implements Runnable {
      */
     public PlayQueue(QueueManager queueManager) {
         this.queueManager = queueManager;
-        playQueue = new Vector();
+        playQueue = new java.util.ArrayList<QueueItem>();
     }
 
     /**
@@ -226,7 +226,7 @@ class PlayQueue implements Runnable {
      */
     private void removeQueueItem(final QueueItem item) {
         synchronized (playQueue) {
-            playQueue.removeElement(item);
+            playQueue.remove(item);
         }
     }
 
@@ -317,7 +317,7 @@ class PlayQueue implements Runnable {
      */
     public void addQueueItem(final QueueItem item) {
         synchronized (playQueue) {
-            playQueue.addElement(item);
+            playQueue.add(item);
             playQueue.notifyAll();
         }
     }
@@ -330,8 +330,7 @@ class PlayQueue implements Runnable {
      */
     public QueueItem getQueueItem(final int id) {
         synchronized (playQueue) {
-            for (int i=0; i< playQueue.size(); i++) {
-                final QueueItem item = (QueueItem) playQueue.elementAt(i);
+            for (QueueItem item : playQueue) {
                 if (item.getId() == id) {
                     return item;
                 }
@@ -358,7 +357,7 @@ class PlayQueue implements Runnable {
             if (queueManager.isDone()) {
                 return null;
             }
-            return (QueueItem) playQueue.elementAt(0);
+            return playQueue.get(0);
         }
     }
 
@@ -370,7 +369,7 @@ class PlayQueue implements Runnable {
      */
     private boolean isSynthesized(int index) {
         synchronized (playQueue) {
-            final QueueItem item = (QueueItem) playQueue.elementAt(index);
+            final QueueItem item = playQueue.get(index);
             return item.isSynthesized();
         }
     }
@@ -383,7 +382,7 @@ class PlayQueue implements Runnable {
      */
     public boolean isQueueEmpty() {
         synchronized (playQueue) {
-            return playQueue.size() == 0;
+            return playQueue.isEmpty();
         }
     }
 
@@ -398,7 +397,7 @@ class PlayQueue implements Runnable {
             if (playQueue.isEmpty()) {
                 return false;
             }
-            final QueueItem item = (QueueItem) playQueue.elementAt(0);
+            final QueueItem item = playQueue.get(0);
             if (!item.isSynthesized()) {
                 final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
                 synthesizer.handleCancel();
@@ -410,7 +409,7 @@ class PlayQueue implements Runnable {
                         listener);
             }
             // TODO handle the case that the item is currently played back
-            playQueue.removeElementAt(0);
+            playQueue.remove(0);
             synchronized (this.queueManager.cancelLock) {
                 queueManager.cancelFirstItem = true;
             }
@@ -429,7 +428,7 @@ class PlayQueue implements Runnable {
         // search item in playqueue
         synchronized (playQueue) {
             for (int i = 0; i < playQueue.size(); ++i) {
-                final QueueItem item = (QueueItem) playQueue.elementAt(i);
+                final QueueItem item = playQueue.get(i);
                 final int currentId = item.getId();
                 if (currentId == id) {
                     if (i == 0) {
@@ -447,7 +446,7 @@ class PlayQueue implements Runnable {
                         synthesizer.postSynthesizerEvent(synthesizer.getEngineState(),
                                 synthesizer.getEngineState(),
                                 SynthesizerEvent.QUEUE_UPDATED, false);
-                        playQueue.removeElementAt(i);
+                        playQueue.remove(i);
                         found = true;
                     }
                 }
