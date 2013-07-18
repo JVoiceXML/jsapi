@@ -114,8 +114,6 @@ This file builds the JSAPI2 project.
         </section>
       </manifest>
     </jar>
-    <ant dir="../org.jvoicexml.jsapi2.jse" antfile="build.xml"
-        inheritall="false"/>
   </target>
 
   <target name="-buildFreetts" depends="-init" if="jsapi2.freetts.use">
