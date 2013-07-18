@@ -83,8 +83,7 @@ This file builds the JSAPI2 project.
   </target>
   
   <target name="compile" depends="-init,-dependentComponents"
-    description="Compile the JAVA sources for JSE"
-      unless="midp.available">
+    description="Compile the JAVA sources for JSE">
     <echo message="compiling ${component} for JSE with debug=${debug}, optimize=${optimize}" />
       <javac destdir="${build}" optimize="${optimize}"
         includeantruntime="false"

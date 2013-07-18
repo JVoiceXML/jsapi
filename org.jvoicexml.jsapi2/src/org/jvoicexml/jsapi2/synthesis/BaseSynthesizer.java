@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,8 +26,7 @@
 
 package org.jvoicexml.jsapi2.synthesis;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.Collection;
 
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
@@ -61,7 +60,7 @@ import org.jvoicexml.jsapi2.BaseEngine;
  */
 public abstract class BaseSynthesizer extends BaseEngine
     implements Synthesizer {
-    protected Vector speakableListeners;
+    protected Collection<SpeakableListener> speakableListeners;
     protected SynthesizerProperties synthesizerProperties;
     protected int speakableMask;
     protected final QueueManager queueManager;
@@ -79,7 +78,7 @@ public abstract class BaseSynthesizer extends BaseEngine
      */
     public BaseSynthesizer(final SynthesizerMode engineMode) {
         super(engineMode);
-        speakableListeners = new Vector();
+        speakableListeners = new java.util.ArrayList<SpeakableListener>();
         final BaseAudioManager audioManager =
             (BaseAudioManager) getAudioManager();
         audioManager.setEngine(this);
@@ -158,11 +157,8 @@ public abstract class BaseSynthesizer extends BaseEngine
         }
 
         if (speakableListeners != null) {
-            final Enumeration e = speakableListeners.elements();
-            while (e.hasMoreElements()) {
-                final SpeakableListener sl =
-                    (SpeakableListener) e.nextElement();
-                sl.speakableUpdate(event);
+            for (SpeakableListener listener : speakableListeners) {
+                listener.speakableUpdate(event);
             }
         }
     }
@@ -180,7 +176,7 @@ public abstract class BaseSynthesizer extends BaseEngine
      */
     public final void addSpeakableListener(final SpeakableListener listener) {
         if (!speakableListeners.contains(listener)) {
-            speakableListeners.addElement(listener);
+            speakableListeners.add(listener);
         }
     }
 
@@ -189,7 +185,7 @@ public abstract class BaseSynthesizer extends BaseEngine
      */
     public final void removeSpeakableListener(
             final SpeakableListener listener) {
-        speakableListeners.removeElement(listener);
+        speakableListeners.remove(listener);
     }
 
     /**
