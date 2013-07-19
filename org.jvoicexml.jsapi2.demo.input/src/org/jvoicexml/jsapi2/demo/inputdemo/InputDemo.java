@@ -30,8 +30,8 @@ import javax.speech.recognition.ResultToken;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
 
-import org.jvoicexml.jsapi2.jse.recognition.sphinx4.SphinxEngineListFactory;
-import org.jvoicexml.jsapi2.jse.synthesis.freetts.FreeTTSEngineListFactory;
+import org.jvoicexml.jsapi2.recognition.sphinx4.SphinxEngineListFactory;
+import org.jvoicexml.jsapi2.synthesis.freetts.FreeTTSEngineListFactory;
 
 /**
  * @author Dirk Schnelle-Walka

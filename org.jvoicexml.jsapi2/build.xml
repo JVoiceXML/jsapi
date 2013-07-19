@@ -51,12 +51,12 @@ This file builds the JSAPI2 project.
   </target>
 
   <target name="-cleanFreetts" depends="-init" if="jsapi2.freetts.use">
-    <ant dir="../org.jvoicexml.jsapi2.jse.freetts" target="clean"
+    <ant dir="../org.jvoicexml.jsapi2.freetts" target="clean"
       inheritall="false" inheritrefs="false"/>
   </target>
 
   <target name="-cleanSphinx4" depends="-init" if="jsapi2.sphinx4.use">
-    <ant dir="../org.jvoicexml.jsapi2.jse.sphinx4" target="clean"
+    <ant dir="../org.jvoicexml.jsapi2.sphinx4" target="clean"
       inheritall="false" inheritrefs="false"/>
   </target>
 
@@ -83,8 +83,8 @@ This file builds the JSAPI2 project.
   </target>
   
   <target name="compile" depends="-init,-dependentComponents"
-    description="Compile the JAVA sources for JSE">
-    <echo message="compiling ${component} for JSE with debug=${debug}, optimize=${optimize}" />
+    description="Compile the JAVA sources">
+    <echo message="compiling ${component} with debug=${debug}, optimize=${optimize}" />
       <javac destdir="${build}" optimize="${optimize}"
         includeantruntime="false"
         debug="${debug}" deprecation="on">
@@ -117,12 +117,12 @@ This file builds the JSAPI2 project.
   </target>
 
   <target name="-buildFreetts" depends="-init" if="jsapi2.freetts.use">
-    <ant dir="../org.jvoicexml.jsapi2.jse.freetts" target="jar"
+    <ant dir="../org.jvoicexml.jsapi2.freetts" target="jar"
       inheritall="false" inheritrefs="false"/>
   </target>
 
   <target name="-buildSphinx4" depends="-init" if="jsapi2.sphinx4.use">
-    <ant dir="../org.jvoicexml.jsapi2.jse.sphinx4" target="jar"
+    <ant dir="../org.jvoicexml.jsapi2.sphinx4" target="jar"
       inheritall="false" inheritrefs="false"/>
   </target>
 
