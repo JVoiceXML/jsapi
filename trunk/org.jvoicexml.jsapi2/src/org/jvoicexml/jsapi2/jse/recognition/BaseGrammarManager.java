@@ -55,8 +55,6 @@ import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleGrammar;
 
-import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
-
 /**
  * A base implementation of a {@link GrammarManager}.
  *
@@ -273,11 +271,12 @@ public class BaseGrammarManager implements GrammarManager {
      * @throws EngineStateException
      * @throws EngineException
      */
+    @Override
     public Grammar loadGrammar(String grammarReference,
                                String mediaType,
                                boolean loadReferences,
                                boolean reloadGrammars,
-                               Vector loadedGrammars) throws
+                               @SuppressWarnings("rawtypes") Vector loadedGrammars) throws
             GrammarException, IllegalArgumentException,
             IOException, EngineStateException, EngineException {
         

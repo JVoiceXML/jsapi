@@ -11,11 +11,7 @@
  */
 package org.jvoicexml.jsapi2;
 
-import java.util.AbstractCollection;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
-import org.jvoicexml.jsapi2.TerminatableSpeechEventExecutor;
 
 /**
  * A speech event executor that is based on a thread.

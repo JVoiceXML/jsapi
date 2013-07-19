@@ -12,11 +12,7 @@
 package org.jvoicexml.jsapi2;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Vector;
 
 import javax.speech.Engine;
 import javax.speech.EngineProperties;
