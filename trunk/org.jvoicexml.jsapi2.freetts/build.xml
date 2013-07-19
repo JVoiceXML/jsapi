@@ -1,6 +1,6 @@
-<project name="org.jvoicexml.jsapi2.jse.freetts" default="jar" basedir=".">
+<project name="org.jvoicexml.jsapi2.freetts" default="jar" basedir=".">
   <description>
-This file builds the FreeTTS layer for the JSE synthesizer.
+This file builds the FreeTTS layer for the JSAPI synthesizer.
     </description>
 
   <property name="base-project" value ="../org.jvoicexml.jsapi2" />
@@ -16,7 +16,7 @@ This file builds the FreeTTS layer for the JSE synthesizer.
   <property name="dist" value="${base-project}/dist" />
   
   <!-- distribution files -->
-  <property name="component" value="org.jvoicexml.jsapi2.jse.freetts" />
+  <property name="component" value="org.jvoicexml.jsapi2.freetts" />
   <property name="dist.jar" value="${dist}/${component}.jar" />
 
   <target name="-init">
@@ -27,7 +27,6 @@ This file builds the FreeTTS layer for the JSE synthesizer.
   <path id="classpath">
     <pathelement location="${base-project}/dist/jsr113.jar"/>
     <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
-    <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jse.jar"/>
     <fileset dir="3rdparty\freetts1.2\lib">
       <include name="cmulex.jar" />
       <include name="cmu_us_kal.jar" />

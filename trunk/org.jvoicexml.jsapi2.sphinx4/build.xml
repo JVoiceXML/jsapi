@@ -1,6 +1,6 @@
-<project name="org.jvoicexml.jsapi2.jse.sphinx4" default="jar" basedir=".">
+<project name="org.jvoicexml.jsapi2.sphinx4" default="jar" basedir=".">
   <description>
-This file builds the JSAPI base layer for JSE.
+This file builds the sphinx4 layer for JSAPI.
     </description>
 
   <property name="base-project" value ="../org.jvoicexml.jsapi2" />
@@ -18,7 +18,7 @@ This file builds the JSAPI base layer for JSE.
     <property name="dist" value="${base-project}/dist" />
     
     <!-- distribution files -->
-    <property name="component" value="org.jvoicexml.jsapi2.jse.sphinx4" />
+    <property name="component" value="org.jvoicexml.jsapi2.sphinx4" />
     <property name="dist.jar" value="${dist}/${component}.jar" />
 
     <property name="sphinx4.lib.dir" value="3rdparty/sphinx4/lib" />
@@ -29,7 +29,6 @@ This file builds the JSAPI base layer for JSE.
     <path id="classpath">
       <pathelement location="${base-project}/dist/jsr113.jar"/>
       <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
-      <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jse.jar"/>
       <fileset dir="${sphinx4.lib.dir}">
         <include name="sphinx4.jar" />
       </fileset>
@@ -71,7 +70,7 @@ This file builds the JSAPI base layer for JSE.
           <attribute name="Implementation-Vendor"
             value="JVoiceXML group" />
           <attribute name="Implementation-Title"
-            value="Sphinx recognition implementation for JSAPI2 JSE" />
+            value="Sphinx recognition implementation for JSAPI2" />
           <attribute name="Implementation-Version"
               value="${version}" />
         </section>

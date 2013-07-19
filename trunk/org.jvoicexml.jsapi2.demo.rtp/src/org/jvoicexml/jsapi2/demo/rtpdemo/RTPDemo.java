@@ -22,7 +22,7 @@ import javax.speech.EngineManager;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
 
-import org.jvoicexml.jsapi2.jse.synthesis.freetts.FreeTTSEngineListFactory;
+import org.jvoicexml.jsapi2.synthesis.freetts.FreeTTSEngineListFactory;
 
 /**
  * A demo to output a synthesized text to the speaker.
