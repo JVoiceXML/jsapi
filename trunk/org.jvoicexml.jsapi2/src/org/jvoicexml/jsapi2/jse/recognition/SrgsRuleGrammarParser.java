@@ -32,7 +32,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleAlternatives;
@@ -75,7 +75,7 @@ public class SrgsRuleGrammarParser {
 
     private XPath xpath;
     private static EntityResolver entityResolver = new EmptyEntityResolver();
-    private HashMap<String, String> attributes;
+    private Map<String, String> attributes;
 
     public static class EmptyEntityResolver implements EntityResolver {
         @Override
@@ -90,7 +90,7 @@ public class SrgsRuleGrammarParser {
         XPathFactory factory = XPathFactory.newInstance();
 
         xpath = factory.newXPath();
-        attributes = new HashMap<String,String>();
+        attributes = new java.util.HashMap<String,String>();
     }
 
     public Rule[] load(final Reader reader) {
@@ -346,7 +346,7 @@ public class SrgsRuleGrammarParser {
         return ruleComponents;
     }
 
-    public HashMap getAttributes() {
+    public Map<String, String> getAttributes() {
         return attributes;
     }
 }

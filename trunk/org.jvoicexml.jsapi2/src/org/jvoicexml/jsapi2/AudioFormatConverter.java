@@ -30,7 +30,7 @@ import javax.sound.sampled.AudioSystem;
  * @author Dirk Schnelle-Walka
  *
  */
-public class AudioFormatConverter {
+public final class AudioFormatConverter {
 
     /** The source audio format. */
     private final AudioFormat sourceFormat;

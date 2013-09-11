@@ -26,10 +26,17 @@
 
 package org.jvoicexml.jsapi2;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collection;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.speech.AudioEvent;
 import javax.speech.AudioException;
 import javax.speech.AudioListener;
@@ -38,10 +45,16 @@ import javax.speech.Engine;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 
+import org.jvoicexml.jsapi2.protocols.JavaSoundParser;
+
 /**
  * Supports the JSAPI 2.0 {@link AudioManager}
  * interface.  Actual JSAPI implementations might want to extend
- * or modify this implementation.
+ * or modify this implementation. Usually, this will be required for
+ * {@link javax.speech.synthesis.Synthesizer}s and
+ * {@link javax.speech.recognition.Recognizer}s to retrieve the
+ * {@link OutputStream} (via {@link #getOutputStream()} or
+ * {@link InputStream} (via {@link #getInputStream()}) respectively.
  */
 public abstract class BaseAudioManager implements AudioManager {
     /**
@@ -63,9 +76,20 @@ public abstract class BaseAudioManager implements AudioManager {
     private boolean audioStarted;
 
     /**
+     * Constructs a new object.
+     * @param format native engine audio format
+     */
+    public BaseAudioManager(final AudioFormat format) {
+        this();
+        engineAudioFormat = format;
+        targetAudioFormat = engineAudioFormat;
+    }
+
+
+    /**
      * Class constructor.
      */
-    public BaseAudioManager() {
+    protected BaseAudioManager() {
         audioListeners = new java.util.ArrayList<AudioListener>();
         audioMask = AudioEvent.DEFAULT_MASK;
     }
@@ -79,8 +103,8 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
-     * Requests notification of <code>AudioEvents</code> from the
-     * <code>AudioManager</code>.
+     * Requests notification of {@link AudioEvent}s from the
+     * {@link AudioManager}.
      *
      * @param listener the listener to add
      */
@@ -174,10 +198,17 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * Handles further processing if the audio output has to be stopped by
      * a call to {@link #audioStop()}.
+     * <p>
+     * Closes the format converter. May be overridden to handle further cleanup.
+     * </p>
      * @throws AudioException
      *         error stopping
      */
-    protected abstract void handleAudioStop() throws AudioException;
+    protected void handleAudioStop() throws AudioException {
+        if (formatConverter != null) {
+            formatConverter = null;
+        }
+    }
 
     /**
      * Checks if the audio has been started.
@@ -322,6 +353,125 @@ public abstract class BaseAudioManager implements AudioManager {
      * @return the used audio format
      * @throws AudioException the audio format could not be determined
      */
-    public abstract AudioFormat getAudioFormat() throws AudioException;
+    public org.jvoicexml.jsapi2.AudioFormat getAudioFormat()
+            throws AudioException {
+        final String locator = getMediaLocator();
+        if (locator != null) {
+            //Get matching URI to extract query parameters
+            URL url = null;
+            try {
+                url = new URL(locator);
+                AudioFormat format =
+                    JavaSoundParser.parse(url);
+                return new org.jvoicexml.jsapi2.AudioFormat(
+                        format.getEncoding().toString(),
+                        format.getSampleRate(), format.getSampleSizeInBits(),
+                        format.getChannels(), format.getFrameSize(),
+                        format.getFrameRate(), format.isBigEndian());
+            } catch (MalformedURLException ex) {
+                throw new AudioException(ex.getMessage());
+            } catch (URISyntaxException ex) {
+                throw new AudioException(ex.getMessage());
+            }
+        }
+        return new org.jvoicexml.jsapi2.AudioFormat(
+                engineAudioFormat.getEncoding().toString(),
+                engineAudioFormat.getSampleRate(), engineAudioFormat.getSampleSizeInBits(),
+                engineAudioFormat.getChannels(), engineAudioFormat.getFrameSize(),
+                engineAudioFormat.getFrameRate(), engineAudioFormat.isBigEndian());
+    }
+
+    protected AudioInputStream ais;
+
+    /**
+     * Audio format of the audio natively produced by the engine.
+     */
+    protected AudioFormat engineAudioFormat;
+
+    /** Audio format of that is being received or that is being delivered. */
+    protected AudioFormat targetAudioFormat;
+
+    /** Converter from the source (synthesizer) to the target format. */
+    private AudioFormatConverter formatConverter;
+
+    /**
+     * Retrieves the audio format converter.
+     * @return the audio format converter.
+     */
+    public AudioFormatConverter getAudioFormatConverter() throws IOException {
+        if (formatConverter == null) {
+            formatConverter = openAudioFormatConverter(engineAudioFormat,
+                    targetAudioFormat);
+        }
+        return formatConverter;
+    }
+
+    /**
+     * Opens the connection to the configured media locator.
+     * @return opened connection
+     * @throws IOException
+     *         error opening the connection.
+     */
+    protected URLConnection openURLConnection() throws IOException {
+        final String locator = getMediaLocator();
+        if (locator == null) {
+            return null;
+        }
+
+        final URL url;
+        try {
+            url = new URL(locator);
+        } catch (MalformedURLException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+
+        // Open a connection to URL
+        final URLConnection connection = url.openConnection();
+        connection.connect();
+        return connection;
+    }
+
+    /**
+     * Opens the audio format converter to convert from the given source
+     * format into the given target format.
+     * <p>
+     * This method must be called in the {@link #audioStart()} method.
+     * </p>
+     * @param source the source audio format
+     * @param target the target audio format.
+     * @return the audio format converter.
+     * @throws IOException
+     *         error opening the format converter
+     */
+    protected AudioFormatConverter openAudioFormatConverter(
+            final AudioFormat source, final AudioFormat target)
+        throws IOException {
+        return new AudioFormatConverter(this, source, target);
+    }
+
+
+    /**
+     * Sets the audio format that is being used by this engine.
+     * @param audioFormat new audio format.
+     */
+    public void setEngineAudioFormat(final AudioFormat audioFormat) {
+        engineAudioFormat = audioFormat;
+    }
+
+    /**
+     * Retrieves the audio format that is used by this engine.
+     * @return audio format used by this engine.
+     */
+    public AudioFormat getEngineAudioFormat() {
+        return engineAudioFormat;
+    }
+
+    /**
+     * Retrieves the target audio format.
+     * @return target audio format.
+     */
+    public AudioFormat getTargetAudioFormat() {
+        return targetAudioFormat;
+    }
 }
 

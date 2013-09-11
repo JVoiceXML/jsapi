@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -312,7 +313,8 @@ public class BaseGrammarManager implements GrammarManager {
             BaseRuleGrammar brg = new BaseRuleGrammar(recognizer,
                     grammarReference);
             brg.addRules(rules);
-            brg.setAttributes(srgsParser.getAttributes());
+            final Map<String, String> attributes = srgsParser.getAttributes();
+            brg.setAttributes(attributes);
 
             //Register grammar
             grammars.put(grammarReference, brg);
@@ -394,7 +396,7 @@ public class BaseGrammarManager implements GrammarManager {
         brg.addRules(rules);
         
         @SuppressWarnings("rawtypes")       
-        final HashMap attributes = srgsParser.getAttributes();
+        final Map attributes = srgsParser.getAttributes();
         
         if(LOGGER.isLoggable(Level.FINE)){
             LOGGER.log(Level.FINE,
