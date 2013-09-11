@@ -1,7 +1,6 @@
 package org.jvoicexml.jsapi2.recognition;
 
 import java.util.Collection;
-import java.util.Vector;
 
 import javax.speech.EngineStateException;
 import javax.speech.recognition.SpeakerManager;

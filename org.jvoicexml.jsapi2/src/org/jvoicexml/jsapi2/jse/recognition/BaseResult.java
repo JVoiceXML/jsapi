@@ -17,9 +17,8 @@
 package org.jvoicexml.jsapi2.jse.recognition;
 
 import java.io.Serializable;
-import java.util.Enumeration;
+import java.util.Collection;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,11 +47,14 @@ import javax.speech.recognition.RuleToken;
 import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 
 public class BaseResult implements Result, FinalResult, FinalRuleResult, Serializable, Cloneable {
+    /** The serial version UID. */
+    private static final long serialVersionUID = -7742652622067884474L;
+
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(BaseResult.class.getName());
 
-    private Vector resultListeners;
+    private Collection<ResultListener> resultListeners;
     private ResultToken tokens[];
     private int nTokens;
     private transient Grammar grammar;
@@ -76,7 +78,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * @exception GrammarException error evaluating the grammar
      */
     public BaseResult(final Grammar gram) {
-        resultListeners = new Vector();
+        resultListeners = new java.util.ArrayList<ResultListener>();
         grammar = gram;
         confidenceLevel = RecognizerProperties.UNKNOWN_CONFIDENCE;
         state = Result.UNFINALIZED;
@@ -88,8 +90,9 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * @param result the result string
      * @exception GrammarException error evaluating the grammar
      */
-    public BaseResult(Grammar gram, String result) throws GrammarException {
-        resultListeners = new Vector();
+    public BaseResult(final Grammar gram, final String result)
+            throws GrammarException {
+        resultListeners = new java.util.ArrayList<ResultListener>();
         grammar = gram;
         confidenceLevel = RecognizerProperties.UNKNOWN_CONFIDENCE;
         if (result == null) {
@@ -211,7 +214,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      */
     public void addResultListener(ResultListener listener) {
         if (!resultListeners.contains(listener)) {
-            resultListeners.addElement(listener);
+            resultListeners.add(listener);
         }
     }
 
@@ -220,7 +223,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * From javax.speech.recognition.Result.
      */
     public void removeResultListener(ResultListener listener) {
-        resultListeners.removeElement(listener);
+        resultListeners.remove(listener);
     }
 //////////////////////
 // End Result Methods
@@ -446,11 +449,8 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
        */
       public void fireResultEvent(final ResultEvent event) {
           if (resultListeners != null) {
-              final Enumeration enumeration = resultListeners.elements();
-              while (enumeration.hasMoreElements()) {
-                  ResultListener rl =
-                      (ResultListener) enumeration.nextElement();
-                  rl.resultUpdate(event);
+              for (ResultListener listener : resultListeners) {
+                  listener.resultUpdate(event);
               }
           }
       }

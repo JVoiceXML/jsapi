@@ -15,7 +15,7 @@ import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 
-import org.jvoicexml.jsapi2.JseBaseAudioManager;
+import org.jvoicexml.jsapi2.BaseAudioManager;
 
 /**
  * A simple {@link OutputStream} that writes the data to the local speaker.
@@ -31,7 +31,7 @@ public class ClipOutputStream extends OutputStream implements LineListener {
     private final Object lock;
 
     /** The audio manager to use. */
-    private final JseBaseAudioManager manager;
+    private final BaseAudioManager manager;
 
     /** The current clip. */
     private Clip clip;
@@ -40,7 +40,7 @@ public class ClipOutputStream extends OutputStream implements LineListener {
      * Constructs a new object.
      * @param audioManager the audio manger
      */
-    public ClipOutputStream(final JseBaseAudioManager audioManager) {
+    public ClipOutputStream(final BaseAudioManager audioManager) {
         buffer = new ByteArrayOutputStream();
         lock = new Object();
         manager = audioManager;

@@ -26,8 +26,7 @@
 
 package org.jvoicexml.jsapi2.recognition;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
 import javax.speech.SpeechEventExecutor;
 import javax.speech.SpeechLocale;
@@ -61,10 +60,10 @@ public class BaseGrammar implements Grammar, ResultListener {
     private SpeechLocale locale;
 
     /** Registered listeners for grammar changes. */
-    private transient Vector grammarListeners;
+    private transient List<GrammarListener> grammarListeners;
 
     /** Registered listeners for result events. */
-    private transient Vector resultListeners;
+    private transient List<ResultListener> resultListeners;
 
     /** Unique reference of this grammar. */
     protected String reference;
@@ -93,8 +92,8 @@ public class BaseGrammar implements Grammar, ResultListener {
             throw new IllegalArgumentException(
                     "grammar reference must not be null");
         }
-        grammarListeners = new Vector();
-        resultListeners = new Vector();
+        grammarListeners = new java.util.ArrayList<GrammarListener>();
+        resultListeners = new java.util.ArrayList<ResultListener>();
         recognizer = rec;
         if (rec != null) {
             recognizer.addResultListener(this);
@@ -186,7 +185,7 @@ public class BaseGrammar implements Grammar, ResultListener {
      */
     public final void addGrammarListener(final GrammarListener listener) {
         if (!grammarListeners.contains(listener)) {
-            grammarListeners.addElement(listener);
+            grammarListeners.add(listener);
         }
     }
 
@@ -194,7 +193,7 @@ public class BaseGrammar implements Grammar, ResultListener {
      * {@inheritDoc}
      */
     public final void removeGrammarListener(final GrammarListener listener) {
-        grammarListeners.removeElement(listener);
+        grammarListeners.remove(listener);
     }
 
     /**
@@ -202,7 +201,7 @@ public class BaseGrammar implements Grammar, ResultListener {
      */
     public final void addResultListener(final ResultListener listener) {
         if (!resultListeners.contains(listener)) {
-            resultListeners.addElement(listener);
+            resultListeners.add(listener);
         }
     }
 
@@ -210,7 +209,7 @@ public class BaseGrammar implements Grammar, ResultListener {
      * {@inheritDoc}
      */
     public final void removeResultListener(final ResultListener listener) {
-        resultListeners.removeElement(listener);
+        resultListeners.remove(listener);
     }
 
     /**
@@ -271,12 +270,8 @@ public class BaseGrammar implements Grammar, ResultListener {
      * @param event the event to fire
      */
     private void fireGrammarEvent(final GrammarEvent event) {
-        Enumeration enumeration;
         if (resultListeners != null) {
-            enumeration = resultListeners.elements();
-            while (enumeration.hasMoreElements()) {
-                GrammarListener listener =
-                    (GrammarListener) enumeration.nextElement();
+            for (GrammarListener listener : grammarListeners) {
                 listener.grammarUpdate(event);
             }
         }
@@ -339,10 +334,7 @@ public class BaseGrammar implements Grammar, ResultListener {
 
         // We are running in the speech event executor, so there is no need to
         // create a new one.
-        Enumeration enumeration = resultListeners.elements();
-        while (enumeration.hasMoreElements()) {
-            final ResultListener listener =
-                (ResultListener) enumeration.nextElement();
+        for (ResultListener listener : resultListeners) {
             listener.resultUpdate(event);
         }
     }

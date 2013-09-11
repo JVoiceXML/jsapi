@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -125,13 +126,11 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         }
     }
 
-    private class InternalRuleIdComparator implements Comparator{
+    private class InternalRuleIdComparator implements Comparator<InternalRule> {
      public InternalRuleIdComparator() {
      }
 
-     public int compare(Object o1, Object o2){
-         InternalRule ir1 = (InternalRule)o1;
-         InternalRule ir2 = (InternalRule)o2;
+     public int compare(InternalRule ir1, InternalRule ir2){
          return ir1.getId() > ir2.getId() ? 1 :
                  ir1.getId() < ir2.getId() ? -1 : 0;
      }
@@ -371,7 +370,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         
     }
 
-    protected void setAttributes(HashMap<String, String> attributes) {
+    protected void setAttributes(Map<String, String> attributes) {
         
         if(LOGGER.isLoggable(Level.FINE)){
             LOGGER.log(Level.FINE,
@@ -789,16 +788,16 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         str.append(tagFormat);
         str.append("\" xmlns=\"http://www.w3.org/2001/06/grammar\">\n");
 
-        Iterator it = rules.keySet().iterator();
-        Vector v = new Vector();
+        final Iterator<String> it = rules.keySet().iterator();
+        final List<InternalRule> list = new java.util.ArrayList<InternalRule>();
         while(it.hasNext()){
-            InternalRule r = (InternalRule) rules.get(it.next());
-            v.addElement(r);
+            final InternalRule r = (InternalRule) rules.get(it.next());
+            list.add(r);
         }
 
-        Collections.sort(v, new InternalRuleIdComparator());
-        for (int i = 0; i < v.size(); ++i) {
-            final InternalRule internalRule = (InternalRule) v.get(i);
+        Collections.sort(list, new InternalRuleIdComparator());
+        for (int i = 0; i < list.size(); ++i) {
+            final InternalRule internalRule = (InternalRule) list.get(i);
             if (displayDisabledRules || internalRule.isActivable()) {
                 str.append(internalRule);
                 str.append('\n');

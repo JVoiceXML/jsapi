@@ -21,7 +21,7 @@ import javax.speech.EnginePropertyListener;
 import javax.speech.SpeechEventExecutor;
 
 /**
- * Supports the JSAPI 2.0 <code>EngineProperties</code> interface.
+ * Supports the JSAPI 2.0 {@link EngineProperties} interface.
  * 
  * <p>
  * Actual JSAPI 2 implementations may want to override this class to apply the

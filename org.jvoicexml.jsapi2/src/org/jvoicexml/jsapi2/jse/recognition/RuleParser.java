@@ -8,7 +8,7 @@
 
 package org.jvoicexml.jsapi2.jse.recognition;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -149,7 +149,7 @@ public class RuleParser {
         } else {
             rNames = grammar.listRuleNames();
         }
-        Vector parsed = new Vector();
+        List<Object> parsed = new java.util.ArrayList<Object>();
         for (int j = 0; j < rNames.length; j++) {
             if ((ruleName == null) && !(grammar.isActivatable(rNames[j]))) {
                 continue;
@@ -173,7 +173,7 @@ public class RuleParser {
             return null;
         }
         final RuleParse[] rpa = new RuleParse[parsed.size()];
-        parsed.copyInto(rpa);
+        parsed.toArray(rpa);
         return rpa;
     }
 
@@ -448,7 +448,7 @@ public class RuleParser {
 
        if (maxRepeat != RuleCount.REPEAT_INDEFINITELY) {
            GrammarGraph tmpGraph;
-           ArrayList<GrammarNode> v = new ArrayList();
+           List<GrammarNode> v = new java.util.ArrayList<GrammarNode>();
            lastNode = newNodes;
            while (countNodes < maxRepeat) {
                ++countNodes;
@@ -574,7 +574,8 @@ public class RuleParser {
      * @param currentNode the current node
      */
     private void posParseStartCount(final GrammarNode currentNode) {
-        Vector ruleComponents = new Vector();
+        List<RuleComponent> ruleComponents =
+                new java.util.ArrayList<RuleComponent>();
         int count = 0;
         while (true) {
             if (grammarElements.empty()) {
@@ -585,7 +586,7 @@ public class RuleParser {
                 && ((GrammarNode) topElement).getNodeType()
                 == GrammarNode.END_COUNT) {
                 RuleComponent[] copy = new RuleComponent[ruleComponents.size()];
-                ruleComponents.copyInto(copy);
+                ruleComponents.toArray(copy);
 
                 int repeatProb = ((RuleCount) currentNode.getRuleComponent()).
                                  getRepeatProbability();
@@ -598,7 +599,7 @@ public class RuleParser {
                 }
                 break;
             } else if (topElement instanceof RuleComponent) {
-                ruleComponents.add(topElement);
+                ruleComponents.add((RuleComponent)topElement);
                 count++;
             }
         }
