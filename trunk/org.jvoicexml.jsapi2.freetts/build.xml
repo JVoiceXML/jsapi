@@ -42,7 +42,7 @@ This file builds the FreeTTS layer for the JSAPI synthesizer.
 
   <target name="compile" depends="-init" description="Compile the JAVA sources">
     <echo message="compiling with debug=${debug}, optimize=${optimize}" />
-    <javac destdir="${build}" target="1.6"
+    <javac destdir="${build}"
       optimize="${optimize}" debug="${debug}" deprecation="on"
       includeantruntime="false">
       <src path="${src}" />

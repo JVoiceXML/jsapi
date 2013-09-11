@@ -33,7 +33,7 @@ import java.io.InputStream;
 import javax.sound.sampled.AudioFormat;
 
 import org.jvoicexml.jsapi2.AudioFormatConverter;
-import org.jvoicexml.jsapi2.JseBaseAudioManager;
+import org.jvoicexml.jsapi2.BaseAudioManager;
 
 import com.sun.speech.freetts.audio.AudioPlayer;
 
@@ -53,7 +53,7 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
     private ByteArrayOutputStream buffer;
 
     /** Reference to the audio manager. */
-    private JseBaseAudioManager baseAudioManager;
+    private BaseAudioManager baseAudioManager;
 
     /** The audio format to use. */
     private AudioFormat audioFormat;
@@ -62,7 +62,7 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
      * Constructs a new object.
      * @param manager the audio manager.
      */
-    public FreeTTSAudioPlayer(final JseBaseAudioManager manager) {
+    public FreeTTSAudioPlayer(final BaseAudioManager manager) {
         baseAudioManager = manager;
         buffer = new ByteArrayOutputStream();
         audioFormat = baseAudioManager.getEngineAudioFormat();
