@@ -53,9 +53,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
 import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
-import org.jvoicexml.jsapi2.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
@@ -120,7 +120,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      */
     protected boolean setRecognizerInputStream() {
      // Get the source audioStream
-        JseBaseAudioManager audioManager = (JseBaseAudioManager) getAudioManager();
+        BaseAudioManager audioManager = (BaseAudioManager) getAudioManager();
         //audioManager.audioStart();
         InputStream in = audioManager.getInputStream();
         return setRecognizerInputStream(in);
@@ -278,7 +278,7 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
         @Override
         public void propertyChangeRequest(EnginePropertyChangeRequestEvent event) {
-            System.out.println("Free Beer! \\o/");
+            System.out.println("Free Beer! \\o//");
         }
     }
     
