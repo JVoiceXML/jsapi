@@ -37,8 +37,8 @@ import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.Voice;
 
+import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseAudioSegment;
-import org.jvoicexml.jsapi2.JseBaseAudioManager;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 /**
@@ -196,8 +196,8 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     @Override
     public AudioSegment handleSpeak(final int id, final String item) {
         final byte[] bytes = sapiHandleSpeak(synthesizerHandle, id, item);
-        final JseBaseAudioManager manager =
-                (JseBaseAudioManager) getAudioManager();
+        final BaseAudioManager manager =
+                (BaseAudioManager) getAudioManager();
         final String locator = manager.getMediaLocator();
         InputStream in = null;
         try {
@@ -235,8 +235,8 @@ public final class SapiSynthesizer extends JseBaseSynthesizer {
     protected AudioSegment handleSpeak(final int id, final Speakable item) {
         final String markup = item.getMarkupText();
         final byte[] bytes = sapiHandleSpeakSsml(synthesizerHandle, id, markup);
-        final JseBaseAudioManager manager =
-                (JseBaseAudioManager) getAudioManager();
+        final BaseAudioManager manager =
+                (BaseAudioManager) getAudioManager();
         final String locator = manager.getMediaLocator();
         InputStream in = null;
         try {
