@@ -39,8 +39,7 @@ import org.jvoicexml.jsapi2.recognition.BaseGrammar;
  * Implementation of javax.speech.recognition.RuleGrammar.
  *
  */
-public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
-{
+public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(BaseRuleGrammar.class.getName());
@@ -66,7 +65,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
     protected List    importedRules;
 
     /**
-     * Create a new BaseRuleGrammar
+     * Creates a new object.
      * @param recognizer the BaseRecognizer for this grammar.
      * @param reference the unique reference of this grammar.
      */
@@ -75,7 +74,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
         super(recognizer, reference);
         rules = new HashMap<String, InternalRule>();
 
-        //Initialize rule grammar attributes
+        // Initialize rule grammar attributes
         root = null;
         version = "1.0";
         xmlns = "";
@@ -91,13 +90,19 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 
     /**
      * Internal representation of a Rule that
-     * holds additionally the "activable" property
+     * holds additionally the <code>activable</code> property.
      */
     private class InternalRule {
         private Rule rule;
         private boolean activable;
         private int id;
-        public InternalRule(Rule r, int id) {
+
+        /**
+         * Constructs a new object.
+         * @param r the rule
+         * @param id id of the rule
+         */
+        public InternalRule(final Rule r, final int id) {
             rule = r;
             this.id = id;
             activable = true;
@@ -119,26 +124,28 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 
         public Rule getRule() { return rule; }
 
-        public int getId() { return id; }
+        public int getId() {
+            return id;
+        }
 
         public String toString(){
             return rule.toString();
         }
     }
 
-    private class InternalRuleIdComparator implements Comparator<InternalRule> {
-     public InternalRuleIdComparator() {
-     }
-
-     public int compare(InternalRule ir1, InternalRule ir2){
-         return ir1.getId() > ir2.getId() ? 1 :
-                 ir1.getId() < ir2.getId() ? -1 : 0;
-     }
- }
+    private class InternalRuleIdComparator
+        implements Comparator<InternalRule> {
+        /**
+         * {@inheritDoc}
+         */
+        public int compare(final InternalRule ir1, final InternalRule ir2) {
+            return ir1.getId() - ir2.getId();
+        }
+    }
 
 
     /**
-     * Abstract class used to make uncommited operations uniform
+     * Abstract class used to make uncommited operations uniform.
      */
     private abstract class RuleGrammarOperation {
         public abstract void execute() throws GrammarException;
@@ -773,9 +780,13 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      */
     public String toString(boolean displayDisabledRules) {
         final StringBuffer str = new StringBuffer();
-        str.append("<?xml version=\"1.0\" encoding=\"iso-8859-1\"?> \n"
-                  + "<!DOCTYPE grammar PUBLIC \"-//W3C//DTD GRAMMAR 1.0//EN\""
-                  + " \"http://www.w3.org/TR/speech-grammar/grammar.dtd\"> \n");
+        str.append("<?xml version=\"1.0\" encoding=\"");
+        final String encoding = System.getProperty("file.encoding",
+                "UTF-8");
+        str.append(encoding);
+        str.append("\"?> \n"
+                + "<!DOCTYPE grammar PUBLIC \"-//W3C//DTD GRAMMAR 1.0//EN\""
+                + " \"http://www.w3.org/TR/speech-grammar/grammar.dtd\"> \n");
         str.append("<grammar version=\"");
         str.append(version);
         str.append("\" mode=\"");
@@ -790,7 +801,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
 
         final Iterator<String> it = rules.keySet().iterator();
         final List<InternalRule> list = new java.util.ArrayList<InternalRule>();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             final InternalRule r = (InternalRule) rules.get(it.next());
             list.add(r);
         }
@@ -861,8 +872,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar
      * Resolve the given rule.
      */
     protected void resolveRule(RuleComponent r)
-        throws GrammarException
-    {
+        throws GrammarException {
 
       if (r instanceof RuleToken) {
             return;

@@ -3,10 +3,10 @@ package org.jvoicexml.jsapi2.mock;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
 
-import org.jvoicexml.jsapi2.AudioFormat;
 import org.jvoicexml.jsapi2.BaseAudioManager;
 
 /**
@@ -19,7 +19,8 @@ public class MockAudioManager extends BaseAudioManager {
      * {@inheritDoc}
      */
     public AudioFormat getAudioFormat() {
-        return new AudioFormat("ulaw", 8000.0f, 16, 1, 16, 8000, false);
+        return new AudioFormat(AudioFormat.Encoding.ULAW,
+                8000.0f, 16, 1, 16, 8000, false);
     }
 
     /**

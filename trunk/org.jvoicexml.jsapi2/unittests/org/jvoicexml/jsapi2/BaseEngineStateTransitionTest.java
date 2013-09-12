@@ -5,6 +5,7 @@ package org.jvoicexml.jsapi2;
 
 import javax.speech.Engine;
 import javax.speech.EngineEvent;
+import javax.speech.SpeechEventExecutor;
 
 import junit.framework.TestCase;
 
@@ -16,7 +17,7 @@ import org.jvoicexml.jsapi2.mock.synthesis.MockSynthesizer;
  * @author Dirk Schnelle-Walka
  *
  */
-public class BaseEngineStateTransitionTest extends TestCase {
+public final class BaseEngineStateTransitionTest extends TestCase {
     /** The engine to test. */
     private Engine engine;
 
@@ -28,13 +29,16 @@ public class BaseEngineStateTransitionTest extends TestCase {
      * @exception Exception set up failed
      */
     protected void setUp() throws Exception {
-        final MockSynthesizer syn = new MockSynthesizer();
-        syn.setEngineMask(EngineEvent.DEFAULT_MASK
+        final MockSynthesizer synthesizer = new MockSynthesizer();
+        synthesizer.setEngineMask(EngineEvent.DEFAULT_MASK
                 | EngineEvent.ENGINE_ALLOCATING_RESOURCES
                 | EngineEvent.ENGINE_DEALLOCATING_RESOURCES);
         eventAccu = new EngineEventAccumulator();
-        syn.addSynthesizerListener(eventAccu);
-        engine = syn;
+        synthesizer.addSynthesizerListener(eventAccu);
+        engine = synthesizer;
+        final SpeechEventExecutor executor =
+                new SynchronousSpeechEventExecutor();
+        engine.setSpeechEventExecutor(executor);
         super.setUp();
     }
 
