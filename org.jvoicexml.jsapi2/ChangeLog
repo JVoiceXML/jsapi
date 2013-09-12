@@ -4,6 +4,8 @@ Version 0.5
 - Supporting only Java SE
 - bugfix: RecognizerEvent falsely reported an IllegalArgumentExcpetion for
   CHANGES_REJECTED
+- new SynchronousSpeechEventExecutor
+- default encoding is determined from system property file.encoding (default: UTF-8)
 
 
 Version 0.4

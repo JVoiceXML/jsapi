@@ -1,6 +1,15 @@
-/**
- * 
+/*
+ * File:    $HeadURL: https://svn.code.sf.net/p/jsapi/code/trunk/org.jvoicexml.jsapi2/unittests/org/jvoicexml/jsapi2/ThreadSpeechEventExecutorTest.java $
+ * Version: $LastChangedRevision: 782 $
+ * Date:    $LastChangedDate $
+ * Author:  $LastChangedBy: schnelle $
+ *
+ * JSAPI - An independent reference implementation of JSR 113.
+ *
+ * Copyright (C) 2007 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
  */
+
 package org.jvoicexml.jsapi2.jse.recognition;
 
 import java.io.InputStream;
@@ -24,7 +33,7 @@ import org.jvoicexml.jsapi2.jse.test.recognition.DummyRecognizer;
  * @author Dirk Schnelle-Walka
  *
  */
-public class BaseGrammarManagerTest {
+public final class BaseGrammarManagerTest {
     /** The related recognizer. */
     private Recognizer recognizer;
 
@@ -60,7 +69,9 @@ public class BaseGrammarManagerTest {
 
     @Test
     public void testCreateRuleGrammarReader() throws Exception {
-        final InputStream in = BaseGrammarManagerTest.class.getResourceAsStream("pizza-de.xml");
+        final InputStream in =
+                BaseGrammarManagerTest.class.getResourceAsStream(
+                        "pizza-de.xml");
         final Reader reader = new InputStreamReader(in);
         final Grammar grammar = manager.loadGrammar("test",
                 "application/srgs+xml", reader);

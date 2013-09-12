@@ -61,12 +61,11 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     private int state;
     private int confidenceLevel;
 
-    protected String[] tags;
+    protected Object[] tags;
     private String   ruleName;
 
     /**
      * Create an empty result.
-     * @exception GrammarException error evaluating the grammar
      */
     public BaseResult() {
         this(null);
@@ -75,7 +74,6 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     /**
      * Create an empty result.
      * @param gram the grammar
-     * @exception GrammarException error evaluating the grammar
      */
     public BaseResult(final Grammar gram) {
         resultListeners = new java.util.ArrayList<ResultListener>();
@@ -85,7 +83,7 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
     }
 
     /**
-     * Create a result with a result string
+     * Create a result with a result string.
      * @param gram the grammar
      * @param result the result string
      * @exception GrammarException error evaluating the grammar
@@ -115,11 +113,11 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
      * @return copied result
      * @exception GrammarException if the related grammar could not be evaluated
      */
-    static BaseResult copyResult(Result result) throws GrammarException {
+    static BaseResult copyResult(final Result result) throws GrammarException {
         BaseResult copy = null;
         if (result instanceof BaseResult) {
             try {
-                copy = (BaseResult) ((BaseResult)result).clone();
+                copy = (BaseResult) ((BaseResult) result).clone();
             } catch (CloneNotSupportedException e) {
                 LOGGER.warning("ERROR: " + e);
             }
@@ -779,14 +777,15 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
                 final RuleParse rp = rule.parse(result, null);
                 if (rp != null) {
                     grammar = gram;
-                    tags = (String[])rp.getTags();   /** @todo Danger. RRR */
+                    tags = rp.getTags();
                     ruleName = rp.getRuleReference().getRuleName();
                     final StringTokenizer st = new StringTokenizer(result);
                     nTokens = st.countTokens();
                     int i = 0;
                     tokens = new ResultToken[nTokens];
                     while (st.hasMoreTokens()) {
-                        /** @todo information about startTime, endTime and confidenceLevel */
+                        // TODO information about startTime, endTime and
+                        // confidenceLevel
                         tokens[i] = new BaseResultToken(this, st.nextToken()); 
                         ++i;
                     }

@@ -36,7 +36,6 @@ import java.net.URLConnection;
 import java.util.Collection;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.speech.AudioEvent;
 import javax.speech.AudioException;
 import javax.speech.AudioListener;
@@ -74,6 +73,17 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /** <code>true</code> if audio has been started. */
     private boolean audioStarted;
+
+    /**
+     * Audio format of the audio natively produced by the engine.
+     */
+    protected AudioFormat engineAudioFormat;
+
+    /** Audio format of that is being received or that is being delivered. */
+    protected AudioFormat targetAudioFormat;
+
+    /** Converter from the source (synthesizer) to the target format. */
+    private AudioFormatConverter formatConverter;
 
     /**
      * Constructs a new object.
@@ -353,7 +363,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * @return the used audio format
      * @throws AudioException the audio format could not be determined
      */
-    public org.jvoicexml.jsapi2.AudioFormat getAudioFormat()
+    public AudioFormat getAudioFormat()
             throws AudioException {
         final String locator = getMediaLocator();
         if (locator != null) {
@@ -361,44 +371,24 @@ public abstract class BaseAudioManager implements AudioManager {
             URL url = null;
             try {
                 url = new URL(locator);
-                AudioFormat format =
-                    JavaSoundParser.parse(url);
-                return new org.jvoicexml.jsapi2.AudioFormat(
-                        format.getEncoding().toString(),
-                        format.getSampleRate(), format.getSampleSizeInBits(),
-                        format.getChannels(), format.getFrameSize(),
-                        format.getFrameRate(), format.isBigEndian());
+                return JavaSoundParser.parse(url);
             } catch (MalformedURLException ex) {
                 throw new AudioException(ex.getMessage());
             } catch (URISyntaxException ex) {
                 throw new AudioException(ex.getMessage());
             }
         }
-        return new org.jvoicexml.jsapi2.AudioFormat(
-                engineAudioFormat.getEncoding().toString(),
-                engineAudioFormat.getSampleRate(), engineAudioFormat.getSampleSizeInBits(),
-                engineAudioFormat.getChannels(), engineAudioFormat.getFrameSize(),
-                engineAudioFormat.getFrameRate(), engineAudioFormat.isBigEndian());
+        return engineAudioFormat;
     }
-
-    protected AudioInputStream ais;
-
-    /**
-     * Audio format of the audio natively produced by the engine.
-     */
-    protected AudioFormat engineAudioFormat;
-
-    /** Audio format of that is being received or that is being delivered. */
-    protected AudioFormat targetAudioFormat;
-
-    /** Converter from the source (synthesizer) to the target format. */
-    private AudioFormatConverter formatConverter;
 
     /**
      * Retrieves the audio format converter.
      * @return the audio format converter.
+     * @throws IOException
+     *         error opening the format converter
      */
-    public AudioFormatConverter getAudioFormatConverter() throws IOException {
+    public AudioFormatConverter getAudioFormatConverter()
+            throws IOException {
         if (formatConverter == null) {
             formatConverter = openAudioFormatConverter(engineAudioFormat,
                     targetAudioFormat);
@@ -454,7 +444,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * Sets the audio format that is being used by this engine.
      * @param audioFormat new audio format.
      */
-    public void setEngineAudioFormat(final AudioFormat audioFormat) {
+    public final void setEngineAudioFormat(final AudioFormat audioFormat) {
         engineAudioFormat = audioFormat;
     }
 
@@ -462,7 +452,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * Retrieves the audio format that is used by this engine.
      * @return audio format used by this engine.
      */
-    public AudioFormat getEngineAudioFormat() {
+    public final AudioFormat getEngineAudioFormat() {
         return engineAudioFormat;
     }
 
@@ -470,7 +460,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * Retrieves the target audio format.
      * @return target audio format.
      */
-    public AudioFormat getTargetAudioFormat() {
+    public final AudioFormat getTargetAudioFormat() {
         return targetAudioFormat;
     }
 }

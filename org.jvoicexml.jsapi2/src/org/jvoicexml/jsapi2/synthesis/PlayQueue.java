@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.AudioSegment;
 import javax.speech.Engine;
@@ -41,7 +42,6 @@ import javax.speech.synthesis.SpeakableListener;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerEvent;
 
-import org.jvoicexml.jsapi2.AudioFormat;
 import org.jvoicexml.jsapi2.BaseAudioManager;
 
 /**

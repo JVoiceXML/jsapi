@@ -206,7 +206,7 @@ public abstract class BaseEngine implements Engine {
             // Will wait forever to reach that state
             while (!testEngineState(state)) {
                 synchronized (engineStateLock) {
-                    engineStateLock.wait(300);
+                    engineStateLock.wait();
                 }
             }
         }
@@ -240,7 +240,7 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     * Updates this <code>Engine</code> state by clearing defined bits,
+     * Updates this {@link Engine} state by clearing defined bits,
      * then setting other specified bits.
      * @param clear the flags to clear
      * @param set the flags to set

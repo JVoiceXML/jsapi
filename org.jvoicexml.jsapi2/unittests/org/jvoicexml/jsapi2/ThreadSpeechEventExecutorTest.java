@@ -13,10 +13,11 @@
 package org.jvoicexml.jsapi2;
 
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Assert;
 
 /**
  * Test cases for {@link ThreadSpeechEventExecutor}.
@@ -51,15 +52,15 @@ public final class ThreadSpeechEventExecutorTest extends TestCase {
      *            test failed
      */
     public void testExecute() throws Exception {
-        final Vector list = new Vector();
+        final List<Integer> list = new java.util.ArrayList<Integer>();
         final Runnable runnable1 = new Runnable() {
             public void run() {
-                list.addElement(new Integer(1));
+                list.add(new Integer(1));
             }
         };
         final Runnable runnable2 = new Runnable() {
             public void run() {
-                list.addElement(new Integer(2));
+                list.add(new Integer(2));
                 synchronized (list) {
                     list.notifyAll();
                 }
@@ -71,9 +72,8 @@ public final class ThreadSpeechEventExecutorTest extends TestCase {
             list.wait();
         }
         Assert.assertEquals(2, list.size());
-        final Enumeration enumeration = list.elements();
-        Assert.assertEquals(new Integer(1), enumeration.nextElement());
-        Assert.assertEquals(new Integer(2), enumeration.nextElement());
+        Assert.assertEquals(new Integer(1), list.get(0));
+        Assert.assertEquals(new Integer(2), list.get(1));
     }
 
 }

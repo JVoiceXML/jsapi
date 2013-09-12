@@ -9,10 +9,8 @@ import java.io.InputStream;
 
 import javax.speech.AudioSegment;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
-import org.jvoicexml.jsapi2.BaseAudioSegment;
 
 /**
  * Test cases for {@link BaseAudioSegment}.
