@@ -12,9 +12,9 @@
 
 package org.jvoicexml.jsapi2.synthesis.freetts;
 
-import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.Voice;
 
+import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
 
 /**
@@ -28,7 +28,7 @@ public class FreeTTSEngineProperties extends BaseSynthesizerProperties {
      * Constructs a new object.
      * @param synthesizer the associated synthesizer
      */
-    public FreeTTSEngineProperties(final Synthesizer synthesizer) {
+    public FreeTTSEngineProperties(final BaseSynthesizer synthesizer) {
         super(synthesizer);
     }
 
