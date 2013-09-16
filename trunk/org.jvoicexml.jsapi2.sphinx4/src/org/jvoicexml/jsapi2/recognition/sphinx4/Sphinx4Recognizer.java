@@ -46,6 +46,7 @@ import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
@@ -522,5 +523,17 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
     @Override
     protected AudioFormat getAudioFormat() {
        return new AudioFormat(16000f, 16, 1, true, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void handlePropertyChangeRequest(
+            final BaseEngineProperties properties,
+            final String propName, final Object oldValue,
+            final Object newValue) {
+        throw new UnsupportedOperationException(
+                "property change not implemented!");
     }
 }
