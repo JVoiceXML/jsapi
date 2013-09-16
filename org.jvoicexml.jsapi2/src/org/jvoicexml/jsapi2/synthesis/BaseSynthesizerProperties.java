@@ -68,7 +68,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
      * Constructs a new Object.
      * @param synthesizer reference to the synthesizer.
      */
-    public BaseSynthesizerProperties(final Synthesizer synthesizer) {
+    public BaseSynthesizerProperties(final BaseSynthesizer synthesizer) {
         super(synthesizer);
 
         interruptibility = OBJECT_LEVEL;
@@ -110,7 +110,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
         if (level == interruptibility) {
             return;
         }
-        notifyPropertyChangeRequest(INTERRUPTIBILITY,
+        handlePropertyChangeRequest(INTERRUPTIBILITY,
                 new Integer(interruptibility),
                 new Integer(level));
     }
@@ -133,7 +133,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
         if (pitch == hertz) {
             return;
         }
-        notifyPropertyChangeRequest(PITCH,
+        handlePropertyChangeRequest(PITCH,
                 new Integer(pitch), new Integer(hertz));
     }
 
@@ -155,7 +155,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
         if (pitchRange == hertz) {
             return;
         }
-        notifyPropertyChangeRequest(PITCH_RANGE,
+        handlePropertyChangeRequest(PITCH_RANGE,
                 new Integer(pitchRange), new Integer(hertz));
     }
 
@@ -177,7 +177,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
         if (speakingRate == wpm) {
             return;
         }
-        notifyPropertyChangeRequest(SPEAKING_RATE,
+        handlePropertyChangeRequest(SPEAKING_RATE,
                 new Integer(speakingRate), new Integer(wpm));
     }
 
@@ -202,7 +202,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
         for (int i = 0; i < voices.length; i++) {
             final Voice current = voices[i];
             if (current.match(voice)) {
-                notifyPropertyChangeRequest(VOICE,
+                handlePropertyChangeRequest(VOICE,
                         this.voice, current);
                 return;
             }
@@ -228,7 +228,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
         if (volume == vol) {
             return;
         }
-        notifyPropertyChangeRequest(VOLUME,
+        handlePropertyChangeRequest(VOLUME,
                 new Integer(volume), new Integer(vol));
     }
 

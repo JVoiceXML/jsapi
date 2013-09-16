@@ -12,7 +12,6 @@
 
 package org.jvoicexml.jsapi2.recognition;
 
-import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerProperties;
 
 import org.jvoicexml.jsapi2.BaseEngineProperties;
@@ -133,7 +132,7 @@ public class BaseRecognizerProperties
      * Constructs a new object.
      * @param recognizer reference to the recognizer
      */
-    public BaseRecognizerProperties(final Recognizer recognizer) {
+    public BaseRecognizerProperties(final BaseRecognizer recognizer) {
         super(recognizer);
         adaptation = ADAPT_PAUSED | ADAPT_RESUMED;
         completeTimeout = 500;
@@ -242,7 +241,8 @@ public class BaseRecognizerProperties
         if (adaptation == adapt) {
             return;
         }
-        notifyPropertyChangeRequest(ADAPTATION, new Integer(adaptation),
+        
+        handlePropertyChangeRequest(ADAPTATION, new Integer(adaptation),
                                 new Integer(adapt));
     }
 
@@ -258,7 +258,7 @@ public class BaseRecognizerProperties
         if (completeTimeout == value) {
             return;
         }
-        notifyPropertyChangeRequest(COMPLETE_TIMEOUT,
+        handlePropertyChangeRequest(COMPLETE_TIMEOUT,
                                 new Integer(completeTimeout),
                                 new Integer(value));
     }
@@ -277,7 +277,7 @@ public class BaseRecognizerProperties
         } else {
             confidenceThreshold = threshold;
         }
-        postPropertyChangeEvent(CONFIDENCE_THRESHOLD,
+        handlePropertyChangeRequest(CONFIDENCE_THRESHOLD,
                                 new Integer(confidenceThreshold),
                                 new Integer(threshold));
     }
@@ -295,7 +295,7 @@ public class BaseRecognizerProperties
         if (endpointStyle == style) {
             return;
         }
-        notifyPropertyChangeRequest(ENDPOINT_STYLE,
+        handlePropertyChangeRequest(ENDPOINT_STYLE,
                                 new Integer(endpointStyle),
                                 new Integer(style));
     }
@@ -311,7 +311,7 @@ public class BaseRecognizerProperties
         if (incompleteTimeout == timeout) {
             return;
         }
-        notifyPropertyChangeRequest(INCOMPLETE_TIMEOUT,
+        handlePropertyChangeRequest(INCOMPLETE_TIMEOUT,
                                 new Integer(incompleteTimeout),
                                 new Integer(timeout));
     }
@@ -323,7 +323,7 @@ public class BaseRecognizerProperties
         if (numResultAlternatives == num) {
             return;
         }
-        notifyPropertyChangeRequest(NUM_RESULT_ALTERNATIVES,
+        handlePropertyChangeRequest(NUM_RESULT_ALTERNATIVES,
                                 new Integer(numResultAlternatives),
                                 new Integer(num));
     }
@@ -340,7 +340,7 @@ public class BaseRecognizerProperties
         if (sensitivity == value) {
             return;
         }
-        notifyPropertyChangeRequest(SENSITIVITY,
+        handlePropertyChangeRequest(SENSITIVITY,
                                 new Integer(sensitivity),
                                 new Integer(value));
     }
@@ -359,7 +359,7 @@ public class BaseRecognizerProperties
         if (speedVsAccuracy == value) {
             return;
         }
-        notifyPropertyChangeRequest(SPEED_VS_ACCURACY,
+        handlePropertyChangeRequest(SPEED_VS_ACCURACY,
                                 new Integer(speedVsAccuracy),
                                 new Integer(value));
     }
@@ -371,7 +371,7 @@ public class BaseRecognizerProperties
         if (resultAudioProvided == value) {
             return;
         }
-        notifyPropertyChangeRequest(RESULT_AUDIO_PROVIDED,
+        handlePropertyChangeRequest(RESULT_AUDIO_PROVIDED,
                                 new Boolean(resultAudioProvided),
                                 new Boolean(value));
     }
@@ -383,7 +383,7 @@ public class BaseRecognizerProperties
         if (trainingProvided == value) {
             return;
         }
-        notifyPropertyChangeRequest(TRAINING_PROVIDED,
+        handlePropertyChangeRequest(TRAINING_PROVIDED,
                                 new Boolean(trainingProvided),
                                 new Boolean(value));
     }
@@ -391,6 +391,7 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean setProperty(String propName, Object value) {
         if (propName.equals(TRAINING_PROVIDED)) {
             final Boolean boolVal = (Boolean) value;

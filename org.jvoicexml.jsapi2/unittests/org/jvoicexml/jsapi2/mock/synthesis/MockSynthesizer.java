@@ -26,6 +26,9 @@
 
 package org.jvoicexml.jsapi2.mock.synthesis;
 
+import java.beans.PropertyChangeListener;
+
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
@@ -35,17 +38,17 @@ import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
 import javax.speech.synthesis.Speakable;
 
-import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
+import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 import org.jvoicexml.jsapi2.mock.MockAudioManager;
 import org.jvoicexml.jsapi2.mock.MockSpeechEventExecutor;
-import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
 
 /**
  * Dummy implementation of a {@link javax.spech.synthesis.Synthesizer}
  * for test purposes.
  * @author Dirk Schnelle-Walka
  */
-public class MockSynthesizer extends BaseSynthesizer {
+public class MockSynthesizer extends JseBaseSynthesizer {
 
     /**
      * {@inheritDoc}
@@ -144,7 +147,19 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
-    protected EnginePropertyChangeRequestListener getChangeRequestListener() {
+    protected PropertyChangeListener getChangeRequestListener() {
+        return null;
+    }
+
+    @Override
+    protected void handlePropertyChangeRequest(BaseEngineProperties properties,
+            String propName, Object oldValue, Object newValue) {
+        properties.commitPropertyChange(propName, oldValue, newValue);
+    }
+
+    @Override
+    protected AudioFormat getAudioFormat() {
+        // TODO Auto-generated method stub
         return null;
     }
 }

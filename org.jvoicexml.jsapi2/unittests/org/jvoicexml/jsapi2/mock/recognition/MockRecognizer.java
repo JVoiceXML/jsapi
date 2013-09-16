@@ -3,6 +3,7 @@ package org.jvoicexml.jsapi2.mock.recognition;
 import java.io.InputStream;
 import java.util.Collection;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
 import javax.speech.EngineException;
@@ -14,9 +15,10 @@ import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 
+import org.jvoicexml.jsapi2.BaseEngineProperties;
+import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 import org.jvoicexml.jsapi2.mock.MockAudioManager;
 import org.jvoicexml.jsapi2.mock.MockSpeechEventExecutor;
-import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 /**
@@ -24,7 +26,7 @@ import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
  * for test purposes.
  * @author Dirk Schnelle-Walka
  */
-public class MockRecognizer extends BaseRecognizer {
+public class MockRecognizer extends JseBaseRecognizer {
 
     /**
      * {@inheritDoc}
@@ -119,5 +121,17 @@ public class MockRecognizer extends BaseRecognizer {
             Collection<GrammarDefinition> grammarDefinition) {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    protected void handlePropertyChangeRequest(BaseEngineProperties properties,
+            String propName, Object oldValue, Object newValue) {
+        properties.commitPropertyChange(propName, oldValue, newValue);
+    }
+
+    @Override
+    protected AudioFormat getAudioFormat() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

@@ -6,6 +6,7 @@ Version 0.5
   CHANGES_REJECTED
 - new SynchronousSpeechEventExecutor
 - default encoding is determined from system property file.encoding (default: UTF-8)
+- refactoring: cleanup of how property change requests are handled
 
 
 Version 0.4
