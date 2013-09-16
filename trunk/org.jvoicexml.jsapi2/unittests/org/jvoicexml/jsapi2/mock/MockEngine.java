@@ -35,6 +35,7 @@ import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
 
 import org.jvoicexml.jsapi2.BaseEngine;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
 
 /**
  * An engine for test purposes.
@@ -105,5 +106,11 @@ public class MockEngine extends BaseEngine {
     protected EngineEvent createStateTransitionEngineEvent(long oldState, long newState,
             int id) {
         return new MockEngineEvent(this, id, oldState, newState, null);
+    }
+
+    @Override
+    protected void handlePropertyChangeRequest(BaseEngineProperties properties,
+            String propName, Object oldValue, Object newValue) {
+        properties.commitPropertyChange(propName, oldValue, newValue);
     }
 }

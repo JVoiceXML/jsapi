@@ -30,8 +30,7 @@ import javax.speech.SpeechEventExecutor;
  *
  * <p>
  * Properties are pending when the corresponding <code>set...</code> method is
- * called. Notifications about pending requests are sent via
- * {@link #notifyPropertyChangeRequest(String, Object, Object)}.
+ * called. Notifications are delegated to the engine.
  * They may apply the changes at any time and remove the pending status by
  * calling {@link #commitPropertyChange(String, Object, Object)}. This also
  * triggers the posts of the property change request.
@@ -53,14 +52,8 @@ public abstract class BaseEngineProperties implements EngineProperties {
      */
     private final Collection<EnginePropertyListener> propertyChangeListeners;
 
-    /**
-     * List of {@link EnginePropertyChangeRequestListener} registered for
-     * {@link EnginePropertyChangeRequestEvent} on this object.
-     */
-    private final Collection<EnginePropertyChangeRequestListener> propertyChangeRequestListeners;
-
     /** The engine for which these properties apply. */
-    private final Engine engine;
+    private final BaseEngine engine;
 
     /**
      * The base location to resolve relative URLs against for this Engine
@@ -77,11 +70,9 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * @param eng
      *            the engine for which these properties apply.
      */
-    protected BaseEngineProperties(final Engine eng) {
+    protected BaseEngineProperties(final BaseEngine eng) {
         propertyChangeListeners =
                 new java.util.ArrayList<EnginePropertyListener>();
-        propertyChangeRequestListeners =
-                new java.util.ArrayList<EnginePropertyChangeRequestListener>();
         engine = eng;
         priority = EngineProperties.NORM_TRUSTED_PRIORITY;
         base = "";
@@ -120,7 +111,8 @@ public abstract class BaseEngineProperties implements EngineProperties {
         if (prio == priority) {
             return;
         }
-        notifyPropertyChangeRequest(PRIORITY, new Integer(priority),
+        engine.handlePropertyChangeRequest(this, PRIORITY,
+                new Integer(priority),
                 new Integer(prio));
     }
 
@@ -137,7 +129,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
                 return;
             }
         }
-        notifyPropertyChangeRequest(BASE, base, uri);
+        engine.handlePropertyChangeRequest(this, BASE, base, uri);
     }
 
     /**
@@ -163,28 +155,6 @@ public abstract class BaseEngineProperties implements EngineProperties {
     public void removeEnginePropertyListener(
             final EnginePropertyListener listener) {
         propertyChangeListeners.remove(listener);
-    }
-
-    /**
-     * Adds the given {@link EnginePropertyChangeRequestListener} to the list of
-     * known listeners.
-     * 
-     * @param listener
-     *            the listener to add
-     */
-    public void addEnginePropertyChangeRequestListener(
-            final EnginePropertyChangeRequestListener listener) {
-        if (!propertyChangeRequestListeners.contains(listener)) {
-            propertyChangeRequestListeners.add(listener);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void removeEnginePropertyChangeRequestListener(
-            final EnginePropertyChangeRequestListener listener) {
-        propertyChangeRequestListeners.remove(listener);
     }
 
     /**
@@ -232,64 +202,21 @@ public abstract class BaseEngineProperties implements EngineProperties {
             final Object value);
 
     /**
-     * Synchronously notifies the registered listeners about the property change
-     * request.
-     * 
-     * @param propName
-     *            name of the property
-     * @param oldValue
-     *            old value of the property
-     * @param newValue
-     *            requested value of the property
-     */
-    protected void postPropertyChangeRequestEvent(final String propName,
-            final Object oldValue, final Object newValue) {
-        final EnginePropertyChangeRequestEvent event =
-            new EnginePropertyChangeRequestEvent(
-                this, propName, oldValue, newValue);
-        for (EnginePropertyChangeRequestListener listener : propertyChangeRequestListeners) {
-            listener.propertyChangeRequest(event);
-        }
-    }
-
-    /**
-     * Notifies the engine about a property change request. The engine may apply
-     * the request at any time.
+     * Forwards the change request to the enine.
      * @param propName
      *            the name of the property
      * @param oldValue
      *            the old value
      * @param newValue
-     *            the new value
+     *            the requested new value
      */
-    protected final void notifyPropertyChangeRequest(final String propName,
-            final Object oldValue, final Object newValue) {
-        final boolean set = handlePropertyChangeRequest(propName, oldValue,
+    protected void handlePropertyChangeRequest(
+            final String propName, final Object oldValue,
+            final Object newValue) {
+        engine.handlePropertyChangeRequest(this, propName, oldValue,
                 newValue);
-        if (set) {
-            commitPropertyChange(propName, oldValue, newValue);
-        }
     }
-
-    /**
-     * Engines should override this method to apply a pending property change
-     * request. If a pending request is not handled within this method, the
-     * engine implementation must take care to call
-     * {@link #commitPropertyChange(String, Object, Object)} after it applied
-     * the change request.
-     * @param propName
-     *            the name of the property
-     * @param oldValue
-     *            the old value
-     * @param newValue
-     *            the new value
-     * @return <code>true</code> if the property hass been set.
-     */
-    protected final boolean handlePropertyChangeRequest(final String propName,
-            final Object oldValue, final Object newValue) {
-        return false;
-    }
-
+    
     /**
      * Generates a {@link PropertyChangeEvent} for an <code>Object</code> value
      * and posts it to the event queue using the configured

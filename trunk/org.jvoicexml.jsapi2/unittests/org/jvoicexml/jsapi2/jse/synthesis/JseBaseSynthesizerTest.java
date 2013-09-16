@@ -3,23 +3,19 @@
  */
 package org.jvoicexml.jsapi2.jse.synthesis;
 
-import javax.speech.AudioException;
 import javax.speech.Engine;
-import javax.speech.EngineException;
-import javax.speech.EngineStateException;
 import javax.speech.synthesis.Synthesizer;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
-import org.jvoicexml.jsapi2.jse.test.synthesis.DummySynthesizer;
+import org.jvoicexml.jsapi2.mock.synthesis.MockSynthesizer;
 
 /**
  * Test cases for {@link JseBaseSynthesizer}.
  * @author Dirk Schnelle-Walka
  *
  */
-public class JseBaseSynthesizerTest {
+public final class JseBaseSynthesizerTest {
 
     /**
      * Test method for {@link org.jvoicexml.jsapi2.BaseEngine#allocate()}.
@@ -28,7 +24,7 @@ public class JseBaseSynthesizerTest {
      */
     @Test
     public void testAllocate() throws Exception {
-        final DummySynthesizer synthesizer = new DummySynthesizer();
+        final MockSynthesizer synthesizer = new MockSynthesizer();
         final long state1 = synthesizer.getEngineState();
         Assert.assertEquals(Engine.DEALLOCATED, state1);
         synthesizer.allocate();

@@ -838,4 +838,31 @@ public abstract class BaseEngine implements Engine {
      */
     protected abstract EngineEvent createStateTransitionEngineEvent(
             final long oldState, final long newState, final int id);
+
+    /**
+     * Engines must override this method to apply a pending property change
+     * request. After a pending request is handled, the
+     * engine implementation must take care to call
+     * {@link BaseEngineProperties#commitPropertyChange(String, Object, Object)}
+     * to notify registered {@link javax.speech.EnginePropertyListener}s
+     * that the change took effect.
+     * <p>
+     * Depending on the property, implementations may throw an
+     * {@link IllegalArgumentException} in case the the value is not supported.
+     * The requested value is considered to be a hint and may be ignored.
+     * </p>
+     * @param properties
+     *            the engine properties
+     * @param propName
+     *            the name of the property
+     * @param oldValue
+     *            the old value
+     * @param newValue
+     *            the requested new value
+     */
+    protected abstract void handlePropertyChangeRequest(
+            final BaseEngineProperties properties,
+            final String propName, final Object oldValue,
+            final Object newValue);
+
 }

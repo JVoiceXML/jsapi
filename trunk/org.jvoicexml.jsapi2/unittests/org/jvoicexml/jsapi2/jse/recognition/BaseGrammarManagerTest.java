@@ -26,7 +26,7 @@ import javax.speech.recognition.RuleToken;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.jvoicexml.jsapi2.jse.test.recognition.DummyRecognizer;
+import org.jvoicexml.jsapi2.mock.recognition.MockRecognizer;
 
 /**
  * Test cases for the {@link GrammarManager}.
@@ -45,7 +45,7 @@ public final class BaseGrammarManagerTest {
      */
     @Before
     public void setUp() throws Exception {
-        recognizer = new DummyRecognizer();
+        recognizer = new MockRecognizer();
         manager = recognizer.getGrammarManager();
     }
 
