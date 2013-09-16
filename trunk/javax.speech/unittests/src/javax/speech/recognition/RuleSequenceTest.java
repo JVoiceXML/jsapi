@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 /**
  * Test case for {@link javax.speech.recognition.RuleSequence}.
  * 
- * @author Dirk Schnelle
+ * @author Dirk Schnelle-Walka
  */
 public class RuleSequenceTest extends TestCase {
 
@@ -16,7 +16,7 @@ public class RuleSequenceTest extends TestCase {
      * Test method for {@link javax.speech.recognition.RuleSequence#toString()}.
      */
     public void testToString() {
-        final RuleComponent[] components1 = null;
+        final RuleComponent[] components1 = new RuleComponent[0];
         final RuleSequence sequence1 = new RuleSequence(components1);
         assertEquals("", sequence1.toString());
 
@@ -34,7 +34,7 @@ public class RuleSequenceTest extends TestCase {
         }
         assertEquals(str3.toString(), sequence3.toString());
 
-        final String[] tokens4 = null;
+        final String[] tokens4 = new String[0];
         final RuleSequence sequence4 = new RuleSequence(tokens4);
         assertEquals("", sequence4.toString());
 
@@ -59,9 +59,9 @@ public class RuleSequenceTest extends TestCase {
      * {@link javax.speech.recognition.RuleSequence#getRuleComponents()}.
      */
     public void testGetRuleComponents() {
-        final RuleComponent[] components1 = null;
+        final RuleComponent[] components1 = new RuleComponent[0];
         final RuleSequence sequence1 = new RuleSequence(components1);
-        assertNull(sequence1.getRuleComponents());
+        assertEquals(components1, sequence1.getRuleComponents());
 
         final RuleComponent[] components2 = new RuleComponent[0];
         final RuleSequence sequence2 = new RuleSequence(components2);
@@ -73,9 +73,9 @@ public class RuleSequenceTest extends TestCase {
         final RuleSequence sequence3 = new RuleSequence(components3);
         assertEquals(components3, sequence3.getRuleComponents());
 
-        final String[] tokens4 = null;
+        final String[] tokens4 = new String[0];
         final RuleSequence sequence4 = new RuleSequence(tokens4);
-        assertNull(sequence4.getRuleComponents());
+        assertEquals(0, sequence4.getRuleComponents().length);
 
         final String[] tokens5 = new String[0];
         final RuleSequence sequence5 = new RuleSequence(tokens5);
