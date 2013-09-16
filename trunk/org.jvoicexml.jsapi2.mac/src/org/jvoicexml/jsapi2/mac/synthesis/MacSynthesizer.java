@@ -38,6 +38,7 @@ import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.Voice;
 
 import org.jvoicexml.jsapi2.BaseAudioSegment;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 
 /**
@@ -262,5 +263,17 @@ public final class MacSynthesizer extends JseBaseSynthesizer {
      * @return native audio format
      */
     private native AudioFormat macGetAudioFormat(final long handle);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void handlePropertyChangeRequest(
+            final BaseEngineProperties properties,
+            final String propName, final Object oldValue,
+            final Object newValue) {
+        throw new UnsupportedOperationException(
+                "property change not implemented!");
+    }
 }
 
