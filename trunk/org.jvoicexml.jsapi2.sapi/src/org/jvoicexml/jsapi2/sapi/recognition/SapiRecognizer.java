@@ -54,8 +54,7 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
-import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
-import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
@@ -273,15 +272,6 @@ public final class SapiRecognizer extends JseBaseRecognizer {
 
     private native void start(long handle);
 
-    class SapiChangeRequestListener
-            implements EnginePropertyChangeRequestListener {
-
-        @Override
-        public void propertyChangeRequest(EnginePropertyChangeRequestEvent event) {
-            System.out.println("Free Beer! \\o//");
-        }
-    }
-    
     /**
      * Callback of the SAPI recognizer if the recognition failed.
      */
@@ -550,4 +540,16 @@ public final class SapiRecognizer extends JseBaseRecognizer {
      * @return native audio format
      */
     private native AudioFormat sapiGetAudioFormat(final long handle);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void handlePropertyChangeRequest(
+            final BaseEngineProperties properties,
+            final String propName, final Object oldValue,
+            final Object newValue) {
+        throw new UnsupportedOperationException(
+                "property change not implemented!");
+    }
 }
