@@ -1,5 +1,7 @@
 package org.jvoicexml.jsapi2.mac.recognition;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,21 +20,21 @@ import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.RuleGrammar;
 
-import org.jvoicexml.jsapi2.EnginePropertyChangeRequestEvent;
-import org.jvoicexml.jsapi2.EnginePropertyChangeRequestListener;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 /**
  * A SAPI recognizer.
+ * 
  * @author Dirk Schnelle-Walka
- *
+ * 
  */
 public final class MacRecognizer extends JseBaseRecognizer {
     /** Logger for this class. */
-    private static final Logger LOGGER =
-            Logger.getLogger(MacRecognizer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MacRecognizer.class
+            .getName());
 
     static {
         System.loadLibrary("Jsapi2MacBridge");
@@ -43,7 +45,9 @@ public final class MacRecognizer extends JseBaseRecognizer {
 
     /**
      * Constructs a new object.
-     * @param mode the recognizer mode.
+     * 
+     * @param mode
+     *            the recognizer mode.
      */
     public MacRecognizer(final MacRecognizerMode mode) {
         super(mode);
@@ -105,18 +109,17 @@ public final class MacRecognizer extends JseBaseRecognizer {
                 final File file = File.createTempFile("sapi", "xml");
                 file.deleteOnExit();
                 final FileOutputStream out = new FileOutputStream(file);
-   
-                StringBuffer xml = new StringBuffer();          
-                xml.append( grammar.toString() );
+
+                StringBuffer xml = new StringBuffer();
+                xml.append(grammar.toString());
                 int index = xml.indexOf("06/grammar");
-                xml.insert(index+11, " xml:lang=\"de-DE\" ");
+                xml.insert(index + 11, " xml:lang=\"de-DE\" ");
                 out.write(xml.toString().getBytes());
                 out.close();
-                grammarSources[i] = file.getCanonicalPath();                
-//                System.out.println(xml);
-//                System.out.println(grammarSources[i]);
-           
-                
+                grammarSources[i] = file.getCanonicalPath();
+                // System.out.println(xml);
+                // System.out.println(grammarSources[i]);
+
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -127,7 +130,7 @@ public final class MacRecognizer extends JseBaseRecognizer {
     }
 
     private native boolean macResume(long handle, String[] grammars)
-        throws EngineStateException;
+            throws EngineStateException;
 
     /**
      * {@inheritDoc}
@@ -152,16 +155,19 @@ public final class MacRecognizer extends JseBaseRecognizer {
 
     /**
      * Notification from the SAPI recognizer about a recognition result.
-     * @param utterance the detected utterance
+     * 
+     * @param utterance
+     *            the detected utterance
      */
     @SuppressWarnings("unused")
     private void reportResult(final String utterance) {
-        
+
         System.out.println("Java Code " + utterance);
-        
-        final RuleGrammar grammar = currentGrammar;    // current grammar is not available 
+
+        final RuleGrammar grammar = currentGrammar; // current grammar is not
+                                                    // available
         System.out.println(grammar);
-        
+
         final BaseResult result;
         try {
             result = new BaseResult(grammar, utterance);
@@ -174,41 +180,31 @@ public final class MacRecognizer extends JseBaseRecognizer {
                 ResultEvent.RESULT_CREATED, false, false);
         postResultEvent(created);
 
-        final ResultEvent grammarFinalized =
-            new ResultEvent(result, ResultEvent.GRAMMAR_FINALIZED);
+        final ResultEvent grammarFinalized = new ResultEvent(result,
+                ResultEvent.GRAMMAR_FINALIZED);
         postResultEvent(grammarFinalized);
 
         if (result.getResultState() == Result.REJECTED) {
-            final ResultEvent rejected =
-                new ResultEvent(result, ResultEvent.RESULT_REJECTED,
-                        false, false);
+            final ResultEvent rejected = new ResultEvent(result,
+                    ResultEvent.RESULT_REJECTED, false, false);
             postResultEvent(rejected);
         } else {
             final ResultEvent accepted = new ResultEvent(result,
-                        ResultEvent.RESULT_ACCEPTED, false, false);
+                    ResultEvent.RESULT_ACCEPTED, false, false);
             postResultEvent(accepted);
         }
     }
 
-	@Override
-	protected void handleReleaseFocus() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    protected void handleReleaseFocus() {
+        // TODO Auto-generated method stub
 
-	@Override
-	protected void handleRequestFocus() {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-    class MacChangeRequestListener
-            implements EnginePropertyChangeRequestListener {
+    @Override
+    protected void handleRequestFocus() {
+        // TODO Auto-generated method stub
 
-        @Override
-        public void propertyChangeRequest(EnginePropertyChangeRequestEvent event) {
-            // TODO Auto-generated method stub
-        }
     }
 
     /**
@@ -217,5 +213,17 @@ public final class MacRecognizer extends JseBaseRecognizer {
     @Override
     protected AudioFormat getAudioFormat() {
         return new AudioFormat(16000, 2, 1, true, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void handlePropertyChangeRequest(
+            final BaseEngineProperties properties,
+            final String propName, final Object oldValue,
+            final Object newValue) {
+        throw new UnsupportedOperationException(
+                "property change not implemented!");
     }
 }
