@@ -38,9 +38,11 @@ import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SynthesizerMode;
+import javax.speech.synthesis.SynthesizerProperties;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseAudioSegment;
+import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 import org.w3c.dom.Document;
 
@@ -97,7 +99,7 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
         SynthesizerMode synthesizerMode = (SynthesizerMode) getEngineMode();
 
         if (synthesizerMode.getVoices().length > 0) {
-            FreeTTSVoice freettsVoice = (FreeTTSVoice) synthesizerMode
+            final FreeTTSVoice freettsVoice = (FreeTTSVoice) synthesizerMode
                     .getVoices()[0];
             ok = setCurrentVoice(freettsVoice);
         }
@@ -274,5 +276,23 @@ public class FreeTTSSynthesizer extends JseBaseSynthesizer {
     @Override
     protected AudioFormat getAudioFormat() {
         return new AudioFormat(8000f, 16, 1, true, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void handlePropertyChangeRequest(
+            final BaseEngineProperties properties,
+            final String propName, final Object oldValue,
+            final Object newValue) {
+        if (curVoice == null) {
+            return;
+        }
+        com.sun.speech.freetts.Voice freettsVoice = curVoice.getVoice();
+        if (propName.equals(SynthesizerProperties.DEFAULT_RATE)) {
+        }
+        throw new UnsupportedOperationException(
+                "property change not implemented!");
     }
 }
