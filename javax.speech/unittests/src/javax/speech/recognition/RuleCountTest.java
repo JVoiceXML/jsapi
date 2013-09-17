@@ -41,8 +41,8 @@ public class RuleCountTest extends TestCase {
         final RuleCount count4 = new RuleCount(component, 45, 46,
                 RuleCount.MAX_PROBABILITY);
         final String str4 = count4.toString();
-        assertEquals("<item repeat=\"45-46\" repeat-prop=\"1.0\">token</item>",
-                str4);
+        assertEquals("<item repeat=\"45-46\" repeat-prop=\""
+                + RuleCount.MAX_PROBABILITY + "\">token</item>", str4);
     }
 
     /**

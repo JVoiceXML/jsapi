@@ -137,7 +137,7 @@ This file builds the JSR 113.jar.
             <batchtest todir="${test.results}">
                 <fileset dir="${test.build}">
                     <include name="javax/speech/**/*Test.class" />
-                    <exclude name="org/jvoicexml/test/**" />
+                    <exclude name="javax/speech/mock/**" />
                 </fileset>
             </batchtest>
         </junit>
