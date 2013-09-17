@@ -29,7 +29,7 @@ package javax.speech.recognition;
 //Comp 2.0.6
 
 public class SpeakerProfile {
-    public static SpeakerProfile DEFAULT = new SpeakerProfile("default", null);
+    public static SpeakerProfile DEFAULT = new SpeakerProfile(null, null);
 
     private String name;
 

@@ -19,21 +19,8 @@ public class RuleTagTest extends TestCase {
         final RuleTag tag1 = new RuleTag("test");
         assertEquals("test", tag1.getTag());
 
-        Exception failure = null;
-        try {
-            final RuleTag tag2 = new RuleTag(null);
-        } catch (IllegalArgumentException e) {
-            failure = e;
-        }
-        assertNotNull(failure);
-
-        failure = null;
-        try {
-            final RuleTag tag3 = new RuleTag("<text>contents<text>");
-        } catch (IllegalArgumentException e) {
-            failure = e;
-        }
-        assertNotNull(failure);
+        final RuleTag tag2 = new RuleTag(new Integer(42));
+        assertEquals(new Integer(42), tag2.getTag());
     }
 
     /**
@@ -42,6 +29,15 @@ public class RuleTagTest extends TestCase {
     public void testToString() {
         final RuleTag tag = new RuleTag("CL");
         assertEquals("<tag>CL</tag>", tag.toString());
+
+        Exception failure = null;
+        final RuleTag tag2 = new RuleTag(null);
+        try {
+            tag2.toString();
+        } catch (IllegalArgumentException e) {
+            failure = e;
+        }
+        assertNotNull(failure);
     }
 
     /**
@@ -50,5 +46,8 @@ public class RuleTagTest extends TestCase {
     public void testGetTag() {
         final RuleTag tag = new RuleTag("CL");
         assertEquals("CL", tag.getTag());
+
+        final RuleTag tag2 = new RuleTag(null);
+        assertNull(tag2.getTag());
     }
 }

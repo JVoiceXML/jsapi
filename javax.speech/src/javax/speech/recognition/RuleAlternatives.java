@@ -93,15 +93,18 @@ public class RuleAlternatives extends RuleComponent {
         }
 
         final StringBuffer str = new StringBuffer();
-
         str.append("<one-of>");
 
         for (int i = 0; i < ruleComponents.length; i++) {
             str.append("<item");
             if (weights != null) {
-                str.append(" weight=\"");
-                str.append(weights[i]);
-                str.append("\"");
+                if (weights[i] != NORM_WEIGHT) {
+                    // TODO we should divide by NORM_WEIGHT but this is not
+                    // supported in CLDC 1.0
+                    str.append(" weight=\"");
+                    str.append(weights[i]);
+                    str.append("\"");
+                }
             }
             str.append('>');
             final RuleComponent component = ruleComponents[i];

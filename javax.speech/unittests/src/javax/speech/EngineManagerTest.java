@@ -5,7 +5,9 @@ package javax.speech;
 
 import javax.speech.mock.MockRecognizerEngineListFactory;
 import javax.speech.mock.MockSpeechEventExecutor;
+import javax.speech.mock.MockSynthesizerEngineListFactory;
 import javax.speech.recognition.RecognizerMode;
+import javax.speech.spi.EngineListFactory;
 import javax.speech.synthesis.SynthesizerMode;
 
 import junit.framework.TestCase;
@@ -13,9 +15,19 @@ import junit.framework.TestCase;
 /**
  * Test case for {@link javax.speech.recognition.RuleAlternatives}.
  * 
- * @author Dirk Schnelle
+ * @author Dirk Schnelle-Walka
  */
 public class EngineManagerTest extends TestCase {
+    /**
+     * {@inheritDoc}
+     */
+    protected void setUp() throws Exception {
+        EngineManager.registerEngineListFactory(
+                MockRecognizerEngineListFactory.class.getCanonicalName());
+        EngineManager.registerEngineListFactory(
+                MockSynthesizerEngineListFactory.class.getCanonicalName());
+    }
+
     /**
      * Test method for
      * {@link javax.speech.EngineManager#availableEngines(javax.speech.EngineMode)}.
@@ -45,7 +57,7 @@ public class EngineManagerTest extends TestCase {
 
         final EngineMode require2 = new RecognizerMode();
         final Engine engine2 = EngineManager.createEngine(require2);
-        assertNull(engine2);
+        assertNotNull(engine2);
 
         final EngineMode require3 = null;
         Exception failure = null;
@@ -62,7 +74,9 @@ public class EngineManagerTest extends TestCase {
      * {@link javax.speech.EngineManager#getSpeechEventExecutor()}.
      */
     public void testGetSpeechEventExecutor() {
-        assertNull(EngineManager.getSpeechEventExecutor());
+        final SpeechEventExecutor executor =
+                EngineManager.getSpeechEventExecutor();
+        assertNotNull(executor);
     }
 
     /**
@@ -89,7 +103,7 @@ public class EngineManagerTest extends TestCase {
      */
     public void testRegisterEngineListFactory() throws Exception {
         final EngineList engines1 = EngineManager.availableEngines(null);
-        assertEquals(1, engines1.size());
+        assertEquals(2, engines1.size());
 
         EngineManager
                 .registerEngineListFactory(MockRecognizerEngineListFactory.class

@@ -119,6 +119,8 @@ public class RuleCount extends RuleComponent {
         str.append("\"");
 
         if (repeatProbability >= 0) {
+            // TODO we should divide by MAX_PROBABILTY but this is not
+            // supported in CLDC 1.0
             str.append(" repeat-prop=\"");
             str.append(repeatProbability);
             str.append("\"");

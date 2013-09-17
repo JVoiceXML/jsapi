@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 /**
  * Test case for {@link javax.speech.recognition.Rule}.
  * 
- * @author Dirk Schnelle
+ * @author Dirk Schnelle-Walka
  */
 public class RuleTest extends TestCase {
 
@@ -20,7 +20,7 @@ public class RuleTest extends TestCase {
         final RuleComponent component1 = new RuleToken("test1");
         final Rule rule1 = new Rule("rule1", component1);
 
-        final RuleComponent component2 = null;
+        final RuleComponent component2 = new RuleComponent();
         final Rule rule2 = new Rule("rule2", component2);
 
         final RuleComponent component3 = new RuleToken("test3");
@@ -50,7 +50,7 @@ public class RuleTest extends TestCase {
         final RuleComponent component1 = new RuleToken("test1");
         final Rule rule1 = new Rule("rule1", component1, Rule.PUBLIC);
 
-        final RuleComponent component2 = null;
+        final RuleComponent component2 = new RuleComponent();
         final Rule rule2 = new Rule("rule2", component2, Rule.PUBLIC);
 
         final RuleComponent component3 = new RuleToken("test3");
@@ -128,12 +128,12 @@ public class RuleTest extends TestCase {
         final RuleComponent component1 = new RuleToken("test1");
         final Rule rule1 = new Rule("rule1", component1);
         assertEquals(
-                "javax.speech.recognition.Rule[rule1,test1,PRIVATE_SCOPE]",
+                "<rule id=\"rule1\" scope=\"private\">test1</rule>",
                 rule1.toString());
 
         final RuleComponent component2 = new RuleToken("test2");
         final Rule rule2 = new Rule("rule2", component2, Rule.PUBLIC);
-        assertEquals("javax.speech.recognition.Rule[rule2,test2,PUBLIC_SCOPE]",
+        assertEquals("<rule id=\"rule2\" scope=\"public\">test2</rule>",
                 rule2.toString());
     }
 }

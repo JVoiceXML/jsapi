@@ -31,7 +31,7 @@ import junit.framework.TestCase;
 /**
  * Test case for {@link javax.speech.recognition.SpeakerProfile}.
  * 
- * @author Dirk Schnelle
+ * @author Dirk Schnelle-Walka
  */
 public class SpeakerProfileTest extends TestCase {
 
@@ -43,7 +43,7 @@ public class SpeakerProfileTest extends TestCase {
         final SpeakerProfile profile1 = SpeakerProfile.DEFAULT;
         final SpeakerProfile profile2 = SpeakerProfile.DEFAULT;
 
-        assertTrue(profile1.hashCode() != profile2.hashCode());
+        assertEquals(profile1.hashCode(), profile2.hashCode());
     }
 
     /**

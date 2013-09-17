@@ -40,12 +40,13 @@ public class RuleTag extends RuleComponent {
     }
 
     public String toString() {
-        final StringBuffer str = new StringBuffer();
-
-        str.append("<tag>");
-        if (tag != null) {
-            str.append(tag);
+        if (tag == null) {
+            throw new IllegalArgumentException(
+                    "null can not be represented in XML");
         }
+        final StringBuffer str = new StringBuffer();
+        str.append("<tag>");
+        str.append(tag);
         str.append("</tag>");
 
         return str.toString();
