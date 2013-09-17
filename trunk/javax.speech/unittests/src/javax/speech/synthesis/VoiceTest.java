@@ -35,7 +35,7 @@ import junit.framework.TestCase;
 /**
  * Test case for {@link javax.speech.synthesis.Voice}.
  * 
- * @author Dirk Schnelle
+ * @author Dirk Schnelle-Walka
  * 
  */
 public class VoiceTest extends TestCase {
@@ -46,7 +46,7 @@ public class VoiceTest extends TestCase {
     public void testHashCode() {
         final Voice voice1 = new Voice();
         final Voice voice2 = new Voice();
-        assertTrue(voice1.hashCode() != voice2.hashCode());
+        assertEquals(voice1.hashCode(), voice2.hashCode());
     }
 
     /**
@@ -205,7 +205,7 @@ public class VoiceTest extends TestCase {
         final Voice voice7 = new Voice(SpeechLocale.US, "john", Voice.GENDER_MALE,
                 Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         final Voice voice8 = new Voice(SpeechLocale.US, "john", Voice.GENDER_MALE,
-                Voice.AGE_MIDDLE_ADULT + 4, Voice.VARIANT_DEFAULT);
+                Voice.AGE_MIDDLE_ADULT, Voice.VARIANT_DEFAULT);
         assertTrue(voice7.match(voice8));
     }
 

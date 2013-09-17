@@ -45,7 +45,7 @@ public class SynthesizerModeTest extends TestCase {
     public void testHashCode() {
         SynthesizerMode mode1 = new SynthesizerMode();
         SynthesizerMode mode2 = new SynthesizerMode();
-        assertTrue(mode1.hashCode() != mode2.hashCode());
+        assertEquals(mode1.hashCode(), mode2.hashCode());
     }
 
     /**

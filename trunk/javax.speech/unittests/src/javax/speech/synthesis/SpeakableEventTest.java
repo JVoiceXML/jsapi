@@ -33,7 +33,7 @@ import junit.framework.TestCase;
 /**
  * Test case for {@link javax.speech.synthesis.SpeakableEvent}.
  * 
- * @author Dirk Schnelle
+ * @author Dirk Schnelle-Walka
  */
 public class SpeakableEventTest extends TestCase {
     private Object source;
@@ -54,83 +54,43 @@ public class SpeakableEventTest extends TestCase {
     public void testGetAttributes() {
         final SpeakableEvent event1 = new SpeakableEvent(source,
                 SpeakableEvent.TOP_OF_QUEUE, 42);
-
-        String[] attributes;
-        Exception error = null;
-
-        try {
-            attributes = event1.getAttributes();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event1.getAttributes().length);
 
         final String[] attrs = new String[] { "attribute1", "attribute2" };
         final SpeakableEvent event2 = new SpeakableEvent(source,
                 SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
                 SpeakableEvent.ELEMENT_OPEN, attrs);
-        attributes = event2.getAttributes();
-        assertEquals(attrs, attributes);
+        assertEquals(attrs, event2.getAttributes());
 
         final int audioPosition = 46738;
         final SpeakableEvent event3 = new SpeakableEvent(source,
                 SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
-        error = null;
-        try {
-            attributes = event3.getAttributes();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event3.getAttributes().length);
 
         final int requested = 100;
         final int realized = 99;
         final SpeakableEvent event4 = new SpeakableEvent(source,
                 SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
                 SpeakableEvent.PROSODY_RATE, requested, realized);
-        error = null;
-        try {
-            attributes = event4.getAttributes();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event4.getAttributes().length);
 
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
                 SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
                 wordEnd);
-        error = null;
-        try {
-            attributes = event5.getAttributes();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event5.getAttributes().length);
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
         final SpeakableEvent event6 = new SpeakableEvent(source,
                 SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
-        error = null;
-        try {
-            attributes = event6.getAttributes();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event6.getAttributes().length);
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
-        error = null;
-        try {
-            attributes = event7.getAttributes();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event7.getAttributes().length);
 
         final Voice oldVoice = new Voice(SpeechLocale.US, "mary",
                 Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
@@ -139,13 +99,7 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event8 = new SpeakableEvent(source,
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
-        error = null;
-        try {
-            attributes = event8.getAttributes();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event8.getAttributes().length);
     }
 
     /**
@@ -155,83 +109,48 @@ public class SpeakableEventTest extends TestCase {
     public void testGetAudioPosition() {
         final SpeakableEvent event1 = new SpeakableEvent(source,
                 SpeakableEvent.TOP_OF_QUEUE, 42);
-
-        int pos;
-        Exception error = null;
-
-        try {
-            pos = event1.getAudioPosition();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_AUDIO_POSITION,
+                event1.getAudioPosition());
 
         final String[] attrs = new String[] { "attribute1", "attribute2" };
         final SpeakableEvent event2 = new SpeakableEvent(source,
                 SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
                 SpeakableEvent.ELEMENT_OPEN, attrs);
-        try {
-            pos = event2.getAudioPosition();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_AUDIO_POSITION,
+                event2.getAudioPosition());
 
         final int audioPosition = 46738;
         final SpeakableEvent event3 = new SpeakableEvent(source,
                 SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
-        error = null;
-        pos = event3.getAudioPosition();
-        assertEquals(audioPosition, pos);
+        assertEquals(audioPosition, event3.getAudioPosition());
 
         final int requested = 100;
         final int realized = 99;
         final SpeakableEvent event4 = new SpeakableEvent(source,
                 SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
                 SpeakableEvent.PROSODY_RATE, requested, realized);
-        error = null;
-        try {
-            pos = event4.getAudioPosition();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_AUDIO_POSITION,
+                event4.getAudioPosition());
 
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
                 SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
                 wordEnd);
-        error = null;
-        try {
-            pos = event5.getAudioPosition();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_AUDIO_POSITION,
+                event5.getAudioPosition());
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
         final SpeakableEvent event6 = new SpeakableEvent(source,
                 SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
-        error = null;
-        try {
-            pos = event6.getAudioPosition();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_AUDIO_POSITION,
+                event6.getAudioPosition());
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
-                SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
-        error = null;
-        try {
-            pos = event7.getAudioPosition();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
+                17);
+        assertEquals(17, event7.getAudioPosition());
 
         final Voice oldVoice = new Voice(SpeechLocale.US, "mary",
                 Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
@@ -240,13 +159,8 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event8 = new SpeakableEvent(source,
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
-        error = null;
-        try {
-            pos = event8.getAudioPosition();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_AUDIO_POSITION,
+                event8.getAudioPosition());
     }
 
     /**
@@ -257,82 +171,44 @@ public class SpeakableEventTest extends TestCase {
                 SpeakableEvent.TOP_OF_QUEUE, 42);
 
         int index;
-        Exception error = null;
-
-        try {
-            index = event1.getIndex();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_INDEX, event1.getIndex());
 
         final String[] attrs = new String[] { "attribute1", "attribute2" };
         final SpeakableEvent event2 = new SpeakableEvent(source,
                 SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
                 SpeakableEvent.ELEMENT_OPEN, attrs);
-        error = null;
-        try {
-            index = event2.getIndex();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_INDEX, event2.getIndex());
 
         final int audioPosition = 46738;
         final SpeakableEvent event3 = new SpeakableEvent(source,
                 SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
-        error = null;
-        try {
-            index = event3.getIndex();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_INDEX, event3.getIndex());
 
         final int requested = 100;
         final int realized = 99;
         final SpeakableEvent event4 = new SpeakableEvent(source,
                 SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
                 SpeakableEvent.PROSODY_RATE, requested, realized);
-        error = null;
-        try {
-            index = event4.getIndex();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_INDEX, event4.getIndex());
 
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
                 SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
                 wordEnd);
-        error = null;
-        try {
-            index = event5.getIndex();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_INDEX, event5.getIndex());
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
         final SpeakableEvent event6 = new SpeakableEvent(source,
                 SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
-        error = null;
         index = event6.getIndex();
         assertEquals(1, index);
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
-        error = null;
-        try {
-            index = event7.getIndex();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_INDEX, event7.getIndex());
 
         final Voice oldVoice = new Voice(SpeechLocale.US, "mary",
                 Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
@@ -341,13 +217,7 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event8 = new SpeakableEvent(source,
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
-        error = null;
-        try {
-            index = event8.getIndex();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_INDEX, event8.getIndex());
     }
 
     /**
@@ -359,86 +229,43 @@ public class SpeakableEventTest extends TestCase {
                 SpeakableEvent.TOP_OF_QUEUE, 42);
 
         Voice voice;
-        Exception error = null;
-
-        try {
-            voice = event1.getNewVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event1.getNewVoice());
 
         final String[] attrs = new String[] { "attribute1", "attribute2" };
         final SpeakableEvent event2 = new SpeakableEvent(source,
                 SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
                 SpeakableEvent.ELEMENT_OPEN, attrs);
-        error = null;
-        try {
-            voice = event2.getNewVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event2.getNewVoice());
 
         final int audioPosition = 46738;
         final SpeakableEvent event3 = new SpeakableEvent(source,
                 SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
-        error = null;
-        try {
-            voice = event3.getNewVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event3.getNewVoice());
 
         final int requested = 100;
         final int realized = 99;
         final SpeakableEvent event4 = new SpeakableEvent(source,
                 SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
                 SpeakableEvent.PROSODY_RATE, requested, realized);
-        error = null;
-        try {
-            voice = event4.getNewVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event4.getNewVoice());
 
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
                 SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
                 wordEnd);
-        error = null;
-        try {
-            voice = event5.getNewVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event5.getNewVoice());
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
         final SpeakableEvent event6 = new SpeakableEvent(source,
                 SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
-        error = null;
-        try {
-            voice = event6.getNewVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event6.getNewVoice());
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
-        error = null;
-        try {
-            voice = event7.getNewVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event7.getNewVoice());
 
         final Voice oldVoice = new Voice(SpeechLocale.US, "mary",
                 Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
@@ -447,7 +274,6 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event8 = new SpeakableEvent(source,
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
-        error = null;
         voice = event8.getNewVoice();
         assertEquals(newVoice, voice);
     }
@@ -459,88 +285,43 @@ public class SpeakableEventTest extends TestCase {
     public void testGetOldVoice() {
         final SpeakableEvent event1 = new SpeakableEvent(source,
                 SpeakableEvent.TOP_OF_QUEUE, 42);
-
-        Voice voice;
-        Exception error = null;
-
-        try {
-            voice = event1.getOldVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event1.getOldVoice());
 
         final String[] attrs = new String[] { "attribute1", "attribute2" };
         final SpeakableEvent event2 = new SpeakableEvent(source,
                 SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
                 SpeakableEvent.ELEMENT_OPEN, attrs);
-        error = null;
-        try {
-            voice = event2.getOldVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event2.getOldVoice());
 
         final int audioPosition = 46738;
         final SpeakableEvent event3 = new SpeakableEvent(source,
                 SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
-        error = null;
-        try {
-            voice = event3.getOldVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event3.getOldVoice());
 
         final int requested = 100;
         final int realized = 99;
         final SpeakableEvent event4 = new SpeakableEvent(source,
                 SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
                 SpeakableEvent.PROSODY_RATE, requested, realized);
-        error = null;
-        try {
-            voice = event4.getOldVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event4.getOldVoice());
 
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
                 SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
                 wordEnd);
-        error = null;
-        try {
-            voice = event5.getOldVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event5.getOldVoice());
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
         final SpeakableEvent event6 = new SpeakableEvent(source,
                 SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
-        error = null;
-        try {
-            voice = event6.getOldVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event6.getOldVoice());
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
-        error = null;
-        try {
-            voice = event7.getNewVoice();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertNull(event7.getOldVoice());
 
         final Voice oldVoice = new Voice(SpeechLocale.US, "mary",
                 Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
@@ -549,9 +330,7 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event8 = new SpeakableEvent(source,
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
-        error = null;
-        voice = event8.getOldVoice();
-        assertEquals(oldVoice, voice);
+        assertEquals(oldVoice, event8.getOldVoice());
     }
 
     /**
@@ -563,81 +342,43 @@ public class SpeakableEventTest extends TestCase {
 
         PhoneInfo[] phoneInfos;
         Exception error = null;
-
-        try {
-            phoneInfos = event1.getPhones();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event1.getPhones().length);
 
         final String[] attrs = new String[] { "attribute1", "attribute2" };
         final SpeakableEvent event2 = new SpeakableEvent(source,
                 SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
                 SpeakableEvent.ELEMENT_OPEN, attrs);
-        error = null;
-        try {
-            phoneInfos = event2.getPhones();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event2.getPhones().length);
 
         final int audioPosition = 46738;
         final SpeakableEvent event3 = new SpeakableEvent(source,
                 SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
-        error = null;
-        try {
-            phoneInfos = event3.getPhones();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event3.getPhones().length);
 
         final int requested = 100;
         final int realized = 99;
         final SpeakableEvent event4 = new SpeakableEvent(source,
                 SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
                 SpeakableEvent.PROSODY_RATE, requested, realized);
-        error = null;
-        try {
-            phoneInfos = event4.getPhones();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event4.getPhones().length);
 
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
                 SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
                 wordEnd);
-        error = null;
-        try {
-            phoneInfos = event5.getPhones();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event5.getPhones().length);
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
         final SpeakableEvent event6 = new SpeakableEvent(source,
                 SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
-        error = null;
-        phoneInfos = event6.getPhones();
-        assertEquals(phones, phoneInfos);
+        assertEquals(phones, event6.getPhones());
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
-        error = null;
-        try {
-            phoneInfos = event7.getPhones();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event7.getPhones().length);
 
         final Voice oldVoice = new Voice(SpeechLocale.US, "mary",
                 Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
@@ -646,13 +387,7 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event8 = new SpeakableEvent(source,
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
-        error = null;
-        try {
-            phoneInfos = event8.getPhones();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(0, event8.getPhones().length);
     }
 
     /**
@@ -662,84 +397,44 @@ public class SpeakableEventTest extends TestCase {
     public void testGetRealizedValue() {
         final SpeakableEvent event1 = new SpeakableEvent(source,
                 SpeakableEvent.TOP_OF_QUEUE, 42);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE, event1.getRealizedValue());
 
-        int realizedValue;
-        Exception error = null;
-
-        try {
-            realizedValue = event1.getRealizedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
 
         final String[] attrs = new String[] { "attribute1", "attribute2" };
         final SpeakableEvent event2 = new SpeakableEvent(source,
                 SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
                 SpeakableEvent.ELEMENT_OPEN, attrs);
-        error = null;
-        try {
-            realizedValue = event2.getRealizedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE, event2.getRealizedValue());
 
         final int audioPosition = 46738;
         final SpeakableEvent event3 = new SpeakableEvent(source,
                 SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
-        error = null;
-        try {
-            realizedValue = event3.getRealizedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE, event3.getRealizedValue());
 
         final int requested = 100;
         final int realized = 99;
         final SpeakableEvent event4 = new SpeakableEvent(source,
                 SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
                 SpeakableEvent.PROSODY_RATE, requested, realized);
-        error = null;
-        realizedValue = event4.getRealizedValue();
-        assertEquals(realized, realizedValue);
+        assertEquals(realized, event4.getRealizedValue());
 
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
                 SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
                 wordEnd);
-        error = null;
-        try {
-            realizedValue = event5.getRealizedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE, event5.getRealizedValue());
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
         final SpeakableEvent event6 = new SpeakableEvent(source,
                 SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
-        error = null;
-        try {
-            realizedValue = event6.getRealizedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE, event6.getRealizedValue());
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
-        error = null;
-        try {
-            realizedValue = event7.getRealizedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE, event7.getRealizedValue());
 
         final Voice oldVoice = new Voice(SpeechLocale.US, "mary",
                 Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
@@ -748,13 +443,7 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event8 = new SpeakableEvent(source,
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
-        error = null;
-        try {
-            realizedValue = event8.getRealizedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE, event8.getRealizedValue());
     }
 
     /**
@@ -764,84 +453,49 @@ public class SpeakableEventTest extends TestCase {
     public void testGetRequestedValue() {
         final SpeakableEvent event1 = new SpeakableEvent(source,
                 SpeakableEvent.TOP_OF_QUEUE, 42);
-
-        int requestedValue;
-        Exception error = null;
-
-        try {
-            requestedValue = event1.getRequestedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE,
+                event1.getRequestedValue());
 
         final String[] attrs = new String[] { "attribute1", "attribute2" };
         final SpeakableEvent event2 = new SpeakableEvent(source,
                 SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
                 SpeakableEvent.ELEMENT_OPEN, attrs);
-        error = null;
-        try {
-            requestedValue = event2.getRequestedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE,
+                event2.getRequestedValue());
 
         final int audioPosition = 46738;
         final SpeakableEvent event3 = new SpeakableEvent(source,
                 SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
-        error = null;
-        try {
-            requestedValue = event3.getRequestedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE,
+                event3.getRequestedValue());
 
         final int requested = 100;
         final int realized = 99;
         final SpeakableEvent event4 = new SpeakableEvent(source,
                 SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
                 SpeakableEvent.PROSODY_RATE, requested, realized);
-        error = null;
-        requestedValue = event4.getRequestedValue();
-        assertEquals(requested, requestedValue);
+        assertEquals(requested, event4.getRequestedValue());
 
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
                 SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
                 wordEnd);
-        error = null;
-        try {
-            requestedValue = event5.getRequestedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE,
+                event5.getRequestedValue());
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
         final SpeakableEvent event6 = new SpeakableEvent(source,
                 SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
-        error = null;
-        try {
-            requestedValue = event6.getRequestedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE,
+                event6.getRequestedValue());
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
-        error = null;
-        try {
-            requestedValue = event7.getRealizedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE,
+                event7.getRequestedValue());
 
         final Voice oldVoice = new Voice(SpeechLocale.US, "mary",
                 Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
@@ -850,13 +504,8 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event8 = new SpeakableEvent(source,
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
-        error = null;
-        try {
-            requestedValue = event8.getRequestedValue();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_VALUE,
+                event8.getRequestedValue());
     }
 
     /**
@@ -900,7 +549,7 @@ public class SpeakableEventTest extends TestCase {
         assertEquals(59, event6.getRequestId());
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
         assertEquals(60, event7.getRequestId());
 
@@ -964,7 +613,7 @@ public class SpeakableEventTest extends TestCase {
         assertEquals("textInfo5", textinfo);
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
         textinfo = event7.getTextInfo();
         assertEquals("textInfo6", textinfo);
@@ -986,75 +635,44 @@ public class SpeakableEventTest extends TestCase {
     public void testGetType() {
         final SpeakableEvent event1 = new SpeakableEvent(source,
                 SpeakableEvent.TOP_OF_QUEUE, 42);
-
-        int type;
-        Exception error = null;
-
-        try {
-            type = event1.getType();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_TYPE, event1.getType());
 
         final String[] attrs = new String[] { "attribute1", "attribute2" };
         final SpeakableEvent event2 = new SpeakableEvent(source,
                 SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
                 SpeakableEvent.ELEMENT_OPEN, attrs);
-        error = null;
-        type = event2.getType();
-        assertEquals(SpeakableEvent.ELEMENT_OPEN, type);
+        assertEquals(SpeakableEvent.ELEMENT_OPEN, event2.getType());
 
         final int audioPosition = 46738;
         final SpeakableEvent event3 = new SpeakableEvent(source,
                 SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
-        error = null;
-        try {
-            type = event3.getType();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_TYPE, event3.getType());
 
         final int requested = 100;
         final int realized = 99;
         final SpeakableEvent event4 = new SpeakableEvent(source,
                 SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
                 SpeakableEvent.PROSODY_RATE, requested, realized);
-        error = null;
-        type = event4.getType();
-        assertEquals(SpeakableEvent.PROSODY_RATE, type);
+        assertEquals(SpeakableEvent.PROSODY_RATE, event4.getType());
 
         final int wordStart = 17;
         final int wordEnd = 23;
         final SpeakableEvent event5 = new SpeakableEvent(source,
                 SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
                 wordEnd);
-        error = null;
-        try {
-            type = event5.getType();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_TYPE, event5.getType());
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
         final SpeakableEvent event6 = new SpeakableEvent(source,
                 SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
-        error = null;
-        try {
-            type = event6.getType();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_TYPE, event6.getType());
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
-        type = event7.getType();
-        assertEquals(SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE, type);
+        assertEquals(SpeakableEvent.UNKNOWN_TYPE,
+                event7.getType());
 
         final Voice oldVoice = new Voice(SpeechLocale.US, "mary",
                 Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
@@ -1063,13 +681,7 @@ public class SpeakableEventTest extends TestCase {
         final SpeakableEvent event8 = new SpeakableEvent(source,
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
-        error = null;
-        try {
-            type = event8.getType();
-        } catch (IllegalStateException e) {
-            error = e;
-        }
-        assertNotNull(error);
+        assertEquals(SpeakableEvent.UNKNOWN_TYPE, event8.getType());
     }
 
 
@@ -1077,44 +689,59 @@ public class SpeakableEventTest extends TestCase {
      * Test method for {@link javax.speech.SpeechEvent#paramString()}.
      */
     public void testParamString() {
-        final SpeakableEvent event1 = new SpeakableEvent(source, 43, 44);
+        final SpeakableEvent event1 = new SpeakableEvent(source,
+                SpeakableEvent.TOP_OF_QUEUE, 42);
         final String str1 = event1.paramString();
-        assertTrue("id not found in toString", str1.indexOf("43") >= 0);
+        assertTrue("id not found in toString",
+                str1.indexOf("TOP_OF_QUEUE") >= 0);
 
-        final String[] attributes = new String[] { "attribute1", "attribute2" };
-        final SpeakableEvent event2 = new SpeakableEvent(source, 45, 46,
-                "textInfo", 47, attributes);
+        final String[] attrs = new String[] { "attribute1", "attribute2" };
+        final SpeakableEvent event2 = new SpeakableEvent(source,
+                SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
+                SpeakableEvent.ELEMENT_OPEN, attrs);
         final String str2 = event2.paramString();
-        assertTrue("id not found in toString", str2.indexOf("45") >= 0);
+        assertTrue("id not found in toString",
+                str2.indexOf("ELEMENT_REACHED") >= 0);
 
         final int audioPosition = 46738;
-        final SpeakableEvent event3 = new SpeakableEvent(source, 48, 49,
-                "textInfo2", audioPosition);
+        final SpeakableEvent event3 = new SpeakableEvent(source,
+                SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
         final String str3 = event3.paramString();
-        assertTrue("id not found in toString", str3.indexOf("48") >= 0);
+        assertTrue("id not found in toString",
+                str3.indexOf("MARKER_REACHED") >= 0);
 
-        final SpeakableEvent event4 = new SpeakableEvent(source, 50, 51,
-                "textInfo3", 51, 52, 53);
+        final int requested = 100;
+        final int realized = 99;
+        final SpeakableEvent event4 = new SpeakableEvent(source,
+                SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
+                SpeakableEvent.PROSODY_RATE, requested, realized);
         final String str4 = event4.paramString();
-        assertTrue("id not found in toString", str4.indexOf("50") >= 0);
+        assertTrue("id not found in toString",
+                str4.indexOf("PROSODY_UPDATED") >= 0);
 
-        final SpeakableEvent event5 = new SpeakableEvent(source, 54, 55,
-                "textInfo4", 56, 57);
+        final int wordStart = 17;
+        final int wordEnd = 23;
+        final SpeakableEvent event5 = new SpeakableEvent(source,
+                SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
+                wordEnd);
         final String str5 = event5.paramString();
-        assertTrue("id not found in toString", str5.indexOf("54") >= 0);
+        assertTrue("id not found in toString",
+                str5.indexOf("WORD_STARTED") >= 0);
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
-        final SpeakableEvent event6 = new SpeakableEvent(source, 58, 59,
-                "textInfo5", phones, 60);
+        final SpeakableEvent event6 = new SpeakableEvent(source,
+                SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
         final String str6 = event6.paramString();
-        assertTrue("id not found in toString", str6.indexOf("58") >= 0);
+        assertTrue("id not found in toString",
+                str6.indexOf("PHONEME_STARTED") >= 0);
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
         final String str7 = event7.paramString();
-        assertTrue("id not found in toString", str7.indexOf("60") >= 0);
+        assertTrue("id not found in toString",
+                str7.indexOf("MARKER_REACHED") >= 0);
 
         final Voice oldVoice = new Voice(SpeechLocale.US, "mary",
                 Voice.GENDER_FEMALE, 41, Voice.VARIANT_DEFAULT);
@@ -1124,71 +751,84 @@ public class SpeakableEventTest extends TestCase {
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
         final String str8 = event8.paramString();
-        assertTrue("id not found in toString", str8.indexOf(Integer
-                .toString(SpeakableEvent.VOICE_CHANGED)) >= 0);
+        assertTrue("id not found in toString",
+                str8.indexOf("VOICE_CHANGED") >= 0);
     }
 
     /**
      * Test method for {@link javax.speech.SpeechEvent#toString()}.
      */
     public void testToString() {
-        final SpeakableEvent event1 = new SpeakableEvent(source, 43, 44);
+        final SpeakableEvent event1 = new SpeakableEvent(source,
+                SpeakableEvent.TOP_OF_QUEUE, 42);
         final String str1 = event1.toString();
-        assertTrue("id not found in toString", str1.indexOf("43") >= 0);
+        assertTrue("id not found in toString", str1.indexOf("TOP_OF_QUEUE") >= 0);
         String paramString = event1.paramString();
         assertTrue("toString not longer than paramString",
                 str1.length() > paramString.length());
 
-        final String[] attributes = new String[] { "attribute1", "attribute2" };
-        final SpeakableEvent event2 = new SpeakableEvent(source, 45, 46,
-                "textInfo", 47, attributes);
+        final String[] attrs = new String[] { "attribute1", "attribute2" };
+        final SpeakableEvent event2 = new SpeakableEvent(source,
+                SpeakableEvent.ELEMENT_REACHED, 46, "textInfo",
+                SpeakableEvent.ELEMENT_OPEN, attrs);
         final String str2 = event2.toString();
-        assertTrue("id not found in toString", str2.indexOf("45") >= 0);
+        assertTrue("id not found in toString",
+                str2.indexOf("ELEMENT_REACHED") >= 0);
         String paramString2 = event1.paramString();
         assertTrue("toString not longer than paramString",
                 str2.length() > paramString2.length());
 
         final int audioPosition = 46738;
-        final SpeakableEvent event3 = new SpeakableEvent(source, 48, 49,
-                "textInfo2", audioPosition);
+        final SpeakableEvent event3 = new SpeakableEvent(source,
+                SpeakableEvent.MARKER_REACHED, 49, "textInfo2", audioPosition);
         final String str3 = event3.toString();
-        assertTrue("id not found in toString", str3.indexOf("48") >= 0);
+        assertTrue("id not found in toString",
+                str3.indexOf("MARKER_REACHED") >= 0);
         String paramString3 = event3.paramString();
         assertTrue("toString not longer than paramString",
                 str3.length() > paramString3.length());
 
-        final SpeakableEvent event4 = new SpeakableEvent(source, 50, 51,
-                "textInfo3", 51, 52, 53);
+        final int requested = 100;
+        final int realized = 99;
+        final SpeakableEvent event4 = new SpeakableEvent(source,
+                SpeakableEvent.PROSODY_UPDATED, 51, "textInfo3",
+                SpeakableEvent.PROSODY_RATE, requested, realized);
         final String str4 = event4.toString();
-        assertTrue("id not found in toString", str4.indexOf("50") >= 0);
+        assertTrue("id not found in toString",
+                str4.indexOf("PROSODY_UPDATED") >= 0);
         String paramString4 = event4.paramString();
         assertTrue("toString not longer than paramString",
                 str4.length() > paramString4.length());
 
-        final SpeakableEvent event5 = new SpeakableEvent(source, 54, 55,
-                "textInfo4", 56, 57);
+        final int wordStart = 17;
+        final int wordEnd = 23;
+        final SpeakableEvent event5 = new SpeakableEvent(source,
+                SpeakableEvent.WORD_STARTED, 55, "textInfo4", wordStart,
+                wordEnd);
         final String str5 = event5.toString();
-        assertTrue("id not found in toString", str5.indexOf("54") >= 0);
+        assertTrue("id not found in toString",
+                str5.indexOf("WORD_STARTED") >= 0);
         String paramString5 = event5.paramString();
         assertTrue("toString not longer than paramString",
                 str5.length() > paramString5.length());
 
         final PhoneInfo[] phones = new PhoneInfo[] { new PhoneInfo("ph1", 1),
                 new PhoneInfo("ph2", 2) };
-        final SpeakableEvent event6 = new SpeakableEvent(source, 58, 59,
-                "textInfo5", phones, 60);
+        final SpeakableEvent event6 = new SpeakableEvent(source,
+                SpeakableEvent.PHONEME_STARTED, 59, "textInfo5", phones, 1);
         final String str6 = event6.toString();
-        assertTrue("id not found in toString", str6.indexOf("58") >= 0);
+        assertTrue("id not found in toString",
+                str6.indexOf("PHONEME_STARTED") >= 0);
         String paramString6 = event6.paramString();
         assertTrue("toString not longer than paramString",
                 str6.length() > paramString6.length());
 
         final SpeakableEvent event7 = new SpeakableEvent(source,
-                SpeakableEvent.SPEAKABLE_FAILED, 60, "textInfo6",
+                SpeakableEvent.MARKER_REACHED, 60, "textInfo6",
                 SpeakableEvent.SPEAKABLE_FAILURE_RECOVERABLE);
         final String str7 = event7.toString();
-        assertTrue("id not found in toString", str7.indexOf(Integer
-                .toString(SpeakableEvent.SPEAKABLE_FAILED)) >= 0);
+        assertTrue("id not found in toString",
+                str7.indexOf("MARKER_REACHED") >= 0);
         String paramString7 = event7.paramString();
         assertTrue("toString not longer than paramString",
                 str7.length() > paramString7.length());
@@ -1201,8 +841,8 @@ public class SpeakableEventTest extends TestCase {
                 SpeakableEvent.VOICE_CHANGED, 60, "textInfo7", oldVoice,
                 newVoice);
         final String str8 = event8.toString();
-        assertTrue("id not found in toString", str8.indexOf(Integer
-                .toString(SpeakableEvent.VOICE_CHANGED)) >= 0);
+        assertTrue("id not found in toString",
+                str8.indexOf("VOICE_CHANGED") >= 0);
         String paramString8 = event8.paramString();
         assertTrue("toString not longer than paramString",
                 str8.length() > paramString8.length());

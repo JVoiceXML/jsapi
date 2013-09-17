@@ -56,25 +56,24 @@ public class SynthesizerEventTest extends TestCase {
     public void testIsTopOfQueueChanged() {
         final Throwable problem = new Exception();
         boolean topOfQueueChanged = false;
-        final SynthesizerEvent event = new SynthesizerEvent(synthesizer, 42,
+        final SynthesizerEvent event = new SynthesizerEvent(synthesizer,
+                SynthesizerEvent.ENGINE_ERROR,
                 SynthesizerEvent.QUEUE_EMPTIED,
                 SynthesizerEvent.SYNTHESIZER_BUFFER_READY, problem,
                 topOfQueueChanged);
         assertFalse(event.isTopOfQueueChanged());
 
-        final Throwable problem2 = new Exception();
         boolean topOfQueueChanged2 = false;
         final SynthesizerEvent event2 = new SynthesizerEvent(synthesizer,
                 SynthesizerEvent.QUEUE_UPDATED, SynthesizerEvent.QUEUE_EMPTIED,
-                SynthesizerEvent.SYNTHESIZER_BUFFER_READY, problem2,
+                SynthesizerEvent.SYNTHESIZER_BUFFER_READY, null,
                 topOfQueueChanged2);
         assertFalse(event2.isTopOfQueueChanged());
 
-        final Throwable problem3 = new Exception();
         boolean topOfQueueChanged3 = true;
         final SynthesizerEvent event3 = new SynthesizerEvent(synthesizer,
                 SynthesizerEvent.QUEUE_UPDATED, SynthesizerEvent.QUEUE_EMPTIED,
-                SynthesizerEvent.SYNTHESIZER_BUFFER_READY, problem3,
+                SynthesizerEvent.SYNTHESIZER_BUFFER_READY, null,
                 topOfQueueChanged3);
         assertTrue(event3.isTopOfQueueChanged());
     }
@@ -83,28 +82,28 @@ public class SynthesizerEventTest extends TestCase {
      * Test method for {@link javax.speech.SpeechEvent#paramString()}.
      */
     public void testParamString() {
-        final Throwable problem = new Exception();
         boolean topOfQueueChanged = false;
-        final SynthesizerEvent event = new SynthesizerEvent(synthesizer, 42,
+        final SynthesizerEvent event = new SynthesizerEvent(synthesizer,
+                SynthesizerEvent.QUEUE_UPDATED,
                 SynthesizerEvent.QUEUE_EMPTIED,
-                SynthesizerEvent.SYNTHESIZER_BUFFER_READY, problem,
+                SynthesizerEvent.SYNTHESIZER_BUFFER_READY, null,
                 topOfQueueChanged);
         final String str = event.paramString();
-        assertTrue(str.indexOf("42") >= 0);
+        assertTrue(str.indexOf("QUEUE_UPDATED") >= 0);
     }
 
     /**
      * Test method for {@link javax.speech.SpeechEvent#toString()}.
      */
     public void testToString() {
-        final Throwable problem = new Exception();
         boolean topOfQueueChanged = false;
-        final SynthesizerEvent event = new SynthesizerEvent(synthesizer, 42,
+        final SynthesizerEvent event = new SynthesizerEvent(synthesizer,
+                SynthesizerEvent.QUEUE_UPDATED,
                 SynthesizerEvent.QUEUE_EMPTIED,
-                SynthesizerEvent.SYNTHESIZER_BUFFER_READY, problem,
+                SynthesizerEvent.SYNTHESIZER_BUFFER_READY, null,
                 topOfQueueChanged);
         final String str = event.toString();
-        assertTrue(str.indexOf("42") >= 0);
+        assertTrue(str.indexOf("QUEUE_UPDATED") >= 0);
     }
 
 }
