@@ -26,7 +26,7 @@
 
 package org.jvoicexml.jsapi2.synthesis;
 
-import java.util.Vector;
+import java.util.List;
 
 import javax.speech.AudioSegment;
 import javax.speech.synthesis.Speakable;
@@ -49,7 +49,7 @@ class SynthesisQueue implements Runnable {
     private final PlayQueue playQueue;
 
     /** Queued speakables. */
-    private Vector queue;
+    private List<QueueItem> queue;
 
     /** Id of the last queued item. */
     int queueId;
@@ -63,7 +63,7 @@ class SynthesisQueue implements Runnable {
             final PlayQueue playQueue) {
         this.queueManager = queueManager;
         this.playQueue = playQueue;
-        queue = new Vector();
+        queue = new java.util.ArrayList<QueueItem>();
         queueId = 0;
     }
 
@@ -72,7 +72,7 @@ class SynthesisQueue implements Runnable {
      */
     public void terminate() {
         synchronized (queue) {
-            queue.removeAllElements();
+            queue.clear();
             queueManager.done();
             queue.notifyAll();
         }
@@ -127,20 +127,20 @@ class SynthesisQueue implements Runnable {
     }
 
     /**
-     * Appends the given queue item to the end of the list
+     * Appends the given queue item to the end of the list.
      * @param item the item to append
      * @return <code>true</code> if the appended item is the only one
      *      in the queue
      */
     private boolean append(final QueueItem item) {
         final boolean topOfQueueChanged = isQueueEmpty();
-        queue.addElement(item);
+        queue.add(item);
         queue.notifyAll();
         return topOfQueueChanged;
     }
 
     /**
-     * Adapts the synthesizer state after a queue item has been added
+     * Adapts the synthesizer state after a queue item has been added.
      * @param topOfQueueChanged <code>true</code> if the top of the
      *      queue changed after the item has been appended
      */
@@ -181,7 +181,7 @@ class SynthesisQueue implements Runnable {
                 return false;
             }
             // Get the data of the first item for the notification
-            final QueueItem item = (QueueItem) queue.elementAt(0);
+            final QueueItem item = queue.get(0);
             cancelItem(item);
             return true;
         }
@@ -216,7 +216,7 @@ class SynthesisQueue implements Runnable {
                 source, SpeakableEvent.SPEAKABLE_CANCELLED, id);
         final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
         synthesizer.postSpeakableEvent(event, listener);
-        queue.removeElement(item);
+        queue.remove(item);
     }
 
     /**
@@ -227,8 +227,8 @@ class SynthesisQueue implements Runnable {
      */
     public QueueItem getQueueItem(final int id) {
         synchronized (queue) {
-            for (int i=0; i< queue.size(); i++) {
-                final QueueItem item = (QueueItem) queue.elementAt(i);
+            for (int i = 0; i < queue.size(); i++) {
+                final QueueItem item = queue.get(i);
                 if (item.getId() == id) {
                     return item;
                 }
@@ -256,7 +256,7 @@ class SynthesisQueue implements Runnable {
             if (queueManager.isDone()) {
                 return null;
             }
-            return (QueueItem) queue.elementAt(0);
+            return queue.get(0);
         }
     }
 
@@ -269,7 +269,7 @@ class SynthesisQueue implements Runnable {
      */
     protected void removeQueueItem(final QueueItem item) {
         synchronized (queue) {
-            boolean found = queue.removeElement(item);
+            boolean found = queue.remove(item);
             if (found) {
                 queueManager.queueDrained();
             }

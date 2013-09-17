@@ -7,6 +7,10 @@ Version 0.5
 - new SynchronousSpeechEventExecutor
 - default encoding is determined from system property file.encoding (default: UTF-8)
 - refactoring: cleanup of how property change requests are handled
+- bugfix: RuleTag now throws an IllegalArgumentException if the tag evaluates
+  to null
+- bugfix: SpeakerProfile.DEFAULT has no name to indicate a don't care value
+- NORM_WEIGHT in RuleAternatives is not rendered in toString()
 
 
 Version 0.4

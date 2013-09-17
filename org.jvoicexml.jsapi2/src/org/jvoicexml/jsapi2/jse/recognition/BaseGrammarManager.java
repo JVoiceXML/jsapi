@@ -72,7 +72,7 @@ public class BaseGrammarManager implements GrammarManager {
     protected final List<GrammarListener> grammarListeners;
 
     /** Storage of created grammars. */
-    protected HashMap<String, Grammar> grammars; // final gone
+    protected HashMap<String, Grammar> grammars;
 
     /** Mask that filter events. */
     private int grammarMask;
