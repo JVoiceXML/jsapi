@@ -1,0 +1,2840 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+  <testsuite errors="0" failures="0" hostname="homersimpson" id="0" name="BaseAudioSegmentTest" package="org.jvoicexml.jsapi2" tests="1" time="0.071" timestamp="2013-09-17T13:13:20">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.BaseAudioSegmentTest" name="testOpenInputStream" time="0.003" />
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="homersimpson" id="1" name="BaseEngineStateTransitionTest" package="org.jvoicexml.jsapi2" tests="2" time="0.042" timestamp="2013-09-17T13:13:20">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.BaseEngineStateTransitionTest" name="testAllocate" time="0.035" />
+
+      <testcase classname="org.jvoicexml.jsapi2.BaseEngineStateTransitionTest" name="testDeallocate" time="0.001" />
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="homersimpson" id="2" name="ThreadSpeechEventExecutorTest" package="org.jvoicexml.jsapi2" tests="1" time="0.01" timestamp="2013-09-17T13:13:20">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.ThreadSpeechEventExecutorTest" name="testExecute" time="0.005" />
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="homersimpson" id="3" name="BaseGrammarManagerTest" package="org.jvoicexml.jsapi2.jse.recognition" tests="2" time="0.29" timestamp="2013-09-17T13:13:21">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.jse.recognition.BaseGrammarManagerTest" name="testCreateRuleGrammarReader" time="0.282" />
+
+      <testcase classname="org.jvoicexml.jsapi2.jse.recognition.BaseGrammarManagerTest" name="testCreateRuleGrammarStringString" time="0.001" />
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="homersimpson" id="4" name="BaseResultTest" package="org.jvoicexml.jsapi2.jse.recognition" tests="1" time="0.046" timestamp="2013-09-17T13:13:21">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.jse.recognition.BaseResultTest" name="testGetTags" time="0.041" />
+
+      <system-out><![CDATA[<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE grammar PUBLIC "-//W3C//DTD GRAMMAR 1.0//EN" "http://www.w3.org/TR/speech-grammar/grammar.dtd"> 
+<grammar version="1.0" mode="voice" xml:lang="en" root="null" tag-format="" xmlns="http://www.w3.org/2001/06/grammar">
+</grammar>
+null
+]]></system-out>
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="homersimpson" id="5" name="JseBaseSynthesizerTest" package="org.jvoicexml.jsapi2.jse.synthesis" tests="1" time="0.031" timestamp="2013-09-17T13:13:21">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizerTest" name="testAllocate" time="0.026" />
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="1" failures="0" hostname="homersimpson" id="6" name="JavaSoundParserTest" package="org.jvoicexml.jsapi2.protocols" tests="1" time="0.013" timestamp="2013-09-17T13:13:21">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.protocols.JavaSoundParserTest" name="testParse" time="0.009">
+          <error message="unknown protocol: playback" type="java.net.MalformedURLException">java.net.MalformedURLException: unknown protocol: playback
+	at java.net.URL.&lt;init&gt;(URL.java:592)
+	at java.net.URL.&lt;init&gt;(URL.java:482)
+	at java.net.URL.&lt;init&gt;(URL.java:431)
+	at org.jvoicexml.jsapi2.protocols.JavaSoundParserTest.testParse(JavaSoundParserTest.java:40)
+</error>
+
+      </testcase>
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="2" failures="0" hostname="homersimpson" id="7" name="CaptureURLConnectionTest" package="org.jvoicexml.jsapi2.protocols.capture" tests="2" time="0.021" timestamp="2013-09-17T13:13:21">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.protocols.capture.CaptureURLConnectionTest" name="testGetOutputStream" time="0.003">
+          <error message="Unexpected exception, expected&lt;java.net.UnknownServiceException&gt; but was&lt;java.net.MalformedURLException&gt;" type="java.lang.Exception">java.lang.Exception: Unexpected exception, expected&lt;java.net.UnknownServiceException&gt; but was&lt;java.net.MalformedURLException&gt;
+Caused by: java.net.MalformedURLException: unknown protocol: playback
+	at java.net.URL.&lt;init&gt;(URL.java:592)
+	at java.net.URL.&lt;init&gt;(URL.java:482)
+	at java.net.URL.&lt;init&gt;(URL.java:431)
+	at org.jvoicexml.jsapi2.protocols.capture.CaptureURLConnectionTest.testGetOutputStream(CaptureURLConnectionTest.java:50)
+</error>
+
+      </testcase>
+
+      <testcase classname="org.jvoicexml.jsapi2.protocols.capture.CaptureURLConnectionTest" name="testGetInputStream" time="0.009">
+          <error message="unknown protocol: capture" type="java.net.MalformedURLException">java.net.MalformedURLException: unknown protocol: capture
+	at java.net.URL.&lt;init&gt;(URL.java:592)
+	at java.net.URL.&lt;init&gt;(URL.java:482)
+	at java.net.URL.&lt;init&gt;(URL.java:431)
+	at org.jvoicexml.jsapi2.protocols.capture.CaptureURLConnectionTest.testGetInputStream(CaptureURLConnectionTest.java:36)
+</error>
+
+      </testcase>
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="2" failures="0" hostname="homersimpson" id="8" name="PlaybackURLConnectionTest" package="org.jvoicexml.jsapi2.protocols.playback" tests="2" time="0.06" timestamp="2013-09-17T13:13:21">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.protocols.playback.PlaybackURLConnectionTest" name="testGetOutputStream" time="0.053">
+          <error message="unknown protocol: playback" type="java.net.MalformedURLException">java.net.MalformedURLException: unknown protocol: playback
+	at java.net.URL.&lt;init&gt;(URL.java:592)
+	at java.net.URL.&lt;init&gt;(URL.java:482)
+	at java.net.URL.&lt;init&gt;(URL.java:431)
+	at org.jvoicexml.jsapi2.protocols.playback.PlaybackURLConnectionTest.testGetOutputStream(PlaybackURLConnectionTest.java:53)
+</error>
+
+      </testcase>
+
+      <testcase classname="org.jvoicexml.jsapi2.protocols.playback.PlaybackURLConnectionTest" name="testGetInputStream" time="0.002">
+          <error message="Unexpected exception, expected&lt;java.net.UnknownServiceException&gt; but was&lt;java.net.MalformedURLException&gt;" type="java.lang.Exception">java.lang.Exception: Unexpected exception, expected&lt;java.net.UnknownServiceException&gt; but was&lt;java.net.MalformedURLException&gt;
+Caused by: java.net.MalformedURLException: unknown protocol: capture
+	at java.net.URL.&lt;init&gt;(URL.java:592)
+	at java.net.URL.&lt;init&gt;(URL.java:482)
+	at java.net.URL.&lt;init&gt;(URL.java:431)
+	at org.jvoicexml.jsapi2.protocols.playback.PlaybackURLConnectionTest.testGetInputStream(PlaybackURLConnectionTest.java:38)
+</error>
+
+      </testcase>
+
+      <system-out><![CDATA[PCM_SIGNED 44100.0 Hz, 16 bit, stereo, 4 bytes/frame, little-endian
+]]></system-out>
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="homersimpson" id="9" name="RecognizerStateTransitionTest" package="org.jvoicexml.jsapi2.recognition" tests="2" time="0.032" timestamp="2013-09-17T13:13:21">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.recognition.RecognizerStateTransitionTest" name="testRecognizerFocusedDefocused" time="0.026" />
+
+      <testcase classname="org.jvoicexml.jsapi2.recognition.RecognizerStateTransitionTest" name="testRecognizerPausedResumed" time="0.001" />
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="homersimpson" id="10" name="PlayQueueTest" package="org.jvoicexml.jsapi2.synthesis" tests="2" time="1.027" timestamp="2013-09-17T13:13:21">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.synthesis.PlayQueueTest" name="testGetNextQueueItem" time="0.018" />
+
+      <testcase classname="org.jvoicexml.jsapi2.synthesis.PlayQueueTest" name="testGetNextQueueItemNotSynthesized" time="1.004" />
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="1" failures="0" hostname="homersimpson" id="11" name="QueueManagerTest" package="org.jvoicexml.jsapi2.synthesis" tests="1" time="2.044" timestamp="2013-09-17T13:13:22">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.synthesis.QueueManagerTest" name="testAppendItemSpeakableSpeakableListener" time="2.038">
+          <error message="test timed out after 2000 milliseconds" type="java.lang.Exception">java.lang.Exception: test timed out after 2000 milliseconds
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Object.wait(Object.java:503)
+	at org.jvoicexml.jsapi2.mock.synthesis.MockSpeakableListener.waitForSize(MockSpeakableListener.java:63)
+	at org.jvoicexml.jsapi2.synthesis.QueueManagerTest.testAppendItemSpeakableSpeakableListener(QueueManagerTest.java:70)
+</error>
+
+      </testcase>
+
+      <system-out><![CDATA[javax.speech.synthesis.SpeakableEvent[test,SPEAKABLE_STARTED,0,1,null,null]
+]]></system-out>
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="homersimpson" id="12" name="SynthesisQueueTest" package="org.jvoicexml.jsapi2.synthesis" tests="5" time="0.053" timestamp="2013-09-17T13:13:24">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.synthesis.SynthesisQueueTest" name="testGetNextQueueItem" time="0.02" />
+
+      <testcase classname="org.jvoicexml.jsapi2.synthesis.SynthesisQueueTest" name="testGetQueueItem" time="0.009" />
+
+      <testcase classname="org.jvoicexml.jsapi2.synthesis.SynthesisQueueTest" name="testCancelFirstItem" time="0.002" />
+
+      <testcase classname="org.jvoicexml.jsapi2.synthesis.SynthesisQueueTest" name="testIsQueueEmpty" time="0.0" />
+
+      <testcase classname="org.jvoicexml.jsapi2.synthesis.SynthesisQueueTest" name="testCancelItem" time="0.008" />
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+  <testsuite errors="0" failures="0" hostname="homersimpson" id="13" name="SynthesizerStateTransitionTest" package="org.jvoicexml.jsapi2.synthesis" tests="2" time="0.033" timestamp="2013-09-17T13:13:24">
+      <properties>
+          <property name="java.vendor" value="Oracle Corporation" />
+
+          <property name="jsapi2.sapi" value="false" />
+
+          <property name="sun.java.launcher" value="SUN_STANDARD" />
+
+          <property name="sun.management.compiler" value="HotSpot Tiered Compilers" />
+
+          <property name="midp.home" value="/usr/lib/jvm/wtk2.5.2" />
+
+          <property name="dist" value="dist" />
+
+          <property name="os.name" value="Linux" />
+
+          <property name="sun.boot.class.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/resources.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rt.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jsse.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jce.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/charsets.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/netx.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/plugin.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/rhino.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/jfr.jar:/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/classes" />
+
+          <property name="test.build" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/classes" />
+
+          <property name="apidoc" value="doc/api" />
+
+          <property name="sun.desktop" value="gnome" />
+
+          <property name="java.vm.specification.vendor" value="Oracle Corporation" />
+
+          <property name="ant.home" value="/usr/share/ant" />
+
+          <property name="java.runtime.version" value="1.7.0_60-mockbuild_2013_09_06_14_00-b00" />
+
+          <property name="cldcapi.jar" value="cldcapi10.jar" />
+
+          <property name="user.name" value="dirk" />
+
+          <property name="debug" value="true" />
+
+          <property name="msvc.devenv" value="C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE\devenv.com" />
+
+          <property name="test.results" value="dist/unittests" />
+
+          <property name="user.language" value="en" />
+
+          <property name="build" value="classes" />
+
+          <property name="sun.boot.library.path" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/i386" />
+
+          <property name="ant.project.default-target" value="jar" />
+
+          <property name="ant.project.name" value="org.jvoicexml.jsapi2" />
+
+          <property name="java.version" value="1.7.0_60" />
+
+          <property name="ant.file.org.jvoicexml.jsapi2" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="version" value="0.4" />
+
+          <property name="user.timezone" value="" />
+
+          <property name="sun.arch.data.model" value="32" />
+
+          <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/endorsed" />
+
+          <property name="sun.cpu.isalist" value="" />
+
+          <property name="sun.jnu.encoding" value="UTF-8" />
+
+          <property name="file.encoding.pkg" value="sun.io" />
+
+          <property name="file.separator" value="/" />
+
+          <property name="java.specification.name" value="Java Platform API Specification" />
+
+          <property name="dist.src.zip" value="dist/jsr-113-0.4-src.zip" />
+
+          <property name="java.class.version" value="51.0" />
+
+          <property name="src" value="src" />
+
+          <property name="jsapi2.sphinx4.use" value="true" />
+
+          <property name="user.country" value="US" />
+
+          <property name="java.home" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre" />
+
+          <property name="optimize" value="false" />
+
+          <property name="java.vm.info" value="mixed mode" />
+
+          <property name="ant.file" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/build.xml" />
+
+          <property name="os.version" value="3.10.11-200.fc19.i686" />
+
+          <property name="path.separator" value=":" />
+
+          <property name="java.vm.version" value="24.0-b56" />
+
+          <property name="ant.library.dir" value="/usr/share/ant/lib" />
+
+          <property name="dist.jar" value="dist/org.jvoicexml.jsapi2.jar" />
+
+          <property name="jsapi2.sphinx4" value="true" />
+
+          <property name="jsapi2.freetts.use" value="true" />
+
+          <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
+
+          <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
+
+          <property name="component" value="org.jvoicexml.jsapi2" />
+
+          <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
+
+          <property name="ant.file.type.org.jvoicexml.jsapi2" value="file" />
+
+          <property name="dist.src.libs.zip" value="dist/jsr-113-0.4-src-withlibs.zip" />
+
+          <property name="user.home" value="/home/dirk" />
+
+          <property name="java.specification.vendor" value="Oracle Corporation" />
+
+          <property name="test" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests" />
+
+          <property name="midpapi.jar" value="midpapi10.jar" />
+
+          <property name="java.library.path" value="/usr/java/packages/lib/i386:/lib:/usr/lib" />
+
+          <property name="java.vendor.url" value="http://java.oracle.com/" />
+
+          <property name="java.vm.vendor" value="Oracle Corporation" />
+
+          <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
+
+          <property name="sun.java.command" value="org.apache.tools.ant.launch.Launcher -cp  test" />
+
+          <property name="java.class.path" value="/usr/share/java/ant.jar:/usr/share/java/ant-launcher.jar:/usr/share/java/jaxp_parser_impl.jar:/usr/share/java/xml-commons-apis.jar:/usr/share/java/antlr.jar:/usr/share/java/ant/ant-antlr.jar:/usr/share/java/bcel.jar:/usr/share/java/ant/ant-apache-bcel.jar:/usr/share/java/bsf.jar:/usr/share/java/ant/ant-apache-bsf.jar:/usr/share/java/ivy.jar:/usr/share/java/log4j.jar:/usr/share/java/ant/ant-apache-log4j.jar:/usr/share/java/oro.jar:/usr/share/java/ant/ant-apache-oro.jar:/usr/share/java/regexp.jar:/usr/share/java/ant/ant-apache-regexp.jar:/usr/share/java/xml-commons-resolver.jar:/usr/share/java/ant/ant-apache-resolver.jar:/usr/share/java/xalan-j2.jar:/usr/share/java/xalan-j2-serializer.jar:/usr/share/java/ant/ant-apache-xalan2.jar:/usr/share/java/checkstyle.jar:/usr/share/java/antlr.jar:/usr/share/java/apache-commons-beanutils.jar:/usr/share/java/apache-commons-cli.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/guava.jar:/usr/share/java/apache-commons-logging.jar:/usr/share/java/ant/ant-commons-logging.jar:/usr/share/java/apache-commons-net.jar:/usr/share/java/ant/ant-commons-net.jar:/usr/share/java/javamail/mail.jar:/usr/share/java/javamail/dsn.jar:/usr/share/java/ant/ant-javamail.jar:/usr/share/java/jdepend.jar:/usr/share/java/ant/ant-jdepend.jar:/usr/share/java/ant/ant-jmf.jar:/usr/share/java/jsch.jar:/usr/share/java/ant/ant-jsch.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit.jar:/usr/share/java/junit.jar:/usr/share/java/ant/ant-junit4.jar:/usr/share/java/ant/ant-swing.jar:/usr/share/java/ant/ant-testutil.jar:/usr/lib/jvm/java/lib/tools.jar:/usr/share/ant/lib/ant-commons-logging.jar:/usr/share/ant/lib/ant-apache-xalan2.jar:/usr/share/ant/lib/ant-apache-resolver.jar:/usr/share/ant/lib/ant-swing.jar:/usr/share/ant/lib/ant-apache-oro.jar:/usr/share/ant/lib/ant-launcher.jar:/usr/share/ant/lib/ant-apache-regexp.jar:/usr/share/ant/lib/ant-javamail.jar:/usr/share/ant/lib/ant.jar:/usr/share/ant/lib/ant-junit.jar:/usr/share/ant/lib/ant-commons-net.jar:/usr/share/ant/lib/ant-jsch.jar:/usr/share/ant/lib/ant-apache-bsf.jar:/usr/share/ant/lib/ant-jmf.jar:/usr/share/ant/lib/ant-antlr.jar:/usr/share/ant/lib/ant-apache-log4j.jar:/usr/share/ant/lib/ant-junit4.jar:/usr/share/ant/lib/ant-testutil.jar:/usr/share/ant/lib/ant-jdepend.jar:/usr/share/ant/lib/ant-apache-bcel.jar:/usr/share/ant/lib/ant-bootstrap.jar" />
+
+          <property name="ant.version" value="Apache Ant(TM) version 1.8.4 compiled on February 13 2013" />
+
+          <property name="test.class" value="&lt;Specify junit test class&gt;" />
+
+          <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
+
+          <property name="dist.zip" value="dist/jsr-113-0.4.zip" />
+
+          <property name="ant.file.type" value="file" />
+
+          <property name="java.vm.specification.version" value="1.7" />
+
+          <property name="sun.os.patch.level" value="unknown" />
+
+          <property name="sun.cpu.endian" value="little" />
+
+          <property name="java.io.tmpdir" value="/tmp" />
+
+          <property name="test.src" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2/unittests/src" />
+
+          <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/" />
+
+          <property name="jsapi2.mac" value="false" />
+
+          <property name="jsapi2.freetts" value="true" />
+
+          <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment" />
+
+          <property name="os.arch" value="i386" />
+
+          <property name="java.ext.dirs" value="/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.2.0.fc19.i386/jre/lib/ext:/usr/java/packages/lib/ext" />
+
+          <property name="user.dir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="line.separator" value="&#xa;" />
+
+          <property name="java.vm.name" value="OpenJDK Server VM" />
+
+          <property name="basedir" value="/home/dirk/Development/jsapi/org.jvoicexml.jsapi2" />
+
+          <property name="ant.java.version" value="1.7" />
+
+          <property name="ant.core.lib" value="/usr/share/java/ant.jar" />
+
+          <property name="file.encoding" value="UTF-8" />
+
+          <property name="dist.jsr113.jar" value="dist/jsr113.jar" />
+
+          <property name="java.specification.version" value="1.7" />
+
+          <property name="ant.project.invoked-targets" value="test" />
+
+      </properties>
+
+      <testcase classname="org.jvoicexml.jsapi2.synthesis.SynthesizerStateTransitionTest" name="testSynthesizerPauseResume" time="0.027" />
+
+      <testcase classname="org.jvoicexml.jsapi2.synthesis.SynthesizerStateTransitionTest" name="testSynthesizerNestedPauseResume" time="0.001" />
+
+      <system-out />
+
+      <system-err />
+
+  </testsuite>
+</testsuites>

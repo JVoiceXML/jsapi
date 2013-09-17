@@ -93,22 +93,24 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
-    public void fireEvent(final EngineEvent event) {
+    public final void fireEvent(final EngineEvent event) {
         synchronized (engineListeners) {
             final SynthesizerEvent synthesizerEvent =
                 (SynthesizerEvent) event;
             for (EngineListener listener : engineListeners) {
-                SynthesizerListener synthesizerListener = (SynthesizerListener) listener;
+                SynthesizerListener synthesizerListener =
+                        (SynthesizerListener) listener;
                 synthesizerListener.synthesizerUpdate(synthesizerEvent);
             }
         }
     }
 
     /**
-     * {@inheritDic}
+     * {@inheritDoc}
      */
-    public EngineEvent createStateTransitionEngineEvent(long oldState, long newState,
-            int eventType) {
+    @Override
+    public EngineEvent createStateTransitionEngineEvent(
+            long oldState, long newState,  int eventType) {
         return new SynthesizerEvent(this, eventType,
                 oldState, newState, null, false);
     }
