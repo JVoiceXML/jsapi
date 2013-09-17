@@ -60,11 +60,11 @@ public class RuleAlternativesTest extends TestCase {
         final RuleAlternatives alternatives7 = new RuleAlternatives(
                 components7, weights7);
         final String str7 = alternatives7.toString();
-        assertEquals("<one-of><item weight=\"0.0\">token</item>"
-                + "<item weight=\"1.0\"><tag>tag</tag></item>"
+        assertEquals("<one-of><item weight=\"" + RuleAlternatives.MIN_WEIGHT
+                + "\">token</item>"
+                + "<item><tag>tag</tag></item>"
                 + "<item weight=\""
-                + (float) RuleAlternatives.MAX_WEIGHT 
-                    / RuleAlternatives.NORM_WEIGHT
+                +  RuleAlternatives.MAX_WEIGHT 
                 + "\">otherToken</item></one-of>", str7);
 
         final RuleComponent[] components8 = new RuleComponent[] {
@@ -74,9 +74,9 @@ public class RuleAlternativesTest extends TestCase {
         final RuleAlternatives alternatives8 = new RuleAlternatives(
                 components8, weights8);
         final String str8 = alternatives8.toString();
-        assertEquals("<one-of><item weight=\"1.0\">token</item>"
-                + "<item weight=\"1.0\"><tag>tag</tag></item>"
-                + "<item weight=\"1.0\">otherToken</item></one-of>", str8);
+        assertEquals("<one-of><item>token</item>"
+                + "<item><tag>tag</tag></item>"
+                + "<item>otherToken</item></one-of>", str8);
     }
 
     /**
