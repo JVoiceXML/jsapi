@@ -50,10 +50,6 @@ public final class RTPDemo {
             EngineManager
                     .registerEngineListFactory(FreeTTSEngineListFactory.class
                             .getName());
-            System.setProperty("javax.speech.supports.audio.management",
-                    Boolean.TRUE.toString());
-            System.setProperty("javax.speech.supports.audio.capture",
-                    Boolean.TRUE.toString());
             System.setProperty("java.protocol.handler.pkgs",
                     "org.jlibrtp.protocols");
             // Create a synthesizer for the default Locale
