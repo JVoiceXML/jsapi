@@ -71,7 +71,6 @@ public class AudioSegmentTest extends TestCase {
      *         test failed 
      */
     public void testOpenInputStream() throws Exception {
-        System.setProperty("javax.speech.supports.audio.capture", "true");
         final String locator1 = "file:///user/smith/hello.wav";
         final String markup1 = "<speak xml:lang='en-US' version='1.0'>Hello</speak>";
         final AudioSegment segment1 = new AudioSegment(locator1, markup1);

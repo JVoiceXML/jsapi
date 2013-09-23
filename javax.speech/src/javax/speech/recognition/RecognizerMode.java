@@ -145,6 +145,7 @@ public class RecognizerMode extends EngineMode {
     }
 
     public SpeakerProfile[] getSpeakerProfiles() {
+        // TODO add security check for javax.speech.recognition.SpeakerProfile
         return profiles;
     }
 

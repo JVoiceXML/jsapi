@@ -126,8 +126,7 @@ public class MockEngine implements Engine {
     }
 
     public SpeechEventExecutor getSpeechEventExecutor() {
-        // TODO Auto-generated method stub
-        return null;
+        return new MockSpeechEventExecutor();
     }
 
     public void setSpeechEventExecutor(SpeechEventExecutor speechEventExecutor) {
