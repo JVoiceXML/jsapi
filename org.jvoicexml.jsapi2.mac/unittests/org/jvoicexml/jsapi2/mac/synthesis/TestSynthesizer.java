@@ -35,8 +35,6 @@ public final class TestSynthesizer {
 	 */
 	@BeforeClass
 	public static void init() throws Exception {
-		System.setProperty("javax.speech.supports.audio.management", Boolean.TRUE.toString());
-		System.setProperty("javax.speech.supports.audio.capture", Boolean.TRUE.toString());
 		/**
 		 * You have to set one of these properties to true on Mac OSX 10.6,
 		 * otherwise JDK13Services.getProviders() called by the AudioManager

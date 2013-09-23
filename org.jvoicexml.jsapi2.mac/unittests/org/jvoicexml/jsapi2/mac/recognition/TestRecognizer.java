@@ -46,10 +46,6 @@ public final class TestRecognizer implements ResultListener {
      */
     @BeforeClass
     public static void init() throws Exception {
-        System.setProperty("javax.speech.supports.audio.management",
-                Boolean.TRUE.toString());
-        System.setProperty("javax.speech.supports.audio.capture",
-                Boolean.TRUE.toString());
         EngineManager.registerEngineListFactory(
                 MacEngineListFactory.class.getCanonicalName());
     }
