@@ -112,10 +112,6 @@ public final class InputDemo implements ResultListener {
         try {
             EngineManager.registerEngineListFactory(
                     FreeTTSEngineListFactory.class.getName());
-            System.setProperty("javax.speech.supports.audio.management",
-                    Boolean.TRUE.toString());
-            System.setProperty("javax.speech.supports.audio.capture",
-                    Boolean.TRUE.toString());
 
             EngineManager.registerEngineListFactory(
                     SphinxEngineListFactory.class.getName());
