@@ -68,10 +68,6 @@ public final class HelloWorldDemo implements SpeakableListener, SynthesizerListe
             EngineManager
                     .registerEngineListFactory(FreeTTSEngineListFactory.class
                             .getName());
-            System.setProperty("javax.speech.supports.audio.management",
-                    Boolean.TRUE.toString());
-            System.setProperty("javax.speech.supports.audio.capture",
-                    Boolean.TRUE.toString());
             // Create a synthesizer for the default Locale
             Synthesizer synthesizer = (Synthesizer) EngineManager
                     .createEngine(SynthesizerMode.DEFAULT);
