@@ -159,6 +159,8 @@ public class EngineManager {
     public static void registerEngineListFactory(String className)
             throws IllegalArgumentException, EngineException,
                 SecurityException {
+        // TODO add a security check for 
+        // javax.speech.EngineManager.registerEngineListFactory
         final Class clazz;
         try {
             clazz = Class.forName(className);
