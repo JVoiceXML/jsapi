@@ -82,8 +82,7 @@ public abstract class JseBaseSynthesizer extends BaseSynthesizer
     protected AudioManager createAudioManager() {
         final AudioFormat format = getAudioFormat();
         final BaseSynthesizerAudioManager manager =
-            new BaseSynthesizerAudioManager(format);
-        manager.setEngine(this);
+            new BaseSynthesizerAudioManager(this, format);
         return manager;
     }
 

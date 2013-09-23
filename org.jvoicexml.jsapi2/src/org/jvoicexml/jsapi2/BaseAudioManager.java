@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.Permission;
 import java.util.Collection;
 
 import javax.sound.sampled.AudioFormat;
@@ -43,6 +44,7 @@ import javax.speech.AudioManager;
 import javax.speech.Engine;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
+import javax.speech.SpeechPermission;
 
 import org.jvoicexml.jsapi2.protocols.JavaSoundParser;
 
@@ -69,7 +71,7 @@ public abstract class BaseAudioManager implements AudioManager {
     private String mediaLocator;
     
     /** The associated engine. */
-    private Engine engine;
+    private final Engine engine;
 
     /** <code>true</code> if audio has been started. */
     private boolean audioStarted;
@@ -87,29 +89,24 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * Constructs a new object.
+     * @param eng the associated engine
      * @param format native engine audio format
      */
-    public BaseAudioManager(final AudioFormat format) {
-        this();
+    public BaseAudioManager(final Engine eng, final AudioFormat format) {
+        this(eng);
         engineAudioFormat = format;
         targetAudioFormat = engineAudioFormat;
     }
 
 
     /**
-     * Class constructor.
+     * Creates a new object.
+     * @param eng the associated engine
      */
-    protected BaseAudioManager() {
+    protected BaseAudioManager(final Engine eng) {
         audioListeners = new java.util.ArrayList<AudioListener>();
         audioMask = AudioEvent.DEFAULT_MASK;
-    }
-
-    /**
-     * Sets the engine.
-     * @param value the engine.
-     */
-    public final void setEngine(final Engine value) {
-        engine = value;
+        engine = eng;
     }
 
     /**
@@ -158,9 +155,11 @@ public abstract class BaseAudioManager implements AudioManager {
     public final void audioStart() throws SecurityException,
             AudioException, EngineStateException {
         final String locator = getMediaLocator();
-        if ((locator != null) && !isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
+        final SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            final Permission permission = new SpeechPermission(
+                    "javax.speech.AudioManager.control");
+            security.checkPermission(permission);
         }
 
         handleAudioStart();
@@ -185,9 +184,11 @@ public abstract class BaseAudioManager implements AudioManager {
      */
     public final void audioStop() throws SecurityException,
             AudioException, EngineStateException {
-        if (!isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
+        final SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            final Permission permission = new SpeechPermission(
+                    "javax.speech.AudioManager.control");
+            security.checkPermission(permission);
         }
         
         if (!(engine.testEngineState(Engine.PAUSED)
@@ -235,9 +236,11 @@ public abstract class BaseAudioManager implements AudioManager {
         throws AudioException, EngineStateException, IllegalArgumentException,
             SecurityException {
 
-        if (!isSupportsAudioManagement()) {
-            throw new SecurityException(
-                    "AudioManager has no permission to access audio resources");
+        final SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            final Permission permission = new SpeechPermission(
+                    "javax.speech.AudioManager.control");
+            security.checkPermission(permission);
         }
 
         // Ensure that media locator is supported
@@ -281,19 +284,6 @@ public abstract class BaseAudioManager implements AudioManager {
         final String[] supportedMediaLocators = getSupportedMediaLocators(
                 locator);
         return supportedMediaLocators != null;
-    }
-
-    /**
-     * Checks if audio management is supported.
-     * @return <code>true</code> if audio management is supported.
-     */
-    protected final boolean isSupportsAudioManagement() {
-        final String management =
-            System.getProperty("javax.speech.supports.audio.management");
-        if (management == null) {
-            return false;
-        }
-        return management.equals("true");
     }
 
     /**

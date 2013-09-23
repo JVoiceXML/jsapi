@@ -17,6 +17,7 @@
 package org.jvoicexml.jsapi2.jse.recognition;
 
 import java.io.Serializable;
+import java.security.Permission;
 import java.util.Collection;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -24,6 +25,7 @@ import java.util.logging.Logger;
 
 import javax.speech.AudioSegment;
 import javax.speech.SpeechEventExecutor;
+import javax.speech.SpeechPermission;
 import javax.speech.recognition.FinalResult;
 import javax.speech.recognition.FinalRuleResult;
 import javax.speech.recognition.Grammar;
@@ -257,8 +259,13 @@ public class BaseResult implements Result, FinalResult, FinalRuleResult, Seriali
                                 ResultToken fromToken,
                                 ResultToken toToken,
                                 int correctionType)
-        throws ResultStateException, IllegalArgumentException
-    {
+        throws ResultStateException, IllegalArgumentException {
+        final SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            final Permission permission = new SpeechPermission(
+                    "javax.speech.recognition.FinalResult.tokenCorrection");
+            security.checkPermission(permission);
+        }
         checkResultState(UNFINALIZED);
     }
 

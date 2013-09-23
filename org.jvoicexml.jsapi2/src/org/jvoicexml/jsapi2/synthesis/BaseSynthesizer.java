@@ -79,9 +79,6 @@ public abstract class BaseSynthesizer extends BaseEngine
     public BaseSynthesizer(final SynthesizerMode engineMode) {
         super(engineMode);
         speakableListeners = new java.util.ArrayList<SpeakableListener>();
-        final BaseAudioManager audioManager =
-            (BaseAudioManager) getAudioManager();
-        audioManager.setEngine(this);
         final SynthesizerProperties props =
             new BaseSynthesizerProperties(this);
         setSynthesizerProperties(props);

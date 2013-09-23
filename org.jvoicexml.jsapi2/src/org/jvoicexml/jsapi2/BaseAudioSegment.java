@@ -29,8 +29,10 @@ package org.jvoicexml.jsapi2;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.Permission;
 
 import javax.speech.AudioSegment;
+import javax.speech.SpeechPermission;
 
 /**
  * Basic implementation of an {@link AudioSegment}.
@@ -91,8 +93,12 @@ public class BaseAudioSegment extends AudioSegment {
     @Override
     public InputStream openInputStream() throws IOException, SecurityException {
         if (!isGettable()) {
-            throw new SecurityException(
-                    "The platform does not allow to access the input stream!");
+            final SecurityManager security = System.getSecurityManager();
+            if (security != null) {
+                final Permission permission = new SpeechPermission(
+                        "javax.speech.AudioSegment.openInputStream      ");
+                security.checkPermission(permission);
+            }
         }
         if (is == null) {
             final String locator = getMediaLocator();
@@ -103,4 +109,21 @@ public class BaseAudioSegment extends AudioSegment {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isGettable() {
+        final SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            final Permission permission = new SpeechPermission(
+                    "javax.speech.AudioSegment.openInputStream");
+            try {
+                security.checkPermission(permission);
+            } catch (SecurityException e) {
+                return false;
+            }
+        }
+        return super.isGettable();
+    }
 }

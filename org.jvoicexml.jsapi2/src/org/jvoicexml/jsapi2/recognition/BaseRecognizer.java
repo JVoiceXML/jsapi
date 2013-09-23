@@ -46,6 +46,7 @@
 package org.jvoicexml.jsapi2.recognition;
 
 import java.io.InputStream;
+import java.security.Permission;
 import java.util.Collection;
 import java.util.Vector;
 
@@ -56,6 +57,7 @@ import javax.speech.EngineException;
 import javax.speech.EngineListener;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
+import javax.speech.SpeechPermission;
 import javax.speech.VocabularyManager;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarException;
@@ -126,9 +128,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     public BaseRecognizer(final RecognizerMode mode) {
         super(mode);
         uncommitedDeletedGrammars = new Vector();
-        final BaseAudioManager audioManager =
-            (BaseAudioManager) getAudioManager();
-        audioManager.setEngine(this);
         resultListeners = new java.util.ArrayList<ResultListener>();
         speakerManager = new BaseSpeakerManager();
         final RecognizerProperties props =
@@ -393,6 +392,12 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * {@inheritDoc}
      */
     public SpeakerManager getSpeakerManager() {
+        final SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            final Permission permission = new SpeechPermission(
+                    "javax.speech.recognition.SpeakerManager");
+            security.checkPermission(permission);
+        }
         return speakerManager;
     }
 
@@ -553,6 +558,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected abstract void handleAllocate() throws EngineStateException,
         EngineException, AudioException, SecurityException;
 
+    // TODO check security for javax.speech.recognition.Recognizer.allocate
 
     /**
      * Called from the <code>deallocate</code> method.  Override this in
