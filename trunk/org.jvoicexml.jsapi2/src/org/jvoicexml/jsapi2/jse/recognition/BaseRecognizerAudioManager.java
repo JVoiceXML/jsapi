@@ -45,6 +45,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.speech.AudioException;
+import javax.speech.Engine;
 import javax.speech.EngineStateException;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
@@ -65,10 +66,12 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
 
     /**
      * Constructs a new object.
+     * @param engine the associated engine
      * @param format native engine audio format
      */
-    public BaseRecognizerAudioManager(final AudioFormat format) {
-        super(format);
+    public BaseRecognizerAudioManager(final Engine engine,
+            final AudioFormat format) {
+        super(engine, format);
     }
 
     /**

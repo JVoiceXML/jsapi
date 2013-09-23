@@ -3,8 +3,11 @@
  */
 package org.jvoicexml.jsapi2;
 
+import java.security.Permission;
+
 import javax.speech.EngineStateException;
 import javax.speech.SpeechLocale;
+import javax.speech.SpeechPermission;
 import javax.speech.VocabularyManager;
 import javax.speech.Word;
 
@@ -19,8 +22,12 @@ public class BaseVocabularyManager implements VocabularyManager {
      */
     public void addWord(final Word word) throws EngineStateException,
             SecurityException {
-        // TODO Auto-generated method stub
-
+        final SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            final Permission permission = new SpeechPermission(
+                    "javax.speech.VocabularyManager.update");
+            security.checkPermission(permission);
+        }
     }
 
     /**
@@ -28,8 +35,12 @@ public class BaseVocabularyManager implements VocabularyManager {
      */
     public void addWords(final Word[] words) throws EngineStateException,
             SecurityException {
-        // TODO Auto-generated method stub
-
+        final SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            final Permission permission = new SpeechPermission(
+                    "javax.speech.VocabularyManager.update");
+            security.checkPermission(permission);
+        }
     }
 
     /**
@@ -56,8 +67,12 @@ public class BaseVocabularyManager implements VocabularyManager {
      */
     public void removeWord(final Word word) throws EngineStateException,
             IllegalArgumentException, SecurityException {
-        // TODO Auto-generated method stub
-
+        final SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            final Permission permission = new SpeechPermission(
+                    "javax.speech.VocabularyManager.update");
+            security.checkPermission(permission);
+        }
     }
 
     /**
@@ -65,7 +80,11 @@ public class BaseVocabularyManager implements VocabularyManager {
      */
     public void removeWords(final Word[] words) throws EngineStateException,
             IllegalArgumentException, SecurityException {
-        // TODO Auto-generated method stub
-
+        final SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            final Permission permission = new SpeechPermission(
+                    "javax.speech.VocabularyManager.update");
+            security.checkPermission(permission);
+        }
     }
 }

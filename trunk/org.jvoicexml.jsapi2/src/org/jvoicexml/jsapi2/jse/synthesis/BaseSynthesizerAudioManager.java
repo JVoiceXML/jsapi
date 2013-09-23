@@ -22,6 +22,7 @@ import java.net.URLConnection;
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
+import javax.speech.Engine;
 import javax.speech.EngineStateException;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
@@ -37,10 +38,12 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
 
     /**
      * Constructs a new object.
+     * @param engine the associated engine
      * @param format native engine audio format
      */
-    public BaseSynthesizerAudioManager(final AudioFormat format) {
-        super(format);
+    public BaseSynthesizerAudioManager(final Engine engine,
+            final AudioFormat format) {
+        super(engine, format);
     }
 
     /**

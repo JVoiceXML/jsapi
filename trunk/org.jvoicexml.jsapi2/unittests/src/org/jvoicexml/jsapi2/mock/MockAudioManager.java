@@ -5,15 +5,20 @@ import java.io.OutputStream;
 
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
-import javax.speech.AudioManager;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 
 /**
- * Dummy implementation of an {@link AudioManager} for test purposes.
- * @author Dirk SChnelle-Walka
+ * Dummy implementation of an {@link BaseAudioManager} for test purposes.
+ * @author Dirk Schnelle-Walka
  */
 public class MockAudioManager extends BaseAudioManager {
+    /**
+     * Creates a new object.
+     */
+    public MockAudioManager() {
+        super (new MockEngine());
+    }
 
     /**
      * {@inheritDoc}

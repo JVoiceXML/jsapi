@@ -4,10 +4,11 @@ import javax.speech.Engine;
 import javax.speech.recognition.Recognizer;
 import javax.speech.synthesis.Synthesizer;
 
+import junit.framework.TestCase;
+
+import org.junit.Assert;
 import org.jvoicexml.jsapi2.mock.recognition.MockRecognizer;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 /**
  * Test cases for state transitions of the
@@ -22,10 +23,6 @@ public class RecognizerStateTransitionTest extends TestCase {
      * Set up the test environment.
      */
     protected void setUp() throws Exception {
-        System.setProperty("javax.speech.supports.audio.management",
-                Boolean.TRUE.toString());
-        System.setProperty("javax.speech.supports.audio.capture",
-                Boolean.TRUE.toString());
         recognizer = new MockRecognizer();
         super.setUp();
     }

@@ -26,7 +26,6 @@ public class BaseAudioSegmentTest {
      */
     @Test
     public void testOpenInputStream() throws Exception {
-        System.setProperty("javax.speech.supports.audio.capture", "true");
         final String test = "test";
         final ByteArrayInputStream input =
             new ByteArrayInputStream(test.getBytes());

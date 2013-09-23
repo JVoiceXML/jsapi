@@ -11,6 +11,7 @@ Version 0.5
   to null
 - bugfix: SpeakerProfile.DEFAULT has no name to indicate a don't care value
 - NORM_WEIGHT in RuleAternatives is not rendered in toString()
+- bugfix: corrected the way security checks are performed
 
 
 Version 0.4
