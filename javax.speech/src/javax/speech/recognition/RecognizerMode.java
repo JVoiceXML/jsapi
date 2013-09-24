@@ -29,6 +29,7 @@ package javax.speech.recognition;
 import java.util.Vector;
 
 import javax.speech.EngineMode;
+import javax.speech.JavaSpeechSecurity;
 import javax.speech.SpeechLocale;
 
 //Comp 2.0.6
@@ -145,7 +146,8 @@ public class RecognizerMode extends EngineMode {
     }
 
     public SpeakerProfile[] getSpeakerProfiles() {
-        // TODO add security check for javax.speech.recognition.SpeakerProfile
+        JavaSpeechSecurity.checkPermission(
+                "javax.speech.recognition.SpeakerProfile");
         return profiles;
     }
 
