@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
-import javax.speech.AudioManager;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
@@ -19,7 +18,6 @@ import javax.speech.recognition.ResultEvent;
 import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.jse.recognition.BaseGrammarManager;
 import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
-import org.jvoicexml.jsapi2.mock.MockAudioManager;
 import org.jvoicexml.jsapi2.mock.MockSpeechEventExecutor;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
@@ -116,13 +114,6 @@ public final class MockRecognizer extends JseBaseRecognizer {
     /**
      * {@inheritDoc}
      */
-    protected AudioManager createAudioManager() {
-        return new MockAudioManager();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     protected SpeechEventExecutor createSpeechEventExecutor() {
         return new MockSpeechEventExecutor();
     }
@@ -144,7 +135,6 @@ public final class MockRecognizer extends JseBaseRecognizer {
 
     @Override
     protected AudioFormat getAudioFormat() {
-        // TODO Auto-generated method stub
-        return null;
+        return new AudioFormat(16000f, 16, 1, true, false);
     }
 }

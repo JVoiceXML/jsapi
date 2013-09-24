@@ -578,6 +578,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             final AudioManager audioManager = getAudioManager();
             audioManager.audioStop();
         }
+
+        // Post the state transition
         long[] states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
         postStateTransitionEngineEvent(states[0], states[1],
                 EngineEvent.ENGINE_DEALLOCATED);
