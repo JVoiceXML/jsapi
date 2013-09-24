@@ -154,7 +154,6 @@ public abstract class BaseAudioManager implements AudioManager {
      */
     public final void audioStart() throws SecurityException,
             AudioException, EngineStateException {
-        final String locator = getMediaLocator();
         final SecurityManager security = System.getSecurityManager();
         if (security != null) {
             final Permission permission = new SpeechPermission(

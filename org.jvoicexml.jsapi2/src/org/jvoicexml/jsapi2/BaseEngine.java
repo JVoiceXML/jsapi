@@ -56,6 +56,7 @@ import javax.speech.EngineListener;
 import javax.speech.EngineMode;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
+import javax.speech.SpeechException;
 import javax.speech.VocabularyManager;
 
 /**
@@ -345,7 +346,7 @@ public abstract class BaseEngine implements Engine {
     public final void deallocate()
         throws AudioException, EngineException, EngineStateException {
 
-        //Validate current state
+        // Validate current state
         if (testEngineState(DEALLOCATED)
                 || testEngineState(DEALLOCATING_RESOURCES)) {
             return;
@@ -353,7 +354,7 @@ public abstract class BaseEngine implements Engine {
 
         checkEngineState(ALLOCATING_RESOURCES);
 
-        //Update current state
+        // Update current state
         long[] states = setEngineState(CLEAR_ALL_STATE,
                                        DEALLOCATING_RESOURCES);
         postStateTransitionEngineEvent(states[0], states[1],
@@ -368,7 +369,7 @@ public abstract class BaseEngine implements Engine {
     public final void deallocate(final int mode)
         throws AudioException, EngineException {
         if (mode == ASYNCHRONOUS_MODE) {
-            new Thread(new Runnable() {
+            final Runnable runnable = new Runnable() {
                 public void run() {
                     try {
                         deallocate();
@@ -376,7 +377,9 @@ public abstract class BaseEngine implements Engine {
                         ex.printStackTrace();
                     }
                 }
-            }).start();
+            };
+            final SpeechEventExecutor executor = getSpeechEventExecutor();
+            executor.execute(runnable);
         } else if ((mode == 0) || (mode == IMMEDIATE_MODE)) {
             deallocate();
         } else {
