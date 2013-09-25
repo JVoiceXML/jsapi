@@ -52,9 +52,12 @@ This file builds the JSR 113.jar.
         <ant dir="../javax.speech.security" target="compileJ2ME"
             inheritall="false" inheritrefs="false"/>
         <echo message="compiling ${component} for J2ME with debug=${debug}, optimize=${optimize}" />
-        <javac bootclasspathref="midp.lib" destdir="${build}" source="1.2" target="1.1" includeantruntime="false" optimize="${optimize}" debug="${debug}" deprecation="on">
+        <javac bootclasspathref="midp.lib" destdir="${build}"
+            source="1.2" target="1.1" includeantruntime="false"
+            optimize="${optimize}" debug="${debug}" deprecation="on">
             <src path="${src}" />
             <compilerarg value="-Xlint:unchecked" />
+            <classpath location="../javax.speech.security/preverify"/>
         </javac>
     </target>
 
@@ -65,6 +68,7 @@ This file builds the JSR 113.jar.
         <javac destdir="${preverify}" includeantruntime="false" optimize="${optimize}" debug="${debug}" deprecation="on" encoding="iso-8859-1">
             <src path="${src}" />
             <compilerarg value="-Xlint:unchecked" />
+            <classpath location="../javax.speech.security/preverify"/>
         </javac>
     </target>
 
