@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,15 +56,15 @@ class PlayQueue implements Runnable {
     private static final int BUFFER_LENGTH = 256;
 
     /** The items to be played back. */
-    private List<QueueItem> playQueue;
+    private List<QueueItem> queue;
 
     /**
      * Constructs a new object.
-     * @param queueManager TODO
+     * @param manager the queue manager
      */
-    public PlayQueue(QueueManager queueManager) {
-        this.queueManager = queueManager;
-        playQueue = new java.util.ArrayList<QueueItem>();
+    public PlayQueue(final QueueManager manager) {
+        queueManager = manager;
+        queue = new java.util.ArrayList<QueueItem>();
     }
 
     /**
@@ -109,36 +109,18 @@ class PlayQueue implements Runnable {
             try {
                 format = manager.getAudioFormat();
             } catch (AudioException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
                 break;
             }
             final float sampleRate = format.getSampleRate();
-            long bps = format.getChannels();
-            bps *= sampleRate;
-            bps *= (format.getSampleSizeInBits() / 8);
+            final long bps = getBitsPerSecond(format);
             try {
                 final AudioSegment segment = item.getAudioSegment();
-                if ((segment == null) || !segment.isGettable()) {
-                    throw new SecurityException(
-                        "The platform does not allow to access the input "
-                            + "stream!");
-                }
                 final InputStream inputStream = segment.openInputStream();
                 if (inputStream == null) {
                     break;
                 }
-                while((bytesRead = inputStream.read(buffer)) >= 0) {
-                    synchronized (queueManager.cancelLock) {
-                        if (queueManager.cancelFirstItem) {
-                            final SpeakableEvent cancelledEvent =
-                                new SpeakableEvent(source,
-                                    SpeakableEvent.SPEAKABLE_CANCELLED, id);
-                            synthesizer.postSpeakableEvent(cancelledEvent,
-                                    listener);
-                            break;
-                        }
-                    }
+                while ((bytesRead = inputStream.read(buffer)) >= 0) {
                     try {
                         delayUntilResumed(item);
                     } catch (InterruptedException e) {
@@ -213,7 +195,7 @@ class PlayQueue implements Runnable {
                 removeQueueItem(item);
             }
 
-            synchronized(this.queueManager.cancelLock) {
+            synchronized (queueManager.cancelLock) {
                 queueManager.cancelFirstItem = false;
             }
             postEventsAfterPlay();
@@ -221,17 +203,30 @@ class PlayQueue implements Runnable {
     }
 
     /**
+     * Calculates the number of bits per second for the given audio format.
+     * @param format the audio format to use
+     * @return number of bits per second
+     */
+    private long getBitsPerSecond(final AudioFormat format) {
+        final float sampleRate = format.getSampleRate();
+        long bps = format.getChannels();
+        bps *= sampleRate;
+        bps *= (format.getSampleSizeInBits() / 8);
+        return bps;
+    }
+
+    /**
      * Removes the given item from the play queue.
      * @param item the item to remove
      */
     private void removeQueueItem(final QueueItem item) {
-        synchronized (playQueue) {
-            playQueue.remove(item);
+        synchronized (queue) {
+            queue.remove(item);
         }
     }
 
     /**
-     * Posts an event that processing of the queue has started
+     * Posts an event that processing of the queue has started.
      * @param item the top most queue item
      */
     private void postTopOfQueue(final QueueItem item) {
@@ -306,8 +301,8 @@ class PlayQueue implements Runnable {
      * @param item the item that has changed
      */
     public void itemChanged(final QueueItem item) {
-        synchronized (playQueue) {
-            playQueue.notifyAll();
+        synchronized (queue) {
+            queue.notifyAll();
         }
     }
 
@@ -316,9 +311,9 @@ class PlayQueue implements Runnable {
      * @param item the item to add
      */
     public void addQueueItem(final QueueItem item) {
-        synchronized (playQueue) {
-            playQueue.add(item);
-            playQueue.notifyAll();
+        synchronized (queue) {
+            queue.add(item);
+            queue.notifyAll();
         }
     }
 
@@ -329,8 +324,8 @@ class PlayQueue implements Runnable {
      *      queue item with the given id
      */
     public QueueItem getQueueItem(final int id) {
-        synchronized (playQueue) {
-            for (QueueItem item : playQueue) {
+        synchronized (queue) {
+            for (QueueItem item : queue) {
                 if (item.getId() == id) {
                     return item;
                 }
@@ -345,11 +340,11 @@ class PlayQueue implements Runnable {
      * @return a queue item to play
      */
     protected QueueItem getNextQueueItem() {
-        synchronized (playQueue) {
-            while ((playQueue.isEmpty() || !isSynthesized(0))
+        synchronized (queue) {
+            while ((queue.isEmpty() || !isSynthesized(0))
                     && !queueManager.isDone()) {
                 try {
-                    playQueue.wait();
+                    queue.wait();
                 } catch (InterruptedException e) {
                     return null;
                 }
@@ -357,19 +352,19 @@ class PlayQueue implements Runnable {
             if (queueManager.isDone()) {
                 return null;
             }
-            return playQueue.get(0);
+            return queue.get(0);
         }
     }
 
     /**
-     * Checks if the queue item at the given index has already been synthesized
+     * Checks if the queue item at the given index has already been synthesized.
      * @param index the index to look for the queue item
      * @return <code>true</code> if the item at the given index has been
      *           synthesized
      */
-    private boolean isSynthesized(int index) {
-        synchronized (playQueue) {
-            final QueueItem item = playQueue.get(index);
+    private boolean isSynthesized(final int index) {
+        synchronized (queue) {
+            final QueueItem item = queue.get(index);
             return item.isSynthesized();
         }
     }
@@ -381,25 +376,33 @@ class PlayQueue implements Runnable {
      * <code>false</code>
      */
     public boolean isQueueEmpty() {
-        synchronized (playQueue) {
-            return playQueue.isEmpty();
+        synchronized (queue) {
+            return queue.isEmpty();
         }
     }
 
     /**
-     * Cancel the item at the top of the queue
+     * Cancels the item at the top of the queue.
      * @return <code>true</code> if an item was canceled
      * @exception EngineStateException
      *            if the engine is in an invalid state
      */
     protected boolean cancelItemAtTopOfQueue() throws EngineStateException {
-        synchronized (playQueue) {
-            if (playQueue.isEmpty()) {
+        synchronized (queue) {
+            if (queue.isEmpty()) {
                 return false;
             }
-            final QueueItem item = playQueue.get(0);
-            if (!item.isSynthesized()) {
-                final BaseSynthesizer synthesizer = queueManager.getSynthesizer();
+            final QueueItem item = queue.get(0);
+            if (item.isSynthesized()) {
+                final BaseSynthesizer synthesizer =
+                        queueManager.getSynthesizer();
+                final BaseAudioManager manager =
+                        (BaseAudioManager) synthesizer.getAudioManager();
+                final OutputStream out = manager.getOutputStream();
+                // TODO should cancel the output stream
+            } else {
+                final BaseSynthesizer synthesizer =
+                        queueManager.getSynthesizer();
                 synthesizer.handleCancel();
                 final Object source = item.getSource();
                 final int id = item.getId();
@@ -408,8 +411,7 @@ class PlayQueue implements Runnable {
                         source, SpeakableEvent.SPEAKABLE_CANCELLED, id),
                         listener);
             }
-            // TODO handle the case that the item is currently played back
-            playQueue.remove(0);
+            queue.remove(0);
             synchronized (this.queueManager.cancelLock) {
                 queueManager.cancelFirstItem = true;
             }
@@ -418,7 +420,7 @@ class PlayQueue implements Runnable {
     }
 
     /**
-     * Cancels the playback of the speakable with the given id
+     * Cancels the playback of the speakable with the given id.
      * @param id the speakable to cancel
      * @return <code>true</code> if the speakable was canceled
      */
@@ -426,9 +428,9 @@ class PlayQueue implements Runnable {
         boolean found = false;
 
         // search item in playqueue
-        synchronized (playQueue) {
-            for (int i = 0; i < playQueue.size(); ++i) {
-                final QueueItem item = playQueue.get(i);
+        synchronized (queue) {
+            for (int i = 0; i < queue.size(); ++i) {
+                final QueueItem item = queue.get(i);
                 final int currentId = item.getId();
                 if (currentId == id) {
                     if (i == 0) {
@@ -443,10 +445,11 @@ class PlayQueue implements Runnable {
                                 .getSource(),
                                 SpeakableEvent.SPEAKABLE_CANCELLED, currentId),
                                 item.getListener());
-                        synthesizer.postSynthesizerEvent(synthesizer.getEngineState(),
+                        synthesizer.postSynthesizerEvent(
+                                synthesizer.getEngineState(),
                                 synthesizer.getEngineState(),
                                 SynthesizerEvent.QUEUE_UPDATED, false);
-                        playQueue.remove(i);
+                        queue.remove(i);
                         found = true;
                     }
                 }
@@ -456,7 +459,7 @@ class PlayQueue implements Runnable {
     }
 
     public void setWords(final int id, final String[] words) {
-        synchronized (playQueue) {
+        synchronized (queue) {
             final QueueItem item = getQueueItem(id);
             if (item == null) {
                 return;
@@ -466,10 +469,10 @@ class PlayQueue implements Runnable {
         }
     }
 
-    public void setWordsStartTimes(final int itemId,
+    public void setWordsStartTimes(final int id,
             final float[] starttimes) {
-        synchronized (playQueue) {
-            final QueueItem item = getQueueItem(itemId);
+        synchronized (queue) {
+            final QueueItem item = getQueueItem(id);
             if (item == null) {
                 return;
             }
@@ -480,7 +483,7 @@ class PlayQueue implements Runnable {
 
     public void setPhonesInfo(final int itemId,
             final PhoneInfo[] phonesinfo) {
-        synchronized (playQueue) {
+        synchronized (queue) {
             final QueueItem item = getQueueItem(itemId);
             if (item == null) {
                 return;

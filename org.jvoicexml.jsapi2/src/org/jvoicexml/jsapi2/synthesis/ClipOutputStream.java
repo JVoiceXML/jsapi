@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.jvoicexml.jsapi2.jse.synthesis;
+package org.jvoicexml.jsapi2.synthesis;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,7 +23,8 @@ import org.jvoicexml.jsapi2.BaseAudioManager;
  * @author Dirk Schnelle-Walka
  *
  */
-public class ClipOutputStream extends OutputStream implements LineListener {
+public final class ClipOutputStream extends OutputStream
+    implements LineListener {
     /** The audio buffer. */
     private ByteArrayOutputStream buffer;
 

@@ -5,17 +5,17 @@ package org.jvoicexml.jsapi2.synthesis;
 
 import javax.speech.AudioSegment;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.jvoicexml.jsapi2.mock.synthesis.MockSynthesizer;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 /**
  * Test cases for {@link PlayQueue}.
  * @author Dirk Schnelle-Walka
  *
  */
-public class PlayQueueTest extends TestCase {
+public class PlayQueueTest {
     /** The test object. */
     private PlayQueue queue;
 
@@ -24,8 +24,8 @@ public class PlayQueueTest extends TestCase {
      * @exception Exception
      *            error setting up the test environment
      */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         final BaseSynthesizer synthesizer = new MockSynthesizer();
         final QueueManager manager = new QueueManager(synthesizer);
         queue = manager.getPlayQueue();
@@ -34,6 +34,7 @@ public class PlayQueueTest extends TestCase {
     /**
      * Test method for {@link org.jvoicexml.jsapi2.synthesis.PlayQueue#getNextQueueItem()}.
      */
+    @Test
     public void testGetNextQueueItem() {
         final AudioSegment segment1 =
                 new AudioSegment("http://localhost", "test");
@@ -53,6 +54,7 @@ public class PlayQueueTest extends TestCase {
     /**
      * Test method for {@link org.jvoicexml.jsapi2.synthesis.PlayQueue#getNextQueueItem()}.
      */
+    @Test
     public void testGetNextQueueItemNotSynthesized() {
         final AudioSegment segment1 =
                 new AudioSegment("http://localhost", "test");

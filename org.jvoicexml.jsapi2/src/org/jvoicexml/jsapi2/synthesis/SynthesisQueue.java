@@ -39,9 +39,8 @@ import javax.speech.synthesis.SynthesizerEvent;
  * Synthesis thread. Queues all speakable and calls the synthesizer to
  * synthesize them without actually playing back the audio.
  * @author Dirk Schnelle-Walka
- *
  */
-class SynthesisQueue implements Runnable {
+final class SynthesisQueue implements Runnable {
     /** Reference to the queue manager. */
     private final QueueManager queueManager;
 
@@ -52,23 +51,23 @@ class SynthesisQueue implements Runnable {
     private List<QueueItem> queue;
 
     /** Id of the last queued item. */
-    int queueId;
+    private int queueId;
 
     /**
      * Constructs a new object.
-     * @param queueManager reference to the queue manager
-     * @param playQueue reference to the play queue
+     * @param manager reference to the queue manager
+     * @param pqueue reference to the play queue
      */
-    public SynthesisQueue(final QueueManager queueManager,
-            final PlayQueue playQueue) {
-        this.queueManager = queueManager;
-        this.playQueue = playQueue;
+    public SynthesisQueue(final QueueManager manager,
+            final PlayQueue pqueue) {
+        queueManager = manager;
+        playQueue = pqueue;
         queue = new java.util.ArrayList<QueueItem>();
         queueId = 0;
     }
 
     /**
-     * Terminates the queue manager and clears all pending speak requests.
+     * Terminates the synthesis queue and clears all pending speak requests.
      */
     public void terminate() {
         synchronized (queue) {
@@ -107,11 +106,14 @@ class SynthesisQueue implements Runnable {
     }
 
     /**
-     * Add an item to be spoken to the output queue. Fires the appropriate
-     * queue events.
+     * Add an audio segment to be spoken to the output queue.
+     * Fires the appropriate queue events.
      *
-     * @param item
-     *                the item to add to the queue
+     * @param audioSegment
+     *                the audio segment to add
+     * @param listener
+     *                listeners of this audio segment
+     * @return queue id.
      */
     public int appendItem(final AudioSegment audioSegment,
             final SpeakableListener listener) {

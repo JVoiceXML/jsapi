@@ -39,16 +39,16 @@ import javax.speech.VocabularyManager;
 import javax.speech.synthesis.Speakable;
 
 import org.jvoicexml.jsapi2.BaseEngineProperties;
-import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
 import org.jvoicexml.jsapi2.mock.MockAudioManager;
 import org.jvoicexml.jsapi2.mock.MockSpeechEventExecutor;
+import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
 
 /**
  * Dummy implementation of a {@link javax.spech.synthesis.Synthesizer}
  * for test purposes.
  * @author Dirk Schnelle-Walka
  */
-public class MockSynthesizer extends JseBaseSynthesizer {
+public class MockSynthesizer extends BaseSynthesizer {
 
     /**
      * {@inheritDoc}

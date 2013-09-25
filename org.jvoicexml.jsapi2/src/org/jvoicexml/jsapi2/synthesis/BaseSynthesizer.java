@@ -28,6 +28,7 @@ package org.jvoicexml.jsapi2.synthesis;
 
 import java.util.Collection;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
@@ -36,6 +37,7 @@ import javax.speech.EngineException;
 import javax.speech.EngineListener;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
+import javax.speech.VocabularyManager;
 import javax.speech.synthesis.PhoneInfo;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableEvent;
@@ -49,6 +51,8 @@ import javax.speech.synthesis.SynthesizerProperties;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
+import org.jvoicexml.jsapi2.BaseVocabularyManager;
+import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 
 
 /**
@@ -223,7 +227,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
-    public boolean cancel(int id) throws IllegalArgumentException,
+    public boolean cancel(final int id) throws IllegalArgumentException,
             EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
@@ -526,5 +530,38 @@ public abstract class BaseSynthesizer extends BaseEngine
      */
     protected QueueManager getQueueManager() {
         return queueManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected SpeechEventExecutor createSpeechEventExecutor() {
+        return new ThreadSpeechEventExecutor();
+    }
+
+    /**
+     * Retrieves the audio format that is produced by this synthesizer.
+     * @return audio format.
+     */
+    protected abstract AudioFormat getAudioFormat();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected AudioManager createAudioManager() {
+        final AudioFormat format = getAudioFormat();
+        final BaseSynthesizerAudioManager manager =
+            new BaseSynthesizerAudioManager(this, format);
+        return manager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected VocabularyManager createVocabularyManager() {
+        return new BaseVocabularyManager();
     }
 }
