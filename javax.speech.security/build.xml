@@ -61,7 +61,7 @@ This file builds the security placeholder for the JSR 113.jar.
             description="Compile the JAVA sources for J2ME">
         <echo message="compiling ${component} for J2ME with debug=${debug}, optimize=${optimize}" />
         <javac bootclasspathref="midp.lib"
-               destdir="${build}"
+               destdir="${preverify}"
                source="1.2"
                target="1.1"
                includeantruntime="false"
