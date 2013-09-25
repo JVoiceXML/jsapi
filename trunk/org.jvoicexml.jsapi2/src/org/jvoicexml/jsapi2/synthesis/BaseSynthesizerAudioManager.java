@@ -9,7 +9,7 @@
  * Copyright (C) 2007 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
-package org.jvoicexml.jsapi2.jse.synthesis;
+package org.jvoicexml.jsapi2.synthesis;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +52,7 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
     public void handleAudioStart() throws AudioException {
         final String locator = getMediaLocator();
         if (locator == null) {
-            outputStream = new ClipOutputStream(this);
+            outputStream = new SpeakerOutputStream(this);
         } else {
             // Gets IO from that connection if not already present
             if (outputStream == null) {
@@ -62,7 +62,8 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
                     urlConnection = openURLConnection();
                     outputStream = urlConnection.getOutputStream();
                 } catch (IOException ex) {
-                    throw new AudioException("Cannot get OutputStream from URL: "
+                    throw new AudioException(
+                            "Cannot get OutputStream from URL: "
                             + ex.getMessage());
                 }
             }

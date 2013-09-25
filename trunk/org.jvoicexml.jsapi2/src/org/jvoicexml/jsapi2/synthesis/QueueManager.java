@@ -82,7 +82,7 @@ public class QueueManager {
      * Retrieves the synthesis queue.
      * @return the synthesis queue
      */
-    SynthesisQueue getSynthesisQueue() {
+    final SynthesisQueue getSynthesisQueue() {
         return synthQueue;
     }
 
@@ -90,7 +90,7 @@ public class QueueManager {
      * Retrieves the play queue.
      * @return the play queue
      */
-    PlayQueue getPlayQueue() {
+    final PlayQueue getPlayQueue() {
         return playQueue;
     }
 
@@ -98,7 +98,7 @@ public class QueueManager {
      * Retrieves the synthesizer.
      * @return the synthesizer
      */
-    BaseSynthesizer getSynthesizer() {
+    final BaseSynthesizer getSynthesizer() {
         return synthesizer;
     }
 
@@ -122,7 +122,7 @@ public class QueueManager {
      * Checks if the queue manager has terminated.
      * @return <code>true</code> if the queue manager has terminated
      */
-    boolean isDone() {
+    final boolean isDone() {
         return done;
     }
 
@@ -247,10 +247,10 @@ public class QueueManager {
 
     /**
      * Cancels the playback of the speakable with the given id. This is 
-     * done by trying to remove it from the playthread and from
-     * the synthesis thread.
+     * done by trying to remove it from the play queue and from
+     * the synthesis queue.
      * @param id the id of the speakable to cancel
-     * @return <code>true</code> if the spakable could be canceled.
+     * @return <code>true</code> if the speakable could be canceled.
      */
     protected boolean cancelItem(final int id) {
         final boolean found = playQueue.cancelItem(id);
