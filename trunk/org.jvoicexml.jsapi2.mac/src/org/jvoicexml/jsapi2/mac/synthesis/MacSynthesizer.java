@@ -39,7 +39,7 @@ import javax.speech.synthesis.Voice;
 
 import org.jvoicexml.jsapi2.BaseAudioSegment;
 import org.jvoicexml.jsapi2.BaseEngineProperties;
-import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
+import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
 
 /**
  * A SAPI compliant {@link javax.speech.synthesis.Synthesizer}.
@@ -47,7 +47,7 @@ import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
  * @author Josua Arndt
  *
  */
-public final class MacSynthesizer extends JseBaseSynthesizer {
+public final class MacSynthesizer extends BaseSynthesizer {
 
     static {
         System.loadLibrary("Jsapi2MacBridge");
