@@ -43,7 +43,7 @@ import javax.speech.synthesis.SynthesizerProperties;
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseAudioSegment;
 import org.jvoicexml.jsapi2.BaseEngineProperties;
-import org.jvoicexml.jsapi2.jse.synthesis.JseBaseSynthesizer;
+import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
 import org.w3c.dom.Document;
 
 import com.sun.speech.freetts.FreeTTSSpeakableImpl;
@@ -56,7 +56,7 @@ import com.sun.speech.freetts.audio.AudioPlayer;
  * synthesis system.
  * @author Dirk Schnelle-Walka
  */
-public class FreeTTSSynthesizer extends JseBaseSynthesizer {
+public class FreeTTSSynthesizer extends BaseSynthesizer {
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(FreeTTSSynthesizer.class.getName());
