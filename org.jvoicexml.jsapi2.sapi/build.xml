@@ -131,9 +131,9 @@ This file builds the JSR 113.jar.
 
   <target name="-copyDebugDll" if="isDebug">
     <copy file="cpp/Jsapi2SapiBridge/Debug/Jsapi2SapiBridge.dll"
-      tofile="${dist}/Jsapi2SapiBridge.dll" overwrite="true"/>
+      tofile="${dist}/Jsapi2SapiBridged.dll" overwrite="true"/>
     <copy file="cpp/Jsapi2SapiBridge/Debug_x64/Jsapi2SapiBridge_x64.dll"
-      tofile="${dist}/Jsapi2SapiBridge_x64.dll" overwrite="true"/>
+      tofile="${dist}/Jsapi2SapiBridged_x64.dll" overwrite="true"/>
   </target>
 
   <target name="-copyReleaseDll" unless="isDebug">
