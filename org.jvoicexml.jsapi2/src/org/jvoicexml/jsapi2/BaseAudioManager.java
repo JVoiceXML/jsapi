@@ -371,15 +371,12 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
-     * Retrieves the audio format converter.
+     * Lazy instantiation of the audio format converter.
      * @return the audio format converter.
-     * @throws IOException
-     *         error opening the format converter
      */
-    public AudioFormatConverter getAudioFormatConverter()
-            throws IOException {
+    public final AudioFormatConverter getAudioFormatConverter() {
         if (formatConverter == null) {
-            formatConverter = openAudioFormatConverter(engineAudioFormat,
+            formatConverter = getAudioFormatConverter(engineAudioFormat,
                     targetAudioFormat);
         }
         return formatConverter;
@@ -419,13 +416,10 @@ public abstract class BaseAudioManager implements AudioManager {
      * @param source the source audio format
      * @param target the target audio format.
      * @return the audio format converter.
-     * @throws IOException
-     *         error opening the format converter
      */
-    protected AudioFormatConverter openAudioFormatConverter(
-            final AudioFormat source, final AudioFormat target)
-        throws IOException {
-        return new AudioFormatConverter(this, source, target);
+    protected AudioFormatConverter getAudioFormatConverter(
+            final AudioFormat source, final AudioFormat target) {
+        return new AudioFormatConverter(source, target);
     }
 
 

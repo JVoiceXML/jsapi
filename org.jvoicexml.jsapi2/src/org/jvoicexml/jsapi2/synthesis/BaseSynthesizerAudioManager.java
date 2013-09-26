@@ -77,12 +77,6 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
                 throw new AudioException(e.getMessage());
             }
         }
-        // Configure audio conversions
-        try {
-            openAudioFormatConverter(engineAudioFormat, targetAudioFormat);
-        } catch (IOException e) {
-            throw new AudioException(e.getMessage());
-        }
     }
 
     /**
