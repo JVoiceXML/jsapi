@@ -76,9 +76,6 @@ class PlayQueue implements Runnable {
         int wordStart = 0;
         int phonemeIndex = 0;
         double timeNextPhone = 0;
-        OutputStreamFlushThread flush = new OutputStreamFlushThread();
-        flush.start();
-        
         final byte[] buffer = new byte[BUFFER_LENGTH];
 
         while (!queueManager.isDone()) {
