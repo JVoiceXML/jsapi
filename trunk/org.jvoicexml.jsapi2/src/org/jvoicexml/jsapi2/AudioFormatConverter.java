@@ -37,11 +37,15 @@ public final class AudioFormatConverter {
     /** The target audio format. */
     private final AudioFormat targetFormat;
 
-    public AudioFormatConverter(BaseAudioManager manager,
-            AudioFormat sourceFormat, AudioFormat targetFormat)
-        throws IOException {
-        this.sourceFormat = sourceFormat;
-        this.targetFormat = targetFormat;
+    /**
+     * Creates a new object.
+     * @param source the audio format to convert from
+     * @param target the audio format to convert to
+     */
+    public AudioFormatConverter(final AudioFormat source,
+            final AudioFormat target) {
+        sourceFormat = source;
+        targetFormat = target;
     }
 
     /**
@@ -54,20 +58,17 @@ public final class AudioFormatConverter {
     public InputStream getConvertedAudio(final byte[] in)
         throws IOException {
         final ByteArrayInputStream stream = new ByteArrayInputStream(in);
-        return getConvertedStream(stream, sourceFormat, targetFormat);
+        return getConvertedStream(stream);
     }
 
     /**
-     * @todo Insure that this is robust...
+     * Converts the audio coming from the given input stream from the source
+     * audio format into the target audio format.
      *
-     * @param is InputStream
-     * @param sourceFormat AudioFormat
-     * @param targetFormat AudioFormat
-     * @return InputStream
+     * @param is the stream that delivers audio in the source format
+     * @return an input stream that delivers audio in the target format
      */
-    public InputStream getConvertedStream(final InputStream is,
-            final AudioFormat sourceFormat, final AudioFormat targetFormat) {
-        /** @todo Compare more precisely AudioFormat (not using AudioFormat.matches()) */
+    public InputStream getConvertedStream(final InputStream is) {
         if (sourceFormat.matches(targetFormat)) {
             return is;
         }
@@ -79,35 +80,26 @@ public final class AudioFormatConverter {
     }
 
     /**
-     * @todo Insure that this is robust...
+     * Converts the audio written to the given output stream from the source
+     * audio format into the target audio format.
      *
-     * @param os OutputStream
-     * @param engineAudioFormat AudioFormat
-     * @param audioFormat AudioFormat
-     * @return OutputStream
+     * @param os the stream where audio in the source format is written to
+     * @return an output stream where audio in the target format is written to
+     * @exception IOException error redirecting the stream
      */
-    public OutputStream getConvertedStream(final OutputStream os,
-                                            AudioFormat engineAudioFormat,
-                                            AudioFormat targetFormat) {
-        /** @todo Compare more preciselly AudioFormat (not using AudioFormat.matches()) */
-        if (engineAudioFormat.matches(targetFormat)) {
+    public OutputStream getConvertedStream(final OutputStream os) 
+            throws IOException {
+        if (sourceFormat.matches(targetFormat)) {
             return os;
         }
 
-        try {
-            //Basic Conversion support
-            PipedInputStream pis = new PipedInputStream(16000000);
-            PipedOutputStream pos = new PipedOutputStream(pis);
+        // Basic Conversion support
+        final PipedInputStream pis = new PipedInputStream(16000000);
+        final PipedOutputStream pos = new PipedOutputStream(pis);
 
-            //Describe source audio
-            getConvertedStream(pis, engineAudioFormat, targetFormat);
+        // Describe source audio
+        getConvertedStream(pis);
 
-            return pos;
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-        /** @todo Should never reach this point */
-        return os;
+        return pos;
     }
 }

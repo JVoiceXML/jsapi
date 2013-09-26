@@ -76,8 +76,9 @@ class PlayQueue implements Runnable {
         int wordStart = 0;
         int phonemeIndex = 0;
         double timeNextPhone = 0;
-        long nextTimeStamp = 0;
-
+        OutputStreamFlushThread flush = new OutputStreamFlushThread();
+        flush.start();
+        
         final byte[] buffer = new byte[BUFFER_LENGTH];
 
         while (!queueManager.isDone()) {
@@ -113,7 +114,6 @@ class PlayQueue implements Runnable {
                 break;
             }
             final float sampleRate = format.getSampleRate();
-            final long bps = getBitsPerSecond(format);
             try {
                 final AudioSegment segment = item.getAudioSegment();
                 final InputStream inputStream = segment.openInputStream();
@@ -168,16 +168,8 @@ class PlayQueue implements Runnable {
 
                     final OutputStream out = manager.getOutputStream();
                     out.write(buffer, 0, bytesRead);
-                    // update next timestamp
-                    long dataTime = (long) (1000 * bytesRead / bps);
-                    final long system = System.currentTimeMillis();
-                    if (nextTimeStamp - system < -dataTime) {
-                        nextTimeStamp = system + dataTime;
-                    } else {
-                        nextTimeStamp += dataTime;
-                    }
-                }
 
+                }
                 // Flush audio in the stream
                 final OutputStream out = manager.getOutputStream();
                 if (out != null) {
@@ -200,19 +192,6 @@ class PlayQueue implements Runnable {
             }
             postEventsAfterPlay();
         }
-    }
-
-    /**
-     * Calculates the number of bits per second for the given audio format.
-     * @param format the audio format to use
-     * @return number of bits per second
-     */
-    private long getBitsPerSecond(final AudioFormat format) {
-        final float sampleRate = format.getSampleRate();
-        long bps = format.getChannels();
-        bps *= sampleRate;
-        bps *= (format.getSampleSizeInBits() / 8);
-        return bps;
     }
 
     /**
