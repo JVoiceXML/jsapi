@@ -1,30 +1,36 @@
-//   Copyright (C) 2010, Vaclav Haisman. All rights reserved.
-//   
-//   Redistribution and use in source and binary forms, with or without modifica-
-//   tion, are permitted provided that the following conditions are met:
-//   
-//   1. Redistributions of  source code must  retain the above copyright  notice,
-//      this list of conditions and the following disclaimer.
-//   
-//   2. Redistributions in binary form must reproduce the above copyright notice,
-//      this list of conditions and the following disclaimer in the documentation
-//      and/or other materials provided with the distribution.
-//   
-//   THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
-//   INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-//   FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
-//   APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
-//   INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
-//   DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
-//   OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
-//   ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
-//   (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
-//   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// -*- C++ -*-
+//  Copyright (C) 2010-2013, Vaclav Haisman. All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without modifica-
+//  tion, are permitted provided that the following conditions are met:
+//  
+//  1. Redistributions of  source code must  retain the above copyright  notice,
+//     this list of conditions and the following disclaimer.
+//  
+//  2. Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//  
+//  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+//  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+//  FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+//  APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
+//  INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
+//  DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
+//  OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
+//  ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+//  (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
+//  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef LOG4CPLUS_THREAD_IMPL_TLS_H
 #define LOG4CPLUS_THREAD_IMPL_TLS_H
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <new>
 #include <cassert>
 
@@ -129,14 +135,16 @@ tls_cleanup (tls_key_type k)
 
 
 #elif defined (LOG4CPLUS_SINGLE_THREADED)
-extern std::vector<tls_value_type> tls_single_threaded_values;
+extern std::vector<tls_value_type> * tls_single_threaded_values;
 
 
 tls_key_type
 tls_init (tls_init_cleanup_func_type)
 {
-    tls_key_type key = tls_single_threaded_values.size ();
-    tls_single_threaded_values.resize (key + 1);
+    if (! tls_single_threaded_values)
+        tls_single_threaded_values = new std::vector<tls_value_type>;
+    tls_key_type key = tls_single_threaded_values->size ();
+    tls_single_threaded_values->resize (key + 1);
     return key;
 }
 
@@ -144,24 +152,24 @@ tls_init (tls_init_cleanup_func_type)
 tls_value_type
 tls_get_value (tls_key_type k)
 {
-    assert (k < tls_single_threaded_values.size ());
-    return tls_single_threaded_values[k];
+    assert (k < tls_single_threaded_values->size ());
+    return (*tls_single_threaded_values)[k];
 }
 
 
 void
 tls_set_value (tls_key_type k, tls_value_type val)
 {
-    assert (k < tls_single_threaded_values.size ());
-    tls_single_threaded_values[k] = val;
+    assert (k < tls_single_threaded_values->size ());
+    (*tls_single_threaded_values)[k] = val;
 }
 
 
 void
 tls_cleanup (tls_key_type k)
 {
-    assert (k < tls_single_threaded_values.size ());
-    tls_single_threaded_values[k] = 0;
+    assert (k < tls_single_threaded_values->size ());
+    (*tls_single_threaded_values)[k] = 0;
 }
 
 #endif

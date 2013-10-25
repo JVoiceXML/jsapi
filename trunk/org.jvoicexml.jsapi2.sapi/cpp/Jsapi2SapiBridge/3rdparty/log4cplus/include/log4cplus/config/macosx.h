@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    config-macosx.h
 // Created: 7/2003
 // Author:  Christopher R. Bailey
 //
 //
-// Copyright 2003-2010 Christopher R. Bailey
+// Copyright 2003-2013 Christopher R. Bailey
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +23,10 @@
 
 #ifndef LOG4CPLUS_CONFIG_MACOSX_HEADER_
 #define LOG4CPLUS_CONFIG_MACOSX_HEADER_
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
 
 #if (defined(__APPLE__) || (defined(__MWERKS__) && defined(__MACOS__)))
 

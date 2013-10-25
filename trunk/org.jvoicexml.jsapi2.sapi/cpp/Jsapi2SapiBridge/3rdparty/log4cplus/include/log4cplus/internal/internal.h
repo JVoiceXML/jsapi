@@ -1,31 +1,32 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    internal.h
 // Created: 1/2009
 // Author:  Vaclav Haisman
 //
 //
-//   Copyright (C) 2009-2010, Vaclav Haisman. All rights reserved.
-//   
-//   Redistribution and use in source and binary forms, with or without modifica-
-//   tion, are permitted provided that the following conditions are met:
-//   
-//   1. Redistributions of  source code must  retain the above copyright  notice,
-//      this list of conditions and the following disclaimer.
-//   
-//   2. Redistributions in binary form must reproduce the above copyright notice,
-//      this list of conditions and the following disclaimer in the documentation
-//      and/or other materials provided with the distribution.
-//   
-//   THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
-//   INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-//   FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
-//   APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
-//   INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
-//   DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
-//   OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
-//   ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
-//   (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
-//   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//  Copyright (C) 2009-2013, Vaclav Haisman. All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without modifica-
+//  tion, are permitted provided that the following conditions are met:
+//  
+//  1. Redistributions of  source code must  retain the above copyright  notice,
+//     this list of conditions and the following disclaimer.
+//  
+//  2. Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//  
+//  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+//  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+//  FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+//  APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
+//  INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
+//  DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
+//  OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
+//  ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+//  (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
+//  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /** @file 
  * This header contains declaration internal to log4cplus. They must never be
@@ -36,6 +37,12 @@
 #ifndef LOG4CPLUS_INTERNAL_INTERNAL_HEADER_
 #define LOG4CPLUS_INTERNAL_INTERNAL_HEADER_
 
+#include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #if ! defined (INSIDE_LOG4CPLUS)
 #  error "This header must not be be used outside log4cplus' implementation files."
 #endif
@@ -44,7 +51,6 @@
 #include <vector>
 #include <sstream>
 #include <cstdio>
-#include <log4cplus/config.hxx>
 #include <log4cplus/tstring.h>
 #include <log4cplus/streams.h>
 #include <log4cplus/ndc.h>
@@ -98,6 +104,7 @@ struct appender_sratch_pad
 
     tostringstream oss;
     tstring str;
+    std::string chstr;
 };
 
 
@@ -108,6 +115,7 @@ struct per_thread_data
     ~per_thread_data ();
 
     tostringstream macros_oss;
+    tostringstream layout_oss;
     DiagnosticContextStack ndc_dcs;
     MappedDiagnosticContextMap mdc_map;
     log4cplus::tstring thread_name;
@@ -115,6 +123,7 @@ struct per_thread_data
     gft_scratch_pad gft_sp;
     appender_sratch_pad appender_sp;
     log4cplus::tstring faa_str;
+    log4cplus::tstring ll_str;
     spi::InternalLoggingEvent forced_log_ev;
     std::FILE * fnull;
     log4cplus::helpers::snprintf_buf snprintf_buf;
@@ -141,19 +150,11 @@ set_ptd (per_thread_data * p)
 }
 
 
-//! The default value of the \param alloc is false for Win32 DLL builds
-//! since per thread data are already initialized by DllMain().
 inline
 per_thread_data *
-get_ptd (bool alloc
-#if defined (_WIN32) && defined (LOG4CPLUS_BUILD_DLL)
-         = false
-#else
-         = true
-#endif
-         )
+get_ptd (bool alloc = true)
 {
-    if (! ptd && alloc)
+    if (LOG4CPLUS_UNLIKELY (! ptd && alloc))
         return alloc_ptd ();
 
     // The assert() does not belong here. get_ptd() might be called by
@@ -183,7 +184,7 @@ get_ptd (bool alloc = true)
         = reinterpret_cast<per_thread_data *>(
             thread::impl::tls_get_value (tls_storage_key));
 
-    if (! ptd && alloc)
+    if (LOG4CPLUS_UNLIKELY (! ptd && alloc))
         return alloc_ptd ();
 
     return ptd;

@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    appenderattachableimpl.h
 // Created: 6/2001
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2010 Tad E. Smith
+// Copyright 2001-2013 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,10 +21,15 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_HELPERS_APPENDER_ATTACHABLE_IMPL_HEADER_
-#define _LOG4CPLUS_HELPERS_APPENDER_ATTACHABLE_IMPL_HEADER_
+#ifndef LOG4CPLUS_HELPERS_APPENDER_ATTACHABLE_IMPL_HEADER_
+#define LOG4CPLUS_HELPERS_APPENDER_ATTACHABLE_IMPL_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/tstring.h>
 #include <log4cplus/helpers/pointer.h>
 #include <log4cplus/spi/appenderattachable.h>
@@ -109,5 +115,5 @@ namespace log4cplus {
     } // end namespace helpers
 } // end namespace log4cplus
 
-#endif // _LOG4CPLUS_HELPERS_APPENDER_ATTACHABLE_IMPL_HEADER_
+#endif // LOG4CPLUS_HELPERS_APPENDER_ATTACHABLE_IMPL_HEADER_
 

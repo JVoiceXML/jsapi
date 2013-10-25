@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    win32debugappender.h
 // Created: 12/2003
 // Author:  Eduardo Francos, Odalio SARL
 //
 //
-// Copyright 2003-2010 Odalio SARL
+// Copyright 2003-2013 Odalio SARL
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,10 +21,15 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_
-#define _LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_
+#ifndef LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_
+#define LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #if defined (LOG4CPLUS_HAVE_OUTPUTDEBUGSTRING) 
 
 #include <log4cplus/appender.h>
@@ -60,4 +66,4 @@ namespace log4cplus {
 } // end namespace log4cplus
 
 #endif // LOG4CPLUS_HAVE_OUTPUTDEBUGSTRING
-#endif // _LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_
+#endif // LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_

@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    appender.h
 // Created: 6/2001
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2010 Tad E. Smith
+// Copyright 2001-2013 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,15 +21,21 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_APPENDER_HEADER_
-#define _LOG4CPLUS_APPENDER_HEADER_
+#ifndef LOG4CPLUS_APPENDER_HEADER_
+#define LOG4CPLUS_APPENDER_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/layout.h>
 #include <log4cplus/loglevel.h>
 #include <log4cplus/tstring.h>
 #include <log4cplus/helpers/pointer.h>
 #include <log4cplus/spi/filter.h>
+#include <log4cplus/helpers/lockfile.h>
 
 #include <memory>
 
@@ -76,6 +83,48 @@ namespace log4cplus {
     /**
      * Extend this class for implementing your own strategies for printing log
      * statements.
+     *
+     * <h3>Properties</h3>
+     * <dl>
+     *
+     * <dt><tt>layout</tt></dt>
+     * <dd>This property specifies message layout used by
+     * Appender.
+     * \sa Layout
+     * </dd>
+     *
+     * <dt><tt>filters</tt></dt>
+     * <dd>This property specifies possibly multiple filters used by
+     * Appender. Each of multple filters and its properties is under a
+     * numbered subkey of filters key. E.g.:
+     * <tt>filters.<em>1</em>=log4cplus::spi::LogLevelMatchFilter</tt>. Filter
+     * subkey numbers must be consecutive.</dd>
+     *
+     * <dt><tt>Threshold</tt></dt>
+     * <dd>This property specifies log level threshold. Events with
+     * lower log level than the threshold will not be logged by
+     * appender.</dd>
+     *
+     * <dt><tt>UseLockFile</tt></dt>
+     * <dd>Set this property to <tt>true</tt> if you want your output
+     * through this appender to be synchronized between multiple
+     * processes. When this property is set to true then log4cplus
+     * uses OS specific facilities (e.g., <code>lockf()</code>) to
+     * provide inter-process locking. With the exception of
+     * FileAppender and its derived classes, it is also necessary to
+     * provide path to a lock file using the <tt>LockFile</tt>
+     * property.
+     * \sa FileAppender
+     * </dd>
+     *
+     * <dt><tt>LockFile</tt></dt>
+     * <dd>This property specifies lock file, file used for
+     * inter-process synchronization of log file access. The property
+     * is only used when <tt>UseLockFile</tt> is set to true. Then it
+     * is mandatory.
+     * \sa FileAppender
+     * </dd>
+     * </dl>
      */
     class LOG4CPLUS_EXPORT Appender
         : public virtual log4cplus::helpers::SharedObject
@@ -88,6 +137,14 @@ namespace log4cplus {
       // Dtor
         virtual ~Appender();
 
+        /**
+         * This function is for derived appenders to call from their
+         * destructors. All classes derived from `Appender` class
+         * _must_ call this function from their destructors. It
+         * ensures that appenders will get properly closed during
+         * shutdown by call to `close()` function before they are
+         * destroyed.
+         */
         void destructorImpl();
 
       // Methods
@@ -100,11 +157,16 @@ namespace log4cplus {
         virtual void close() = 0;
 
         /**
+         * Check if this appender is in closed state.
+         */
+        bool isClosed() const;
+
+        /**
          * This method performs threshold checks and invokes filters before
          * delegating actual logging to the subclasses specific {@link
          * #append} method.
          */
-        virtual void doAppend(const log4cplus::spi::InternalLoggingEvent& event);
+        void doAppend(const log4cplus::spi::InternalLoggingEvent& event);
 
         /**
          * Get the name of this appender. The name uniquely identifies the
@@ -207,6 +269,13 @@ namespace log4cplus {
         /** It is assumed and enforced that errorHandler is never null. */
         std::auto_ptr<ErrorHandler> errorHandler;
 
+        //! Optional system wide synchronization lock.
+        std::auto_ptr<helpers::LockFile> lockFile;
+
+        //! Use lock file for inter-process synchronization of access
+        //! to log file.
+        bool useLockFile;
+
         /** Is this appender closed? */
         bool closed;
     };
@@ -216,5 +285,5 @@ namespace log4cplus {
 
 } // end namespace log4cplus
 
-#endif // _LOG4CPLUS_APPENDER_HEADER_
+#endif // LOG4CPLUS_APPENDER_HEADER_
 

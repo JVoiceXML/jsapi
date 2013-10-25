@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    tracelogger.h
 // Created: 1/2009
 // Author:  Vaclav Haisman
 //
 //
-// Copyright 2009-2010 Tad E. Smith
+// Copyright 2009-2013 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +23,12 @@
 
 #ifndef LOG4CPLUS_TRACELOGGER_H
 #define LOG4CPLUS_TRACELOGGER_H
+
+#include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
 
 #include <log4cplus/logger.h>
 

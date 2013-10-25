@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    property.h
 // Created: 2/2002
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2002-2010 Tad E. Smith
+// Copyright 2002-2013 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +25,11 @@
 #define LOG4CPLUS_HELPERS_PROPERTY_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/streams.h>
 #include <log4cplus/tstring.h>
 #include <map>
@@ -33,11 +39,33 @@
 namespace log4cplus {
     namespace helpers {
 
+        //! \sa log4cplus::PropertyConfigurator
         class LOG4CPLUS_EXPORT Properties {
         public:
+            enum PFlags
+            {
+                // These encoding related options occupy 2 bits of the flags
+                // and are mutually exclusive. These flags are synchronized
+                // with PCFlags in PropertyConfigurator.
+
+                fEncodingShift      = 3
+                , fEncodingMask     = 0x3
+                , fUnspecEncoding   = (0 << fEncodingShift)
+#if defined (LOG4CPLUS_HAVE_CODECVT_UTF8_FACET) && defined (UNICODE)
+                , fUTF8             = (1 << fEncodingShift)
+#endif
+#if (defined (LOG4CPLUS_HAVE_CODECVT_UTF16_FACET) || defined (_WIN32)) \
+    && defined (UNICODE)
+                , fUTF16            = (2 << fEncodingShift)
+#endif
+#if defined (LOG4CPLUS_HAVE_CODECVT_UTF32_FACET) && defined (UNICODE)
+                , fUTF32            = (3 << fEncodingShift)
+#endif
+            };
+
             Properties();
             explicit Properties(log4cplus::tistream& input);
-            explicit Properties(const log4cplus::tstring& inputFile);
+            explicit Properties(const log4cplus::tstring& inputFile, unsigned flags = 0);
             virtual ~Properties();
 
           // constants
@@ -114,6 +142,7 @@ namespace log4cplus {
 
           // Data
             StringMap data;
+            unsigned flags;
 
         private:
             template <typename StringType>

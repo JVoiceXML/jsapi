@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    hierarchy.h
 // Created: 6/2001
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2010 Tad E. Smith
+// Copyright 2001-2013 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,10 +21,15 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_HIERARCHY_HEADER_
-#define _LOG4CPLUS_HIERARCHY_HEADER_
+#ifndef LOG4CPLUS_HIERARCHY_HEADER_
+#define LOG4CPLUS_HIERARCHY_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/logger.h>
 #include <log4cplus/thread/syncprims.h>
 #include <map>
@@ -102,11 +108,9 @@ namespace log4cplus {
          * <em>all</em> loggers in this hierarchy. Logging requests of
          * higher LogLevel then <code>p</code> remain unaffected.
          *
-         * Nevertheless, if the {@link
-         * BasicConfigurator#DISABLE_OVERRIDE_KEY} system property is set to
-         * "true" or any value other than "false", then logging requests are
-         * evaluated as usual, i.e. according to the <a
-         * href="../../../../manual.html#selectionRule">Basic Selection Rule</a>.
+         * Nevertheless, if the
+         * BasicConfigurator::DISABLE_OVERRIDE_KEY property is set to
+         * true, then logging requests are evaluated as usual.
          *
          * The "disable" family of methods are there for speed. They
          * allow printing methods such as debug, info, etc. to return
@@ -183,7 +187,7 @@ namespace log4cplus {
         /** 
          * Is the LogLevel specified by <code>level</code> enabled? 
          */
-        virtual bool isDisabled(int level);
+        virtual bool isDisabled(LogLevel level);
 
         /**
          * Get the root of this hierarchy.
@@ -241,13 +245,15 @@ namespace log4cplus {
          * This is the implementation of the <code>getInstance()</code> method.
          * NOTE: This method does not lock the <code>hashtable_mutex</code>.
          */
+        LOG4CPLUS_PRIVATE
         virtual Logger getInstanceImpl(const log4cplus::tstring& name, 
-                                       spi::LoggerFactory& factory);
+            spi::LoggerFactory& factory);
         
         /**
          * This is the implementation of the <code>getCurrentLoggers()</code>.
          * NOTE: This method does not lock the <code>hashtable_mutex</code>.
          */
+        LOG4CPLUS_PRIVATE
         virtual void initializeLoggerList(LoggerList& list) const;
         
         /**
@@ -270,7 +276,7 @@ namespace log4cplus {
          *
          *    We add 'logger' to the list of children for this potential parent.
          */
-        void updateParents(Logger const & logger);
+        LOG4CPLUS_PRIVATE void updateParents(Logger const & logger);
 
         /**
          * We update the links for all the children that placed themselves
@@ -286,7 +292,8 @@ namespace log4cplus {
          *   Otherwise, we set logger's parent field to c's parent and set
          *   c's parent field to logger.
          */
-        void updateChildren(ProvisionNode& pn, Logger const & logger);
+        LOG4CPLUS_PRIVATE void updateChildren(ProvisionNode& pn,
+            Logger const & logger);
 
      // Data
         thread::Mutex hashtable_mutex;
@@ -314,5 +321,5 @@ namespace log4cplus {
 
 } // end namespace log4cplus
 
-#endif // _LOG4CPLUS_HIERARCHY_HEADER_
+#endif // LOG4CPLUS_HIERARCHY_HEADER_
 
