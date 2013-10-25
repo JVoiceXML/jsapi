@@ -53,32 +53,60 @@ public final class SapiResult extends BaseResult  {
         utterance = null;
     }
 
+    /**
+     * Retrieves the confidence of the result.
+     * @return confidence
+     */
     public float getConfidence() {
         return confidence;
     }
 
-    public void setConfidence(final float confidence) {
-        this.confidence = confidence;
+    /**
+     * Sets the confidence of this result.
+     * @param value the confidence
+     */
+    public void setConfidence(final float value) {
+        confidence = value;
     }
 
+    /**
+     * Retrieves the utterance.
+     * @return the utterance
+     */
     public String getUtterance() {
         return utterance;
     }
 
-    public void setUtterance(final String utterance){
-        this.utterance=utterance;
+    /**
+     * Sets the utterance.
+     * @param value the utterance
+     */
+    public void setUtterance(final String value) {
+        utterance = value;
     }
 
-    public void setSml(String ssml) {
-        this.sml = ssml;
+    /**
+     * Sets the retrieved SML string.
+     * @param value the SML string
+     */
+    public void setSml(final String value) {
+        sml = value;
     }
 
+    /**
+     * Retrieves the SML string.
+     * @return the SML string
+     */
     public String getSml() {
         return sml;
     }
     
-    public void setTags(String[] tags) {
-        this.tags = tags;
+    /**
+     * Retrieves the tags that are set in the result.
+     * @param values the tags that are set in the result
+     */
+    public void setTags(final String[] values) {
+        tags = values;
     }
 
     /**

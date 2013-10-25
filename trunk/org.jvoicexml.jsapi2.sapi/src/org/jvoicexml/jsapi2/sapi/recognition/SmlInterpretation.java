@@ -43,23 +43,24 @@ public final class SmlInterpretation {
 
     /**
      * Constructs a new object.
-     * @param tag the tag
+     * @param tagValue the tag
      * @param conf confidence n the result
      */
-    SmlInterpretation(final String tag, final float conf) {
-        this.tag = tag;
+    SmlInterpretation(final String tagValue, final float conf) {
+        tag = tagValue;
         confidence = conf;
     }
 
     /**
      * Constructs a new object.
-     * @param tag the tag
-     * @param value the associated value
+     * @param tagValue the tag
+     * @param val the associated value
      * @param conf confidence n the result
      */
-    SmlInterpretation(final String tag, final String value, final float conf) {
-        this.tag = tag;
-        this.value = value;
+    SmlInterpretation(final String tagValue, final String val,
+            final float conf) {
+        tag = tagValue;
+        value = val;
         confidence = conf;
     }
 

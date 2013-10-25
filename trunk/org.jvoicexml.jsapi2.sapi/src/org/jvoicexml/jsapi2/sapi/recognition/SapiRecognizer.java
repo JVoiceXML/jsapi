@@ -55,7 +55,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngineProperties;
-import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
+import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
@@ -65,7 +65,7 @@ import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
  * @author Markus Baumgart
  *
  */
-public final class SapiRecognizer extends JseBaseRecognizer {
+public final class SapiRecognizer extends BaseRecognizer {
     /** Logger for this class. */
     private static final Logger LOGGER =
         Logger.getLogger(SapiRecognizer.class.getName());

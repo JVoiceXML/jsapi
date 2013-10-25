@@ -7,21 +7,22 @@ import javax.speech.AudioListener;
 import javax.speech.Engine;
 
 /**
- * This AudioEventListener keeps track of the various audioevents happening during runtime.
- * If changes to the inputStream are made, the listener adds a pause() to the Recognizer's 
- * pause-counter. This ensures, that the associated recognizer can only be resumed AFTER 
- * all changes to the inputStream are fully committed.
+ * This AudioEventListener keeps track of the various audio events happening
+ * during runtime. If changes to the inputStream are made, the listener adds
+ * a {@link javax.speech.recognition.Recognizer#pause()} to the Recognizer's 
+ * pause-counter. This ensures, that the associated recognizer can only be
+ * resumed AFTER all changes to the inputStream are fully committed.
  * 
  * @author Markus Baumgart <info@CIBEK.de>
  *
  */
 public class SapiRecognizerAudioEventListener implements AudioListener {
     /** Logger instance. */
-    private final static Logger LOGGER =
-        Logger.getLogger(SapiRecognizerAudioEventListener.class.getCanonicalName());
+    private static final Logger LOGGER = Logger.getLogger(
+                SapiRecognizerAudioEventListener.class.getCanonicalName());
 
     /**
-     * The associated recognizer
+     * The associated recognizer.
      */
     private SapiRecognizer recognizer;
     
