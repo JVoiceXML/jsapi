@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  LOG4CPLUS
 // File:    socketappender.h
 // Created: 5/2003
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2010 Tad E. Smith
+// Copyright 2003-2013 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,10 +21,15 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_SOCKET_APPENDER_HEADER_
-#define _LOG4CPLUS_SOCKET_APPENDER_HEADER_
+#ifndef LOG4CPLUS_SOCKET_APPENDER_HEADER_
+#define LOG4CPLUS_SOCKET_APPENDER_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/appender.h>
 #include <log4cplus/helpers/socket.h>
 #include <log4cplus/thread/syncprims.h>
@@ -78,6 +84,19 @@ namespace log4cplus
      *   is down, the client will not be blocked when making log requests
      *   but the log events will be lost due to server unavailability.
      * </ul>
+     *
+     * <h3>Properties</h3>
+     * <dl>
+     * <dt><tt>host</tt></dt>
+     * <dd>Remote host name to connect and send events to.</dd>
+     *
+     * <dt><tt>port</tt></dt>
+     * <dd>Port on remote host to send events to.</dd>
+     *
+     * <dt><tt>ServerName</tt></dt>
+     * <dd>Host name of event's origin prepended to each event.</dd>
+     *
+     * </dl>
      */
     class LOG4CPLUS_EXPORT SocketAppender : public Appender {
     public:
@@ -147,5 +166,5 @@ namespace log4cplus
 
 } // end namespace log4cplus
 
-#endif // _LOG4CPLUS_SOCKET_APPENDER_HEADER_
+#endif // LOG4CPLUS_SOCKET_APPENDER_HEADER_
 

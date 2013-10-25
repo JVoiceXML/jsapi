@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    ndc.h
 // Created: 6/2001
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2010 Tad E. Smith
+// Copyright 2001-2013 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +27,11 @@
 #define _LO4CPLUS_NDC_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/tstring.h>
 
 #include <map>
@@ -83,13 +89,14 @@ namespace log4cplus {
      * and the context set in the NDC.  Use of the {@link NDCContextCreator}
      * class can automate this process and make your code exception-safe.
      *
-     * If configured to do so, {@link log4cplus::PatternLayout} and {@link
-     * log4cplus::TTCCLayout} instances automatically retrieve the nested diagnostic
-     * context for the current thread without any user intervention.
-     * Hence, even if a server is serving multiple clients
-     * simultaneously, the logs emanating from the same code (belonging to
-     * the same logger) can still be distinguished because each client
-     * request will have a different NDC tag.
+     * If configured to do so, {@link log4cplus::PatternLayout} and
+     * {@link log4cplus::TTCCLayout} instances automatically retrieve
+     * the nested diagnostic context for the current thread without
+     * any user intervention.  Hence, even if a server is serving
+     * multiple clients simultaneously, the logs emanating from the
+     * same code (belonging to the same logger) can still be
+     * distinguished because each client request will have a different
+     * NDC tag.
      *
      * Heavy duty systems should call the {@link #remove} method when
      * leaving the run method of a thread. This ensures that the memory
@@ -162,11 +169,16 @@ namespace log4cplus {
          * context.
          *
          * The returned value is the value that was pushed last. If no
-         * context is available, then the empty string "" is returned.
+         * context is available, then the empty string "" is
+         * returned. If each call to push() is paired with a call to
+         * pop() (even in presence of thrown exceptions), the last
+         * pop() call frees the memory used by NDC for this
+         * thread. Otherwise, remove() must be called at the end of
+         * the thread to free the memory used by NDC for the thread.
          *
          * @return String The innermost diagnostic context.
          *
-         * @see NDCContextCreator
+         * @see NDCContextCreator, remove(), push()
          */
         log4cplus::tstring pop();
 
@@ -190,11 +202,12 @@ namespace log4cplus {
          * Push new diagnostic context information for the current thread.
          *
          * The contents of the <code>message</code> parameter is
-         * determined solely by the client.  
+         * determined solely by the client. Each call to push() should
+         * be paired with a call to pop().
          *
          * @param message The new diagnostic context information.
          *
-         * @see NDCContextCreator
+         * @see NDCContextCreator, pop(), remove()
          */
         void push(const log4cplus::tstring& message);
         void push(tchar const * message);
@@ -203,8 +216,13 @@ namespace log4cplus {
          * Remove the diagnostic context for this thread.
          *
          * Each thread that created a diagnostic context by calling
-         * {@link #push} should call this method before exiting. Otherwise,
-         * the memory used by the thread cannot be reclaimed.
+         * push() should call this method before exiting. Otherwise,
+         * the memory used by the thread cannot be reclaimed. It is
+         * possible to omit this call if and only if each push() call
+         * is always paired with a pop() call (even in presence of
+         * thrown exceptions). Then the memory used by NDC will be
+         * returned by the last pop() call and a call to remove() will
+         * be no-op.
          */
         void remove();
 
@@ -248,9 +266,10 @@ namespace log4cplus {
 
     private:
       // Methods
-        static DiagnosticContextStack* getPtr();
+        LOG4CPLUS_PRIVATE static DiagnosticContextStack* getPtr();
 
         template <typename StringType>
+        LOG4CPLUS_PRIVATE
         void push_worker (StringType const &);
 
       // Disallow construction (and copying) except by getNDC()
@@ -277,6 +296,15 @@ namespace log4cplus {
             DiagnosticContext const * parent);
         DiagnosticContext(const log4cplus::tstring& message);
         DiagnosticContext(tchar const * message);
+        DiagnosticContext(DiagnosticContext const &);
+        DiagnosticContext & operator = (DiagnosticContext const &);
+
+#if defined (LOG4CPLUS_HAVE_RVALUE_REFS)
+        DiagnosticContext(DiagnosticContext &&);
+        DiagnosticContext & operator = (DiagnosticContext &&);
+#endif
+
+        void swap (DiagnosticContext &);
 
       // Data
         log4cplus::tstring message; /*!< The message at this context level. */

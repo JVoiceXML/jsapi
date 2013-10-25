@@ -1,3 +1,4 @@
+// -*- C -*-
 /**
  * Module:  Log4CPLUS
  * File:    clogger.h
@@ -5,7 +6,7 @@
  * Author:  Jens Rehsack
  *
  *
- * Copyright 2011 Jens Rehsack & Tad E. Smith
+ * Copyright 2011-2013 Jens Rehsack & Tad E. Smith
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +24,15 @@
 /** @file 
  * This header defines the C API for log4cplus and the logging macros. */
 
-#ifndef _LOG4CPLUS_CLOGGERHEADER_
-#define _LOG4CPLUS_CLOGGERHEADER_
+#ifndef LOG4CPLUS_CLOGGERHEADER_
+#define LOG4CPLUS_CLOGGERHEADER_
+
+#include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 
 #ifdef __cplusplus
 extern "C"
@@ -55,18 +63,23 @@ typedef char log4cplus_char_t;
 #endif // UNICODE
 #define LOG4CPLUS_TEXT(STRING) LOG4CPLUS_TEXT2(STRING)
 
-int log4cplus_file_configure(const log4cplus_char_t *pathname);
-int log4cplus_str_configure(const log4cplus_char_t *config);
-int log4cplus_basic_configure(void);
-void log4cplus_shutdown(void);
+LOG4CPLUS_EXPORT int log4cplus_file_configure(const log4cplus_char_t *pathname);
+LOG4CPLUS_EXPORT int log4cplus_str_configure(const log4cplus_char_t *config);
+LOG4CPLUS_EXPORT int log4cplus_basic_configure(void);
+LOG4CPLUS_EXPORT void log4cplus_shutdown(void);
 
-bool log4cplus_logger_exists(const log4cplus_char_t *name);
-bool log4cplus_logger_is_enabled_for(const log4cplus_char_t *name, loglevel_t ll);
-int log4cplus_logger_log(const log4cplus_char_t *name, loglevel_t ll, const log4cplus_char_t *msgfmt, ...);
-int log4cplus_logger_force_log(const log4cplus_char_t *name, loglevel_t ll, const log4cplus_char_t *msgfmt, ...);
+LOG4CPLUS_EXPORT int log4cplus_logger_exists(const log4cplus_char_t *name);
+LOG4CPLUS_EXPORT int log4cplus_logger_is_enabled_for(
+    const log4cplus_char_t *name, loglevel_t ll);
+LOG4CPLUS_EXPORT int log4cplus_logger_log(const log4cplus_char_t *name,
+    loglevel_t ll, const log4cplus_char_t *msgfmt, ...)
+    LOG4CPLUS_FORMAT_ATTRIBUTE (__printf__, 3, 4);
+LOG4CPLUS_EXPORT int log4cplus_logger_force_log(const log4cplus_char_t *name,
+    loglevel_t ll, const log4cplus_char_t *msgfmt, ...)
+    LOG4CPLUS_FORMAT_ATTRIBUTE (__printf__, 3, 4);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*?_LOG4CPLUS_CLOGGERHEADER_*/
+#endif /*?LOG4CPLUS_CLOGGERHEADER_*/
