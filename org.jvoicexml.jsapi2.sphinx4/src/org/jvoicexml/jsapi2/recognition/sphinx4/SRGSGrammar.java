@@ -34,7 +34,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -128,9 +127,7 @@ public class SRGSGrammar extends Grammar {
     private URL baseURL = null;
     private URL grammarURL = null;
     private String grammarSTR;
-    private LogMath logMath;
 
-    private boolean loadGrammar = true;
     private GrammarNode firstNode = null;
 
     /**
@@ -160,8 +157,6 @@ public class SRGSGrammar extends Grammar {
         super.newProperties(ps);
         baseURL = ConfigurationManagerUtils.getResource(PROP_BASE_GRAMMAR_URL,
                 ps);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
-
         grammarName = ps.getString(PROP_GRAMMAR_NAME);
 
         try {
@@ -173,8 +168,6 @@ public class SRGSGrammar extends Grammar {
             // there is no grammar at the given location or no location is given
             return;
         }
-
-        loadGrammar = true;
     }
 
     /**
@@ -216,14 +209,12 @@ public class SRGSGrammar extends Grammar {
      */
     public void loadSRGS(URL grammarURL) throws IOException {
         this.grammarURL = grammarURL;
-        loadGrammar = true;
         commitChanges();
     }
 
     public void loadSRGS(String grammar) throws IOException {
         this.grammarURL = null;
         grammarSTR = grammar;
-        loadGrammar = true;
         commitChanges();
     }
 
@@ -352,14 +343,7 @@ public class SRGSGrammar extends Grammar {
             ruleStack.push(initialRule.getRuleName(), result);
         }
         RuleReference ruleName = initialRule;
-
-        if (ruleName == null) {
-            throw new GrammarException("Can't resolve " + initialRule + " g "
-                    + initialRule.getGrammarReference());
-        }
-
         Rule rule;
-
         if (ruleName.getGrammarReference() == null)
             rule = ruleGrammar.getRule(ruleName.getRuleName());
         else
@@ -369,11 +353,6 @@ public class SRGSGrammar extends Grammar {
         if (rule == null) {
             throw new GrammarException("Can't resolve grammar reference: "
                     + ruleName.getGrammarReference() + " with grammar name: "
-                    + ruleName.getRuleName());
-        }
-
-        if (rule == null) {
-            throw new GrammarException("Can't resolve rule: "
                     + ruleName.getRuleName());
         }
         GrammarGraph ruleResult = parseRule(rule.getRuleComponent());
@@ -421,7 +400,7 @@ public class SRGSGrammar extends Grammar {
 
         if (maxRepeat != RuleCount.REPEAT_INDEFINITELY) {
             GrammarGraph tmpGraph;
-            ArrayList<GrammarNode> v = new ArrayList();
+            ArrayList<GrammarNode> v = new java.util.ArrayList<GrammarNode>();
             lastNode = newNodes;
             while (countNodes < maxRepeat) {
                 ++countNodes;
@@ -513,32 +492,6 @@ public class SRGSGrammar extends Grammar {
          * isRuleEnabled;
          */
         return false;
-    }
-
-    /**
-     * Normalize the weights. The weights should always be zero or greater. We
-     * need to convert the weights to a log probability.
-     * 
-     * @param weights
-     *            the weights to normalize
-     */
-    private void normalizeWeights(float[] weights) {
-        if (weights != null) {
-            double sum = 0.0;
-            for (int i = 0; i < weights.length; i++) {
-                if (weights[i] < 0) {
-                    throw new IllegalArgumentException("negative weight");
-                }
-                sum += weights[i];
-            }
-            for (int i = 0; i < weights.length; i++) {
-                if (sum == 0.0f) {
-                    weights[i] = LogMath.getLogZero();
-                } else {
-                    weights[i] = logMath.linearToLog(weights[i] / sum);
-                }
-            }
-        }
     }
 
     /**
@@ -794,9 +747,8 @@ public class SRGSGrammar extends Grammar {
 
     /** Manages a stack of grammar graphs that can be accessed by grammar name */
     class RuleStack {
-
-        private List stack;
-        private HashMap map;
+        private List<String> stack;
+        private HashMap<String, GrammarGraph> map;
 
         /** Creates a name stack */
         public RuleStack() {
@@ -832,8 +784,8 @@ public class SRGSGrammar extends Grammar {
 
         /** Clears this name stack */
         public void clear() {
-            stack = new LinkedList();
-            map = new HashMap();
+            stack = new java.util.LinkedList<String>();
+            map = new java.util.HashMap<String, GrammarGraph>();
         }
     }
 }

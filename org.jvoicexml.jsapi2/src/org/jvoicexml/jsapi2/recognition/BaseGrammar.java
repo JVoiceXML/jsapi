@@ -39,7 +39,6 @@ import javax.speech.recognition.RecognizerMode;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultListener;
 
-
 /**
  * Implementation of {@link javax.speech.recognition.Grammar}.
  *
@@ -66,13 +65,7 @@ public class BaseGrammar implements Grammar, ResultListener {
     private transient List<ResultListener> resultListeners;
 
     /** Unique reference of this grammar. */
-    protected String reference;
-
-    /**
-     * <code>true</code> if this grammar is active.
-     * only changed by commit and rec focus.
-     */
-    protected boolean grammarActive;
+    private String reference;
 
     /** The activation mode of this grammar. */
     private int activationMode;
@@ -87,7 +80,8 @@ public class BaseGrammar implements Grammar, ResultListener {
      * @exception IllegalArgumentException
      *            if the grammar reference is null
      */
-    public BaseGrammar(final Recognizer rec, final String grammarRefererence) {
+    public BaseGrammar(final Recognizer rec, final String grammarRefererence)
+        throws IllegalArgumentException {
         if (grammarRefererence == null) {
             throw new IllegalArgumentException(
                     "grammar reference must not be null");
@@ -99,7 +93,6 @@ public class BaseGrammar implements Grammar, ResultListener {
             recognizer.addResultListener(this);
         }
         reference = grammarRefererence;
-        grammarActive = false;
         activatable = false;
         activationMode = ACTIVATION_FOCUS;
     }
@@ -128,6 +121,7 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean isActivatable() {
         return activatable;
     }
@@ -135,7 +129,8 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
-    public void setActivationMode(final int mode)
+    @Override
+    public final void setActivationMode(final int mode)
         throws IllegalArgumentException {
         if ((mode != ACTIVATION_GLOBAL)
             && (mode != ACTIVATION_MODAL)
@@ -151,14 +146,16 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
-    public int getActivationMode() {
+    @Override
+    public final int getActivationMode() {
         return activationMode;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean isActive() {
+    @Override
+    public final boolean isActive() {
         if (!isActivatable()) {
             return false;
         } else if (getActivationMode() == Grammar.ACTIVATION_GLOBAL) {
@@ -166,8 +163,6 @@ public class BaseGrammar implements Grammar, ResultListener {
         } else if (recognizer.testEngineState(Recognizer.FOCUSED)) {
             if (getActivationMode() == Grammar.ACTIVATION_MODAL) {
                 return true;
-//            } else if (!hasModalGrammars) {
-//                return true;
             }
         }
         return false;
@@ -176,6 +171,7 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final GrammarManager getGrammarManager() {
         return recognizer.getGrammarManager();
     }
@@ -183,6 +179,7 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void addGrammarListener(final GrammarListener listener) {
         if (!grammarListeners.contains(listener)) {
             grammarListeners.add(listener);
@@ -192,6 +189,7 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void removeGrammarListener(final GrammarListener listener) {
         grammarListeners.remove(listener);
     }
@@ -199,6 +197,7 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void addResultListener(final ResultListener listener) {
         if (!resultListeners.contains(listener)) {
             resultListeners.add(listener);
@@ -208,6 +207,7 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void removeResultListener(final ResultListener listener) {
         resultListeners.remove(listener);
     }
@@ -281,7 +281,7 @@ public class BaseGrammar implements Grammar, ResultListener {
      * Utility function to send a GRAMMAR_ACTIVATED event to all result
      * listeners.
      */
-    public void postGrammarActivated() {
+    public final void postGrammarActivated() {
         final GrammarEvent event =
             new GrammarEvent(this, GrammarEvent.GRAMMAR_ACTIVATED,
                     true, false, null);
@@ -292,7 +292,7 @@ public class BaseGrammar implements Grammar, ResultListener {
      * Utility function to send a GRAMMAR_CHANGES_COMMITTED event to all result
      * listeners.
      */
-    public void postGrammarChangesCommitted() {
+    public final void postGrammarChangesCommitted() {
         final GrammarEvent event =
             new GrammarEvent(this, GrammarEvent.GRAMMAR_CHANGES_COMMITTED,
                     false, true, null);
@@ -303,7 +303,7 @@ public class BaseGrammar implements Grammar, ResultListener {
      * Utility function to send a GRAMMAR_CHANGES_REJECTED event to all result
      * listeners.
      */
-    public void postGrammarChangesRejected() {
+    public final void postGrammarChangesRejected() {
         final GrammarEvent event =
             new GrammarEvent(this, GrammarEvent.GRAMMAR_CHANGES_REJECTED,
                     false, true, null);
@@ -314,7 +314,7 @@ public class BaseGrammar implements Grammar, ResultListener {
      * Utility function to send a GRAMMAR_DEACTIVATED event to all result
      * listeners.
      */
-    public void postGrammarDeactivated() {
+    public final void postGrammarDeactivated() {
         final GrammarEvent event =
             new GrammarEvent(this, GrammarEvent.GRAMMAR_DEACTIVATED,
                     true, false, null);
@@ -324,7 +324,7 @@ public class BaseGrammar implements Grammar, ResultListener {
     /**
      * {@inheritDoc}
      */
-    public void resultUpdate(final ResultEvent event) {
+    public final void resultUpdate(final ResultEvent event) {
         final int id = event.getId();
         // TODO correct the event filter.
         if ((id != ResultEvent.RESULT_ACCEPTED)

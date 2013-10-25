@@ -204,7 +204,7 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
         // Convert it to double
         double[] samples = DataUtil.littleEndianBytesToValues(data, 0,
                 data.length, sampleSizeInBytes, signed);
-        
+
         return new DoubleData(samples, (int) sampleRate, collectTime,
                 firstSampleNumber);
     }

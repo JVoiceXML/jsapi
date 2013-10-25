@@ -70,7 +70,8 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
 
             try {
                 final URL url = new URL(locator);
-                targetAudioFormat = JavaSoundParser.parse(url);
+                AudioFormat format = JavaSoundParser.parse(url);
+                setTargetAudioFormat(format);
             } catch (MalformedURLException e) {
                 throw new AudioException(e.getMessage());
             } catch (URISyntaxException e) {

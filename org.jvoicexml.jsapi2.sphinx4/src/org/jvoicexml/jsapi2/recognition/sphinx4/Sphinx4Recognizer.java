@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,13 +41,11 @@ import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.recognition.RecognizerEvent;
 import javax.speech.recognition.ResultEvent;
-import javax.speech.recognition.ResultListener;
 import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngineProperties;
-import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
-import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
+import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 import edu.cmu.sphinx.decoder.search.Token;
@@ -75,7 +72,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  * @author Stefan Radomski
  * @version $Revision: 611 $
  */
-final class Sphinx4Recognizer extends JseBaseRecognizer
+final class Sphinx4Recognizer extends BaseRecognizer
         implements StateListener {
     /** Logger for this class. */
     private static final Logger LOGGER = Logger
@@ -112,7 +109,7 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
         super(recognizerMode);
 
         String configFile = System.getProperty(
-                "org.jvoicexml.jsapi2.jse.recognition.sphinx4.configPath",
+                "org.jvoicexml.jsapi2.recognition.sphinx4.configPath",
                 "/sphinx4.config.xml");
 
         URL url = Sphinx4Recognizer.class.getResource(configFile);
@@ -415,25 +412,8 @@ final class Sphinx4Recognizer extends JseBaseRecognizer
      * {@inheritDoc}
      */
     @Override
-    public Vector getBuiltInGrammars() {
+    public Collection<javax.speech.recognition.Grammar> getBuiltInGrammars() {
         return null;
-    }
-
-    public void fireResultEvent(final ResultEvent event) {
-        for (ResultListener listener : resultListeners) {
-            // only notify result listeners for the given grammar
-            if (RuleGrammar.class.isAssignableFrom(listener.getClass())
-                    && event.getSource().getClass().isAssignableFrom(
-                            BaseResult.class)) {
-                if (((RuleGrammar) listener).getReference().equals(
-                        ((BaseResult) event.getSource()).getGrammar()
-                                .getReference())) {
-                    ((ResultListener) listener).resultUpdate((ResultEvent) event);
-                }
-            } else {
-                listener.resultUpdate((ResultEvent) event);
-            }
-        }
     }
 
     public void postStartOfSpeechEvent() {

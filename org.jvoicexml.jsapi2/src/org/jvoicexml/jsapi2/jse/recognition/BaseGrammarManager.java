@@ -56,6 +56,8 @@ import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleGrammar;
 
+import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
+
 /**
  * A base implementation of a {@link GrammarManager}.
  *
@@ -78,7 +80,7 @@ public class BaseGrammarManager implements GrammarManager {
     private int grammarMask;
 
     /** Recognizer which the GrammarManager belongs. */
-    private final JseBaseRecognizer recognizer;
+    private final BaseRecognizer recognizer;
 
     /**
      * Constructor that associates a Recognizer.
@@ -86,7 +88,7 @@ public class BaseGrammarManager implements GrammarManager {
      *
      * @param reco BaseRecognizer
      */
-    public BaseGrammarManager(final JseBaseRecognizer reco) {
+    public BaseGrammarManager(final BaseRecognizer reco) {
         grammarListeners = new ArrayList<GrammarListener>();
         grammars = new HashMap<String, Grammar>();
         grammarMask = GrammarEvent.DEFAULT_MASK;
@@ -104,14 +106,16 @@ public class BaseGrammarManager implements GrammarManager {
     /**
      * {@inheritDoc}
      */
-    public void addGrammarListener(final GrammarListener listener) {
+    @Override
+    public final void addGrammarListener(final GrammarListener listener) {
         grammarListeners.add(listener);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void removeGrammarListener(final GrammarListener listener) {
+    @Override
+    public final void removeGrammarListener(final GrammarListener listener) {
         grammarListeners.remove(listener);
     }
 
@@ -133,7 +137,7 @@ public class BaseGrammarManager implements GrammarManager {
                                          SpeechLocale locale) throws
             IllegalArgumentException, EngineStateException, EngineException {
 
-        //Validate current state
+        // Validate current state
         ensureValidEngineState();
 
         if (grammars.containsKey(grammarReference)) {
@@ -141,7 +145,7 @@ public class BaseGrammarManager implements GrammarManager {
                                                grammarReference);
         }
 
-        //Create grammar
+        // Create grammar
         final BaseRuleGrammar brg =
             new BaseRuleGrammar(recognizer, grammarReference);
         brg.setAttribute("xml:lang", locale.toString());
@@ -154,30 +158,30 @@ public class BaseGrammarManager implements GrammarManager {
     }
 
     /**
-     * Deletes a Grammar
+     * Deletes a Grammar.
      *
      * @param grammar Grammar
      * @throws IllegalArgumentException
      * @throws EngineStateException
      */
-    public void deleteGrammar(Grammar grammar) throws IllegalArgumentException,
-            EngineStateException {
+    public void deleteGrammar(final Grammar grammar)
+            throws IllegalArgumentException,  EngineStateException {
 
-        //Validate current state
+        // Validate current state
         ensureValidEngineState();
 
-        if (!grammars.containsKey(grammar.getReference()))
-            throw new IllegalArgumentException("The Grammar is unknown");
+        if (!grammars.containsKey(grammar.getReference())) {
+            throw new IllegalArgumentException("The grammar is unknown");
+        }
 
         //Remove the grammar
         Grammar key = grammars.remove(grammar.getReference());
         
-        
-        if(LOGGER.isLoggable(Level.FINE)){
-            LOGGER.log(Level.FINE, "Removed Grammar :{0}", key.getReference());
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.FINE, "Removed grammar :{0}", key.getReference());
             Iterator<String> keys = grammars.keySet().iterator();
-            
-            while (keys.hasNext()){
+
+            while (keys.hasNext()) {
                 LOGGER.log(Level.FINE, "Grammar :{0}", keys.next());
             }
         }
@@ -186,7 +190,7 @@ public class BaseGrammarManager implements GrammarManager {
     }
 
     /**
-     * Lists the Grammars known to this Recognizer
+     * Lists the Grammars known to this Recognizer.
      *
      * @return Grammar[]
      * @throws EngineStateException

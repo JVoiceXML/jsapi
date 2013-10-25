@@ -85,7 +85,6 @@ public final class HelloWorldDemo implements SpeakableListener, SynthesizerListe
                     + "<speak>Goodbye!</speak>", demo);
             synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
             System.out.println("done.");
-
             // Clean up - includes waiting for the queue to empty
             synthesizer.deallocate();
             System.exit(0);
