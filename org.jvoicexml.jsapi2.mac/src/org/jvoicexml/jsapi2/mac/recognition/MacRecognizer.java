@@ -1,7 +1,5 @@
 package org.jvoicexml.jsapi2.mac.recognition;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,7 +20,7 @@ import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
-import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
+import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 /**
@@ -31,7 +29,7 @@ import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
  * @author Dirk Schnelle-Walka
  * 
  */
-public final class MacRecognizer extends JseBaseRecognizer {
+public final class MacRecognizer extends BaseRecognizer {
     /** Logger for this class. */
     private static final Logger LOGGER = Logger.getLogger(MacRecognizer.class
             .getName());
