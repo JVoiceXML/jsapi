@@ -34,6 +34,7 @@ import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
 
 import org.jvoicexml.jsapi2.recognition.BaseGrammar;
+import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 
 /**
  * Implementation of javax.speech.recognition.RuleGrammar.
@@ -69,7 +70,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
      * @param recognizer the BaseRecognizer for this grammar.
      * @param reference the unique reference of this grammar.
      */
-    public BaseRuleGrammar(final JseBaseRecognizer recognizer,
+    public BaseRuleGrammar(final BaseRecognizer recognizer,
             final String reference) {
         super(recognizer, reference);
         rules = new HashMap<String, InternalRule>();

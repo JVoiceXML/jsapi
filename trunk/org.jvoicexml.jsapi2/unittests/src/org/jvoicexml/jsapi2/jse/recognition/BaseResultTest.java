@@ -36,6 +36,7 @@ import javax.speech.recognition.RuleToken;
 
 import org.junit.Test;
 import org.jvoicexml.jsapi2.mock.recognition.MockRecognizer;
+import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 
 
 /**
@@ -51,7 +52,7 @@ public final class BaseResultTest {
      */
     @Test
     public void testGetTags() throws Exception {
-        final JseBaseRecognizer recognizer = new MockRecognizer();
+        final BaseRecognizer recognizer = new MockRecognizer();
         final GrammarManager manager = recognizer.getGrammarManager();
         final RuleGrammar grammar =
             manager.createRuleGrammar("grammar:test", "test");

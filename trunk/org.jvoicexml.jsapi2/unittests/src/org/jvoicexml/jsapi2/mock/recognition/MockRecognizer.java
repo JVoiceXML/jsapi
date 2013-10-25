@@ -17,8 +17,8 @@ import javax.speech.recognition.ResultEvent;
 
 import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.jse.recognition.BaseGrammarManager;
-import org.jvoicexml.jsapi2.jse.recognition.JseBaseRecognizer;
 import org.jvoicexml.jsapi2.mock.MockSpeechEventExecutor;
+import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 /**
@@ -26,7 +26,7 @@ import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
  * for test purposes.
  * @author Dirk Schnelle-Walka
  */
-public final class MockRecognizer extends JseBaseRecognizer {
+public final class MockRecognizer extends BaseRecognizer {
 
     /**
      * Constructs a new object.

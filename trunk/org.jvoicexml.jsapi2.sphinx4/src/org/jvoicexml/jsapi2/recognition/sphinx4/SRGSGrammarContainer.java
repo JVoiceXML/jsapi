@@ -55,9 +55,6 @@ public class SRGSGrammarContainer extends Grammar {
     /** All active SRGSGrammars */
     private Map<String, SRGSGrammar> grammars = new HashMap<String, SRGSGrammar>();
 
-    /** The logMath used */
-    private LogMath logMath;
-
     /** The initial node for the searchGraph of the linguist */
     private GrammarNode firstNode = null;
 
@@ -76,7 +73,6 @@ public class SRGSGrammarContainer extends Grammar {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
     }
 
     /**

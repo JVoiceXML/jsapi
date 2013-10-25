@@ -79,10 +79,10 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * Audio format of the audio natively produced by the engine.
      */
-    protected AudioFormat engineAudioFormat;
+    private AudioFormat engineAudioFormat;
 
     /** Audio format of that is being received or that is being delivered. */
-    protected AudioFormat targetAudioFormat;
+    private AudioFormat targetAudioFormat;
 
     /** Converter from the source (synthesizer) to the target format. */
     private AudioFormatConverter formatConverter;
@@ -224,7 +224,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * Checks if the audio has been started.
      * @return <code>true</code> if the audio has been started.
      */
-    protected boolean isAudioStarted() {
+    protected final boolean isAudioStarted() {
         return audioStarted;
     }
 
@@ -388,7 +388,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * @throws IOException
      *         error opening the connection.
      */
-    protected URLConnection openURLConnection() throws IOException {
+    protected final URLConnection openURLConnection() throws IOException {
         final String locator = getMediaLocator();
         if (locator == null) {
             return null;
@@ -398,7 +398,7 @@ public abstract class BaseAudioManager implements AudioManager {
         try {
             url = new URL(locator);
         } catch (MalformedURLException ex) {
-            throw new IllegalArgumentException(ex);
+            throw new IllegalArgumentException(ex.getMessage(), ex);
         }
 
         // Open a connection to URL
@@ -425,14 +425,14 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * Sets the audio format that is being used by this engine.
-     * @param audioFormat new audio format.
+     * @param format new audio format.
      */
-    public final void setEngineAudioFormat(final AudioFormat audioFormat) {
-        engineAudioFormat = audioFormat;
+    public final void setEngineAudioFormat(final AudioFormat format) {
+        engineAudioFormat = format;
     }
 
     /**
-     * Retrieves the audio format that is used by this engine.
+     * Retrieves the audio format that is used by the associated engine.
      * @return audio format used by this engine.
      */
     public final AudioFormat getEngineAudioFormat() {
@@ -445,6 +445,15 @@ public abstract class BaseAudioManager implements AudioManager {
      */
     public final AudioFormat getTargetAudioFormat() {
         return targetAudioFormat;
+    }
+    
+    /**
+     * Sets the target audio format used by the stream that is consumed by the
+     * associated engine.
+     * @param format the target audio format
+     */
+    protected final void setTargetAudioFormat(final AudioFormat format) {
+        targetAudioFormat = format;
     }
 }
 

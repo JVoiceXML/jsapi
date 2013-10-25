@@ -9,7 +9,11 @@ import java.util.Map;
  *
  */
 public final class SpeechPermission extends Permission {
-    private static Map<String, String> ACTIONS4PERMISSIONS;
+    /** The serial version UID. */
+    private static final long serialVersionUID = 2261631202702374405L;
+
+    /** Mapping of permissions to actions. */
+    private static final Map<String, String> ACTIONS4PERMISSIONS;
     
     static {
         ACTIONS4PERMISSIONS = new java.util.HashMap<String, String>();

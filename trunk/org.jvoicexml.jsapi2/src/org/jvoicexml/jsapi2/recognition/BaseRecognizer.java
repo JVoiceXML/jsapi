@@ -48,8 +48,8 @@ package org.jvoicexml.jsapi2.recognition;
 import java.io.InputStream;
 import java.security.Permission;
 import java.util.Collection;
-import java.util.Vector;
 
+import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
 import javax.speech.EngineEvent;
@@ -76,7 +76,10 @@ import javax.speech.recognition.SpeakerManager;
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
 import org.jvoicexml.jsapi2.BaseVocabularyManager;
-
+import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
+import org.jvoicexml.jsapi2.jse.recognition.BaseGrammarManager;
+import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
+import org.jvoicexml.jsapi2.jse.recognition.BaseRuleGrammar;
 
 /**
  * Skeletal Implementation of the JSAPI Recognizer interface.
@@ -92,18 +95,16 @@ import org.jvoicexml.jsapi2.BaseVocabularyManager;
  *
  */
 public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
-    protected Collection<ResultListener> resultListeners;
+    /** Registered result listeners. */
+    private Collection<ResultListener> resultListeners;
 
     protected boolean hasModalGrammars;
 
     protected boolean supportsNULL = true;
     protected boolean supportsVOID = true;
 
-    /** used when printing grammars */
+    /** used when printing grammars. */
     protected RuleGrammar currentGrammar;
-
-    /** Set to true if recognizer cannot handle partial grammar loading. */
-    protected boolean reloadAll;
 
     private final SpeakerManager speakerManager;
     protected RecognizerProperties recognizerProperties;
@@ -111,8 +112,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
     /** The related grammar manager. */
     private final GrammarManager grammarManager;
-
-    protected final Vector uncommitedDeletedGrammars;
 
     /**
      * Create a new Recognizer in the DEALLOCATED state.
@@ -127,26 +126,20 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     public BaseRecognizer(final RecognizerMode mode) {
         super(mode);
-        uncommitedDeletedGrammars = new Vector();
         resultListeners = new java.util.ArrayList<ResultListener>();
         speakerManager = new BaseSpeakerManager();
         final RecognizerProperties props =
             new BaseRecognizerProperties(this);
         setRecognizerProperties(props);
-        grammarManager = createGrammarManager();
+        grammarManager = new BaseGrammarManager(this);
         resultMask = ResultEvent.DEFAULT_MASK;
         setEngineMask(getEngineMask() | RecognizerEvent.DEFAULT_MASK);
     }
 
     /**
-     * Creates a new grammar manager.
-     * @return the created grammar manager
-     */
-    protected abstract GrammarManager createGrammarManager();
-
-    /**
      * {@inheritDoc}
      */
+    @Override
     protected VocabularyManager createVocabularyManager() {
         return new BaseVocabularyManager();
     }
@@ -154,7 +147,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * {@inheritDoc}
      */
-    public GrammarManager getGrammarManager() {
+    @Override
+    public final GrammarManager getGrammarManager() {
         return grammarManager;
     }
 
@@ -178,7 +172,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         }
 
         long[] states = setEngineState(DEFOCUSED, FOCUSED);
-        postStateTransitionEngineEvent(states[0], states[1], EngineEvent.ENGINE_FOCUSED);
+        postStateTransitionEngineEvent(states[0], states[1],
+                EngineEvent.ENGINE_FOCUSED);
 
         notifyGrammarActivation();
         handleRequestFocus();
@@ -203,7 +198,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         }
 
         long[] states = setEngineState(FOCUSED, DEFOCUSED);
-        postStateTransitionEngineEvent(states[0], states[1], EngineEvent.ENGINE_DEFOCUSED);
+        postStateTransitionEngineEvent(states[0], states[1],
+                EngineEvent.ENGINE_DEFOCUSED);
 
         notifyGrammarActivation();
         handleReleaseFocus();
@@ -231,7 +227,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         // Handle pause
         basePause(mode);
         long[] states = setEngineState(RESUMED, PAUSED);
-        postStateTransitionEngineEvent(states[0], states[1], EngineEvent.ENGINE_PAUSED);
+        postStateTransitionEngineEvent(states[0], states[1],
+                EngineEvent.ENGINE_PAUSED);
     }
 
     /**
@@ -260,12 +257,14 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void fireEvent(final EngineEvent event) {
         synchronized (engineListeners) {
             final RecognizerEvent recognizerEvent =
                 (RecognizerEvent) event;
             for (EngineListener listener : engineListeners) {
-                RecognizerListener recognizerListener = (RecognizerListener) listener;
+                RecognizerListener recognizerListener =
+                        (RecognizerListener) listener;
                 recognizerListener.recognizerUpdate(recognizerEvent);
             }
         }
@@ -275,7 +274,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * {@inheritDoc}
      */
-    public EngineEvent createStateTransitionEngineEvent(long oldState, long newState,
+    public EngineEvent createStateTransitionEngineEvent(long oldState,
+            long newState,
             int eventType) {
         // TODO: Can we determine the audio position?
         return new RecognizerEvent(this, eventType, oldState, newState, null,
@@ -304,6 +304,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         postEngineEvent(event);
     }
 
+
     protected void postResultEvent(final ResultEvent event) {
         final SpeechEventExecutor executor = getSpeechEventExecutor();
         try {
@@ -326,8 +327,12 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * @param event the event
      * @param executor the speech event executor
      */
-    protected abstract void postResultEvent(Result result, ResultEvent event,
-            SpeechEventExecutor executor);
+    protected void postResultEvent(final Result result,
+            final ResultEvent event,
+            final SpeechEventExecutor executor) {
+        final BaseResult base = (BaseResult) result;
+        base.postResultEvent(executor, event);
+    }
 
     public void fireResultEvent(final ResultEvent event) {
         for (ResultListener listener : resultListeners) {
@@ -335,21 +340,22 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
-    public void addRecognizerListener(final RecognizerListener listener) {
+    @Override
+    public final void addRecognizerListener(final RecognizerListener listener) {
         addEngineListener(listener);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void removeRecognizerListener(final RecognizerListener listener) {
+    @Override
+    public final void removeRecognizerListener(
+            final RecognizerListener listener) {
         removeEngineListener(listener);
     }
-
 
     /**
      * Request notification of Result events from the Recognizer.
@@ -404,14 +410,16 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * {@inheritDoc}
      */
-    public void setResultMask(final int mask) {
+    @Override
+    public final void setResultMask(final int mask) {
         resultMask = mask;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getResultMask() {
+    @Override
+    public final int getResultMask() {
         return resultMask;
     }
 
@@ -419,13 +427,14 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void processGrammars() throws EngineStateException {
-
         // Flag that indicates if grammars were changed
         boolean existChanges = false;
 
         // Build a new grammar set, with all enabled grammars
-        Vector newGrammars = new Vector();
+        Collection<GrammarDefinition> newGrammars =
+                new java.util.ArrayList<GrammarDefinition>();
 
         // Commit all grammars pending changes
         final Grammar[] grammars = grammarManager.listGrammars();
@@ -443,7 +452,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
                 final GrammarDefinition definition =
                     new GrammarDefinition(grammar.toString(),
                             grammar.getReference(), existChanges);
-                newGrammars.addElement(definition);
+                newGrammars.add(definition);
             }
         }
 
@@ -475,8 +484,14 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * @exception GrammarException error processing the grammar
      * @return <code>true</code> if the grammar has been updated
      */
-    protected abstract boolean processGrammar(final Grammar grammar)
-        throws GrammarException;
+    protected boolean processGrammar(final Grammar grammar)
+        throws GrammarException {
+        if (grammar instanceof BaseRuleGrammar) {
+            BaseRuleGrammar baseRuleGrammar = (BaseRuleGrammar) grammar;
+            return baseRuleGrammar.commitChanges();
+        }
+        return false;
+    }
 
     /**
      * {@inheritDoc}
@@ -666,4 +681,28 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     public abstract Collection<Grammar> getBuiltInGrammars();
 
+
+    /**
+     * Retrieves the audio format that is produced by this recognizer.
+     * @return audio format.
+     */
+    protected abstract AudioFormat getAudioFormat();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected AudioManager createAudioManager() {
+        final AudioFormat format = getAudioFormat();
+        return new BaseRecognizerAudioManager(this, format);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @return a new instance of {@link ThreadSpeechEventExecutor}.
+     */
+    @Override
+    protected SpeechEventExecutor createSpeechEventExecutor() {
+        return new ThreadSpeechEventExecutor();
+    }
 }
