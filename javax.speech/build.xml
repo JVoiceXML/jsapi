@@ -62,7 +62,7 @@ This file builds the JSR 113.jar.
     </target>
 
     <target name="compileJSE" depends="-init" unless="midp.available" description="Compile the JAVA sources">
-        <ant dir="../javax.speech.security" target="compielJSE"
+        <ant dir="../javax.speech.security" target="compileJSE"
             inheritall="false" inheritrefs="false"/>
         <echo message="compiling ${component} for JSE with debug=${debug}, optimize=${optimize}" />
         <javac destdir="${preverify}" includeantruntime="false" optimize="${optimize}" debug="${debug}" deprecation="on" encoding="iso-8859-1">
