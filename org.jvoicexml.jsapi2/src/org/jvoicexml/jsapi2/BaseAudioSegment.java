@@ -91,15 +91,18 @@ public class BaseAudioSegment extends AudioSegment {
      * to open a stream to the given media locator.
      */
     @Override
-    public InputStream openInputStream() throws IOException, SecurityException {
+    public final InputStream openInputStream()
+            throws IOException, SecurityException {
+        // Firstly check the security settings
         if (!isGettable()) {
             final SecurityManager security = System.getSecurityManager();
             if (security != null) {
                 final Permission permission = new SpeechPermission(
-                        "javax.speech.AudioSegment.openInputStream      ");
+                        "javax.speech.AudioSegment.openInputStream");
                 security.checkPermission(permission);
             }
         }
+
         if (is == null) {
             final String locator = getMediaLocator();
             final URL url = new URL(locator);
@@ -113,7 +116,7 @@ public class BaseAudioSegment extends AudioSegment {
      * {@inheritDoc}
      */
     @Override
-    public boolean isGettable() {
+    public final boolean isGettable() {
         final SecurityManager security = System.getSecurityManager();
         if (security != null) {
             final Permission permission = new SpeechPermission(

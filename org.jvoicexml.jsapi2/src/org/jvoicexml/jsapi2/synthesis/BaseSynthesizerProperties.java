@@ -13,7 +13,6 @@
 package org.jvoicexml.jsapi2.synthesis;
 
 import javax.speech.Engine;
-import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.SynthesizerProperties;
 import javax.speech.synthesis.Voice;
@@ -52,16 +51,22 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
     /** Name of the volume property in events. */
     public static final String VOLUME = "volume";
 
+    /** Current value for the interruptibility. */
     private int interruptibility;
 
+    /** Current value for the pitch. */
     private int pitch;
 
+    /** Current value for the pitch range. */
     private int pitchRange;
 
+    /** Current value for the speaking rate. */
     private int speakingRate;
 
+    /** The current voice. */
     private Voice voice;
 
+    /** Current value for the volume. */
     private int volume;
 
     /**
@@ -73,7 +78,7 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
 
         interruptibility = OBJECT_LEVEL;
         pitch = 160;
-        pitchRange = (int)(160 * 0.60);
+        pitchRange = (int) (160 * 0.60);
         speakingRate = DEFAULT_RATE;
         volume = MEDIUM_VOLUME;
         //Set default voice
@@ -94,14 +99,16 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
     /**
      * {@inheritDoc}
      */
-    public int getInterruptibility() {
+    @Override
+    public final int getInterruptibility() {
         return interruptibility;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setInterruptibility(final int level) {
+    @Override
+    public final void setInterruptibility(final int level) {
         if ((level != WORD_LEVEL) && (level != OBJECT_LEVEL)
                 && (level != QUEUE_LEVEL)) {
             throw new IllegalArgumentException("Invalid interruptibiliy level :"
@@ -118,14 +125,16 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
     /**
      * {@inheritDoc}
      */
-    public int getPitch() {
+    @Override
+    public final int getPitch() {
         return pitch;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setPitch(final int hertz) {
+    @Override
+    public final void setPitch(final int hertz) {
         if (hertz <= 0) {
             throw new IllegalArgumentException(
                     "Pitch is not a positive integer:"  + hertz);
@@ -140,14 +149,16 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
     /**
      * {@inheritDoc}
      */
-    public int getPitchRange() {
+    @Override
+    public final int getPitchRange() {
         return pitchRange;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setPitchRange(final int hertz) {
+    @Override
+    public final void setPitchRange(final int hertz) {
         if (hertz < 0) {
             throw new IllegalArgumentException(
                     "Pitch is a negative integer:"  + hertz);
@@ -162,14 +173,16 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
     /**
      * {@inheritDoc}
      */
-    public int getSpeakingRate() {
+    @Override
+    public final int getSpeakingRate() {
         return speakingRate;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setSpeakingRate(final int wpm) {
+    @Override
+    public final void setSpeakingRate(final int wpm) {
         if (wpm < 0) {
             throw new IllegalArgumentException(
                     "Speaking rate is not a postivie integer:"  + wpm);
@@ -184,13 +197,15 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
     /**
      * {@inheritDoc}
      */
-    public Voice getVoice() {
+    @Override
+    public final Voice getVoice() {
         return voice;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setVoice(final Voice voice) {
         final Engine synthesizer = getEngine();
         final SynthesizerMode mode =
@@ -212,15 +227,16 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
     /**
      * {@inheritDoc}
      */
-    public int getVolume() {
+    @Override
+    public final int getVolume() {
         return volume;
     }
-
 
     /**
      * {@inheritDoc}
      */
-    public void setVolume(final int vol) {
+    @Override
+    public final void setVolume(final int vol) {
         if ((vol < MIN_VOLUME) || (vol > MAX_VOLUME)) {
             throw new IllegalArgumentException("Volume is out of range: "
                     + vol);
@@ -261,7 +277,8 @@ public class BaseSynthesizerProperties extends BaseEngineProperties
     /**
      * {@inheritDoc}
      */
-    protected boolean setProperty(String propName, Object value) {
+    @Override
+    protected boolean setProperty(final String propName, final Object value) {
         if (propName.equals(INTERRUPTIBILITY)) {
             final Integer intVal = (Integer) value;
             interruptibility = intVal.intValue();

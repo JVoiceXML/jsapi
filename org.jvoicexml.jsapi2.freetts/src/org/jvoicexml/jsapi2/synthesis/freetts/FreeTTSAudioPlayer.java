@@ -26,13 +26,15 @@
 
 package org.jvoicexml.jsapi2.synthesis.freetts;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
-import org.jvoicexml.jsapi2.AudioFormatConverter;
 import org.jvoicexml.jsapi2.BaseAudioManager;
 
 import com.sun.speech.freetts.audio.AudioPlayer;
@@ -210,8 +212,8 @@ public final class FreeTTSAudioPlayer implements AudioPlayer {
             res = buffer.toByteArray();
             buffer.reset();
         }
-        final AudioFormatConverter converter =
-            baseAudioManager.getAudioFormatConverter();
-        return converter.getConvertedAudio(res);
+        final ByteArrayInputStream in = new ByteArrayInputStream(res);
+        return new AudioInputStream(in, audioFormat,
+                in.available());
     }
 }

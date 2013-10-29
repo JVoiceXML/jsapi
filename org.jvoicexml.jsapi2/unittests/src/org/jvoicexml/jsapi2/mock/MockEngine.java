@@ -26,10 +26,13 @@
 
 package org.jvoicexml.jsapi2.mock;
 
+import java.util.Collection;
+
 import javax.speech.AudioException;
 import javax.speech.AudioManager;
 import javax.speech.EngineEvent;
 import javax.speech.EngineException;
+import javax.speech.EngineListener;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.VocabularyManager;
@@ -97,7 +100,9 @@ public class MockEngine extends BaseEngine {
     /**
      * {@inheritDoc}
      */
-    protected void fireEvent(EngineEvent event) {
+    @Override
+    public final void fireEvent(final Collection<EngineListener> listeners,
+            final EngineEvent event) {
     }
 
     /**

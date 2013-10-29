@@ -83,11 +83,15 @@ public final class JavaSoundParser {
         // Change default values as specified
         final String signedStr = parameters.get("signed");
         if (signedStr != null) {
-            if (signedStr.equalsIgnoreCase(UNSIGNED) || signedStr.equalsIgnoreCase(Boolean.FALSE.toString()))
+            if (signedStr.equalsIgnoreCase(UNSIGNED)
+                    || signedStr.equalsIgnoreCase(Boolean.FALSE.toString())) {
                 signed = false;
-            else
-                if (signedStr.equalsIgnoreCase(SIGNED) || Boolean.valueOf(signedStr))
+            } else {
+                if (signedStr.equalsIgnoreCase(SIGNED)
+                        || Boolean.valueOf(signedStr)) {
                     signed = true;
+                }
+            }
         }
 
         final String encodingStr = parameters.get("encoding");
@@ -134,6 +138,7 @@ public final class JavaSoundParser {
 
         // Construct the AudioFormat
         return new AudioFormat(encoding, sampleRate,
-                bits, channels, channels * bits / BITS_PER_BYTE, sampleRate, endian);
+                bits, channels, channels * bits / BITS_PER_BYTE, sampleRate,
+                endian);
     }
 }

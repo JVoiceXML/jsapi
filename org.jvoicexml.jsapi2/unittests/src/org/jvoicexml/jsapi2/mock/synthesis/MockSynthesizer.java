@@ -158,7 +158,7 @@ public class MockSynthesizer extends BaseSynthesizer {
     }
 
     @Override
-    protected AudioFormat getAudioFormat() {
+    protected AudioFormat getEngineAudioFormat() {
         // TODO Auto-generated method stub
         return null;
     }

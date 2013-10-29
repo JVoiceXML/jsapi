@@ -69,45 +69,46 @@ public class QueueItem {
 
     /**
      * Constructs a new object.
-     * @param id the unique id of the speakable
-     * @param speakable the speakable
-     * @param listener a listener to notify about events of this item
+     * @param itemId the unique id of the speakable
+     * @param queuedSpeakable the speakable
+     * @param itemListener a listener to notify about events of this item
      */
-    public QueueItem(final int id, final Speakable speakable,
-            final SpeakableListener listener) {
-        this.id = id;
-        this.speakable = speakable;
-        this.listener = listener;
+    public QueueItem(final int itemId, final Speakable queuedSpeakable,
+            final SpeakableListener itemListener) {
+        this.id = itemId;
+        this.speakable = queuedSpeakable;
+        this.listener = itemListener;
         this.segment = null;
         this.words = new String[0];
         this.wordsStartTimes = new float[0];
         this.phonesInfo = new PhoneInfo[0];
-        this.source = speakable;
-    }
-
-    /**
-     * Constructs a new object
-     * @param id the unique id of the speakable
-     * @param speakable the speakable
-     * @param listener a listener to notify about events of this item
-     * @param text the text to be spoken, maybe <code>null</code> if the
-     *             speakable contains markup text
-     */
-    public QueueItem(int id, Speakable speakable, SpeakableListener listener,
-            String text) {
-        this(id, speakable, listener);
-        this.source = text;
+        this.source = queuedSpeakable;
     }
 
     /**
      * Constructs a new object.
-     * @param id the unique id of the speakable
+     * @param itemId the unique id of the speakable
+     * @param queuedSpeakable the speakable
+     * @param itemListener a listener to notify about events of this item
+     * @param text the text to be spoken, maybe <code>null</code> if the
+     *             speakable contains markup text
+     */
+    public QueueItem(final int itemId, final Speakable queuedSpeakable,
+            final SpeakableListener itemListener,
+            final String text) {
+        this(itemId, queuedSpeakable, itemListener);
+        source = text;
+    }
+
+    /**
+     * Constructs a new object.
+     * @param itemId the unique id of the speakable
      * @param audioSegment the audio segment to be synthesized
      * @param listener a listener to notify about events of this item
      */
-    public QueueItem(int id, AudioSegment audioSegment,
+    public QueueItem(final int itemId, AudioSegment audioSegment,
             SpeakableListener listener) {
-        this.id = id;
+        this.id = itemId;
         this.speakable = null;
         this.listener = listener;
         this.segment = audioSegment;

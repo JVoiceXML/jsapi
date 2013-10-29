@@ -32,7 +32,9 @@ import java.io.OutputStream;
 import java.util.List;
 
 import javax.sound.sampled.AudioFormat;
-import javax.speech.AudioException;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
 import javax.speech.Engine;
 import javax.speech.EngineStateException;
@@ -65,6 +67,28 @@ class PlayQueue implements Runnable {
     public PlayQueue(final QueueManager manager) {
         queueManager = manager;
         queue = new java.util.ArrayList<QueueItem>();
+    }
+
+    /**
+     * Retrieves a stream that matches the target audio format.
+     * @param manager the audio manager
+     * @param stream the current stream
+     * @return a converting stream
+     * @exception IOException
+     *            error converting the stream
+     */
+    private AudioInputStream getConvertedStream(
+            final BaseAudioManager manager,
+            final InputStream stream) throws IOException {
+        final AudioInputStream in;
+        final AudioFormat engineFormat = manager.getEngineAudioFormat();
+        if (stream instanceof AudioInputStream) {
+            in = (AudioInputStream) stream;
+        } else {
+            in = new AudioInputStream(stream, engineFormat, stream.available());
+        }
+        final AudioFormat targetFormat = manager.getTargetAudioFormat();
+        return AudioSystem.getAudioInputStream(targetFormat, in);
     }
 
     /**
@@ -103,20 +127,16 @@ class PlayQueue implements Runnable {
             int bytesRead = 0;
             final BaseAudioManager manager =
                 (BaseAudioManager) synthesizer.getAudioManager();
-            final AudioFormat format;
-            try {
-                format = manager.getAudioFormat();
-            } catch (AudioException e) {
-                e.printStackTrace();
-                break;
-            }
+            final AudioFormat format = manager.getEngineAudioFormat();
             final float sampleRate = format.getSampleRate();
             try {
                 final AudioSegment segment = item.getAudioSegment();
-                final InputStream inputStream = segment.openInputStream();
-                if (inputStream == null) {
+                final InputStream stream = segment.openInputStream();
+                if (stream == null) {
                     break;
                 }
+                final InputStream inputStream =
+                        getConvertedStream(manager, stream);
                 while ((bytesRead = inputStream.read(buffer)) >= 0) {
                     try {
                         delayUntilResumed(item);
@@ -165,8 +185,8 @@ class PlayQueue implements Runnable {
 
                     final OutputStream out = manager.getOutputStream();
                     out.write(buffer, 0, bytesRead);
-
                 }
+
                 // Flush audio in the stream
                 final OutputStream out = manager.getOutputStream();
                 if (out != null) {

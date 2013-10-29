@@ -49,7 +49,6 @@ import javax.speech.synthesis.SynthesizerListener;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.SynthesizerProperties;
 
-import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
 import org.jvoicexml.jsapi2.BaseVocabularyManager;
 import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
@@ -64,10 +63,14 @@ import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
  */
 public abstract class BaseSynthesizer extends BaseEngine
     implements Synthesizer {
-    protected Collection<SpeakableListener> speakableListeners;
-    protected SynthesizerProperties synthesizerProperties;
-    protected int speakableMask;
-    protected final QueueManager queueManager;
+    /** Registered listeners for this synthesizer. */
+    private Collection<SpeakableListener> speakableListeners;
+    /** Current synthesizer properties. */
+    private SynthesizerProperties synthesizerProperties;
+    /** Mask for events. */
+    private int speakableMask;
+    /** Empoyed queued manager. */
+    private final QueueManager queueManager;
 
     /**
      * Constructs a new object.
@@ -94,15 +97,14 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
-    public final void fireEvent(final EngineEvent event) {
-        synchronized (engineListeners) {
-            final SynthesizerEvent synthesizerEvent =
-                (SynthesizerEvent) event;
-            for (EngineListener listener : engineListeners) {
-                SynthesizerListener synthesizerListener =
-                        (SynthesizerListener) listener;
-                synthesizerListener.synthesizerUpdate(synthesizerEvent);
-            }
+    @Override
+    public final void fireEvent(final Collection<EngineListener> listeners,
+            final EngineEvent event) {
+        final SynthesizerEvent synthesizerEvent = (SynthesizerEvent) event;
+        for (EngineListener listener : listeners) {
+            SynthesizerListener synthesizerListener =
+                    (SynthesizerListener) listener;
+            synthesizerListener.synthesizerUpdate(synthesizerEvent);
         }
     }
 
@@ -110,8 +112,8 @@ public abstract class BaseSynthesizer extends BaseEngine
      * {@inheritDoc}
      */
     @Override
-    public EngineEvent createStateTransitionEngineEvent(
-            long oldState, long newState,  int eventType) {
+    public final EngineEvent createStateTransitionEngineEvent(
+            final long oldState, final long newState, final int eventType) {
         return new SynthesizerEvent(this, eventType,
                 oldState, newState, null, false);
     }
@@ -137,10 +139,13 @@ public abstract class BaseSynthesizer extends BaseEngine
 
     protected void postSpeakableEvent(final SpeakableEvent event,
             final SpeakableListener extraSpeakableListener) {
+        // Firstly, check if the event is filtered by the mask
         final int id = event.getId();
         if ((speakableMask & id) != id) {
             return;
         }
+        
+        // Fire the event
         final Runnable runnable = new Runnable() {
             public void run() {
                 fireSpeakableEvent(event, extraSpeakableListener);
@@ -169,6 +174,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
+    @Override
     protected long getEngineStates() {
         return super.getEngineStates() | Synthesizer.QUEUE_EMPTY
         | Synthesizer.QUEUE_NOT_EMPTY;
@@ -177,6 +183,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void addSpeakableListener(final SpeakableListener listener) {
         if (!speakableListeners.contains(listener)) {
             speakableListeners.add(listener);
@@ -186,6 +193,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void removeSpeakableListener(
             final SpeakableListener listener) {
         speakableListeners.remove(listener);
@@ -194,6 +202,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void addSynthesizerListener(
             final SynthesizerListener listener) {
         addEngineListener(listener);
@@ -202,6 +211,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void removeSynthesizerListener(
             final SynthesizerListener listener) {
         removeEngineListener(listener);
@@ -210,6 +220,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean cancel() throws EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
@@ -227,6 +238,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean cancel(final int id) throws IllegalArgumentException,
             EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
@@ -541,20 +553,18 @@ public abstract class BaseSynthesizer extends BaseEngine
     }
 
     /**
-     * Retrieves the audio format that is produced by this synthesizer.
-     * @return audio format.
+     * Retrieves the audio format that is used by this synthesizer.
+     * @return used audio format
      */
-    protected abstract AudioFormat getAudioFormat();
+    protected abstract AudioFormat getEngineAudioFormat();
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected AudioManager createAudioManager() {
-        final AudioFormat format = getAudioFormat();
-        final BaseSynthesizerAudioManager manager =
-            new BaseSynthesizerAudioManager(this, format);
-        return manager;
+        final AudioFormat format = getEngineAudioFormat();
+        return new BaseSynthesizerAudioManager(this, format);
     }
 
     /**

@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
 package org.jvoicexml.jsapi2.synthesis;
@@ -21,7 +21,6 @@ import java.net.URLConnection;
 
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
-import javax.speech.AudioManager;
 import javax.speech.Engine;
 import javax.speech.EngineStateException;
 
@@ -29,7 +28,7 @@ import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.protocols.JavaSoundParser;
 
 /**
- * Supports the JSAPI 2.0 {@link AudioManager} interface. Actual JSAPI
+ * Supports the JSAPI 2.0 {@link javax.speech.AudioManager} interface. Actual JSAPI
  * implementations might want to extend or modify this implementation.
  */
 public class BaseSynthesizerAudioManager extends BaseAudioManager {
@@ -49,11 +48,25 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void handleAudioStart() throws AudioException {
         final String locator = getMediaLocator();
         if (locator == null) {
             outputStream = new SpeakerOutputStream(this);
         } else {
+            // Parse the target audio format
+            // TODO: check if this is really correct. The URL encoding is only
+            // used by some protocol handlers
+            try {
+                final URL url = new URL(locator);
+                final AudioFormat format = JavaSoundParser.parse(url);
+                setTargetAudioFormat(format);
+            } catch (MalformedURLException e) {
+                throw new AudioException(e.getMessage());
+            } catch (URISyntaxException e) {
+                throw new AudioException(e.getMessage());
+            }
+
             // Gets IO from that connection if not already present
             if (outputStream == null) {
                 // Open URL described in locator
@@ -67,22 +80,13 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
                             + ex.getMessage());
                 }
             }
-
-            try {
-                final URL url = new URL(locator);
-                AudioFormat format = JavaSoundParser.parse(url);
-                setTargetAudioFormat(format);
-            } catch (MalformedURLException e) {
-                throw new AudioException(e.getMessage());
-            } catch (URISyntaxException e) {
-                throw new AudioException(e.getMessage());
-            }
         }
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void handleAudioStop() throws AudioException {
         if (outputStream != null) {
             try {
@@ -99,14 +103,14 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
      * Retrieves the output stream from the synthesizer.
      * @return the output stream.
      */
-    public OutputStream getOutputStream() {
+    public final OutputStream getOutputStream() {
         return outputStream;
     }
-
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setMediaLocator(final String locator, final OutputStream stream)
             throws AudioException {
         super.setMediaLocator(locator);
@@ -119,7 +123,9 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
      * Throws an {@link IllegalArgumentException} since output streams are not
      * supported.
      */
-    public void setMediaLocator(String locator, InputStream stream)
+    @Override
+    public final void setMediaLocator(final String locator,
+            final InputStream stream)
             throws AudioException, EngineStateException,
             IllegalArgumentException, SecurityException {
         throw new IllegalArgumentException("input streams are not supported");
@@ -127,9 +133,12 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
 
     /**
      * {@inheritDoc}
+     *
+     * Throws an {@link IllegalArgumentException} since output streams are not
+     * supported.
      */
     @Override
-    public InputStream getInputStream() {
+    public final InputStream getInputStream() {
         throw new IllegalArgumentException("input streams are not supported");
     }
 }

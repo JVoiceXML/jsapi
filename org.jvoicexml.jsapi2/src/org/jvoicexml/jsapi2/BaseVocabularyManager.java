@@ -20,7 +20,7 @@ public class BaseVocabularyManager implements VocabularyManager {
     /**
      * {@inheritDoc}
      */
-    public void addWord(final Word word) throws EngineStateException,
+    public final void addWord(final Word word) throws EngineStateException,
             SecurityException {
         final SecurityManager security = System.getSecurityManager();
         if (security != null) {

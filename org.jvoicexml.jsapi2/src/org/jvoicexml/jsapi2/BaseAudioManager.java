@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.Permission;
@@ -45,8 +44,6 @@ import javax.speech.Engine;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.SpeechPermission;
-
-import org.jvoicexml.jsapi2.protocols.JavaSoundParser;
 
 /**
  * Supports the JSAPI 2.0 {@link AudioManager}
@@ -83,9 +80,6 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /** Audio format of that is being received or that is being delivered. */
     private AudioFormat targetAudioFormat;
-
-    /** Converter from the source (synthesizer) to the target format. */
-    private AudioFormatConverter formatConverter;
 
     /**
      * Constructs a new object.
@@ -215,9 +209,6 @@ public abstract class BaseAudioManager implements AudioManager {
      *         error stopping
      */
     protected void handleAudioStop() throws AudioException {
-        if (formatConverter != null) {
-            formatConverter = null;
-        }
     }
 
     /**
@@ -348,41 +339,6 @@ public abstract class BaseAudioManager implements AudioManager {
     public abstract InputStream getInputStream();
 
     /**
-     * Retrieves the used audio format.
-     * @return the used audio format
-     * @throws AudioException the audio format could not be determined
-     */
-    public AudioFormat getAudioFormat()
-            throws AudioException {
-        final String locator = getMediaLocator();
-        if (locator != null) {
-            //Get matching URI to extract query parameters
-            URL url = null;
-            try {
-                url = new URL(locator);
-                return JavaSoundParser.parse(url);
-            } catch (MalformedURLException ex) {
-                throw new AudioException(ex.getMessage());
-            } catch (URISyntaxException ex) {
-                throw new AudioException(ex.getMessage());
-            }
-        }
-        return engineAudioFormat;
-    }
-
-    /**
-     * Lazy instantiation of the audio format converter.
-     * @return the audio format converter.
-     */
-    public final AudioFormatConverter getAudioFormatConverter() {
-        if (formatConverter == null) {
-            formatConverter = getAudioFormatConverter(engineAudioFormat,
-                    targetAudioFormat);
-        }
-        return formatConverter;
-    }
-
-    /**
      * Opens the connection to the configured media locator.
      * @return opened connection
      * @throws IOException
@@ -403,25 +359,10 @@ public abstract class BaseAudioManager implements AudioManager {
 
         // Open a connection to URL
         final URLConnection connection = url.openConnection();
+        connection.setDoOutput(true);
         connection.connect();
         return connection;
     }
-
-    /**
-     * Opens the audio format converter to convert from the given source
-     * format into the given target format.
-     * <p>
-     * This method must be called in the {@link #audioStart()} method.
-     * </p>
-     * @param source the source audio format
-     * @param target the target audio format.
-     * @return the audio format converter.
-     */
-    protected AudioFormatConverter getAudioFormatConverter(
-            final AudioFormat source, final AudioFormat target) {
-        return new AudioFormatConverter(source, target);
-    }
-
 
     /**
      * Sets the audio format that is being used by this engine.

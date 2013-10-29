@@ -23,7 +23,7 @@ import javax.sound.sampled.SourceDataLine;
  * @author Dirk Schnelle-Walka
  *
  */
-public class LineOutputStream extends OutputStream
+public final class LineOutputStream extends OutputStream
     implements Closeable {
     /** The source data line. */
     private SourceDataLine line;

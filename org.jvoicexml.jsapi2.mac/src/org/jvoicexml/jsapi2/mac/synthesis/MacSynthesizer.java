@@ -253,7 +253,7 @@ public final class MacSynthesizer extends BaseSynthesizer {
      * {@inheritDoc}
      */
     @Override
-    protected AudioFormat getAudioFormat() {
+    protected AudioFormat getEngineAudioFormat() {
         return macGetAudioFormat(synthesizerHandle);
     }
 

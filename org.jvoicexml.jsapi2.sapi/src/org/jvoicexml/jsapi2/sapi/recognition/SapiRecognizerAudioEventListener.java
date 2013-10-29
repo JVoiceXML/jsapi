@@ -13,10 +13,11 @@ import javax.speech.Engine;
  * pause-counter. This ensures, that the associated recognizer can only be
  * resumed AFTER all changes to the inputStream are fully committed.
  * 
- * @author Markus Baumgart <info@CIBEK.de>
+ * @author Markus Baumgart
+ * @author Dirk Schnelle-Walka
  *
  */
-public class SapiRecognizerAudioEventListener implements AudioListener {
+public final class SapiRecognizerAudioEventListener implements AudioListener {
     /** Logger instance. */
     private static final Logger LOGGER = Logger.getLogger(
                 SapiRecognizerAudioEventListener.class.getCanonicalName());
@@ -25,10 +26,11 @@ public class SapiRecognizerAudioEventListener implements AudioListener {
      * The associated recognizer.
      */
     private SapiRecognizer recognizer;
-    
+
     /**
      * Keeps track of the audioinput's changes.<br>
-     * Between an <code>AudioManager.audioStop()</code> and <code>AudioManager.audioStart()</code> 
+     * Between an {@link javax.speech.AudioManager#audioStop()} and
+     * {@link javax.speech.AudioManager#audioStart()} 
      * the mediaLocator could be changed  many times.
      * This AudioEventLister must not hold more than one pause on the stack.
      */
@@ -47,7 +49,7 @@ public class SapiRecognizerAudioEventListener implements AudioListener {
      * {@inheritDoc}
      */
     @Override
-    public void audioUpdate(AudioEvent e) {
+    public void audioUpdate(final AudioEvent e) {
         switch(e.getId()) {
             case AudioEvent.AUDIO_CHANGED:
                 LOGGER.fine("AudioEvent: Audio Changed!");
@@ -69,10 +71,12 @@ public class SapiRecognizerAudioEventListener implements AudioListener {
                     }
                 }
                 
-                // tell the recognizer to get the new InputStream and set it as it's new source
+                // tell the recognizer to get the new InputStream and set it
+                // as its new source
                 audioChanged = false;
-                if (!(recognizer.testEngineState(Engine.DEALLOCATED) ||
-                        recognizer.testEngineState(Engine.DEALLOCATING_RESOURCES))) {
+                if (!(recognizer.testEngineState(Engine.DEALLOCATED)
+                        || recognizer.testEngineState(
+                                Engine.DEALLOCATING_RESOURCES))) {
                     recognizer.resume();
                 }
                 break;
