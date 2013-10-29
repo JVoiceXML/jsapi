@@ -26,7 +26,7 @@ import java.net.UnknownHostException;
  * @author Dirk Schnelle-Walka
  * @version 1.0
  */
-public class Handler extends URLStreamHandler {
+public final class Handler extends URLStreamHandler {
     /**
      * Constructs a new object.
      */

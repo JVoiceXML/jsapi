@@ -28,7 +28,6 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.Mixer.Info;
@@ -42,7 +41,7 @@ import org.jvoicexml.jsapi2.protocols.JavaSoundParser;
  * @author Dirk Schnelle-Walka
  * @version 1.0
  */
-public class CaptureURLConnection extends URLConnection {
+public final class CaptureURLConnection extends URLConnection {
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(CaptureURLConnection.class.getName());
@@ -166,12 +165,6 @@ public class CaptureURLConnection extends URLConnection {
                 ex1.printStackTrace();
             }
 
-            Line[] liness = mixer.getTargetLines();
-            for (Line lll : liness) {
-                System.out.println("Infos: " + lll);
-            }
-
-            // Info[] infos = AudioSystem.getTargetLineInfo(mixerInfo);
             DataLine.Info lineInfo = new DataLine.Info(TargetDataLine.class,
                     getAudioFormat());
 

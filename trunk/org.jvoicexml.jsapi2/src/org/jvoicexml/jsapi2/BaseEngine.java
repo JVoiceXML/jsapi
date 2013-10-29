@@ -56,7 +56,6 @@ import javax.speech.EngineListener;
 import javax.speech.EngineMode;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
-import javax.speech.SpeechException;
 import javax.speech.VocabularyManager;
 
 /**
@@ -89,7 +88,7 @@ public abstract class BaseEngine implements Engine {
      * <code>engineState</code>.
      * @see #engineState
      */
-    protected final Object engineStateLock;
+    private final Object engineStateLock;
     
     /**
      * A counter keeping track of nested calls to <code>pause</code>
@@ -99,7 +98,7 @@ public abstract class BaseEngine implements Engine {
      * @see #pause()
      * @see #resume()
      */
-    protected int pauses;
+    private int pauses;
 
     /**
      * List of <code>EngineListeners</code> registered for
@@ -110,7 +109,7 @@ public abstract class BaseEngine implements Engine {
      * and for a recognizer only
      * {@link javax.speech.recognition.RecognizerListener}s.
      */
-    protected final Collection<EngineListener> engineListeners;
+    private final Collection<EngineListener> engineListeners;
 
     /**
      * The <code>AudioManager</code> for this <code>Engine</code>.
@@ -395,7 +394,7 @@ public abstract class BaseEngine implements Engine {
         //Validate current state
         if (testEngineState(PAUSED)) {
             // Increase internal state counter for nested pauses/resumes
-            synchronized(this) {
+            synchronized (this) {
                 pauses++;
             }
             return;
@@ -411,7 +410,7 @@ public abstract class BaseEngine implements Engine {
             }
         }
 
-        synchronized(this) {
+        synchronized (this) {
             // Increase internal state counter for nested pauses/resumes
             pauses++;
         }
@@ -625,14 +624,18 @@ public abstract class BaseEngine implements Engine {
         // Post the event in the configured speech event executor
         final Runnable runnable = new Runnable() {
             public void run() {
-                fireEvent(event);
+                final Collection<EngineListener> listeners;
+                synchronized (engineListeners) {
+                    listeners =
+                      new java.util.ArrayList<EngineListener>(engineListeners);
+                }
+                fireEvent(listeners, event);
             }
         };
         
         final SpeechEventExecutor executor = getSpeechEventExecutor();
         executor.execute(runnable);
     }
-
 
     /**
      * Convenience method that throws an <code>EngineStateException</code>
@@ -772,8 +775,6 @@ public abstract class BaseEngine implements Engine {
         return true;
     }
 
-
-
     /**
      * Called from the <code>deallocate</code> method.  Override this in
      * subclasses.
@@ -812,9 +813,12 @@ public abstract class BaseEngine implements Engine {
      * This is needed since the event listeners for the synthesizer and
      * the recognizer have different notification signatures.
      * </p>
+     * @param listeners all listeners to notify
      * @param event the event
      */
-    protected abstract void fireEvent(final EngineEvent event);
+    protected abstract void fireEvent(
+            final Collection<EngineListener> listeners,
+            final EngineEvent event);
 
     /**
      * Notifies all registered listeners about a state transition.
@@ -822,9 +826,10 @@ public abstract class BaseEngine implements Engine {
      * @param newState the new engine state.
      * @param id the event identifier.
      */
-    protected void postStateTransitionEngineEvent(final long oldState,
+    protected final void postStateTransitionEngineEvent(final long oldState,
             final long newState, final int id) {
-        final EngineEvent event = createStateTransitionEngineEvent(oldState, newState, id);
+        final EngineEvent event = createStateTransitionEngineEvent(oldState,
+                newState, id);
         postEngineEvent(event);
     }
 
@@ -867,5 +872,4 @@ public abstract class BaseEngine implements Engine {
             final BaseEngineProperties properties,
             final String propName, final Object oldValue,
             final Object newValue);
-
 }

@@ -36,7 +36,7 @@ import org.jvoicexml.jsapi2.protocols.JavaSoundParser;
  * @author Dirk Schnelle-Walka
  * @version 1.0
  */
-public class PlaybackURLConnection extends URLConnection {
+public final class PlaybackURLConnection extends URLConnection {
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(PlaybackURLConnection.class.getName());

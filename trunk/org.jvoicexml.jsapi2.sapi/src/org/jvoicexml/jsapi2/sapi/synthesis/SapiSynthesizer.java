@@ -26,10 +26,10 @@
 
 package org.jvoicexml.jsapi2.sapi.synthesis;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.speech.AudioException;
 import javax.speech.AudioSegment;
 import javax.speech.EngineException;
@@ -200,12 +200,10 @@ public final class SapiSynthesizer extends BaseSynthesizer {
         final BaseAudioManager manager =
                 (BaseAudioManager) getAudioManager();
         final String locator = manager.getMediaLocator();
-        InputStream in = null;
-        try {
-            in = manager.getAudioFormatConverter().getConvertedAudio(bytes);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        final ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
+        final AudioFormat engineFormat = getEngineAudioFormat();
+        final AudioInputStream in = new AudioInputStream(bin, engineFormat,
+                bin.available());
         final AudioSegment segment;
         if (locator == null) {
             segment = new BaseAudioSegment(item, in);
@@ -239,12 +237,10 @@ public final class SapiSynthesizer extends BaseSynthesizer {
         final BaseAudioManager manager =
                 (BaseAudioManager) getAudioManager();
         final String locator = manager.getMediaLocator();
-        InputStream in = null;
-        try {
-            in = manager.getAudioFormatConverter().getConvertedAudio(bytes);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        final ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
+        final AudioFormat engineFormat = getEngineAudioFormat();
+        final AudioInputStream in = new AudioInputStream(bin, engineFormat,
+                bin.available());
         final AudioSegment segment;
         if (locator == null) {
             segment = new BaseAudioSegment(markup, in);
@@ -272,7 +268,7 @@ public final class SapiSynthesizer extends BaseSynthesizer {
      * {@inheritDoc}
      */
     @Override
-    protected AudioFormat getAudioFormat() {
+    protected AudioFormat getEngineAudioFormat() {
         return sapiGetAudioFormat(synthesizerHandle);
     }
 

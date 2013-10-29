@@ -11,7 +11,6 @@
 
 package org.jvoicexml.jsapi2;
 
-import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 
 import javax.speech.Engine;
@@ -47,8 +46,8 @@ public abstract class BaseEngineProperties implements EngineProperties {
     public static final String PRIORITY = "priority";
 
     /**
-     * List of <code>PropertyChangeListeners</code> registered for
-     * <code>PropertyChangeEvents</code> on this object.
+     * List of {@link EnginePropertyListener}s registered for
+     * {@link EnginePropertyEvent}s of this object.
      */
     private final Collection<EnginePropertyListener> propertyChangeListeners;
 
@@ -89,7 +88,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
 
     /**
      * Returns all properties to reasonable defaults for the <code>Engine</code>
-     * . A <code>PropertyChangeEvent</code> is issued for each property that
+     * . An {@link EnginePropertyEvent} is issued for each property that
      * changes as the reset takes effect.
      */
     public void reset() {
@@ -100,14 +99,14 @@ public abstract class BaseEngineProperties implements EngineProperties {
     /**
      * {@inheritDoc}
      */
-    public int getPriority() {
+    public final int getPriority() {
         return priority;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setPriority(final int prio) {
+    public final void setPriority(final int prio) {
         if (prio == priority) {
             return;
         }
@@ -119,7 +118,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
     /**
      * {@inheritDoc}
      */
-    public void setBase(final String uri) {
+    public final void setBase(final String uri) {
         if (base == null) {
             if (uri == null) {
                 return;
@@ -135,14 +134,14 @@ public abstract class BaseEngineProperties implements EngineProperties {
     /**
      * {@inheritDoc}
      */
-    public String getBase() {
+    public final String getBase() {
         return base;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addEnginePropertyListener(
+    public final void addEnginePropertyListener(
             final EnginePropertyListener listener) {
         if (!propertyChangeListeners.contains(listener)) {
             propertyChangeListeners.add(listener);
@@ -152,7 +151,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
     /**
      * {@inheritDoc}
      */
-    public void removeEnginePropertyListener(
+    public final void removeEnginePropertyListener(
             final EnginePropertyListener listener) {
         propertyChangeListeners.remove(listener);
     }
@@ -170,8 +169,9 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * @param newValue new value
      * @exception IllegalArgumentException if the property name is not known
      */
-    public void commitPropertyChange(final String propName,
-            final Object oldValue, final Object newValue) {
+    public final void commitPropertyChange(final String propName,
+            final Object oldValue, final Object newValue)
+                    throws IllegalArgumentException {
         if (propName == null) {
             throw new IllegalArgumentException(
                     "Property name must not be null!");
@@ -210,7 +210,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * @param newValue
      *            the requested new value
      */
-    protected void handlePropertyChangeRequest(
+    protected final void handlePropertyChangeRequest(
             final String propName, final Object oldValue,
             final Object newValue) {
         engine.handlePropertyChangeRequest(this, propName, oldValue,
@@ -218,13 +218,13 @@ public abstract class BaseEngineProperties implements EngineProperties {
     }
     
     /**
-     * Generates a {@link PropertyChangeEvent} for an <code>Object</code> value
+     * Generates a {@link EnginePropertyEvent} for an {@link Object} value
      * and posts it to the event queue using the configured
      * {@link SpeechEventExecutor}.
      * 
      * <p>
      * Registered listeners are notified using the
-     * {@link #firePropertyChangeEvent(PropertyChangeEvent)} method.
+     * {@link #firePropertyChangeEvent(EnginePropertyEvent)} method.
      * </p>
      * 
      * @param propName
@@ -237,7 +237,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * @see #firePropertyChangeEvent
      * @see #dispatchSpeechEvent
      */
-    protected void postPropertyChangeEvent(final String propName,
+    protected final void postPropertyChangeEvent(final String propName,
             final Object oldValue, final Object newValue) {
 
         if (propertyChangeListeners.size() < 1) {
@@ -258,20 +258,20 @@ public abstract class BaseEngineProperties implements EngineProperties {
     }
 
     /**
-     * Sends a {@link PropertyChangeEvent} to all
-     * <code>PropertyChangeListeners</code> registered with this object.
+     * Sends a {@link EnginePropertyEvent} to all
+     * {@link EnginePropertyListener} registered with this object.
      * 
      * <p>
      * This method runs within the configured {@link SpeechEventExecutor}.
      * </p>
      * 
      * @param event
-     *            the <code>PropertyChangeEvent</code> to send
+     *            the {@link EnginePropertyEvent} to send
      * 
      * @see #firePropertyChangeEvent
      * @see #dispatchSpeechEvent
      */
-    public void firePropertyChangeEvent(final EnginePropertyEvent event) {
+    private void firePropertyChangeEvent(final EnginePropertyEvent event) {
         for (EnginePropertyListener listener : propertyChangeListeners) {
             listener.propertyUpdate(event);
         }

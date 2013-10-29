@@ -50,7 +50,6 @@ import com.sun.speech.freetts.FreeTTSSpeakableImpl;
 import com.sun.speech.freetts.audio.AudioPlayer;
 
 
-
 /**
  * Provides partial support for a JSAPI 2.0 synthesizer for the FreeTTS speech
  * synthesis system.
@@ -107,13 +106,10 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
         if (ok) {
             BaseAudioManager manager = (BaseAudioManager) getAudioManager();
             audioPlayer = new FreeTTSAudioPlayer(manager);
-
-            synchronized (engineStateLock) {
-                long newState = ALLOCATED | RESUMED;
-                newState |= (getQueueManager().isQueueEmpty() ? QUEUE_EMPTY
-                        : QUEUE_NOT_EMPTY);
-                setEngineState(CLEAR_ALL_STATE, newState);
-            }
+            long newState = ALLOCATED | RESUMED;
+            newState |= (getQueueManager().isQueueEmpty() ? QUEUE_EMPTY
+                    : QUEUE_NOT_EMPTY);
+            setEngineState(CLEAR_ALL_STATE, newState);
         } else {
             throw new AudioException("Can't allocate FreeTTS synthesizer");
         }
@@ -274,7 +270,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
      * {@inheritDoc}
      */
     @Override
-    protected AudioFormat getAudioFormat() {
+    protected AudioFormat getEngineAudioFormat() {
         return new AudioFormat(8000f, 16, 1, true, true);
     }
 

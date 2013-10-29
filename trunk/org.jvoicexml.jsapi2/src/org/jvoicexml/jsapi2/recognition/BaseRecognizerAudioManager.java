@@ -75,18 +75,6 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
     }
 
     /**
-     * Retrieves a stream that matches the engine audio format.
-     * @param stream the current stream
-     * @return a converting stream
-     */
-    private AudioInputStream getConvertedStream(final AudioInputStream stream) {
-        final AudioFormat format = stream.getFormat();
-        setTargetAudioFormat(format);
-        final AudioFormat engineFormat = getEngineAudioFormat();
-        return AudioSystem.getAudioInputStream(engineFormat, stream);
-    }
-
-    /**
      * Opens the URL with the given locator. This also determines the target
      * audio format by
      * <ol>
@@ -145,7 +133,7 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
         }
 
         try {
-            final InputStream source  = urlConnection.getInputStream();
+            final InputStream source = urlConnection.getInputStream();
             return new BufferedInputStream(source);
         } catch (IOException ex) {
             throw new AudioException("Cannot get InputStream from URL: "
@@ -154,10 +142,23 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
     }
 
     /**
+     * Retrieves a stream that matches the engine audio format.
+     * @param stream the current stream
+     * @return a converting stream
+     */
+    private AudioInputStream getConvertedStream(
+            final AudioInputStream stream) {
+        final AudioFormat format = stream.getFormat();
+        setTargetAudioFormat(format);
+        final AudioFormat engineFormat = getEngineAudioFormat();
+        return AudioSystem.getAudioInputStream(engineFormat, stream);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
-    public void handleAudioStart() throws AudioException {
+    public final void handleAudioStart() throws AudioException {
         // Just convert samples if we already have the correct stream
         AudioFormat format = null;
         if (inputStream instanceof AudioInputStream) {
@@ -207,7 +208,7 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
      * {@inheritDoc}
      */
     @Override
-    public void handleAudioStop() throws AudioException {
+    public final void handleAudioStop() throws AudioException {
         if (inputStream == null) {
             return;
         }
@@ -257,7 +258,7 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
      * {@inheritDoc}
      */
     @Override
-    public OutputStream getOutputStream() {
+    public final OutputStream getOutputStream() {
         throw new IllegalArgumentException("output streams are not supported");
     }
 }
