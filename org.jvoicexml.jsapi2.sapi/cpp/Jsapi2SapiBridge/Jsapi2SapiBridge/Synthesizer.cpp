@@ -241,7 +241,7 @@ HRESULT Synthesizer::Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& 
 						//Create pair
 						std::wstring phone(ipaPhoneWChar);
 						std::pair<std::wstring, int> phoneInfo =
-                            std::make_pair<std::wstring, int>(phone, duration);
+                            std::make_pair(phone, duration);
 						phoneInfos.push_back(phoneInfo);
 						LOG4CPLUS_TRACE(logger, _T("Phoneme '")
                             << ipaPhoneWChar << _T("' id: ")

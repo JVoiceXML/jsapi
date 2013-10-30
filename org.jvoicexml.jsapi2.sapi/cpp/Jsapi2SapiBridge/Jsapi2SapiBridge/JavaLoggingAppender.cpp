@@ -3,6 +3,7 @@
 #include "JavaLoggingAppender.h"
 #include "JNIUtils.h"
 
+
 JavaLoggingAppender::JavaLoggingAppender(JNIEnv* environment)
     :env(environment)
 {
