@@ -1,4 +1,4 @@
-package org.jvoicexml.jsapi2.jse.recognition;
+package org.jvoicexml.jsapi2.recognition;
 
 /**
  * Represents a graph, or a sub-graph.

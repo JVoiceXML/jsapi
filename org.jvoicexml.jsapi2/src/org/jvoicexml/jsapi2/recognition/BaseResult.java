@@ -14,7 +14,7 @@
  *
  * @version 1.9 09/09/99 14:24:41
  */
-package org.jvoicexml.jsapi2.jse.recognition;
+package org.jvoicexml.jsapi2.recognition;
 
 import java.io.Serializable;
 import java.security.Permission;
@@ -45,8 +45,6 @@ import javax.speech.recognition.RuleReference;
 import javax.speech.recognition.RuleSequence;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
-
-import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 
 public class BaseResult implements Result, FinalResult, FinalRuleResult, Serializable, Cloneable {
     /** The serial version UID. */

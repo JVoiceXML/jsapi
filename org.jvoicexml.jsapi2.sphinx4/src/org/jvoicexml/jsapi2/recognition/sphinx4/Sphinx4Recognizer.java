@@ -150,8 +150,9 @@ final class Sphinx4Recognizer extends BaseRecognizer
         }
 
         // hard-coded audio format
+        final AudioFormat format = getAudioFormat();
         ((BaseAudioManager) getAudioManager())
-                .setEngineAudioFormat(new AudioFormat(16000, 16, 1, true, true));
+                .setEngineAudioFormat(format);
         resultListener = new Sphinx4ResultListener(this);
     }
 
@@ -258,7 +259,6 @@ final class Sphinx4Recognizer extends BaseRecognizer
 
         // get rid of the recognizer thread
         stopRecognitionThread();
-
     }
 
     /**
@@ -379,7 +379,7 @@ final class Sphinx4Recognizer extends BaseRecognizer
      * @return boolean
      */
     @Override
-    protected boolean setGrammars(Collection<GrammarDefinition> grammarDefinition) {
+    protected boolean setGrammars(final Collection<GrammarDefinition> grammarDefinition) {
         if (grammar instanceof SRGSGrammar) {
             // old behavior with only a single active grammar
             if (grammarDefinition.size() == 1) {
@@ -513,7 +513,7 @@ final class Sphinx4Recognizer extends BaseRecognizer
             final BaseEngineProperties properties,
             final String propName, final Object oldValue,
             final Object newValue) {
-        throw new UnsupportedOperationException(
-                "property change not implemented!");
+        LOGGER.warning("changing property '" + propName
+                + "' to '" + newValue + "' ignored");
     }
 }

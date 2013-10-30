@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,7 @@
  *
  */
 
-package org.jvoicexml.jsapi2.jse.recognition;
+package org.jvoicexml.jsapi2.recognition;
 
 
 import java.io.IOException;
@@ -56,8 +56,6 @@ import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleGrammar;
 
-import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
-
 /**
  * A base implementation of a {@link GrammarManager}.
  *
@@ -65,7 +63,6 @@ import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
  * @author Dirk Schnelle-Walka
  */
 public class BaseGrammarManager implements GrammarManager {
-
     /** Logger for this class. */
     private static final Logger LOGGER =
             Logger.getLogger(BaseGrammarManager.class.getName());
@@ -122,9 +119,11 @@ public class BaseGrammarManager implements GrammarManager {
     /**
      * {@inheritDoc}
      */
-    public RuleGrammar createRuleGrammar(String grammarReference,
-                                         String rootName) throws
-            IllegalArgumentException, EngineStateException, EngineException {
+    @Override
+    public RuleGrammar createRuleGrammar(final String grammarReference,
+            final String rootName)
+            throws IllegalArgumentException, EngineStateException,
+                EngineException {
         final SpeechLocale locale = SpeechLocale.getDefault();
         return createRuleGrammar(grammarReference, rootName, locale);
     }
@@ -132,10 +131,11 @@ public class BaseGrammarManager implements GrammarManager {
     /**
      * {@inheritDoc}
      */
-    public RuleGrammar createRuleGrammar(String grammarReference,
-                                         String rootName,
-                                         SpeechLocale locale) throws
-            IllegalArgumentException, EngineStateException, EngineException {
+    @Override
+    public RuleGrammar createRuleGrammar(final String grammarReference,
+            final String rootName, final SpeechLocale locale)
+                    throws IllegalArgumentException, EngineStateException,
+                        EngineException {
 
         // Validate current state
         ensureValidEngineState();
@@ -229,8 +229,8 @@ public class BaseGrammarManager implements GrammarManager {
      * @return RuleGrammar
      * @throws EngineStateException
      */
-    public Grammar getGrammar(String grammarReference) throws
-            EngineStateException {
+    public Grammar getGrammar(final String grammarReference)
+            throws EngineStateException {
 
         // Validate current state
         ensureValidEngineState();

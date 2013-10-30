@@ -16,8 +16,8 @@ import javax.speech.recognition.Result;
 import javax.speech.recognition.ResultEvent;
 
 import org.jvoicexml.jsapi2.BaseEngineProperties;
-import org.jvoicexml.jsapi2.jse.recognition.BaseGrammarManager;
 import org.jvoicexml.jsapi2.mock.MockSpeechEventExecutor;
+import org.jvoicexml.jsapi2.recognition.BaseGrammarManager;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 

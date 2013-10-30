@@ -28,7 +28,7 @@ package org.jvoicexml.jsapi2.sapi.recognition;
 
 import javax.speech.recognition.ResultToken;
 
-import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
+import org.jvoicexml.jsapi2.recognition.BaseResult;
 
 /**
  * A recognition result from the SAPI engine.

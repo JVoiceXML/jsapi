@@ -1,7 +1,7 @@
 Version 0.5
 ===========
 - Minor bugfixes
-- Supporting only Java SE
+- Supporting only Java SE: integration of se packages into base classes
 - bugfix: RecognizerEvent falsely reported an IllegalArgumentExcpetion for
   CHANGES_REJECTED
 - new SynchronousSpeechEventExecutor
@@ -12,6 +12,7 @@ Version 0.5
 - bugfix: SpeakerProfile.DEFAULT has no name to indicate a don't care value
 - NORM_WEIGHT in RuleAternatives is not rendered in toString()
 - bugfix: corrected the way security checks are performed
+- refactoring of the audio format conversion
 
 
 Version 0.4

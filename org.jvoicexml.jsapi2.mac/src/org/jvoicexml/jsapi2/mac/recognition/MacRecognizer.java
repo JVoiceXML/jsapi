@@ -19,8 +19,8 @@ import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.BaseEngineProperties;
-import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
+import org.jvoicexml.jsapi2.recognition.BaseResult;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 /**
@@ -221,7 +221,7 @@ public final class MacRecognizer extends BaseRecognizer {
             final BaseEngineProperties properties,
             final String propName, final Object oldValue,
             final Object newValue) {
-        throw new UnsupportedOperationException(
-                "property change not implemented!");
+        LOGGER.warning("changing property '" + propName
+                + "' to '" + newValue + "' ignored");
     }
 }

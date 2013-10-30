@@ -34,7 +34,7 @@ import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.ResultToken;
 import javax.speech.recognition.RuleGrammar;
 
-import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
+import org.jvoicexml.jsapi2.recognition.BaseResult;
 import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 
 import edu.cmu.sphinx.decoder.ResultListener;

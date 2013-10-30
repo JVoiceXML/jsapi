@@ -43,7 +43,7 @@ import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.Configurable;
 
 /**
- * A data processor to read the data from a goven input stream and
+ * A data processor to read the data from a given input stream and
  * feed it into the sphinx system.
  * 
  * @author Renato Cassaca

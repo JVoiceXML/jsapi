@@ -53,8 +53,8 @@ import javax.speech.recognition.RuleSpecial;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
 
-import org.jvoicexml.jsapi2.jse.recognition.BaseRuleGrammar;
-import org.jvoicexml.jsapi2.jse.recognition.SrgsRuleGrammarParser;
+import org.jvoicexml.jsapi2.recognition.BaseRuleGrammar;
+import org.jvoicexml.jsapi2.recognition.SrgsRuleGrammarParser;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
@@ -163,7 +163,8 @@ public class SRGSGrammar extends Grammar {
             grammarURL = new URL(baseURL.toString() + grammarName);
             grammarURL.openStream();
         } catch (MalformedURLException ex) {
-            ex.printStackTrace();
+            throw new PropertyException(ex, null, PROP_GRAMMAR_NAME,
+                    ex.getMessage());
         } catch (IOException e) {
             // there is no grammar at the given location or no location is given
             return;

@@ -37,6 +37,7 @@ import javax.speech.recognition.RuleToken;
 import org.junit.Test;
 import org.jvoicexml.jsapi2.mock.recognition.MockRecognizer;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
+import org.jvoicexml.jsapi2.recognition.BaseResult;
 
 
 /**
@@ -47,7 +48,7 @@ import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 public final class BaseResultTest {
 
     /**
-     * Test method for {@link org.jvoicexml.jsapi2.jse.recognition.BaseResult#getTags(int)}.
+     * Test method for {@link org.jvoicexml.jsapi2.recognition.BaseResult#getTags(int)}.
      * @exception Exception test failed
      */
     @Test
