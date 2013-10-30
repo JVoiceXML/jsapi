@@ -50,7 +50,7 @@ public final class BaseGrammarManagerTest {
     }
 
     /**
-     * Test method for {@link org.jvoicexml.jsapi2.jse.recognition.BaseGrammarManager#createRuleGrammar(java.lang.String, java.lang.String)}.
+     * Test method for {@link org.jvoicexml.jsapi2.recognition.BaseGrammarManager#createRuleGrammar(java.lang.String, java.lang.String)}.
      * @exception Exception test failed
      */
     @Test

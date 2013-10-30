@@ -5,7 +5,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  */
-package org.jvoicexml.jsapi2.jse.recognition;
+package org.jvoicexml.jsapi2.recognition;
 
 import java.io.StringReader;
 import java.util.Collections;
@@ -32,9 +32,6 @@ import javax.speech.recognition.RuleReference;
 import javax.speech.recognition.RuleSequence;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
-
-import org.jvoicexml.jsapi2.recognition.BaseGrammar;
-import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 
 /**
  * Implementation of javax.speech.recognition.RuleGrammar.

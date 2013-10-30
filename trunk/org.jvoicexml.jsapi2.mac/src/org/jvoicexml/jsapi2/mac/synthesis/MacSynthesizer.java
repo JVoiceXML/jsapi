@@ -27,6 +27,7 @@
 package org.jvoicexml.jsapi2.mac.synthesis;
 
 import java.io.ByteArrayInputStream;
+import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
@@ -48,6 +49,9 @@ import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
  *
  */
 public final class MacSynthesizer extends BaseSynthesizer {
+    /** Logger for this class. */
+    private static final Logger LOGGER = Logger.getLogger(MacSynthesizer.class
+            .getName());
 
     static {
         System.loadLibrary("Jsapi2MacBridge");
@@ -272,8 +276,8 @@ public final class MacSynthesizer extends BaseSynthesizer {
             final BaseEngineProperties properties,
             final String propName, final Object oldValue,
             final Object newValue) {
-        throw new UnsupportedOperationException(
-                "property change not implemented!");
+        LOGGER.warning("changing property '" + propName
+                + "' to '" + newValue + "' ignored");
     }
 }
 

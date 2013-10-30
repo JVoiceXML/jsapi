@@ -549,7 +549,7 @@ public final class SapiRecognizer extends BaseRecognizer {
             final BaseEngineProperties properties,
             final String propName, final Object oldValue,
             final Object newValue) {
-        throw new UnsupportedOperationException(
-                "property change not implemented!");
+        LOGGER.warning("changing property '" + propName
+                + "' to '" + newValue + "' ignored");
     }
 }

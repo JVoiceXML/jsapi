@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 import javax.speech.recognition.RuleGrammar;
 
-import org.jvoicexml.jsapi2.jse.recognition.BaseRuleGrammar;
+import org.jvoicexml.jsapi2.recognition.BaseRuleGrammar;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 import edu.cmu.sphinx.decoder.search.Token;

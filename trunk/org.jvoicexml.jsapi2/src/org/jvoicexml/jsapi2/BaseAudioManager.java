@@ -279,7 +279,7 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      *
-     * This implementation checks only for equal media locators.
+     * TODO: This implementation checks only for equal media locators.
      */
     public boolean isSameChannel(final AudioManager audioManager) {
         if (audioManager == null) {

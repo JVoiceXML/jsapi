@@ -21,7 +21,7 @@ import org.jvoicexml.jsapi2.BaseEngineProperties;
  *
  * <p>
  * Actual JSAPI2 implementations may want to override this class to
- * apply the settings to the recognizer.
+ * apply other settings to the recognizer.
  * </p>
 
  * @author Renato Cassaca
@@ -149,70 +149,80 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public int getAdaptation() {
+    @Override
+    public final int getAdaptation() {
         return adaptation;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getCompleteTimeout() {
+    @Override
+    public final int getCompleteTimeout() {
         return completeTimeout;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getConfidenceThreshold() {
+    @Override
+    public final int getConfidenceThreshold() {
         return confidenceThreshold;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getEndpointStyle() {
+    @Override
+    public final int getEndpointStyle() {
         return endpointStyle;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getIncompleteTimeout() {
+    @Override
+    public final int getIncompleteTimeout() {
         return incompleteTimeout;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getNumResultAlternatives() {
+    @Override
+    public final int getNumResultAlternatives() {
         return numResultAlternatives;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getSensitivity() {
+    @Override
+    public final int getSensitivity() {
         return sensitivity;
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getSpeedVsAccuracy() {
+    @Override
+    public final int getSpeedVsAccuracy() {
         return speedVsAccuracy;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean isResultAudioProvided() {
+    @Override
+    public final boolean isResultAudioProvided() {
         return resultAudioProvided;
     }
 
     /**
      * {@inheritDoc}
      */
-    public boolean isTrainingProvided() {
+    @Override
+    public final boolean isTrainingProvided() {
         return trainingProvided;
     }
 
@@ -237,7 +247,8 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public void setAdaptation(final int adapt) {
+    @Override
+    public final void setAdaptation(final int adapt) {
         if (adaptation == adapt) {
             return;
         }
@@ -249,7 +260,8 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public void setCompleteTimeout(final int value) {
+    @Override
+    public final void setCompleteTimeout(final int value) {
         if (value < 0) {
             throw new IllegalArgumentException(
                     "Invalid completeTimeout: " + value);
@@ -266,7 +278,8 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public void setConfidenceThreshold(final int threshold) {
+    @Override
+    public final void setConfidenceThreshold(final int threshold) {
         if ((threshold > MAX_CONFIDENCE)
             || (threshold < MIN_CONFIDENCE)) {
             throw new IllegalArgumentException("Invalid confidenceThreshold: "
@@ -274,8 +287,6 @@ public class BaseRecognizerProperties
         }
         if (confidenceThreshold == threshold) {
             return;
-        } else {
-            confidenceThreshold = threshold;
         }
         handlePropertyChangeRequest(CONFIDENCE_THRESHOLD,
                                 new Integer(confidenceThreshold),
@@ -285,7 +296,8 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public void setEndpointStyle(final int style) {
+    @Override
+    public final void setEndpointStyle(final int style) {
         if ((style != ENDPOINT_SPEECH_DETECTION)
             && (style != ENDPOINT_PUSH_TO_START)
             && (style != ENDPOINT_PUSH_TO_TALK)) {
@@ -303,7 +315,8 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public void setIncompleteTimeout(final int timeout) {
+    @Override
+    public final void setIncompleteTimeout(final int timeout) {
         if (timeout < 0) {
             throw new IllegalArgumentException("Invalid incompleteTimeout: "
                                                + timeout);
@@ -319,7 +332,8 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public void setNumResultAlternatives(final int num) {
+    @Override
+    public final void setNumResultAlternatives(final int num) {
         if (numResultAlternatives == num) {
             return;
         }
@@ -331,7 +345,8 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public void setSensitivity(final int value) {
+    @Override
+    public final void setSensitivity(final int value) {
         if ((value > MAX_CONFIDENCE)
             || (value < MIN_CONFIDENCE)) {
             throw new IllegalArgumentException("Invalid sensitivity: "
@@ -349,7 +364,8 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public void setSpeedVsAccuracy(final int value) {
+    @Override
+    public final void setSpeedVsAccuracy(final int value) {
         if ((value != MAX_ACCURACY)
             && (value != NORM_ACCURACY)
             && (value != MAX_ACCURACY)) {
@@ -367,7 +383,8 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public void setResultAudioProvided(final boolean value) {
+    @Override
+    public final void setResultAudioProvided(final boolean value) {
         if (resultAudioProvided == value) {
             return;
         }
@@ -379,7 +396,8 @@ public class BaseRecognizerProperties
     /**
      * {@inheritDoc}
      */
-    public void setTrainingProvided(final boolean value) {
+    @Override
+    public final void setTrainingProvided(final boolean value) {
         if (trainingProvided == value) {
             return;
         }
@@ -392,7 +410,8 @@ public class BaseRecognizerProperties
      * {@inheritDoc}
      */
     @Override
-    public boolean setProperty(String propName, Object value) {
+    public final boolean setProperty(final String propName,
+            final Object value) {
         if (propName.equals(TRAINING_PROVIDED)) {
             final Boolean boolVal = (Boolean) value;
             trainingProvided = boolVal.booleanValue();

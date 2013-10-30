@@ -77,9 +77,6 @@ import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
 import org.jvoicexml.jsapi2.BaseVocabularyManager;
 import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
-import org.jvoicexml.jsapi2.jse.recognition.BaseGrammarManager;
-import org.jvoicexml.jsapi2.jse.recognition.BaseResult;
-import org.jvoicexml.jsapi2.jse.recognition.BaseRuleGrammar;
 
 /**
  * Skeletal Implementation of the JSAPI Recognizer interface.
@@ -271,9 +268,9 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * {@inheritDoc}
      */
-    public EngineEvent createStateTransitionEngineEvent(long oldState,
-            long newState,
-            int eventType) {
+    @Override
+    public EngineEvent createStateTransitionEngineEvent(final long oldState,
+            final long newState, final int eventType) {
         // TODO: Can we determine the audio position?
         return new RecognizerEvent(this, eventType, oldState, newState, null,
                 null, RecognizerEvent.UNKNOWN_AUDIO_POSITION);
@@ -394,7 +391,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * {@inheritDoc}
      */
-    public SpeakerManager getSpeakerManager() {
+    @Override
+    public final SpeakerManager getSpeakerManager() {
         final SecurityManager security = System.getSecurityManager();
         if (security != null) {
             final Permission permission = new SpeechPermission(
@@ -493,6 +491,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected long getEngineStates() {
         return super.getEngineStates() | Recognizer.LISTENING
             | Recognizer.PROCESSING;
@@ -502,6 +501,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String stateToString(final long state) {
         StringBuffer buf = new StringBuffer(super.stateToString(state));
         if ((state & Recognizer.LISTENING) != 0) {
@@ -538,8 +538,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         try {
             handleAllocate();
             long[] states = setEngineState(CLEAR_ALL_STATE,
-                    ALLOCATED | PAUSED | DEFOCUSED |
-                    NOT_BUFFERING);
+                    ALLOCATED | PAUSED | DEFOCUSED | NOT_BUFFERING);
             postStateTransitionEngineEvent(states[0], states[1],
                     EngineEvent.ENGINE_ALLOCATED);
         } catch (EngineStateException e) {
@@ -570,14 +569,12 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected abstract void handleAllocate() throws EngineStateException,
         EngineException, AudioException, SecurityException;
 
-    // TODO check security for javax.speech.recognition.Recognizer.allocate
-
     /**
      * Called from the <code>deallocate</code> method.  Override this in
      * subclasses.
      *
-     * @throws EngineException if this <code>Engine</code> cannot be
-     *   deallocated.
+     * @throws EngineException if this {@link javax.speech.Engine}
+     *          cannot be deallocated.
      */
     protected final void baseDeallocate() throws EngineStateException,
             EngineException, AudioException {
@@ -600,6 +597,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected final void basePause() {
         handlePause();
         setEngineState(LISTENING | PROCESSING,
@@ -616,7 +614,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
                        getEngineState() & ~LISTENING & ~PROCESSING);
     }
 
-
     /**
      * Called from the {@link #resume()} method.
      *
@@ -629,12 +626,13 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         //Process grammars
         processGrammars();
         final AudioManager manager = getAudioManager();
+        
+        // resume streaming of audio
         InputStream in = null;
         if (manager instanceof BaseAudioManager) {
             final BaseAudioManager baseManager = (BaseAudioManager) manager;
             in = baseManager.getInputStream();
         }
-
         boolean status = handleResume(in);
         if (!status) {
             return false;
@@ -657,7 +655,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected abstract void handlePause(int flags);
 
     /**
-     * Further handling of resuming the recognizer
+     * Further handling of resuming the recognizer.
      * @param in the input stream where to read data from.
      * @return <code>true</code> if the recognizer was resumed
      * @throws EngineStateException

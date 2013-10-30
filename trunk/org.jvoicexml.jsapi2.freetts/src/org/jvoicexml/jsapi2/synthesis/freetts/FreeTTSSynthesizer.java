@@ -288,7 +288,7 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
         com.sun.speech.freetts.Voice freettsVoice = curVoice.getVoice();
         if (propName.equals(SynthesizerProperties.DEFAULT_RATE)) {
         }
-        throw new UnsupportedOperationException(
-                "property change not implemented!");
+        LOGGER.warning("changing property '" + propName
+                + "' to '" + newValue + "' ignored");
     }
 }

@@ -27,6 +27,7 @@
 package org.jvoicexml.jsapi2.sapi.synthesis;
 
 import java.io.ByteArrayInputStream;
+import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -49,6 +50,9 @@ import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
  *
  */
 public final class SapiSynthesizer extends BaseSynthesizer {
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+        Logger.getLogger(SapiSynthesizer.class.getName());
 
     /** SAPI synthesizer handle. */
     private long synthesizerHandle;
@@ -287,8 +291,8 @@ public final class SapiSynthesizer extends BaseSynthesizer {
             final BaseEngineProperties properties,
             final String propName, final Object oldValue,
             final Object newValue) {
-        throw new UnsupportedOperationException(
-                "property change not implemented!");
+        LOGGER.warning("changing property '" + propName
+                + "' to '" + newValue + "' ignored");
     }
 }
 
