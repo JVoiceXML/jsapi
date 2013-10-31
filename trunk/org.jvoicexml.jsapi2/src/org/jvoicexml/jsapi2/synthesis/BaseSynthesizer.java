@@ -64,12 +64,12 @@ import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 public abstract class BaseSynthesizer extends BaseEngine
     implements Synthesizer {
     /** Registered listeners for this synthesizer. */
-    private Collection<SpeakableListener> speakableListeners;
+    private final Collection<SpeakableListener> speakableListeners;
     /** Current synthesizer properties. */
-    private SynthesizerProperties synthesizerProperties;
+    private final SynthesizerProperties synthesizerProperties;
     /** Mask for events. */
     private int speakableMask;
-    /** Empoyed queued manager. */
+    /** Employed queued manager. */
     private final QueueManager queueManager;
 
     /**
@@ -86,9 +86,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     public BaseSynthesizer(final SynthesizerMode engineMode) {
         super(engineMode);
         speakableListeners = new java.util.ArrayList<SpeakableListener>();
-        final SynthesizerProperties props =
-            new BaseSynthesizerProperties(this);
-        setSynthesizerProperties(props);
+        synthesizerProperties = createSynthesizerProperties();
         speakableMask = SpeakableEvent.DEFAULT_MASK;
         setEngineMask(getEngineMask() | SynthesizerEvent.DEFAULT_MASK);
         queueManager = new QueueManager(this);
@@ -118,26 +116,40 @@ public abstract class BaseSynthesizer extends BaseEngine
                 oldState, newState, null, false);
     }
 
-    protected void postSynthesizerEvent(long oldState, long newState,
-            int eventType, boolean changedTopOfQueue) {
-        switch (eventType){
+    /**
+     * Utility method to post a {@link SynthesizerEvent} using the current
+     * {@link SpeechEventExecutor} created from the given parameters.
+     * @param oldState the old synthesizer state
+     * @param newState the new synthesizer state
+     * @param eventType the type of the event
+     * @param changedTopOfQueue <code>true</code> if the top of the queue
+     *          was changed
+     */
+    protected final void postSynthesizerEvent(final long oldState,
+            final long newState, final int eventType,
+            final boolean changedTopOfQueue) {
+        boolean topChanged = changedTopOfQueue;
+        switch (eventType) {
         case SynthesizerEvent.QUEUE_UPDATED:
         case SynthesizerEvent.QUEUE_EMPTIED:
             break;
         default:
-            changedTopOfQueue = false;
+            topChanged = false;
         }
         final SynthesizerEvent event = new SynthesizerEvent(this,
-                eventType,
-                oldState,
-                newState,
-                null,
-                changedTopOfQueue);
+                eventType, oldState, newState, null, topChanged);
 
         postEngineEvent(event);
     }
 
-    protected void postSpeakableEvent(final SpeakableEvent event,
+    /**
+     * Posts the given {@link SpeakableEvent} to the given listener using the
+     * current {@link SpeechEventExecutor}.
+     * @param event the event to send
+     * @param extraSpeakableListener the listener to notify, maybe
+     *          <code>null</code>
+     */
+    protected final void postSpeakableEvent(final SpeakableEvent event,
             final SpeakableListener extraSpeakableListener) {
         // Firstly, check if the event is filtered by the mask
         final int id = event.getId();
@@ -148,27 +160,19 @@ public abstract class BaseSynthesizer extends BaseEngine
         // Fire the event
         final Runnable runnable = new Runnable() {
             public void run() {
-                fireSpeakableEvent(event, extraSpeakableListener);
+                if (extraSpeakableListener != null) {
+                    extraSpeakableListener.speakableUpdate(event);
+                }
+
+                if (speakableListeners != null) {
+                    for (SpeakableListener listener : speakableListeners) {
+                        listener.speakableUpdate(event);
+                    }
+                }
             }
         };
         final SpeechEventExecutor executor = getSpeechEventExecutor();
         executor.execute(runnable);
-    }
-
-    /**
-     * Utility function to send a speakable event to all grammar listeners.
-     */
-    public void fireSpeakableEvent(final SpeakableEvent event,
-            final SpeakableListener extraSpeakableListener) {
-        if (extraSpeakableListener != null) {
-            extraSpeakableListener.speakableUpdate(event);
-        }
-
-        if (speakableListeners != null) {
-            for (SpeakableListener listener : speakableListeners) {
-                listener.speakableUpdate(event);
-            }
-        }
     }
 
     /**
@@ -177,7 +181,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     @Override
     protected long getEngineStates() {
         return super.getEngineStates() | Synthesizer.QUEUE_EMPTY
-        | Synthesizer.QUEUE_NOT_EMPTY;
+                | Synthesizer.QUEUE_NOT_EMPTY;
     }
 
     /**
@@ -221,7 +225,7 @@ public abstract class BaseSynthesizer extends BaseEngine
      * {@inheritDoc}
      */
     @Override
-    public boolean cancel() throws EngineStateException {
+    public final boolean cancel() throws EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
         // Wait to finalize allocation
@@ -239,7 +243,7 @@ public abstract class BaseSynthesizer extends BaseEngine
      * {@inheritDoc}
      */
     @Override
-    public boolean cancel(final int id) throws IllegalArgumentException,
+    public final boolean cancel(final int id) throws IllegalArgumentException,
             EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
@@ -254,7 +258,11 @@ public abstract class BaseSynthesizer extends BaseEngine
         return queueManager.cancelItem(id);
     }
 
-    public boolean cancelAll() throws EngineStateException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean cancelAll() throws EngineStateException {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
         // Wait to finalize allocation
@@ -272,12 +280,22 @@ public abstract class BaseSynthesizer extends BaseEngine
         return "";
     }
 
-    public SynthesizerProperties getSynthesizerProperties() {
-        return synthesizerProperties;
+    /**
+     * Maybe be overwritten by the implementing synthesizer to provide specific
+     * {@link SynthesizerProperties}.
+     * @return created synthesizer properties. This implementation returns an
+     *          instance of {@link BaseSynthesizerProperties}.
+     */
+    protected SynthesizerProperties createSynthesizerProperties() {
+        return new BaseSynthesizerProperties(this);
     }
 
-    public void setSynthesizerProperties(
-            SynthesizerProperties props) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final SynthesizerProperties getSynthesizerProperties() {
+        return synthesizerProperties;
     }
 
     public void setSpeakableMask(int mask) {

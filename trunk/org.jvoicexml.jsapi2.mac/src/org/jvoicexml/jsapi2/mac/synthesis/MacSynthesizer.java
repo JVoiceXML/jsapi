@@ -36,11 +36,13 @@ import javax.speech.AudioSegment;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
+import javax.speech.synthesis.SynthesizerProperties;
 import javax.speech.synthesis.Voice;
 
 import org.jvoicexml.jsapi2.BaseAudioSegment;
 import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
+import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
 
 /**
  * A SAPI compliant {@link javax.speech.synthesis.Synthesizer}.

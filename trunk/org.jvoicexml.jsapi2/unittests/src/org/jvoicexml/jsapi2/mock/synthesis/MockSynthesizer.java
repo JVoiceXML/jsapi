@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,8 +25,6 @@
  */
 
 package org.jvoicexml.jsapi2.mock.synthesis;
-
-import java.beans.PropertyChangeListener;
 
 import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
@@ -48,18 +46,11 @@ import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
  * for test purposes.
  * @author Dirk Schnelle-Walka
  */
-public class MockSynthesizer extends BaseSynthesizer {
-
+public final class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
-    protected Speakable getSpeakable(String text) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     protected void handleAllocate() throws EngineStateException,
             EngineException, AudioException, SecurityException {
     }
@@ -67,6 +58,7 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected boolean handleCancel() {
         return true;
     }
@@ -74,6 +66,7 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected boolean handleCancel(int id) {
         return true;
     }
@@ -81,6 +74,7 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected boolean handleCancelAll() {
         return true;
     }
@@ -88,18 +82,21 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void handleDeallocate() {
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void handlePause() {
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     protected boolean handleResume() {
         return true;
     }
@@ -107,6 +104,7 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected AudioSegment handleSpeak(final int id, final String item) {
         return new AudioSegment(
                 "stream://audio?encoding=pcm&rate=11025&bits=16&channels=1",
@@ -116,6 +114,7 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected AudioSegment handleSpeak(final int id, final Speakable item) {
         final String text = item.getMarkupText();
         return new AudioSegment(
@@ -126,6 +125,7 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected AudioManager createAudioManager() {
         return new MockAudioManager();
     }
@@ -133,6 +133,7 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected SpeechEventExecutor createSpeechEventExecutor() {
         return new MockSpeechEventExecutor();
     }
@@ -140,6 +141,7 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected VocabularyManager createVocabularyManager() {
         return null;
     }
@@ -147,16 +149,16 @@ public class MockSynthesizer extends BaseSynthesizer {
     /**
      * {@inheritDoc}
      */
-    protected PropertyChangeListener getChangeRequestListener() {
-        return null;
-    }
-
     @Override
-    protected void handlePropertyChangeRequest(BaseEngineProperties properties,
+    protected void handlePropertyChangeRequest(
+            BaseEngineProperties properties,
             String propName, Object oldValue, Object newValue) {
         properties.commitPropertyChange(propName, oldValue, newValue);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected AudioFormat getEngineAudioFormat() {
         // TODO Auto-generated method stub
