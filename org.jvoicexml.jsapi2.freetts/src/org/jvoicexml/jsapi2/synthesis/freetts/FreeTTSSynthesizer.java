@@ -81,10 +81,15 @@ public class FreeTTSSynthesizer extends BaseSynthesizer {
     public FreeTTSSynthesizer(final FreeTTSSynthesizerMode desc) {
         super(desc);
         audioPlayer = null;
-        super.setSynthesizerProperties(new FreeTTSEngineProperties(this));
+    }
 
-        ((BaseAudioManager) getAudioManager()).setEngineAudioFormat(new
-                AudioFormat(8000f, 16, 1, true, true));
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected SynthesizerProperties createSynthesizerProperties() {
+        return new FreeTTSEngineProperties(this);
     }
 
     /**
