@@ -17,4 +17,4 @@ jsr-113 Installation
 Simply unzip jsr113-base-<version>.zip to extract the jar files.
 
 In order to use the Microsoft SAPI layer you will also need to install
-the Visual Studio 2010 Redistributable that you can obtain from Microsoft
+the Visual Studio 2012 Redistributable that you can obtain from Microsoft
