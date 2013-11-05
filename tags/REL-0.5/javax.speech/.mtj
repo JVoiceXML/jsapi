@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mtjMetadata jad="javax.speech.jad" version="1.2.1.v201009031435">
+   <device group="Sun Java(TM) Wireless Toolkit 2.5.2 for CLDC" name="DefaultColorPhone (1)"/>
+   <signing projectSpecific="false" signProject="false">
+      <alias/>
+   </signing>
+   <configurations>
+      <configuration active="false" name="ClamshellCldcPhone1">
+         <symbolSet name="ClamshellCldcPhone1">
+            <symbol name="MMAPI" value="1.1"/>
+            <symbol name="screen.isColor" value="true"/>
+            <symbol name="descriptor" value="Clamshell CLDC emulator"/>
+            <symbol name="screen.bitDepth" value="16"/>
+            <symbol name="JSR82" value="1.1"/>
+            <symbol name="JSR280" value="1.0"/>
+            <symbol name="JSR226" value="1.0"/>
+            <symbol name="MIDP" value="2.1"/>
+            <symbol name="JSR229" value="1.1"/>
+            <symbol name="SATSA" value="1.0"/>
+            <symbol name="CLDC" value="1.1"/>
+            <symbol name="JSR179" value="1.0"/>
+            <symbol name="WMA" value="2.0"/>
+            <symbol name="J2ME-WS" value="1.0"/>
+            <symbol name="JSR256" value="1.0"/>
+            <symbol name="screen.width" value="240"/>
+            <symbol name="JSR238" value="1.0"/>
+            <symbol name="JSR239" value="1.0"/>
+            <symbol name="screen.isTouch" value="false"/>
+            <symbol name="JSR211" value="1.0"/>
+            <symbol name="JSR234" value="1.0"/>
+            <symbol name="JSR75" value="1.0"/>
+            <symbol name="JSR184" value="1.1"/>
+            <symbol name="version.configuration" value="CLDC-1.1"/>
+            <symbol name="version.profile" value="MIDP-2.1"/>
+            <symbol name="JSR180" value="1.1"/>
+            <symbol name="screen.height" value="320"/>
+         </symbolSet>
+      </configuration>
+      <configuration active="true" name="DefaultColorPhone">
+         <device group="Sun Java(TM) Wireless Toolkit 2.5.2 for CLDC" name="DefaultColorPhone"/>
+         <symbolSet name="DefaultColorPhone">
+            <symbol name="screen.isColor" value="true"/>
+            <symbol name="MMAPI" value="1.1"/>
+            <symbol name="screen.bitDepth" value="8"/>
+            <symbol name="JSR82" value="1.1"/>
+            <symbol name="JSR226" value="1.0"/>
+            <symbol name="MIDP" value="2.1"/>
+            <symbol name="JSR229" value="1.1"/>
+            <symbol name="SATSA-PKI" value="1.0"/>
+            <symbol name="CLDC" value="1.1"/>
+            <symbol name="JSR179" value="1.0"/>
+            <symbol name="WMA" value="2.0"/>
+            <symbol name="SATSA-JCRMI" value="1.0"/>
+            <symbol name="J2ME-WS" value="1.0"/>
+            <symbol name="screen.width" value="240"/>
+            <symbol name="JSR238" value="1.0"/>
+            <symbol name="JSR239" value="1.0"/>
+            <symbol name="screen.isTouch" value="false"/>
+            <symbol name="JSR211" value="1.0"/>
+            <symbol name="JSR234" value="1.0"/>
+            <symbol name="SATSA-APDU" value="1.0"/>
+            <symbol name="JSR75" value="1.0"/>
+            <symbol name="J2ME-XMLRPC" value="1.0"/>
+            <symbol name="JSR184" value="1.1"/>
+            <symbol name="SATSA-CRYPTO" value="1.0"/>
+            <symbol name="version.configuration" value="CLDC-1.1"/>
+            <symbol name="version.profile" value="MIDP-2.1"/>
+            <symbol name="JSR180" value="1.0"/>
+            <symbol name="screen.height" value="320"/>
+         </symbolSet>
+      </configuration>
+      <configuration active="false" name="DefaultGrayPhone">
+         <device group="Sun Java(TM) Wireless Toolkit 2.5.2 for CLDC" name="DefaultGrayPhone"/>
+         <symbolSet name="DefaultGrayPhone">
+            <symbol name="MMAPI" value="1.1"/>
+            <symbol name="screen.isColor" value="false"/>
+            <symbol name="screen.bitDepth" value="8"/>
+            <symbol name="JSR82" value="1.1"/>
+            <symbol name="JSR226" value="1.0"/>
+            <symbol name="MIDP" value="2.1"/>
+            <symbol name="JSR229" value="1.1"/>
+            <symbol name="SATSA-PKI" value="1.0"/>
+            <symbol name="CLDC" value="1.1"/>
+            <symbol name="JSR179" value="1.0"/>
+            <symbol name="SATSA-JCRMI" value="1.0"/>
+            <symbol name="WMA" value="2.0"/>
+            <symbol name="J2ME-WS" value="1.0"/>
+            <symbol name="screen.width" value="180"/>
+            <symbol name="JSR238" value="1.0"/>
+            <symbol name="JSR239" value="1.0"/>
+            <symbol name="screen.isTouch" value="false"/>
+            <symbol name="JSR211" value="1.0"/>
+            <symbol name="JSR234" value="1.0"/>
+            <symbol name="SATSA-APDU" value="1.0"/>
+            <symbol name="JSR75" value="1.0"/>
+            <symbol name="J2ME-XMLRPC" value="1.0"/>
+            <symbol name="JSR184" value="1.1"/>
+            <symbol name="SATSA-CRYPTO" value="1.0"/>
+            <symbol name="version.configuration" value="CLDC-1.1"/>
+            <symbol name="version.profile" value="MIDP-2.1"/>
+            <symbol name="JSR180" value="1.0"/>
+            <symbol name="screen.height" value="208"/>
+         </symbolSet>
+      </configuration>
+      <configuration active="false" name="JSAPI2Phone">
+         <device group="Sun Java(TM) Wireless Toolkit 2.5.2 for CLDC" name="DefaultColorPhone (1)"/>
+         <symbolSet name="DefaultColorPhone (1)">
+            <symbol name="screen.isColor" value="true"/>
+            <symbol name="CLDC" value="1.0"/>
+            <symbol name="screen.width" value="240"/>
+            <symbol name="screen.bitDepth" value="8"/>
+            <symbol name="screen.isTouch" value="false"/>
+            <symbol name="version.configuration" value="CLDC-1.1"/>
+            <symbol name="version.profile" value="MIDP-2.1"/>
+            <symbol name="MIDP" value="1.0"/>
+            <symbol name="screen.height" value="320"/>
+         </symbolSet>
+      </configuration>
+   </configurations>
+</mtjMetadata>
