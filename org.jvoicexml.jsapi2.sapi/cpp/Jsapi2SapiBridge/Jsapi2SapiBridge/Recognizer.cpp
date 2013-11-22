@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "Recognizer.h"
+#include "ErrorLog.h"
 #include "JNIUtils.h"
 #include <log4cplus/loggingmacros.h>
 
 #include <iostream>
 #include <fstream>
 #include <string>
-
 #include <stdio.h>
 #import <msxml4.dll>
 
@@ -199,7 +199,12 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
     }
 
 	CComPtr<ISpErrorLog> errorLog;
-	//CError errorlog(L"test.out", L"W3C XML");
+	//hr = errorLog.CoCreateInstance(CLSID_ErrorLog);
+ //   if (FAILED(hr))
+ //   {
+ //       LOG4CPLUS_ERROR(logger, "CoCreateInstance CLSID_ErrorLog failed : 0x" << std::hex << std::uppercase << hr);
+	//	return hr;
+ //   }
 
 	// seek the beginning of the stream
 	LARGE_INTEGER pos;

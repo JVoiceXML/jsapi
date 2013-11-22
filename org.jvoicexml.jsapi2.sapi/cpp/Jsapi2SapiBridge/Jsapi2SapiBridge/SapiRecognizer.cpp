@@ -58,7 +58,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 
     /* create instance of JInputStream */
     CComPtr<IStream> jStream;
-    hr = jStream.CoCreateInstance(CLSID_JInputStream);
+    hr = jStream.CoCreateInstance(CLSID_JavaInputStream);
 
     /* query Setter-Interface */
     CComPtr<InputStream> jStreamSetter;

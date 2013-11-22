@@ -5,6 +5,7 @@
 #include "log4cplus/consoleappender.h"
 #include "JavaLoggingAppender.h"
 #include "JavaInputStream.h" 
+#include "ErrorLog.h"
 
 static log4cplus::Logger logger =
     log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.JNI"));
@@ -31,7 +32,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm_init, void *reserved)
     }
 
 	// register own component IJavaInputStream etc.
-	hr = ::CoRegisterClassObject(CLSID_JInputStream, &g_ClassFactory, 
+	hr = ::CoRegisterClassObject(CLSID_JavaInputStream, &g_ClassFactory, 
 		CLSCTX_SERVER, REGCLS_MULTIPLEUSE, &dwRegister);
 	if (FAILED(hr)) {
         char buffer[1024];
@@ -40,6 +41,16 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm_init, void *reserved)
         LOG4CPLUS_FATAL(logger, buffer);
         return JNI_ERR;
 	}
+
+	//hr = ::CoRegisterClassObject(CLSID_ErrorLog, &g_ClassFactory, 
+	//	CLSCTX_SERVER, REGCLS_MULTIPLEUSE, &dwRegister);
+	//if (FAILED(hr)) {
+ //       char buffer[1024];
+ //       GetErrorMessage(buffer, sizeof(buffer), "Registering component \"ErrorLog\" failed!",
+ //           hr);
+ //       LOG4CPLUS_FATAL(logger, buffer);
+ //       return JNI_ERR;
+	//}
 
     return JNI_VERSION_1_6;
 }
