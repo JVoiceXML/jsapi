@@ -43,15 +43,15 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm_init, void *reserved)
         return JNI_ERR;
 	}
 
-	//hr = ::CoRegisterClassObject(CLSID_ErrorLog, &g_ClassFactory, 
-	//	CLSCTX_SERVER, REGCLS_MULTIPLEUSE, &dwRegister);
-	//if (FAILED(hr)) {
- //       char buffer[1024];
- //       GetErrorMessage(buffer, sizeof(buffer), "Registering component \"ErrorLog\" failed!",
- //           hr);
- //       LOG4CPLUS_FATAL(logger, buffer);
- //       return JNI_ERR;
-	//}
+	hr = ::CoRegisterClassObject(CLSID_ErrorLog, &classFactory, 
+		CLSCTX_SERVER, REGCLS_MULTIPLEUSE, &dwRegister);
+	if (FAILED(hr)) {
+        char buffer[1024];
+        GetErrorMessage(buffer, sizeof(buffer), "Registering component \"ErrorLog\" failed!",
+            hr);
+        LOG4CPLUS_FATAL(logger, buffer);
+        return JNI_ERR;
+	}
 
     return JNI_VERSION_1_6;
 }
