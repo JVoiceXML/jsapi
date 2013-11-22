@@ -56,23 +56,26 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
     Recognizer* recognizer = (Recognizer*)recognizerHandle;
     HRESULT hr;
 
-    /* create instance of JInputStream */
+    // create instance of JInputStream
     CComPtr<IStream> jStream;
     hr = jStream.CoCreateInstance(CLSID_JavaInputStream);
 
-    /* query Setter-Interface */
+    // query Setter-Interface
     CComPtr<InputStream> jStreamSetter;
-    if (SUCCEEDED(hr)) {
+    if (SUCCEEDED(hr)) 
+	{
         hr = jStream->QueryInterface(IID_IJavaInputStream, (void**) &jStreamSetter);
     }
-    /* setup our IStream with the given Java InputStream as it's source */
-    if (SUCCEEDED(hr)) {
+    // setup our IStream with the given Java InputStream as it's source
+    if (SUCCEEDED(hr)) 
+	{
         hr = jStreamSetter->setJavaInputStream(env, inputStream);
     }
 
-    /* create ISpStream for the recognizer */
+    // create ISpStream for the recognizer
     CComPtr<ISpStream> cpSpStream;
-    if (SUCCEEDED(hr)) {
+    if (SUCCEEDED(hr)) 
+	{
         hr = cpSpStream.CoCreateInstance(CLSID_SpStream);
     }
 
