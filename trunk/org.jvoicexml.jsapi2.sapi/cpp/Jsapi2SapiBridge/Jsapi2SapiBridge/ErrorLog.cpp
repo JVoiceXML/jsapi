@@ -81,7 +81,6 @@ STDMETHODIMP ErrorLog::QueryInterface ( REFIID riid, void** ppv )
 
     *ppv = NULL;
     return E_NOINTERFACE;
-
 }
 
 

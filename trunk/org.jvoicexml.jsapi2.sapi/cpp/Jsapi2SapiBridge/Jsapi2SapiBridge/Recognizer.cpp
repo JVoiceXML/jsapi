@@ -187,7 +187,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 	hr = compiler.CoCreateInstance(CLSID_SpW3CGrammarCompiler); //SRGS-Compiler
     if (FAILED(hr))
     {
-        LOG4CPLUS_ERROR(logger, "CoCreateInstance CLSID_SpW3CGramamrCompiler failed : 0x" << std::hex << std::uppercase << hr);
+        LOG4CPLUS_ERROR(logger, "CoCreateInstance CLSID_SpW3CGramamrCompiler failed: 0x" << std::hex << std::uppercase << hr);
 		return hr;
     }
 
@@ -202,7 +202,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 	hr = errorLog.CoCreateInstance(CLSID_ErrorLog);
     if (FAILED(hr))
     {
-        LOG4CPLUS_ERROR(logger, "CoCreateInstance CLSID_ErrorLog failed : 0x" << std::hex << std::uppercase << hr);
+        LOG4CPLUS_ERROR(logger, "CoCreateInstance CLSID_ErrorLog failed: 0x" << std::hex << std::uppercase << hr);
 		return hr;
     }
 
@@ -216,7 +216,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
     hr = compiler->CompileStream(stream, compiledStream, NULL, NULL, errorLog, 0);
     if (FAILED(hr))
     {
-        LOG4CPLUS_ERROR(logger, "Compile Stream failed : 0x" << std::hex <<std::uppercase << hr);;
+        LOG4CPLUS_ERROR(logger, "Compile Stream failed : 0x" << std::hex << std::uppercase << hr);;
 		return hr;
     }
 
@@ -225,7 +225,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
     ::GetHGlobalFromStream(compiledStream, &hGrammar);//compiledStream
     hr = cpGrammar->LoadCmdFromMemory((SPBINARYGRAMMAR *)::GlobalLock(hGrammar), SPLO_DYNAMIC);
 	if (FAILED(hr)) {
-		LOG4CPLUS_ERROR(logger, "Grammar: \"LoadFromMemory\" failed : 0x" << std::hex <<std::uppercase << hr);
+		LOG4CPLUS_ERROR(logger, "Grammar: \"LoadFromMemory\" failed: 0x" << std::hex << std::uppercase << hr);
 		return hr;
 	}
 
