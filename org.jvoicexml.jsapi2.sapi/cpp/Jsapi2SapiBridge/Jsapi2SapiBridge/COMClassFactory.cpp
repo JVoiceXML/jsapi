@@ -31,13 +31,17 @@
         return CLASS_E_NOAGGREGATION;
 	}
 
-	if (riid == CLSID_JavaInputStream)
+	if (riid == IID_IJavaInputStream || riid == IID_IStream)
     {
 		punk = new JavaInputStream();
 	}
-	else if (riid == CLSID_ErrorLog)
+	else if (riid == IID_IErrorLog || riid == IID_ISpErrorLog)
 	{
 		punk = new ErrorLog();
+	}
+	else
+	{
+		return CLASS_E_CLASSNOTAVAILABLE;
 	}
     if (punk == NULL)
     {

@@ -1,14 +1,17 @@
 #include "ErrorLog.h"
 
 
-ErrorLog::ErrorLog(): m_lastError(NULL) {}
+ErrorLog::ErrorLog()
+	: lastError(NULL)
+{
+}
 
 ErrorLog::~ErrorLog()
 {
-	if (m_lastError != NULL)
+	if (lastError != NULL)
 	{
-		free(m_lastError);
-		m_lastError = NULL;
+		free(lastError);
+		lastError = NULL;
 	}
 }
 
@@ -17,15 +20,15 @@ BOOL ErrorLog::GetErrorIndex(const unsigned int index, WCHAR** dError)
 {
 	if ((index >= 0) && (index < m_errors.size()))
 	{
-		if (m_lastError != NULL)
+		if (lastError != NULL)
 		{
-			free(m_lastError);
-			m_lastError = NULL;
+			free(lastError);
+			lastError = NULL;
 		}
-		m_lastError = NULL; //ConvertToWide(m_errors[index]);
-		if (m_lastError != NULL)
+		lastError = NULL; //ConvertToWide(m_errors[index]);
+		if (lastError != NULL)
 		{
-			*dError = m_lastError;
+			*dError = lastError;
 			return TRUE;
 		}
 	}
@@ -35,13 +38,13 @@ BOOL ErrorLog::GetErrorIndex(const unsigned int index, WCHAR** dError)
 
 STDMETHODIMP_(ULONG) ErrorLog::AddRef()
 {
-	return ++m_uRefCount; // Increment this object's reference count.
+	return ++refCount; // Increment this object's reference count.
 }
 
 STDMETHODIMP_(ULONG) ErrorLog::Release()
 {
-	ULONG uRet = --m_uRefCount; // Decrement this object's reference count.
-	if ( m_uRefCount == 0 ) // Releasing last reference?
+	ULONG uRet = --refCount; // Decrement this object's reference count.
+	if ( refCount == 0 ) // Releasing last reference?
 	{
 		delete this;
 	}

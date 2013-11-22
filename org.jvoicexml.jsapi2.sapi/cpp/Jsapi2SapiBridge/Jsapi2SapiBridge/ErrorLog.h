@@ -43,8 +43,8 @@ public:
 
 private:
 	std::vector<std::string> m_errors;
-	ULONG m_uRefCount;
-	WCHAR *m_lastError;
+	ULONG refCount;
+	WCHAR *lastError;
 
 
 
