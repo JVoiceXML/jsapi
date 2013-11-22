@@ -176,14 +176,12 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 
 	ULONG written;
     hr = stream->Write(grammarAscii, sizeGrammar - 1, &written);
-	//USES_CONVERSION;
-	//hr = stream->Write(W2A(grammar), wcslen(grammar), &written);
     if (FAILED(hr))
     {
         return hr;
     }
 
-	/* GrammarCompiler for conversion in a binary format */
+	// GrammarCompiler for conversion in a binary format
     CComPtr<ISpGrammarCompiler> compiler;
     //hr = compiler.CoCreateInstance(CLSID_SpGrammarCompiler); //SAPI-Compiler
 	hr = compiler.CoCreateInstance(CLSID_SpW3CGrammarCompiler); //SRGS-Compiler
@@ -200,15 +198,15 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
         return hr;
     }
 
-	CComPtr<IStream> headerStream;
 	CComPtr<ISpErrorLog> errorLog;
-	
-	/* seek the beginning of the stream */
+	//CError errorlog(L"test.out", L"W3C XML");
+
+	// seek the beginning of the stream
 	LARGE_INTEGER pos;
 	pos.QuadPart = 0;
 	stream->Seek(pos, STREAM_SEEK_SET, NULL);
 
-	/* compile the stream, and get the errorlog */
+	// compile the stream, and get the errorlog
 	/* @TODO: use the errorlog */
     hr = compiler->CompileStream(stream, compiledStream, NULL, NULL, errorLog, 0);
     if (FAILED(hr))

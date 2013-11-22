@@ -82,13 +82,13 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
     format = (WAVEFORMATEX*)malloc(sizeof(WAVEFORMATEX));
     format->wFormatTag = WAVE_FORMAT_PCM;	//constant
     format->nChannels = channels;			//variable
-    format->nSamplesPerSec = sampleRate;	//variable
+    format->nSamplesPerSec = (DWORD)sampleRate;	//variable
     format->wBitsPerSample = bitsPerSample;	//variable
     format->nBlockAlign = (format->wBitsPerSample * format->nChannels) / 8;	//constant
     format->nAvgBytesPerSec = format->nSamplesPerSec * format->nBlockAlign;	//constant
     format->cbSize = 0;	//constant
 
-    /* set the Java IStream and it's format as the source for the SpeechStream */
+    // set the Java IStream and it's format as the source for the SpeechStream
     if (SUCCEEDED(hr))
     {
         hr = cpSpStream->SetBaseStream(jStream, SPDFID_WaveFormatEx, format);
@@ -103,15 +103,6 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
     {
         hr = recognizer->SetRecognizerInputStream(cpSpStream);
     }
-	/*
-    int limitSetInput = 5;
-    for (int i = 0; (hr == SPERR_ENGINE_BUSY) && i < limitSetInput; i++) 
-    {
-        LOG4CPLUS_DEBUG(logger, _T("=> CPP setInputCounter:") << i);
-        Sleep(10);
-        hr = recognizer->SetRecognizerInputStream(cpSpStream);
-    }
-	*/
 
     if (SUCCEEDED(hr))
     {
