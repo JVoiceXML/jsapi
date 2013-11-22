@@ -778,13 +778,11 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
      */
     public String toString(boolean displayDisabledRules) {
         final StringBuffer str = new StringBuffer();
-        str.append("<?xml version=\"1.0\" encoding=\"");
-        final String encoding = System.getProperty("file.encoding",
-                "UTF-8");
-        str.append(encoding);
-        str.append("\"?> \n"
-                + "<!DOCTYPE grammar PUBLIC \"-//W3C//DTD GRAMMAR 1.0//EN\""
-                + " \"http://www.w3.org/TR/speech-grammar/grammar.dtd\"> \n");
+//        str.append("<?xml version=\"1.0\" encoding=\"");
+//        str.append("UTF-8");
+//        str.append("\"?> \n"
+//                + "<!DOCTYPE grammar PUBLIC \"-//W3C//DTD GRAMMAR 1.0//EN\""
+//                + " \"http://www.w3.org/TR/speech-grammar/grammar.dtd\"> \n");
         str.append("<grammar version=\"");
         str.append(version);
         str.append("\" mode=\"");
