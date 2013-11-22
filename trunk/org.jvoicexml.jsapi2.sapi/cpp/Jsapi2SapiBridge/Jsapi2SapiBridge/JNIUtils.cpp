@@ -6,12 +6,13 @@
 #include "JavaLoggingAppender.h"
 #include "JavaInputStream.h" 
 #include "ErrorLog.h"
+#include "COMClassFactory.h"
 
 static log4cplus::Logger logger =
     log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.JNI"));
 
 
-CClassFactory   g_ClassFactory; // Factory for JInputStream etc.
+COMClassFactory   classFactory; // Factory for JInputStream etc.
 DWORD dwRegister; // Token to unregister JInputStream
 JavaVM *jvm; //Handle to the Java Virtual Machine
 
@@ -32,7 +33,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm_init, void *reserved)
     }
 
 	// register own component IJavaInputStream etc.
-	hr = ::CoRegisterClassObject(CLSID_JavaInputStream, &g_ClassFactory, 
+	hr = ::CoRegisterClassObject(CLSID_JavaInputStream, &classFactory, 
 		CLSCTX_SERVER, REGCLS_MULTIPLEUSE, &dwRegister);
 	if (FAILED(hr)) {
         char buffer[1024];

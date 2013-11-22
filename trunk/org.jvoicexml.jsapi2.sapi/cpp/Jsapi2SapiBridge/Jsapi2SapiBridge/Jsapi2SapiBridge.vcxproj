@@ -180,6 +180,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="COMClassFactory.cpp" />
     <ClCompile Include="ErrorLog.cpp" />
     <ClCompile Include="JavaLoggingAppender.cpp" />
     <ClCompile Include="JavaInputStream.cpp" />
@@ -195,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\org_jvoicexml_jsapi2_sapi_logging_Log4CPlus2JavaLoggingAdapter.h" />
+    <ClInclude Include="COMClassFactory.h" />
     <ClInclude Include="ErrorLog.h" />
     <ClInclude Include="JavaLoggingAppender.h" />
     <ClInclude Include="JavaInputStream.h" />
