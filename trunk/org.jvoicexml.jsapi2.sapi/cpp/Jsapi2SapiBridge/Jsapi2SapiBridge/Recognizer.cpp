@@ -149,7 +149,7 @@ HRESULT Recognizer::SetRecognizerInputStream(CComPtr<ISpStream> spStream)
 
 HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 {
-    LOG4CPLUS_DEBUG(logger, "loading grammar " << grammar);
+    LOG4CPLUS_DEBUG(logger, "loading grammar '" << grammar << "'");
 
     /* container for the new grammar */
 	CComPtr<ISpRecoGrammar> cpGrammar;
@@ -159,7 +159,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
         return hr;
     }
 	
-	/* stream our grammar from java into this buffer */
+	// stream our grammar from java into this buffer
     CComPtr<IStream> stream;
     hr = ::CreateStreamOnHGlobal(NULL, true, &stream);
     if (FAILED(hr))
@@ -169,15 +169,15 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 
 	// first, we need to convert from WCHAR to CHAR for the GrammarCompiler
 	//	(else we get a 0x80045003 - "unsupported format")
-	const size_t sizeGrammar = wcslen(grammar)+1;
-	char* grammar_ascii = new char[sizeGrammar];
-	wcstombs_s(NULL, grammar_ascii, sizeGrammar, grammar, sizeGrammar);
-	
-    ULONG written;
-    hr = stream->Write(grammar_ascii, sizeGrammar - 1, &written);
+	const size_t sizeGrammar = wcslen(grammar) + 1;
+	char* grammarAscii = new char[sizeGrammar];
+	size_t convertedChars = 0;
+	wcstombs_s(&convertedChars, grammarAscii, sizeGrammar, grammar, sizeGrammar);
+
+	ULONG written;
+    hr = stream->Write(grammarAscii, sizeGrammar - 1, &written);
 	//USES_CONVERSION;
 	//hr = stream->Write(W2A(grammar), wcslen(grammar), &written);
-	
     if (FAILED(hr))
     {
         return hr;
