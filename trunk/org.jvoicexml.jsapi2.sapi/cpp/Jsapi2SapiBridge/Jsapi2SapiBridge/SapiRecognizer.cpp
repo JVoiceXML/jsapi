@@ -57,19 +57,19 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
     HRESULT hr;
 
     // create instance of JInputStream
-    CComPtr<IStream> jStream;
-    hr = jStream.CoCreateInstance(CLSID_JavaInputStream);
+    CComPtr<IStream> stream;
+    hr = stream.CoCreateInstance(CLSID_JavaInputStream);
 
     // query Setter-Interface
     CComPtr<InputStream> jStreamSetter;
     if (SUCCEEDED(hr)) 
 	{
-        hr = jStream->QueryInterface(IID_IJavaInputStream, (void**) &jStreamSetter);
+        hr = stream->QueryInterface(IID_IJavaInputStream, (void**) &jStreamSetter);
     }
     // setup our IStream with the given Java InputStream as it's source
     if (SUCCEEDED(hr)) 
 	{
-        hr = jStreamSetter->setJavaInputStream(env, inputStream);
+        hr = jStreamSetter->SetJavaInputStream(env, inputStream);
     }
 
     // create ISpStream for the recognizer
@@ -94,7 +94,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
     // set the Java IStream and it's format as the source for the SpeechStream
     if (SUCCEEDED(hr))
     {
-        hr = cpSpStream->SetBaseStream(jStream, SPDFID_WaveFormatEx, format);
+        hr = cpSpStream->SetBaseStream(stream, SPDFID_WaveFormatEx, format);
     }
 
     /* set the constructed SpeechStream as the new recognizerInput */

@@ -199,12 +199,12 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
     }
 
 	CComPtr<ISpErrorLog> errorLog;
-	//hr = errorLog.CoCreateInstance(CLSID_ErrorLog);
- //   if (FAILED(hr))
- //   {
- //       LOG4CPLUS_ERROR(logger, "CoCreateInstance CLSID_ErrorLog failed : 0x" << std::hex << std::uppercase << hr);
-	//	return hr;
- //   }
+	hr = errorLog.CoCreateInstance(CLSID_ErrorLog);
+    if (FAILED(hr))
+    {
+        LOG4CPLUS_ERROR(logger, "CoCreateInstance CLSID_ErrorLog failed : 0x" << std::hex << std::uppercase << hr);
+		return hr;
+    }
 
 	// seek the beginning of the stream
 	LARGE_INTEGER pos;

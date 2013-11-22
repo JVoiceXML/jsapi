@@ -19,10 +19,10 @@ JavaInputStream::~JavaInputStream()
 }
 
 // ---------------------------------------------------------------------------
-// %%Function: CJavaInputStream::setJavaInputStream
+// %%Function: CJavaInputStream::SetJavaInputStream
 // ---------------------------------------------------------------------------
  STDMETHODIMP
-JavaInputStream::setJavaInputStream(JNIEnv *env, jobject object)
+JavaInputStream::SetJavaInputStream(JNIEnv *env, jobject object)
  {
 	/* the java environment */
 	this->env = env;

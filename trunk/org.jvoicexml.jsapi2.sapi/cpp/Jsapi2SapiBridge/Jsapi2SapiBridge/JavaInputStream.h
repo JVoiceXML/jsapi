@@ -20,7 +20,7 @@ class InputStream : public IStream
 {
   public:
 	// IUnknown
-	virtual STDMETHODIMP    QueryInterface (REFIID riid, void** ppv) 
+	virtual STDMETHODIMP QueryInterface (REFIID riid, void** ppv) 
     {
 		return 0;
     };
@@ -34,8 +34,9 @@ class InputStream : public IStream
     };
 
 	// IJavaInputStream
-	virtual STDMETHODIMP setJavaInputStream(JNIEnv *env, jobject object) {
-	  return S_OK;
+	virtual STDMETHODIMP SetJavaInputStream(JNIEnv *env, jobject object) 
+	{
+		return S_OK;
 	};
   public:
     JNIEnv*		env;		// jvm-env holding our InputStream
@@ -53,11 +54,11 @@ class JavaInputStream : public InputStream
     STDMETHODIMP    QueryInterface (REFIID iid, void **ppv);
 	STDMETHODIMP_(ULONG) AddRef(void) 
     {
-        return InterlockedIncrement(&m_cRef); 
+        return InterlockedIncrement(&ref); 
     };
 	STDMETHODIMP_(ULONG) Release(void)
     {
-        if (InterlockedDecrement(&m_cRef) == 0)
+        if (InterlockedDecrement(&ref) == 0)
         {
             // Ouch!
             // TODO Need a better solution
@@ -118,15 +119,18 @@ class JavaInputStream : public InputStream
     };
 
 	// JavaInputStream
-	STDMETHODIMP setJavaInputStream(JNIEnv *env, jobject object);
+	STDMETHODIMP SetJavaInputStream(JNIEnv *env, jobject object);
     // constructors/destructors
-    JavaInputStream()     { m_cRef = 0; env = NULL;}
-    //virtual ~CJavaInputStream()    { ; }
+    JavaInputStream()     
+	{ 
+		ref = 0; 
+		env = NULL;
+	}
 	virtual ~JavaInputStream();
 
   private:
     /** Reference xounter */
-    LONG        m_cRef;
+    LONG        ref;
 
     /** Logger instance. */
     static log4cplus::Logger logger;
