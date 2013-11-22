@@ -30,10 +30,7 @@ public:
 	
 	HRESULT StartRecognition(WCHAR* result[]);
 
-	void StartDictation();
-
 	HRESULT AbortRecognition();
-
 
     HRESULT	hr;
 

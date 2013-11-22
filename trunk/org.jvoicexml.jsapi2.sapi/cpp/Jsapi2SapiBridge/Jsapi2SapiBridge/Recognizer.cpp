@@ -244,10 +244,10 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 //		Might be useful someday so better keep it! =)
 HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath,LPCWSTR grammarID )
 {
-	CComPtr<ISpRecoGrammar>		cpGrammar;
+	CComPtr<ISpRecoGrammar>	cpGrammar;
 	
 	/* Create a Grammar Instance */
-    hr = cpRecoCtxt->CreateGrammar( NULL, &cpGrammar);
+    hr = cpRecoCtxt->CreateGrammar(NULL, &cpGrammar);
     if (FAILED(hr))
     {
         return hr;
@@ -296,7 +296,6 @@ HRESULT Recognizer::DeleteGrammar(LPCWSTR ID)
 	return hr; 
 }
 
-//wchar_t** Recognizer::RecognitionHappened()
 HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 {
 	/* Inactivate all Grammars contained in the gramHash */
@@ -474,39 +473,6 @@ HRESULT Recognizer::AbortRecognition()
     continuing = false;
     return S_OK;
 }
-
-void Recognizer::StartDictation()
-{	
-	CComPtr<ISpRecoResult>		cpResult;
-
-	CComPtr<ISpRecoGrammar>		cpGrammar;
-
-	
-    hr = cpRecoCtxt->CreateGrammar( NULL, &cpGrammar);
-
-	hr = cpGrammar->LoadDictation(NULL, SPLO_STATIC);
-
-	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
-    
-	if ( SUCCEEDED(hr = BlockForResult( cpGrammar, &cpResult)))
-	{
-		CSpDynamicString dstrText;
-
-        if (SUCCEEDED(cpResult->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, 
-                                        TRUE, &dstrText, NULL)))
-        {
-			// ToDo Give back the Dictation Result To Java Code
-			// and create a terminate Method
-			USES_CONVERSION;
-            LOG4CPLUS_DEBUG(logger, "I heard: " << W2A(dstrText));
-			
-			cpResult.Release();   						
-        }
-							
-		hr = cpGrammar->SetGrammarState(SPGS_ENABLED);			
-	}
-}
-
 
 HRESULT Recognizer::BlockForResult( ISpRecoGrammar* cpGrammar, ISpRecoResult ** ppResult)
 {	

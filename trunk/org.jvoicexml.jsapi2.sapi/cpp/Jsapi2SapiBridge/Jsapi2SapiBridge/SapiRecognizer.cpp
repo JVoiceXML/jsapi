@@ -263,17 +263,6 @@ JNIEXPORT jobject JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogni
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    start
- * Signature: (J)V
- */
-JNIEXPORT void JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_start
-(JNIEnv *env, jobject object, jlong recognizerHandle)
-{
-	reinterpret_cast<Recognizer*>(recognizerHandle)->StartDictation();	
-}
-
-/*
- * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
  * Method:    sapiRecognize
  * Signature: (J)Ljava/lang/String;
  */
