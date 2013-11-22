@@ -181,7 +181,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="JavaLoggingAppender.cpp" />
-    <ClCompile Include="jInputStream.cpp" />
+    <ClCompile Include="JavaInputStream.cpp" />
     <ClCompile Include="JNIUtils.cpp" />
     <ClCompile Include="Log4CPlus2JavaLoggingAdapter.cpp" />
     <ClCompile Include="main.cpp" />
@@ -195,7 +195,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\org_jvoicexml_jsapi2_sapi_logging_Log4CPlus2JavaLoggingAdapter.h" />
     <ClInclude Include="JavaLoggingAppender.h" />
-    <ClInclude Include="jInputStream.h" />
+    <ClInclude Include="JavaInputStream.h" />
     <ClInclude Include="JNIUtils.h" />
     <ClInclude Include="..\include\org_jvoicexml_jsapi2_sapi_recognition_SapiRecognitionThread.h" />
     <ClInclude Include="..\include\org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer.h" />

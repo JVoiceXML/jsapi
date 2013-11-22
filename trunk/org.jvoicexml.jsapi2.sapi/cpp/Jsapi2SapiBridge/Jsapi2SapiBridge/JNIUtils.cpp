@@ -4,7 +4,7 @@
 #include <log4cplus/loggingmacros.h>
 #include "log4cplus/consoleappender.h"
 #include "JavaLoggingAppender.h"
-#include "jInputStream.h" //IJavaInputStream, CJavaInputStream, Interfaces, ClassFactory
+#include "JavaInputStream.h" 
 
 static log4cplus::Logger logger =
     log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.JNI"));

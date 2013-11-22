@@ -5,7 +5,7 @@
 #include <log4cplus/loggingmacros.h>
 
 // wraps a java InputStream in an IStream
-#include "jInputStream.h"
+#include "JavaInputStream.h"
 
 //static initializations
 static log4cplus::Logger logger =
@@ -61,7 +61,7 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
     hr = jStream.CoCreateInstance(CLSID_JInputStream);
 
     /* query Setter-Interface */
-    CComPtr<IJavaInputStream> jStreamSetter;
+    CComPtr<InputStream> jStreamSetter;
     if (SUCCEEDED(hr)) {
         hr = jStream->QueryInterface(IID_IJavaInputStream, (void**) &jStreamSetter);
     }
