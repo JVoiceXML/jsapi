@@ -32,22 +32,12 @@ public:
 		const WCHAR *pszHelpFile,
 		DWORD dwHelpContext);
 
-
 	STDMETHOD_(VOID, ClearErrors());
 
-
-	STDMETHOD_(BOOL, GetErrorIndex(const unsigned int
-		index, WCHAR
-		**dError));
-
-
 private:
-	std::vector<std::string> m_errors;
+	std::vector<std::string> errors;
 	ULONG refCount;
-	WCHAR *lastError;
-
-
-
+	wchar_t* lastError;
 };
 
 

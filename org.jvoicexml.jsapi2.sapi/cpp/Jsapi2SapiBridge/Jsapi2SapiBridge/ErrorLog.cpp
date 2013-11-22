@@ -10,30 +10,11 @@ ErrorLog::~ErrorLog()
 {
 	if (lastError != NULL)
 	{
-		free(lastError);
+		delete[] lastError;
 		lastError = NULL;
 	}
 }
 
-
-BOOL ErrorLog::GetErrorIndex(const unsigned int index, WCHAR** dError)
-{
-	if ((index >= 0) && (index < m_errors.size()))
-	{
-		if (lastError != NULL)
-		{
-			free(lastError);
-			lastError = NULL;
-		}
-		lastError = NULL; //ConvertToWide(m_errors[index]);
-		if (lastError != NULL)
-		{
-			*dError = lastError;
-			return TRUE;
-		}
-	}
-	return FALSE;
-}
 
 
 STDMETHODIMP_(ULONG) ErrorLog::AddRef()
@@ -86,7 +67,7 @@ STDMETHODIMP ErrorLog::QueryInterface ( REFIID riid, void** ppv )
 
 void STDMETHODCALLTYPE ErrorLog::ClearErrors()
 {
-	m_errors.clear();
+	errors.clear();
 }
 
 
@@ -101,6 +82,10 @@ HRESULT ErrorLog::AddError(const long lLineNumber,
 	//	(pszDescription!=NULL)?ConvertFromWide((WCHAR*)pszDescription).c_str():"EMP­TY");
 
 	//m_errors.push_back(errorContent);
+	const size_t sizeDescription = wcslen(pszDescription) + 1;
+	lastError = new wchar_t[sizeDescription];
+	wcsncpy(lastError, pszDescription, sizeDescription);
+
 	return S_OK;
 }
 
