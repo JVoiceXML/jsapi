@@ -122,16 +122,18 @@ public final class SapiResult extends BaseResult  {
         str.append(confidence);
         str.append(',');
         str.append(sml);
-        str.append(',');
-        str.append('[');
-        for (int i = 0; i < tags.length; i++) {
-            final String tag = tags[i].toString();
-            str.append(tag);
-            if (i < tags.length - 1) {
-                str.append(',');
+        if (tags != null) {
+            str.append(',');
+            str.append('[');
+            for (int i = 0; i < tags.length; i++) {
+                final String tag = tags[i].toString();
+                str.append(tag);
+                if (i < tags.length - 1) {
+                    str.append(',');
+                }
             }
+            str.append(']');
         }
-        str.append(']');
         str.append(']');
         return str.toString();
     }

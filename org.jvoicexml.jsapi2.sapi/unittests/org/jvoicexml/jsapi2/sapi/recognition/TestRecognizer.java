@@ -30,9 +30,8 @@ import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
 
-import junit.framework.Assert;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
