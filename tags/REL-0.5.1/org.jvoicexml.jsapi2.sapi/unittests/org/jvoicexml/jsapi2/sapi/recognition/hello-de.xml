@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<grammar xmlns="http://www.w3.org/2001/06/grammar" xml:lang="de"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://www.w3.org/2001/06/grammar 
+                             http://www.w3.org/TR/speech-grammar/grammar.xsd"
+         version="1.0" mode="voice" root="greeting"
+         tag-format="semantics/1.0">
+
+	<rule id="greeting" scope="public">
+		<item repeat="0-1">
+			<one-of>
+				<item> Guten Morgen </item>
+			</one-of>
+		</item>
+		<item>
+			<one-of>
+				<item> Dirk 	</item>
+				<item> David 	</item>
+				<item> Renato 	</item>
+				<item> Josua 	</item>
+
+			</one-of>
+		</item>
+	</rule>
+</grammar>
