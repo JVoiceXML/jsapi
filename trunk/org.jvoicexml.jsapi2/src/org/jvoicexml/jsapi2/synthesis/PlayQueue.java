@@ -154,33 +154,36 @@ class PlayQueue implements Runnable {
                         }
                     }
 
-                    while (wordIndex < item.getWords().length
+                    final String[] words = item.getWords();
+                    while (wordIndex < words.length
                             && (item.getWordsStartTime()[wordIndex] * sampleRate
                                 <= playIndex * bytesRead)) {
                         synthesizer.postSpeakableEvent(new SpeakableEvent(
                                 source, SpeakableEvent.WORD_STARTED, id,
                                 item.getWords()[wordIndex],
                                     wordStart, wordStart
-                                    + item.getWords()[wordIndex].length()),
+                                    + words[wordIndex].length()),
                                 listener);
-                        wordStart += item.getWords()[wordIndex].length() + 1;
+                        wordStart += words[wordIndex].length() + 1;
                         wordIndex++;
                     }
 
-                    while (phonemeIndex < item.getPhonesInfo().length
-                            && timeNextPhone * sampleRate < playIndex
-                                    * bytesRead) {
-                        synthesizer.postSpeakableEvent(new SpeakableEvent(
-                                source, SpeakableEvent.PHONEME_STARTED,
-                                id, item.getWords()[wordIndex - 1],
-                                item.getPhonesInfo(), phonemeIndex),
-                                listener);
-                        timeNextPhone +=
-                            (double) item.getPhonesInfo()[phonemeIndex]
-                                .getDuration() / (double) 1000;
-                        phonemeIndex++;
+                    if (words.length > 0) {
+                        final PhoneInfo[] phones = item.getPhonesInfo();
+                        while (phonemeIndex < phones.length
+                                && timeNextPhone * sampleRate < playIndex
+                                        * bytesRead) {
+                            synthesizer.postSpeakableEvent(new SpeakableEvent(
+                                    source, SpeakableEvent.PHONEME_STARTED,
+                                    id, words[wordIndex - 1],
+                                    phones, phonemeIndex),
+                                    listener);
+                            timeNextPhone +=
+                                (double) phones[phonemeIndex].getDuration() 
+                                    / (double) 1000;
+                            phonemeIndex++;
+                        }
                     }
-
                     playIndex++;
 
                     final OutputStream out = manager.getOutputStream();
