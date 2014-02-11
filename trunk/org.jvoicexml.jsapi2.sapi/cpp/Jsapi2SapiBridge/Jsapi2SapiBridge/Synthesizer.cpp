@@ -31,7 +31,7 @@ Synthesizer::Synthesizer(const wchar_t* engineName)
 		// Get the numbers of tokens found
         hr = cpEnum->GetCount( &ulNumTokens );
 
-        if ( SUCCEEDED( hr ) && 0 != ulNumTokens )
+        if (SUCCEEDED(hr) && 0 != ulNumTokens)
         {
 			CSpDynamicString descriptionString;
 
@@ -64,16 +64,11 @@ Synthesizer::Synthesizer(const wchar_t* engineName)
     // Set the notifyEvent
     if(SUCCEEDED(hr))
     {    
-        /*hr = cpVoice->SetInterest(
-            SPFEI(SPEI_WORD_BOUNDARY|SPEI_TTS_BOOKMARK|SPEI_PHONEME),SPFEI(SPEI_WORD_BOUNDARY
-                |SPEI_TTS_BOOKMARK|SPEI_PHONEME));*/
 		hr = cpVoice->SetInterest( SPFEI_ALL_TTS_EVENTS, SPFEI_ALL_TTS_EVENTS );
         hr = cpVoice->SetNotifyWin32Event();
     }
 
 	LANGID m_LangID = 0;
-
-
 	if (cpToken != NULL)
 	{		
 		CComPtr<ISpDataKey> cpAttribKey;
@@ -266,7 +261,7 @@ HRESULT Synthesizer::Speak(LPCWSTR speakString, bool isSSML, long& size, byte*& 
 			};
 		}
 
-		//Check TTS status
+		// Check TTS status
 		SPVOICESTATUS voiceStatus;
 		hr = cpVoice->GetStatus(&voiceStatus, NULL);
 		if (hr = S_OK) {
