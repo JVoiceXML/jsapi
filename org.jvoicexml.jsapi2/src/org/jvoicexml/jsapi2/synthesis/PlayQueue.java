@@ -160,15 +160,14 @@ class PlayQueue implements Runnable {
                                 <= playIndex * bytesRead)) {
                         synthesizer.postSpeakableEvent(new SpeakableEvent(
                                 source, SpeakableEvent.WORD_STARTED, id,
-                                item.getWords()[wordIndex],
-                                    wordStart, wordStart
-                                    + words[wordIndex].length()),
+                                    words[wordIndex], wordStart,
+                                    wordStart + words[wordIndex].length()),
                                 listener);
                         wordStart += words[wordIndex].length() + 1;
                         wordIndex++;
                     }
 
-                    if (words.length > 0) {
+                    if (words.length > 0  && wordIndex > 0) {
                         final PhoneInfo[] phones = item.getPhonesInfo();
                         while (phonemeIndex < phones.length
                                 && timeNextPhone * sampleRate < playIndex
