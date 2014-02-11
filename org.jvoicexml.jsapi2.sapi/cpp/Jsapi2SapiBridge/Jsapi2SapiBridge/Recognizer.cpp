@@ -440,14 +440,12 @@ HRESULT Recognizer::StartRecognition(WCHAR* result[])
 	hr = S_FALSE;
 
 	/* wait for an event and try to look if it occured every 300ms*/
-	while( continuing && hr==S_FALSE  )
+	while(continuing && hr==S_FALSE)
     {
 		if (cpRecoCtxt) {
-			//hr = cpRecoCtxt->WaitForNotifyEvent(300);
-			hr = cpRecoCtxt->WaitForNotifyEvent(20);
+			hr = cpRecoCtxt->WaitForNotifyEvent(300);
 			if(hr == S_OK)
 			{
-				//return RecognitionHappened();
 				return RecognitionHappened(result);
 			}
 		}
@@ -473,32 +471,3 @@ HRESULT Recognizer::AbortRecognition()
     continuing = false;
     return S_OK;
 }
-
-HRESULT Recognizer::BlockForResult( ISpRecoGrammar* cpGrammar, ISpRecoResult ** ppResult)
-{	
-	USES_CONVERSION;
-
-	HRESULT hr = S_OK;
-	CSpEvent event;
-
-	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_ACTIVE );	
-	
-	hr = cpRecoCtxt->SetNotifyWin32Event();
-
-	if ( SUCCEEDED(hr)&& SUCCEEDED(hr = event.GetFrom( cpRecoCtxt )) && hr == S_FALSE ) //
-	{
-		hr = cpRecoCtxt->WaitForNotifyEvent(INFINITE);
-	}
-			
-	hr = cpGrammar->SetRuleState(NULL, NULL, SPRS_INACTIVE );	
-
-	*ppResult = event.RecoResult();
-
-	if (*ppResult)
-	{
-		(*ppResult)->AddRef();
-	}
-
-	return hr;
-}
-

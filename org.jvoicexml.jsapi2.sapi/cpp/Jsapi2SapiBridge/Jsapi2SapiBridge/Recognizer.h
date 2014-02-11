@@ -40,8 +40,6 @@ private:
 
     void Recognized(LPWSTR utterance);
 
-	HRESULT BlockForResult(ISpRecoGrammar* cpGrammar, ISpRecoResult ** ppResult);
-	
 	std::map< std::wstring , CComPtr<ISpRecoGrammar> > gramHash;
 
     CComPtr<ISpRecognizer>		cpRecognizerEngine;
