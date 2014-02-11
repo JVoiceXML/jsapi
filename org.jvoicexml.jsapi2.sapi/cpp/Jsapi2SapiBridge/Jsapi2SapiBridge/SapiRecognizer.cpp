@@ -206,29 +206,6 @@ JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecogn
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
- * Method:    sapiSetGrammar
- * Signature: (JLjava/lang/String;Ljava/lang/String;)Z
- */
-JNIEXPORT jboolean JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer_sapiSetGrammar
-(JNIEnv *env, jobject object, jlong recognizerHandle, jstring grammarPath, jstring reference){
-		
-	Recognizer* recognizer = (Recognizer*)recognizerHandle;
-    const wchar_t* gram = (const wchar_t*)env->GetStringChars(grammarPath, NULL);
-	const wchar_t* ref = (const wchar_t*)env->GetStringChars(reference, NULL);	
-	
-	HRESULT hr = recognizer->LoadGrammarFile(gram, ref);
-	if (SUCCEEDED(hr))
-    {
-        return JNI_TRUE;
-	}
-	else
-    {
-		return JNI_FALSE;
-	}
-}
-
-/*
- * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
  * Method:    sapiSetGrammarContent
  * Signature: (JLjava/lang/String;Ljava/lang/String;)Z
  */
@@ -286,13 +263,10 @@ JNIEXPORT jint JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 	}
 
 	// if the recognizer successfully matched something, update the returnResult
-	if (hr == S_OK)
-	{
-		jstring ruleName = env->NewString((jchar*)result[0], wcslen(result[0]));
-		jstring utterance = env->NewString((jchar*)result[1], wcslen(result[1]));
-		env->SetObjectArrayElement(returnResult, 0, ruleName); //ruleName
-		env->SetObjectArrayElement(returnResult, 1, utterance); //utterance
-	}
+	jstring ruleName = env->NewString((jchar*)result[0], wcslen(result[0]));
+	jstring utterance = env->NewString((jchar*)result[1], wcslen(result[1]));
+	env->SetObjectArrayElement(returnResult, 0, ruleName);
+	env->SetObjectArrayElement(returnResult, 1, utterance);
 
     return hr;
 }
