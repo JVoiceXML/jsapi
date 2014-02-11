@@ -20,14 +20,14 @@ import java.util.ArrayList;
  */
 public final class SapiEngineListFactory implements EngineListFactory {
     static {
-        //Check the processor architecture
+        // Check the processor architecture
         if (System.getProperty("os.arch").equalsIgnoreCase("x86")) {
             System.loadLibrary("Jsapi2SapiBridge");
         } else {
             System.loadLibrary("Jsapi2SapiBridge_x64");
         }
             
-         
+        // Start the logging adapter
         final Log4CPlus2JavaLoggingAdapter adapter =
             new Log4CPlus2JavaLoggingAdapter();
         adapter.start();
@@ -46,7 +46,7 @@ public final class SapiEngineListFactory implements EngineListFactory {
                 //If a voice preference was presented
                 final ArrayList<Voice> selectedVoices = new ArrayList<Voice>();
                 for (Voice reqVoice: mode.getVoices()) {
-                    for (Voice availVoice: voices) {
+                    for (Voice availVoice : voices) {
                         if (availVoice.match(reqVoice)) {
                             selectedVoices.add(availVoice);
                             break;

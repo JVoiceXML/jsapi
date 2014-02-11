@@ -68,6 +68,20 @@ public final class SapiSynthesizer extends BaseSynthesizer {
     }
 
     /**
+     * Do some cleanup
+     * @throws Throwable
+     *         error finalizing
+     */
+    @Override
+    public void finalize() throws Throwable {
+        if (synthesizerHandle != 0) {
+            sapiHandlDeallocate(synthesizerHandle);
+            synthesizerHandle = 0;
+        }
+        super.finalize();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
