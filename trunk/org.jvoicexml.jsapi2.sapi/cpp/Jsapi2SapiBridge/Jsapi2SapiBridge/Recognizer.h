@@ -17,19 +17,13 @@ public:
     static HRESULT GetAudioFormat(WAVEFORMATEX& format);
 
     HRESULT Resume();
-
     HRESULT Pause();
 
     HRESULT LoadGrammar(const wchar_t* grammar,LPCWSTR grammarID);
-
-    HRESULT LoadGrammarFile(LPCWSTR grammarPath, LPCWSTR grammarID);
-	
 	HRESULT DeleteGrammar(LPCWSTR ID);
 
-    HRESULT RecognitionHappened(WCHAR* recoResult[]);
-	
 	HRESULT StartRecognition(WCHAR* result[]);
-
+    HRESULT RecognitionHappened(WCHAR* recoResult[]);
 	HRESULT AbortRecognition();
 
     HRESULT	hr;

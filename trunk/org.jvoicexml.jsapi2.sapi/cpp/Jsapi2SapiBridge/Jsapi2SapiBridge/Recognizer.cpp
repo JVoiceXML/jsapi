@@ -147,13 +147,13 @@ HRESULT Recognizer::SetRecognizerInputStream(CComPtr<ISpStream> spStream)
 	return hr;
 }
 
-HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
+HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID)
 {
     LOG4CPLUS_DEBUG(logger, "loading grammar '" << grammar << "'");
 
     /* container for the new grammar */
 	CComPtr<ISpRecoGrammar> cpGrammar;
-    hr = cpRecoCtxt->CreateGrammar( NULL , &cpGrammar);
+    hr = cpRecoCtxt->CreateGrammar(NULL , &cpGrammar);
     if (FAILED(hr))
     {
         return hr;
@@ -168,7 +168,7 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
     }
 
 	// first, we need to convert from WCHAR to CHAR for the GrammarCompiler
-	//	(else we get a 0x80045003 - "unsupported format")
+	// (else we get a 0x80045003 - "unsupported format")
 	const size_t sizeGrammar = wcslen(grammar) + 1;
 	char* grammarAscii = new char[sizeGrammar];
 	size_t convertedChars = 0;
@@ -235,43 +235,9 @@ HRESULT Recognizer::LoadGrammar(const wchar_t* grammar, LPCWSTR grammarID )
 	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
 
 	/* pair the grammarID and the grammar in gramHash */
-	gramHash.insert( std::make_pair( grammarID , cpGrammar ) );
+	gramHash.insert(std::make_pair( grammarID, cpGrammar));
 
     return hr;
-}
-
-//NOTE: Functioning, but not used anymore. Grammars are now directly loaded from memory.
-//		Might be useful someday so better keep it! =)
-HRESULT Recognizer::LoadGrammarFile(LPCWSTR grammarPath,LPCWSTR grammarID )
-{
-	CComPtr<ISpRecoGrammar>	cpGrammar;
-	
-	/* Create a Grammar Instance */
-    hr = cpRecoCtxt->CreateGrammar(NULL, &cpGrammar);
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-
-	/* Load content for the Grammar from a file, content will not change */
-	hr = cpGrammar->LoadCmdFromFile( grammarPath , SPLO_STATIC);	
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-
-	/* Enable the Grammar so the Recognizer will try to match the content*/
-	hr = cpGrammar->SetGrammarState(SPGS_ENABLED);
-    if (FAILED(hr))
-    {
-        return hr;
-    }
-
-	/* pair the grammarId and the gramamr and insert it in gramHash*/
-	gramHash.insert( std::make_pair( grammarID , cpGrammar ) );
-	
-
-	return hr;	
 }
 
 HRESULT Recognizer::DeleteGrammar(LPCWSTR ID)
@@ -313,16 +279,13 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 	//ULONG ulTmp = 1;
 
     /* Process all of the recognition events */
-	while ( SUCCEEDED( hr = event.GetFrom(cpRecoCtxt)) && hr!=S_FALSE )//== S_OK
+	while (SUCCEEDED(hr = event.GetFrom(cpRecoCtxt)) && hr!=S_FALSE )
     {
 		switch (event.eEventId)
         {
 			case SPEI_RECOGNITION:
-
+			case SPEI_FALSE_RECOGNITION:
 				result = event.RecoResult();
-
-				//result->SpeakAudio(0, 0, SPF_DEFAULT, &ulTmp); /* TEST */
-
 				hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
 					&utterance, NULL);
 
@@ -359,27 +322,11 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 				}
 
 				gramHash.clear();
-
-				//return SML;//utterance;
-				//return &recoResult[0]; //ruleName + utterance(SML)
-				return S_OK;
-				
-			case SPEI_FALSE_RECOGNITION:
-
-				/* Delete all Grammars contained in the gramHash */
-				/* should be a temporary solution*/
-                for(it = gramHash.begin() ; it != gramHash.end(); it++)
-                {	
-
-					CComPtr<ISpRecoGrammar>	cpGrammar = it->second ;
-
-					cpGrammar->SetGrammarState(SPGS_DISABLED);
-					cpGrammar.Detach();
-					cpGrammar.Release();
+				if (event.eEventId == SPEI_FALSE_RECOGNITION)
+				{
+					return SPEI_FALSE_RECOGNITION;
 				}
-				gramHash.clear();
-
-				return SPEI_FALSE_RECOGNITION;
+				return S_OK;
         }
     }
 
@@ -390,10 +337,6 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 HRESULT Recognizer::Pause()
 {
 	hr = S_OK;
-	//if (continuing) {
-	//	hr = cpRecoCtxt->Pause(NULL);
-	//}
-	
 	continuing = false;
 
 	return hr;
@@ -418,8 +361,8 @@ HRESULT Recognizer::StartRecognition(WCHAR* result[])
     }
 
 	/* Activate the Grammars contained in gramHash */
-	std::map< std::wstring ,  CComPtr<ISpRecoGrammar> >::iterator it = gramHash.begin();
-	for( it ; it != gramHash.end(); it++)
+	std::map<std::wstring, CComPtr<ISpRecoGrammar>>::iterator it = gramHash.begin();
+	for(it ; it != gramHash.end(); it++)
     {		
 		hr = it->second->SetRuleState(NULL, NULL, SPRS_ACTIVE );
         if (FAILED(hr))
