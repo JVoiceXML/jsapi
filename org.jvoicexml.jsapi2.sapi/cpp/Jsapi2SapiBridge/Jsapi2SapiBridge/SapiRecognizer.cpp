@@ -263,10 +263,16 @@ JNIEXPORT jint JNICALL Java_org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer
 	}
 
 	// if the recognizer successfully matched something, update the returnResult
-	jstring ruleName = env->NewString((jchar*)result[0], wcslen(result[0]));
-	jstring utterance = env->NewString((jchar*)result[1], wcslen(result[1]));
-	env->SetObjectArrayElement(returnResult, 0, ruleName);
-	env->SetObjectArrayElement(returnResult, 1, utterance);
+	if (result[0] != NULL)
+	{
+		jstring ruleName = env->NewString((jchar*)result[0], wcslen(result[0]));
+		env->SetObjectArrayElement(returnResult, 0, ruleName);
+	}
+	if (result[1] != NULL)
+	{
+		jstring utterance = env->NewString((jchar*)result[1], wcslen(result[1]));
+		env->SetObjectArrayElement(returnResult, 1, utterance);
+	}
 
     return hr;
 }
