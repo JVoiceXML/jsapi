@@ -289,15 +289,6 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 				hr = result->GetText(SP_GETWHOLEPHRASE, SP_GETWHOLEPHRASE, TRUE,
 					&utterance, NULL);
 
-				SPPHRASE *pPhrase;
-				hr = result->GetPhrase(&pPhrase);
-				if (FAILED(hr))
-                {
-					return hr; //could not retrieve the ruleName
-				}
-				ruleName = (pPhrase->Rule.pszName);
-				recoResult[0] = (WCHAR*) ruleName; //retrieve the rootrulename which activated the rule
-
 				/* receive an XMLRecoResult from the RecoResult */
 				ISpeechXMLRecoResult* XMLResult;
 				result->QueryInterface( IID_ISpeechXMLRecoResult , (void**)&XMLResult);
@@ -309,6 +300,17 @@ HRESULT Recognizer::RecognitionHappened(WCHAR* recoResult[])
 					return hr; // could not retrieve the SML-Resultstring
 				}
 				recoResult[1] = (WCHAR*) SML; //retrieve the utterance
+
+				SPPHRASE *pPhrase;
+				hr = result->GetPhrase(&pPhrase);
+				if (FAILED(hr))
+                {
+					return hr; //could not retrieve the ruleName
+				}
+				ruleName = (pPhrase->Rule.pszName);
+				recoResult[0] = (WCHAR*) ruleName; //retrieve the rootrulename which activated the rule
+
+				
 
 				/* Delete all Grammars contained in the gramHash */
 				/* should be a temporary solution*/
