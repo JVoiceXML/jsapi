@@ -47,31 +47,31 @@ This file builds the JSR 113.jar.
     <delete dir="${dist}">
       <include name="*.dll" />
     </delete>
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
+    <exec dir="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge" executable="${msvc.devenv}"
       osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Clean"/>
       <arg value="&quot;Debug|Win32&quot;"/>
     </exec>
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
+    <exec dir="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge" executable="${msvc.devenv}"
       osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Clean"/>
       <arg value="&quot;Release|Win32&quot;"/>
     </exec>
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
+    <exec dir="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge" executable="${msvc.devenv}"
       osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Clean"/>
       <arg value="&quot;Debug|x64&quot;"/>
     </exec>
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
+    <exec dir="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge" executable="${msvc.devenv}"
       osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Clean"/>
       <arg value="&quot;Release|x64&quot;"/>
     </exec>
-    <delete dir="cpp/Jsapi2SapiBridge/include">
+    <delete dir="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge/include">
       <include name="org_jvoicexml_jsapi2*.h"/>
     </delete>
   </target>
@@ -90,7 +90,7 @@ This file builds the JSR 113.jar.
         <include name="**/*.xsl" />
       </fileset>
     </copy>
-    <javah destdir="cpp/Jsapi2SapiBridge/include">
+    <javah destdir="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge/include">
       <class name="${component}.SapiEngineListFactory"/>
       <class name="${component}.logging.Log4CPlus2JavaLoggingAdapter"/>    
       <class name="${component}.recognition.SapiRecognizer"/>
@@ -100,28 +100,28 @@ This file builds the JSR 113.jar.
       <classpath location="${build}"/>
     </javah>
     <echo>Building Win32 Debug</echo>
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
+    <exec dir="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge" executable="${msvc.devenv}"
       osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Build"/>
       <arg value="&quot;Debug|Win32&quot;"/>
     </exec>
     <echo>Building Win32 Release</echo>
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
+    <exec dir="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge" executable="${msvc.devenv}"
       osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Build"/>
       <arg value="&quot;Release|Win32&quot;"/>
     </exec>
     <echo>Building Win64 Debug</echo>
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
+    <exec dir="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge" executable="${msvc.devenv}"
       osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Build"/>
       <arg value="&quot;Debug|x64&quot;"/>
     </exec>
     <echo>Building Win64 Release</echo>
-    <exec dir="cpp/Jsapi2SapiBridge" executable="${msvc.devenv}"
+    <exec dir="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge" executable="${msvc.devenv}"
       osfamily="windows">
       <arg value="Jsapi2SapiBridge.sln"/>
       <arg value="/Build"/>
@@ -130,9 +130,9 @@ This file builds the JSR 113.jar.
   </target>
 
   <target name="-copyReleaseDll">
-    <copy file="cpp/Jsapi2SapiBridge/Release/Jsapi2SapiBridge.dll"
+    <copy file="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge/Release/Jsapi2SapiBridge.dll"
       tofile="${dist}/Jsapi2SapiBridge.dll" overwrite="true"/>
-    <copy file="cpp/Jsapi2SapiBridge/Release_x64/Jsapi2SapiBridge_x64.dll"
+    <copy file="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge/Release_x64/Jsapi2SapiBridge_x64.dll"
       tofile="${dist}/Jsapi2SapiBridge_x64.dll" overwrite="true"/>
   </target>
 
