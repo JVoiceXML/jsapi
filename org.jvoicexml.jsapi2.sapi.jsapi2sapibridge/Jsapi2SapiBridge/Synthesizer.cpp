@@ -4,7 +4,7 @@
 
 //static initializations
 log4cplus::Logger Synthesizer::logger =
-    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.Synthesizer"));
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.jsapi2sapibridge.Synthesizer"));
 float Synthesizer::bytesPerSecond = 44100;
 
 Synthesizer::Synthesizer(const wchar_t* engineName)

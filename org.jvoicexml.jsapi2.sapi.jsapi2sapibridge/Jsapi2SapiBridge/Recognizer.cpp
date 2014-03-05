@@ -12,7 +12,7 @@
 
 
 log4cplus::Logger Recognizer::logger =
-    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.Recognizer"));
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.jsapi2sapibridge.Recognizer"));
 
 
 /* Constructor */
