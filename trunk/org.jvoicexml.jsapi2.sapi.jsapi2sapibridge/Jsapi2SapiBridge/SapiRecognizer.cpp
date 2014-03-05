@@ -9,7 +9,7 @@
 
 //static initializations
 static log4cplus::Logger logger =
-    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.SapiRecognizer"));
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.jsapi2sapibridge.SapiRecognizer"));
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_recognition_SapiRecognizer

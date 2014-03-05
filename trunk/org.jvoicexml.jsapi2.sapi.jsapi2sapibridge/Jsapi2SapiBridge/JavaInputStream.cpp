@@ -4,7 +4,7 @@
 #include "JavaInputStream.h"
 
 log4cplus::Logger JavaInputStream::logger =
-    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.JavaInputStream"));
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.jsapi2sapibridge.JavaInputStream"));
 
 // ---------------------------------------------------------------------------
 // %%Deconstructor: CJavaInputStream::~CJavaInputStream()

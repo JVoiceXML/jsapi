@@ -6,7 +6,7 @@
 #include "JavaLoggingAppender.h"
 
 static log4cplus::Logger logger =
-    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.cpp.logging.Log4CPlus2JavaLoggingAdapter"));
+    log4cplus::Logger::getInstance(_T("org.jvoicexml.sapi.jsapi2sapibridge.logging.Log4CPlus2JavaLoggingAdapter"));
 
 /*
  * Class:     org_jvoicexml_jsapi2_sapi_logging_Log4CPlus2JavaLoggingAdapter
