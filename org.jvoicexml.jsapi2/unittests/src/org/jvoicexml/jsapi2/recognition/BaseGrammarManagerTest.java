@@ -10,7 +10,7 @@
  *
  */
 
-package org.jvoicexml.jsapi2.jse.recognition;
+package org.jvoicexml.jsapi2.recognition;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
