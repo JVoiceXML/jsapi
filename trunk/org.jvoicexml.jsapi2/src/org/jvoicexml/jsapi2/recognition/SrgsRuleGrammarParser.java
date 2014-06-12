@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.speech.recognition.Rule;
@@ -51,6 +52,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -136,8 +138,9 @@ public class SrgsRuleGrammarParser {
             final DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setEntityResolver(entityResolver);
 
-            final Node grammarNode = (Node) xpath.evaluate("/grammar",
-                    builder.parse(inputSource), XPathConstants.NODE);
+            final Document document = builder.parse(inputSource);
+            final Node grammarNode =  document.getFirstChild();
+
             final Rule[] rules = parseGrammar(grammarNode);
 
             //Extract header from grammar
@@ -148,9 +151,6 @@ public class SrgsRuleGrammarParser {
             }
 
             return rules;
-        } catch (XPathExpressionException ex2) {
-            ex2.printStackTrace();
-            return null;
         } catch (ParserConfigurationException ex) {
             ex.printStackTrace();
             return null;
@@ -165,37 +165,30 @@ public class SrgsRuleGrammarParser {
 
     private Rule[] parseGrammar(Node grammarNode) {
         ArrayList<Rule> rules = new ArrayList<Rule>();
-
-//        try{
-//            String root = xpath.evaluate("@root", grammarNode);
-//            attributes.remove("root");
-//            attributes.put("root", root);
-//            System.out.println("new root : "+ root);
-//            
-//        }catch (XPathExpressionException ex) {
-//            ex.printStackTrace();
-//        }
-        
-        
         try {
-            NodeList ruleNodes = (NodeList) xpath.evaluate("rule", grammarNode,
-                    XPathConstants.NODESET);
-            for (int i = 0; i < ruleNodes.getLength(); i++) {
-                Node ruleNode = ruleNodes.item(i);
-                String ruleId = xpath.evaluate("@id", ruleNode);
+            NodeList childNodes = grammarNode.getChildNodes();
+            for (int i = 0; i < childNodes.getLength(); i++) {
+                final Node child = childNodes.item(i);
+                final String nodeName = child.getNodeName();
+                if (!nodeName.equalsIgnoreCase("rule")) {
+                    continue;
+                }
+                final NamedNodeMap attributes = child.getAttributes();
+                final String ruleId = getAttribute(attributes, "id");
                 int scope = Rule.PRIVATE;
-                String scopeStr = xpath.evaluate("@scope", ruleNode);
-                if (scopeStr != "") {
-                    if (scopeStr.equalsIgnoreCase("public"))
+                final String scopeStr = getAttribute(attributes, "scope");
+                if (scopeStr != null) {
+                    if (scopeStr.equalsIgnoreCase("public")) {
                         scope = Rule.PUBLIC;
+                    }
                 }
 
-                ArrayList<RuleComponent> rcs = evalChildNodes(ruleNode);
-                if (rcs.size() == 1) {
-                    Rule rule = new Rule(ruleId, rcs.get(0), scope);
+                final List<RuleComponent> components = evalChildNodes(child);
+                if (components.size() == 1) {
+                    final Rule rule = new Rule(ruleId, components.get(0), scope);
                     rules.add(rule);
-                } else if (rcs.size() > 1) {
-                    RuleSequence rs = new RuleSequence(rcs.toArray(new
+                } else if (components.size() > 1) {
+                    final RuleSequence rs = new RuleSequence(components.toArray(new
                             RuleComponent[] {}));
                     Rule rule = new Rule(ruleId, rs, scope);
                     rules.add(rule);
@@ -207,10 +200,17 @@ public class SrgsRuleGrammarParser {
         return rules.toArray(new Rule[] {});
     }
 
-
-    private ArrayList<RuleComponent> evalNode(final Node node) throws
+    private String getAttribute(NamedNodeMap attributes, String name) {
+        Node attribute = attributes.getNamedItem(name);
+        if (attribute == null) {
+            return null;
+        }
+        return attribute.getNodeValue();
+    }
+    
+    private List<RuleComponent> evalNode(final Node node) throws
             XPathExpressionException {
-        final ArrayList<RuleComponent> ruleComponents = new ArrayList<RuleComponent>();
+        final List<RuleComponent> ruleComponents = new ArrayList<RuleComponent>();
         final String nodeName = node.getNodeName();
         if (nodeName.equalsIgnoreCase("#text")) {
             final Text textNode = (Text) node;
@@ -220,7 +220,7 @@ public class SrgsRuleGrammarParser {
                 ruleComponents.add(ruleToken);
             }
         } else if (nodeName.equalsIgnoreCase("one-of")) {
-            ArrayList<RuleComponent> rcs = evalChildNodes(node);
+            List<RuleComponent> rcs = evalChildNodes(node);
             RuleAlternatives ra = new RuleAlternatives(rcs.toArray(new
                     RuleComponent[] {}));
             ruleComponents.add(ra);
@@ -228,62 +228,58 @@ public class SrgsRuleGrammarParser {
             int repeatMin = -1;
             int repeatMax = -1;
             double repeatProb = -1;
-            try {
-                String repeatStr = xpath.evaluate("@repeat", node);
-                String repeatProbStr = xpath.evaluate("@repeat-prob", node);
+            final NamedNodeMap attributes = node.getAttributes();
+            String repeatStr = getAttribute(attributes, "repeat");
+            String repeatProbStr = getAttribute(attributes, "repeat-prob");
 
-                if (repeatStr.length() != 0) {
-                    int toIndex = repeatStr.indexOf('-');
-                    if (toIndex < 0) {
-                        repeatMin = Integer.parseInt(repeatStr);
-                        repeatMax = repeatMin;
-                    } else {
-                         String minStr = repeatStr.substring(0, toIndex);
-                         String maxStr = repeatStr.substring(toIndex + 1);
-                         if (minStr.trim().length() > 0) {
-                             repeatMin = Integer.parseInt(minStr);
-                         }
-                         if (maxStr.trim().length() > 0) {
-                                repeatMax = Integer.parseInt(maxStr);
-                         }
-                    }
+            if (repeatStr != null) {
+                int toIndex = repeatStr.indexOf('-');
+                if (toIndex < 0) {
+                    repeatMin = Integer.parseInt(repeatStr);
+                    repeatMax = repeatMin;
+                } else {
+                     String minStr = repeatStr.substring(0, toIndex);
+                     String maxStr = repeatStr.substring(toIndex + 1);
+                     if (minStr.trim().length() > 0) {
+                         repeatMin = Integer.parseInt(minStr);
+                     }
+                     if (maxStr.trim().length() > 0) {
+                            repeatMax = Integer.parseInt(maxStr);
+                     }
                 }
-
-                if (repeatProbStr.length() != 0) {
-                    repeatProb = Double.parseDouble(repeatProbStr);
-                }
-
-            } catch (XPathExpressionException ex) {
-                ex.printStackTrace();
             }
 
-            ArrayList<RuleComponent> rcs = evalChildNodes(node);
-            RuleSequence rs = new RuleSequence(rcs.toArray(new RuleComponent[] {}));
+            if (repeatProbStr != null) {
+                repeatProb = Double.parseDouble(repeatProbStr);
+            }
 
+            final List<RuleComponent> components = evalChildNodes(node);
+            RuleSequence sequence = new RuleSequence(components.toArray(new RuleComponent[] {}));
             if ((repeatMin != -1) && (repeatMax != -1) && (repeatProb != -1)) {
-                RuleCount rc = new RuleCount(rs, repeatMin, repeatMax, (int)(repeatProb*RuleCount.MAX_PROBABILITY));
+                RuleCount rc = new RuleCount(sequence, repeatMin, repeatMax, (int)(repeatProb*RuleCount.MAX_PROBABILITY));
                 ruleComponents.add(rc);
             }
             else if ((repeatMin != -1) && (repeatMax != -1)) {
-                RuleCount rc = new RuleCount(rs, repeatMin, repeatMax);
+                RuleCount rc = new RuleCount(sequence, repeatMin, repeatMax);
                 ruleComponents.add(rc);
             }
             else if (repeatMin != -1) {
                 if (repeatProb != -1){
-                    RuleCount rc = new RuleCount(rs, repeatMin, RuleCount.REPEAT_INDEFINITELY, (int)(repeatProb*RuleCount.MAX_PROBABILITY));
+                    RuleCount rc = new RuleCount(sequence, repeatMin, RuleCount.REPEAT_INDEFINITELY, (int)(repeatProb*RuleCount.MAX_PROBABILITY));
                     ruleComponents.add(rc);
                 } else {
-                    RuleCount rc = new RuleCount(rs, repeatMin);
+                    RuleCount rc = new RuleCount(sequence, repeatMin);
                     ruleComponents.add(rc);
                 }
             }
             else {
-                ruleComponents.add(rs);
+                ruleComponents.add(sequence);
             }
 
         } else if (nodeName.equalsIgnoreCase("ruleref")) {
-            String specialStr = (String) xpath.evaluate("@special", node);
-            if (specialStr != "") {
+            final NamedNodeMap attributes = node.getAttributes();
+            String specialStr = getAttribute(attributes, "special");
+            if (specialStr != null) {
                 if (specialStr.equalsIgnoreCase("NULL")) {
                     ruleComponents.add(RuleSpecial.NULL);
                 } else if (specialStr.equalsIgnoreCase("VOID")) {
@@ -292,11 +288,11 @@ public class SrgsRuleGrammarParser {
                     ruleComponents.add(RuleSpecial.GARBAGE);
                 }
             } else {
-                final String uriStr = (String) xpath.evaluate("@uri", node).trim();
-                if (uriStr.indexOf("#") == -1) {
+                final String uriStr = getAttribute(attributes, "uri");
+                if (uriStr != null && uriStr.indexOf("#") == -1) {
                     final RuleReference reference = new RuleReference(uriStr);
                     ruleComponents.add(reference);
-                } else {
+                } else if (uriStr != null) {
                     final String ruleName =
                         uriStr.substring(uriStr.indexOf("#") + 1).trim();;
                     final String grammarName = uriStr.substring(0, uriStr.indexOf("#"));
@@ -332,14 +328,13 @@ public class SrgsRuleGrammarParser {
         return ruleComponents;
     }
 
-    private ArrayList<RuleComponent> evalChildNodes(Node nodes) throws
+    private List<RuleComponent> evalChildNodes(Node node) throws
             XPathExpressionException {
-        ArrayList<RuleComponent> ruleComponents = new ArrayList<RuleComponent>();
-        NodeList children = (NodeList) xpath.evaluate("child::node()", nodes,
-                XPathConstants.NODESET);
+        final List<RuleComponent> ruleComponents = new ArrayList<RuleComponent>();
+        final NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             final Node child = children.item(i);
-            final ArrayList<RuleComponent> components = evalNode(child);
+            final List<RuleComponent> components = evalNode(child);
             ruleComponents.addAll(components);
         }
 
