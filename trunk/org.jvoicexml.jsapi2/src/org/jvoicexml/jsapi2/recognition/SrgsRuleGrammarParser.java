@@ -47,10 +47,7 @@ import javax.speech.recognition.RuleToken;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -75,7 +72,6 @@ import org.xml.sax.SAXException;
  */
 public class SrgsRuleGrammarParser {
 
-    private XPath xpath;
     private static EntityResolver entityResolver = new EmptyEntityResolver();
     private Map<String, String> attributes;
 
@@ -88,10 +84,6 @@ public class SrgsRuleGrammarParser {
     }
 
     public SrgsRuleGrammarParser() {
-        // Create a new XPath
-        XPathFactory factory = XPathFactory.newInstance();
-
-        xpath = factory.newXPath();
         attributes = new java.util.HashMap<String,String>();
     }
 
@@ -296,29 +288,28 @@ public class SrgsRuleGrammarParser {
                     final String ruleName =
                         uriStr.substring(uriStr.indexOf("#") + 1).trim();;
                     final String grammarName = uriStr.substring(0, uriStr.indexOf("#"));
-                    final String typeStr = (String) xpath.evaluate("@type", node).trim();
+                    final String typeStr = getAttribute(attributes, "type");
                     if (grammarName.isEmpty()) {
                         final RuleReference reference = new RuleReference(
                                 ruleName);
                         ruleComponents.add(reference);
-                    } else if (typeStr.isEmpty()) {
+                    } else if (typeStr == null) {
                         final RuleReference reference = new RuleReference(
                                 grammarName, ruleName);
                         ruleComponents.add(reference);
                     } else {
                         final RuleReference reference = new RuleReference(
-                                grammarName, typeStr);
+                                grammarName, typeStr.trim());
                         ruleComponents.add(reference);
                     }
                 }
             }
         } else if (nodeName.equalsIgnoreCase("token")) {
-            String tokenText = (String) xpath.evaluate(".", node,
-                    XPathConstants.STRING);
+            String tokenText = node.getTextContent();
             RuleToken ruleToken = new RuleToken(tokenText);
             ruleComponents.add(ruleToken);
         } else if (nodeName.equalsIgnoreCase("tag")) {
-            Object tagObject = xpath.evaluate(".", node, XPathConstants.STRING);
+            Object tagObject = node.getTextContent();
             RuleTag ruleTag = new RuleTag(tagObject);
             ruleComponents.add(ruleTag);
         } else if (nodeName.equalsIgnoreCase("example")) {
