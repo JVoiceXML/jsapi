@@ -30,6 +30,7 @@ import java.io.InputStream;
 
 import javax.speech.recognition.Rule;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class SrgsRuleGrammarParserTest {
@@ -40,9 +41,7 @@ public class SrgsRuleGrammarParserTest {
                 .getResourceAsStream("pizza-de.xml");
         SrgsRuleGrammarParser parser = new SrgsRuleGrammarParser();
         final Rule[] rules = parser.load(in);
-        for (Rule rule : rules) {
-            System.out.println(rule);
-        }
+        Assert.assertEquals(5, rules.length);
     }
 
 }
