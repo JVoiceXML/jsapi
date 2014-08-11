@@ -1,3 +1,11 @@
+Version 0.6
+===========
+- several minor bugfixes and code cleanup
+- speed-up of parsing SRGS grammars by removing XPath expressions
+- continued removal of SE-only support 
+- bugfix: a grammar loaded by the grammarmanager is set activatable if a root rule
+  is defined
+
 Version 0.5
 ===========
 - Minor bugfixes
