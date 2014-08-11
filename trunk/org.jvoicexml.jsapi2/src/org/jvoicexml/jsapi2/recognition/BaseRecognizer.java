@@ -47,6 +47,7 @@ package org.jvoicexml.jsapi2.recognition;
 
 import java.io.InputStream;
 import java.security.Permission;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.sound.sampled.AudioFormat;
@@ -80,16 +81,15 @@ import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 
 /**
  * Skeletal Implementation of the JSAPI Recognizer interface.
- *
- * This class is useful by itself for debugging, e.g. you
- * can load grammars and simulate a recognizer recognizing
- * some text, etc.
- *
+ * 
+ * This class is useful by itself for debugging, e.g. you can load grammars and
+ * simulate a recognizer recognizing some text, etc.
+ * 
  * <p>
- * Actual JSAPI recognizer implementations might want to extend or
- * modify this implementation.
+ * Actual JSAPI recognizer implementations might want to extend or modify this
+ * implementation.
  * </p>
- *
+ * 
  */
 public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /** Registered result listeners. */
@@ -119,14 +119,15 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
     /**
      * Create a new Recognizer in the DEALLOCATED state.
-     * @param mode the recognizer mode
+     * 
+     * @param mode
+     *            the recognizer mode
      */
     public BaseRecognizer(final RecognizerMode mode) {
         super(mode);
         resultListeners = new java.util.ArrayList<ResultListener>();
         speakerManager = new BaseSpeakerManager();
-        final RecognizerProperties props =
-            new BaseRecognizerProperties(this);
+        final RecognizerProperties props = new BaseRecognizerProperties(this);
         setRecognizerProperties(props);
         grammarManager = new BaseGrammarManager(this);
         resultMask = ResultEvent.DEFAULT_MASK;
@@ -232,21 +233,19 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * Notify any grammars if their activation state has been changed.
      */
     protected void notifyGrammarActivation() {
-        /*if (grammars == null) {
-            return;
-        }*/
-        /*  Enumeration e = grammars.elements();
-          while (e.hasMoreElements()) {
-              RuleGrammar rg = (RuleGrammar) e.nextElement();
-              boolean active = isActive(rg);*/
-        /*     if (active != rg.isActive()) {
-                 rg.grammarActive = active;
-                 if (active) {
-                     rg.postGrammarActivated();
-                 } else {
-                     rg.postGrammarDeactivated();
-                 }
-             }*/
+        /*
+         * if (grammars == null) { return; }
+         */
+        /*
+         * Enumeration e = grammars.elements(); while (e.hasMoreElements()) {
+         * RuleGrammar rg = (RuleGrammar) e.nextElement(); boolean active =
+         * isActive(rg);
+         */
+        /*
+         * if (active != rg.isActive()) { rg.grammarActive = active; if (active)
+         * { rg.postGrammarActivated(); } else { rg.postGrammarDeactivated(); }
+         * }
+         */
         // }
     }
 
@@ -258,12 +257,10 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             final EngineEvent event) {
         final RecognizerEvent recognizerEvent = (RecognizerEvent) event;
         for (EngineListener listener : listeners) {
-            RecognizerListener recognizerListener =
-                    (RecognizerListener) listener;
+            RecognizerListener recognizerListener = (RecognizerListener) listener;
             recognizerListener.recognizerUpdate(recognizerEvent);
         }
     }
-
 
     /**
      * {@inheritDoc}
@@ -277,7 +274,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
     public void postEngineEvent(long oldState, long newState, int eventType,
-                                long audioPosition) {
+            long audioPosition) {
         switch (eventType) {
         case RecognizerEvent.SPEECH_STARTED:
         case RecognizerEvent.SPEECH_STOPPED:
@@ -288,16 +285,10 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             audioPosition = RecognizerEvent.UNKNOWN_AUDIO_POSITION;
         }
 
-        final RecognizerEvent event = new RecognizerEvent(this,
-                eventType,
-                oldState,
-                newState,
-                null,
-                null,
-                audioPosition);
+        final RecognizerEvent event = new RecognizerEvent(this, eventType,
+                oldState, newState, null, null, audioPosition);
         postEngineEvent(event);
     }
-
 
     protected void postResultEvent(final ResultEvent event) {
         final SpeechEventExecutor executor = getSpeechEventExecutor();
@@ -317,19 +308,24 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * Notification of the result to the registered {@link ResultListener}s
      * about the given result event.
-     * @param result the result
-     * @param event the event
-     * @param executor the speech event executor
+     * 
+     * @param result
+     *            the result
+     * @param event
+     *            the event
+     * @param executor
+     *            the speech event executor
      */
     protected void postResultEvent(final Result result,
-            final ResultEvent event,
-            final SpeechEventExecutor executor) {
+            final ResultEvent event, final SpeechEventExecutor executor) {
         final BaseResult base = (BaseResult) result;
         base.postResultEvent(executor, event);
     }
 
     public void fireResultEvent(final ResultEvent event) {
-        for (ResultListener listener : resultListeners) {
+        final Collection<ResultListener> copy = new java.util.ArrayList<ResultListener>(
+                resultListeners);
+        for (ResultListener listener : copy) {
             listener.resultUpdate(event);
         }
     }
@@ -346,15 +342,16 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * {@inheritDoc}
      */
     @Override
-    public final void removeRecognizerListener(
-            final RecognizerListener listener) {
+    public final void removeRecognizerListener(final RecognizerListener listener) {
         removeEngineListener(listener);
     }
 
     /**
-     * Request notification of Result events from the Recognizer.
-     * From javax.speech.recognition.Recognizer.
-     * @param listener the listener to add.
+     * Request notification of Result events from the Recognizer. From
+     * javax.speech.recognition.Recognizer.
+     * 
+     * @param listener
+     *            the listener to add.
      */
     public void addResultListener(final ResultListener listener) {
         if (!resultListeners.contains(listener)) {
@@ -363,17 +360,19 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
     /**
-     * Remove a ResultListener from the list of ResultListeners.
-     * From javax.speech.recognition.Recognizer.
-     * @param listener the listener to remove.
+     * Remove a ResultListener from the list of ResultListeners. From
+     * javax.speech.recognition.Recognizer.
+     * 
+     * @param listener
+     *            the listener to remove.
      */
     public void removeResultListener(ResultListener listener) {
         resultListeners.remove(listener);
     }
 
     /**
-     * Get the RecognizerProperties of this Recognizer.
-     * From javax.speech.recognition.Recognizer.
+     * Get the RecognizerProperties of this Recognizer. From
+     * javax.speech.recognition.Recognizer.
      */
     public RecognizerProperties getRecognizerProperties() {
         return recognizerProperties;
@@ -381,10 +380,11 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
     /**
      * Sets the properties for this recognizer.
-     * @param properties the properties
+     * 
+     * @param properties
+     *            the properties
      */
-    protected void setRecognizerProperties(RecognizerProperties
-                                        properties) {
+    protected void setRecognizerProperties(RecognizerProperties properties) {
         recognizerProperties = properties;
     }
 
@@ -418,7 +418,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         return resultMask;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -428,8 +427,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         boolean existChanges = false;
 
         // Build a new grammar set, with all enabled grammars
-        Collection<GrammarDefinition> newGrammars =
-                new java.util.ArrayList<GrammarDefinition>();
+        Collection<GrammarDefinition> newGrammars = new java.util.ArrayList<GrammarDefinition>();
 
         // Commit all grammars pending changes
         final Grammar[] grammars = grammarManager.listGrammars();
@@ -444,9 +442,9 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             // Update "modified-flag"
             existChanges = existChanges || updated;
             if (grammar.isActivatable()) {
-                final GrammarDefinition definition =
-                    new GrammarDefinition(grammar.toString(),
-                            grammar.getReference(), existChanges);
+                final GrammarDefinition definition = new GrammarDefinition(
+                        grammar.toString(), grammar.getReference(),
+                        existChanges);
                 newGrammars.add(definition);
             }
         }
@@ -475,12 +473,15 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
     /**
      * Processes the given grammar.
-     * @param grammar the grammar to process.
-     * @exception GrammarException error processing the grammar
+     * 
+     * @param grammar
+     *            the grammar to process.
+     * @exception GrammarException
+     *                error processing the grammar
      * @return <code>true</code> if the grammar has been updated
      */
     protected boolean processGrammar(final Grammar grammar)
-        throws GrammarException {
+            throws GrammarException {
         if (grammar instanceof BaseRuleGrammar) {
             BaseRuleGrammar baseRuleGrammar = (BaseRuleGrammar) grammar;
             return baseRuleGrammar.commitChanges();
@@ -494,9 +495,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     @Override
     protected long getEngineStates() {
         return super.getEngineStates() | Recognizer.LISTENING
-            | Recognizer.PROCESSING;
+                | Recognizer.PROCESSING;
     }
-
 
     /**
      * {@inheritDoc}
@@ -513,21 +513,20 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         return buf.toString();
     }
 
-
     /**
      * Called from the <code>allocate</code> method.
-     *
+     * 
      * @see #allocate
-     *
+     * 
      * @throws AudioException
-     *          if any audio request fails 
+     *             if any audio request fails
      * @throws EngineException
-     *          if an allocation error occurred or the Engine is not
-     *          operational. 
+     *             if an allocation error occurred or the Engine is not
+     *             operational.
      * @throws EngineStateException
-     *          if called for an Engine in the DEALLOCATING_RESOURCES state 
+     *             if called for an Engine in the DEALLOCATING_RESOURCES state
      * @throws SecurityException
-     *          if the application does not have permission for this Engine
+     *             if the application does not have permission for this Engine
      */
     protected final void baseAllocate() throws EngineStateException,
             EngineException, AudioException, SecurityException {
@@ -537,8 +536,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         // Proceed to real engine allocation
         try {
             handleAllocate();
-            long[] states = setEngineState(CLEAR_ALL_STATE,
-                    ALLOCATED | PAUSED | DEFOCUSED | NOT_BUFFERING);
+            long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED | PAUSED
+                    | DEFOCUSED | NOT_BUFFERING);
             postStateTransitionEngineEvent(states[0], states[1],
                     EngineEvent.ENGINE_ALLOCATED);
         } catch (EngineStateException e) {
@@ -553,28 +552,28 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     }
 
     /**
-     * Perform the real allocation of the recognizer. When this
-     * method is called, the {@link javax.speech.AudioManager} has already
-     * been started.
+     * Perform the real allocation of the recognizer. When this method is
+     * called, the {@link javax.speech.AudioManager} has already been started.
+     * 
      * @throws AudioException
-     *          if any audio request fails 
+     *             if any audio request fails
      * @throws EngineException
-     *          if an allocation error occurred or the Engine is not
-     *          operational. 
+     *             if an allocation error occurred or the Engine is not
+     *             operational.
      * @throws EngineStateException
-     *          if called for an Engine in the DEALLOCATING_RESOURCES state 
+     *             if called for an Engine in the DEALLOCATING_RESOURCES state
      * @throws SecurityException
-     *          if the application does not have permission for this Engine
+     *             if the application does not have permission for this Engine
      */
     protected abstract void handleAllocate() throws EngineStateException,
-        EngineException, AudioException, SecurityException;
+            EngineException, AudioException, SecurityException;
 
     /**
-     * Called from the <code>deallocate</code> method.  Override this in
+     * Called from the <code>deallocate</code> method. Override this in
      * subclasses.
-     *
-     * @throws EngineException if this {@link javax.speech.Engine}
-     *          cannot be deallocated.
+     * 
+     * @throws EngineException
+     *             if this {@link javax.speech.Engine} cannot be deallocated.
      */
     protected final void baseDeallocate() throws EngineStateException,
             EngineException, AudioException {
@@ -600,8 +599,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     @Override
     protected final void basePause() {
         handlePause();
-        setEngineState(LISTENING | PROCESSING,
-                       getEngineState() & ~LISTENING & ~PROCESSING);
+        setEngineState(LISTENING | PROCESSING, getEngineState() & ~LISTENING
+                & ~PROCESSING);
         setEngineState(BUFFERING, NOT_BUFFERING);
     }
 
@@ -610,23 +609,23 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     protected final void basePause(final int flags) {
         handlePause(flags);
-        setEngineState(LISTENING | PROCESSING,
-                       getEngineState() & ~LISTENING & ~PROCESSING);
+        setEngineState(LISTENING | PROCESSING, getEngineState() & ~LISTENING
+                & ~PROCESSING);
     }
 
     /**
      * Called from the {@link #resume()} method.
-     *
+     * 
      * @exception EngineStateException
-     *            when not in the standard Conditions for operation
+     *                when not in the standard Conditions for operation
      * @todo Handle grammar updates
      */
     protected final boolean baseResume() throws EngineStateException {
 
-        //Process grammars
+        // Process grammars
         processGrammars();
         final AudioManager manager = getAudioManager();
-        
+
         // resume streaming of audio
         InputStream in = null;
         if (manager instanceof BaseAudioManager) {
@@ -647,7 +646,6 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         return true;
     }
 
-
     protected abstract void handleDeallocate();
 
     protected abstract void handlePause();
@@ -656,15 +654,18 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
     /**
      * Further handling of resuming the recognizer.
-     * @param in the input stream where to read data from.
+     * 
+     * @param in
+     *            the input stream where to read data from.
      * @return <code>true</code> if the recognizer was resumed
      * @throws EngineStateException
-     *         error resuming the recognizer
+     *             error resuming the recognizer
      */
     protected abstract boolean handleResume(final InputStream in)
-        throws EngineStateException;
+            throws EngineStateException;
 
-    protected abstract boolean setGrammars(Collection<GrammarDefinition> grammarDefinition);
+    protected abstract boolean setGrammars(
+            Collection<GrammarDefinition> grammarDefinition);
 
     protected abstract void handleRequestFocus();
 
@@ -672,13 +673,14 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
     /**
      * Returns a list of engine built-in grammars.
+     * 
      * @return list of buildtin grammars
      */
     public abstract Collection<Grammar> getBuiltInGrammars();
 
-
     /**
      * Retrieves the audio format that is produced by this recognizer.
+     * 
      * @return audio format.
      */
     protected abstract AudioFormat getAudioFormat();
@@ -694,6 +696,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
 
     /**
      * {@inheritDoc}
+     * 
      * @return a new instance of {@link ThreadSpeechEventExecutor}.
      */
     @Override
