@@ -130,11 +130,12 @@ public class SrgsRuleGrammarParser {
 
             // Extract header from grammar
             final NamedNodeMap docAttributes = grammarNode.getAttributes();
-            for (int i = 0; i < docAttributes.getLength(); i++) {
-                final Node node = docAttributes.item(i);
-                attributes.put(node.getNodeName(), node.getNodeValue());
+            if (docAttributes != null) {
+                for (int i = 0; i < docAttributes.getLength(); i++) {
+                    final Node node = docAttributes.item(i);
+                    attributes.put(node.getNodeName(), node.getNodeValue());
+                }
             }
-
             return rules;
         } catch (ParserConfigurationException ex) {
             ex.printStackTrace();
