@@ -134,11 +134,12 @@ public class SRGSGrammarContainer extends Grammar {
      * of tokens.
      * 
      * @param token
-     * @return
+     * @return the rule grammar used to produce the list of tokens
      */
     public synchronized RuleGrammar getRuleGrammar(Token token) {
         for (SRGSGrammar grammar : grammars.values()) {
-            if (grammar.getGrammarNodes().contains(
+            final Collection<GrammarNode> nodes = grammar.getGrammarNodes();
+            if (nodes != null && nodes.contains(
                     ((GrammarState) token.getSearchState()).getGrammarNode())) {
                 return grammar.getRuleGrammar();
             }
