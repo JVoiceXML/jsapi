@@ -110,9 +110,8 @@ class Sphinx4ResultListener implements ResultListener {
     public void newResult(final Result result) {
         LOGGER.log(Level.INFO, "received result: {0}", result);
         LOGGER.log(Level.INFO, "isFinal: {0}", result.isFinal());
-
-        if (!result.isFinal()) {
-            LOGGER.warning("result is not final. forget about it.");
+        if (!result.isFinal() || "<sil>".equalsIgnoreCase(result.toString())) {
+            LOGGER.warning("result is not final or <sil>. forget about it.");
             return;
         }
 
