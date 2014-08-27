@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import javax.speech.recognition.RuleGrammar;
 
+import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.BaseRuleGrammar;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
@@ -35,6 +36,7 @@ import edu.cmu.sphinx.util.props.S4Component;
  * </p>
  * 
  * @author Stefan Radomski
+ * @author Dirk Schnelle-Walka
  * @version $Revision: 1 $
  */
 
@@ -64,14 +66,24 @@ public class SRGSGrammarContainer extends Grammar {
     /** All GrammarNodes of contained grammars plus the firstNode */
     private Set<GrammarNode> grammarNodes = new LinkedHashSet<GrammarNode>();
 
-    /*
-     * (non-Javadoc)
+    /** The JSAPI recognizer. */
+    private BaseRecognizer recognizer;
+
+    /**
+     * Sets the recognizer.
      * 
-     * @see
-     * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
-     * .props.PropertySheet)
+     * @param rec
+     *            the recognizer
      */
-    public void newProperties(PropertySheet ps) throws PropertyException {
+    public void setRecognizer(final BaseRecognizer rec) {
+        recognizer = rec;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void newProperties(final PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
     }
 
@@ -85,7 +97,8 @@ public class SRGSGrammarContainer extends Grammar {
      *            The set of all grammars from the GrammarManager
      * @throws IOException
      */
-    public synchronized void loadGrammars(Collection<org.jvoicexml.jsapi2.recognition.GrammarDefinition> grammarDefinitions)
+    public synchronized void loadGrammars(
+            Collection<org.jvoicexml.jsapi2.recognition.GrammarDefinition> grammarDefinitions)
             throws IOException {
         grammarDefs.clear();
         for (GrammarDefinition definition : grammarDefinitions) {
@@ -140,8 +153,8 @@ public class SRGSGrammarContainer extends Grammar {
         for (SRGSGrammar grammar : grammars.values()) {
             final Collection<GrammarNode> nodes = grammar.getGrammarNodes();
             if (nodes != null) {
-                final GrammarState state =
-                        (GrammarState) token.getSearchState();
+                final GrammarState state = (GrammarState) token
+                        .getSearchState();
                 final GrammarNode node = state.getGrammarNode();
                 if (nodes.contains(node)) {
                     return grammar.getRuleGrammar();
@@ -165,7 +178,7 @@ public class SRGSGrammarContainer extends Grammar {
 
         // we need a ruleGrammar in any case
         if (ruleGrammar == null) {
-            ruleGrammar = new BaseRuleGrammar(null, "srgs_container");
+            ruleGrammar = new BaseRuleGrammar(recognizer, "srgs_container");
         }
 
         boolean existsChanges = false;
@@ -191,8 +204,8 @@ public class SRGSGrammarContainer extends Grammar {
                 existsChanges = true;
 
                 // reload the grammar (TODO: reuse existing object?)
-                SRGSGrammar grammar = new SRGSGrammar(false, false, false,
-                        false, dictionary);
+                SRGSGrammar grammar = new SRGSGrammar(recognizer, false, false,
+                        false, false, dictionary);
                 grammar.setGrammarName(grammarName);
                 String grammarString = grammarDef.getGrammar();
                 grammar.loadSRGS(grammarString);
@@ -219,8 +232,8 @@ public class SRGSGrammarContainer extends Grammar {
                  * transitions from our firstNode.
                  */
                 for (GrammarArc transition : srgsStart.getSuccessors()) {
-                    firstNode.add(transition.getGrammarNode(), LogMath
-                            .getLogOne());
+                    firstNode.add(transition.getGrammarNode(),
+                            LogMath.getLogOne());
                 }
 
                 /**
