@@ -53,6 +53,7 @@ import javax.speech.recognition.RuleSpecial;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
 
+import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.BaseRuleGrammar;
 import org.jvoicexml.jsapi2.recognition.SrgsRuleGrammarParser;
 
@@ -118,17 +119,17 @@ public class SRGSGrammar extends Grammar {
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
-    // ---------------------
-    // Configurable data
-    // ---------------------
+    /** The JSAPI recognizer. */
+    private final BaseRecognizer recognizer;
+
     private BaseRuleGrammar ruleGrammar;
     private RuleStack ruleStack;
     private String grammarName;
-    private URL baseURL = null;
-    private URL grammarURL = null;
+    private URL baseURL;
+    private URL grammarURL;
     private String grammarSTR;
 
-    private GrammarNode firstNode = null;
+    private GrammarNode firstNode;
 
     /**
      * The sphinx4 ConfigurationManager cannot get a newInstance() if a
@@ -137,13 +138,15 @@ public class SRGSGrammar extends Grammar {
      */
     public SRGSGrammar() {
         super();
+        recognizer = null;
     }
 
-    public SRGSGrammar(boolean showGrammar, boolean optimizeGrammar,
-            boolean addSilenceWords, boolean addFillerWords,
-            Dictionary dictionary) {
+    public SRGSGrammar(BaseRecognizer rec, boolean showGrammar,
+            boolean optimizeGrammar, boolean addSilenceWords,
+            boolean addFillerWords, Dictionary dictionary) {
         super(showGrammar, optimizeGrammar, addSilenceWords, addFillerWords,
                 dictionary);
+        recognizer = rec;
     }
 
     /*
@@ -348,8 +351,8 @@ public class SRGSGrammar extends Grammar {
         if (ruleName.getGrammarReference() == null)
             rule = ruleGrammar.getRule(ruleName.getRuleName());
         else
-            rule = getExternalGrammar(ruleName.getGrammarReference(), ruleName
-                    .getRuleName());
+            rule = getExternalGrammar(ruleName.getGrammarReference(),
+                    ruleName.getRuleName());
 
         if (rule == null) {
             throw new GrammarException("Can't resolve grammar reference: "
@@ -452,9 +455,7 @@ public class SRGSGrammar extends Grammar {
     private GrammarGraph parseRuleAlternatives(RuleAlternatives ruleAlternatives)
             throws GrammarException {
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER
-                    .fine("parseRuleAlternatives: "
-                            + ruleAlternatives.toString());
+            LOGGER.fine("parseRuleAlternatives: " + ruleAlternatives.toString());
         }
         GrammarGraph result = new GrammarGraph();
 
@@ -634,7 +635,7 @@ public class SRGSGrammar extends Grammar {
             }
 
             if (rules != null) {
-                ruleGrammar = new BaseRuleGrammar(null, grammarName);
+                ruleGrammar = new BaseRuleGrammar(recognizer, grammarName);
                 /** @todo dgmr cuidado com isto */
                 ruleGrammar.addRules(rules);
                 // ruleGrammar.setAttributes(srgsRuleGrammarParser.getAttributes());

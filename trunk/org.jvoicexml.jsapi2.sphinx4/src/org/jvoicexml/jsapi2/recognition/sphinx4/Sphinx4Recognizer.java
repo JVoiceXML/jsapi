@@ -138,10 +138,13 @@ final class Sphinx4Recognizer extends BaseRecognizer
             recognizer = (Recognizer) configuration.lookup("recognizer");
             dataProcessor = (DataProcessor) configuration
                     .lookup("sphinxInputDataProcessor");
-            grammar = (Grammar) configuration.lookup("srgsGrammar");
-
             if (!(dataProcessor instanceof SphinxInputDataProcessor)) {
                 throw new EngineException("Unsupported input type");
+            }
+            grammar = (Grammar) configuration.lookup("srgsGrammar");
+            if (grammar instanceof SRGSGrammarContainer) {
+                final SRGSGrammarContainer container = (SRGSGrammarContainer) grammar;
+                container.setRecognizer(this);
             }
 
         } catch (Exception ex) {
