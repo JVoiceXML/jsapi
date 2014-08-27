@@ -1,6 +1,5 @@
 package org.jvoicexml.jsapi2.recognition;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.speech.recognition.RuleComponent;
@@ -9,6 +8,7 @@ import javax.speech.recognition.RuleComponent;
  * Represents a node of a graph.
  *
  * @author David Jose Rodrigues
+ * @author Dirk Schnelle-Walka
  */
 
 public class GrammarNode {
@@ -41,13 +41,13 @@ public class GrammarNode {
     private boolean isFinal;
 
     /** the arcs to the successors nodes. */
-    private List<GrammarArc> arcList = new ArrayList<GrammarArc>();
+    private final List<GrammarArc> arcs;
 
     /** the type of this node. */
     private int type;
 
     /** the rule component associated with this node. */
-    private RuleComponent ruleComponent;
+    private RuleComponent component;
 
     /**
      * Creates a grammar node without a rule component associated.
@@ -59,7 +59,8 @@ public class GrammarNode {
                           final RuleComponent rc) {
         this.isFinal = isFinalNode;
         this.type = nodeType;
-        this.ruleComponent = rc;
+        this.component = rc;
+        arcs = new java.util.ArrayList<GrammarArc>();
     }
 
     /**
@@ -70,7 +71,8 @@ public class GrammarNode {
     protected GrammarNode(final boolean isFinalNode, final int nodeType) {
         this.isFinal = isFinalNode;
         this.type = nodeType;
-        this.ruleComponent = null;
+        this.component = null;
+        arcs = new java.util.ArrayList<GrammarArc>();
     }
 
     /**
@@ -86,7 +88,7 @@ public class GrammarNode {
      * @param destinationNode the destination node
      */
     public final void addArc(final GrammarNode destinationNode) {
-        arcList.add(new GrammarArc(destinationNode));
+        arcs.add(new GrammarArc(destinationNode));
     }
 
     /**
@@ -101,8 +103,8 @@ public class GrammarNode {
      * Gets the arc list.
      * @return List
      */
-    public final List<GrammarArc> getArcList() {
-        return arcList;
+    public final List<GrammarArc> getArcs() {
+        return arcs;
     }
 
     /**
@@ -110,7 +112,59 @@ public class GrammarNode {
      * @return RuleComponent
      */
     public final RuleComponent getRuleComponent() {
-        return ruleComponent;
+        return component;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final StringBuilder str = new StringBuilder();
+        str.append(getClass().getCanonicalName());
+        str.append('[');
+        switch (type) {
+        case END_ALTERNATIVE:
+            str.append("END_ALTERNATIVE");
+            break;
+        case END_COUNT:
+            str.append("END_COUNT");
+            break;
+        case END_REFERENCE:
+            str.append("END_REFERENCE");
+            break;
+        case END_SEQUENCE:
+            str.append("END_SEQUENCE");
+            break;
+        case START_ALTERNATIVE:
+            str.append("START_ALTERNATIVE");
+            break;
+        case START_COUNT:
+            str.append("START_COUNT");
+            break;
+        case START_REFERENCE:
+            str.append("START_REFERENCE");
+            break;
+        case START_SEQUENCE:
+            str.append("START_SEQUENCE");
+            break;
+        case TAG:
+            str.append("TAG");
+            break;
+        case TOKEN:
+            str.append("TOKEN");
+            break;
+        default:
+            str.append(type);
+            break;
+        }
+        str.append(',');
+        str.append(isFinal);
+        str.append(',');
+        str.append(arcs.size());
+        str.append(',');
+        str.append(component);
+        str.append(']');
+        return str.toString();
+    }
 }

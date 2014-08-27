@@ -9,7 +9,6 @@ import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.SpeechEventExecutor;
 import javax.speech.recognition.Grammar;
-import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.RecognizerMode;
 import javax.speech.recognition.Result;
@@ -49,14 +48,6 @@ public final class MockRecognizer extends BaseRecognizer {
             final SpeechEventExecutor executor) {
         // TODO Auto-generated method stub
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected boolean processGrammar(final Grammar grammar)
-            throws GrammarException {
-        return false;
     }
 
     /**

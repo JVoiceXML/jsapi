@@ -5,6 +5,9 @@ Version 0.6
 - continued removal of SE-only support 
 - bugfix: a grammar loaded by the grammarmanager is set activatable if a root rule
   is defined
+- refactoring: parsing of SML is done in the SapiResult to have all values in
+  place and to avoid copying 
+- also parsing tags in the rule parse
 
 Version 0.5
 ===========
