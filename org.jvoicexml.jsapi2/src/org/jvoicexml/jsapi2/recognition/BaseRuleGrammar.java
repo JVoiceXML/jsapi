@@ -695,7 +695,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
 
     /**
      * Parse the text string against the specified rule. Uses the RuleParser
-     * class. From javax.speech.recognition.RuleGrammar.
+     * class from javax.speech.recognition.RuleGrammar.
      * 
      * @param text
      *            the text to parse.
@@ -704,9 +704,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
      */
     public RuleParse parse(String text, String ruleName)
             throws GrammarException {
-        /*
-         * if (ruleName != null) { ruleName = stripRuleName(ruleName); }
-         */
         final Recognizer recognizer = getRecognizer();
         final GrammarManager manager = recognizer.getGrammarManager();
         final String reference = getReference();

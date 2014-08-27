@@ -34,10 +34,9 @@ import javax.speech.recognition.RuleSequence;
 import javax.speech.recognition.RuleTag;
 import javax.speech.recognition.RuleToken;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.jvoicexml.jsapi2.mock.recognition.MockRecognizer;
-import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
-import org.jvoicexml.jsapi2.recognition.BaseResult;
 
 
 /**
@@ -65,10 +64,10 @@ public final class BaseResultTest {
         final Rule root = new Rule("test", sequence, Rule.PUBLIC);
         grammar.addRule(root);
         recognizer.processGrammars();
-        System.out.println(grammar);
         final BaseResult result = new BaseResult(grammar, "test");
-        final Object[] tags = result.getTags(1);
-        System.out.println(tags);
+        final Object[] tags = result.getTags(0);
+        Assert.assertNotNull(tags);
+        Assert.assertEquals(1, tags.length);
+        Assert.assertEquals("T", tags[0]);
     }
-
 }
