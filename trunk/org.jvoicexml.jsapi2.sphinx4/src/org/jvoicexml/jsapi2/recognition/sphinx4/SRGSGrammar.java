@@ -60,11 +60,9 @@ import org.jvoicexml.jsapi2.recognition.SrgsRuleGrammarParser;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
-import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.S4Component;
 import edu.cmu.sphinx.util.props.S4String;
 
 /**
@@ -116,7 +114,7 @@ public class SRGSGrammar extends Grammar {
     public final static String PROP_GRAMMAR_NAME = "grammarName";
 
     /** Sphinx property that defines the logMath component. */
-    @S4Component(type = LogMath.class)
+    //@S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     /** The JSAPI recognizer. */

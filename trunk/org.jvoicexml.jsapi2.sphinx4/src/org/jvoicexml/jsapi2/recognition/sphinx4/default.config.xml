@@ -189,6 +189,7 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     <component name="epFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>sphinxInputDataProcessor </item>
+			<item>dataBlocker </item>
             <item>speechClassifier </item>
             <item>speechMarker </item>
             <item>nonSpeechDataFilter </item>
@@ -208,9 +209,12 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     
     <component name="speechClassifier" 
                type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
-        <property name="threshold" value="20"/>
+        <property name="threshold" value="15"/>
     </component>
     
+	<component name="dataBlocker" type="edu.cmu.sphinx.frontend.DataBlocker"/>
+	
+	
     <component name="nonSpeechDataFilter" 
                type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/>
     
@@ -234,6 +238,12 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     <component name="melFilterBank" 
         type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank">
     </component>
+  
+	<component name="liveCMN"
+				type="edu.cmu.sphinx.frontend.feature.LiveCMN">
+    <property name="cmnWindow" value="50"/>
+    <property name="shiftWindow" value="25"/>
+	</component>
     
     <component name="dct" 
             type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>

@@ -30,7 +30,7 @@ This file builds the sphinx4 layer for JSAPI.
       <pathelement location="${base-project}/dist/jsr113.jar"/>
       <pathelement location="${base-project}/dist/org.jvoicexml.jsapi2.jar"/>
       <fileset dir="${sphinx4.lib.dir}">
-        <include name="sphinx4.jar" />
+        <include name="sphinx4-core-1.0-SNAPSHOT.jar" />
       </fileset>
     </path>
   </target>

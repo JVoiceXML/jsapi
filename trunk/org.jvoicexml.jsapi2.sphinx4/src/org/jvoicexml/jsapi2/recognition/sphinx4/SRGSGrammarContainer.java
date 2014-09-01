@@ -24,7 +24,6 @@ import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.S4Component;
 
 /**
  * Sphinx4 SRGS grammar container.
@@ -41,10 +40,7 @@ import edu.cmu.sphinx.util.props.S4Component;
  */
 
 public class SRGSGrammarContainer extends Grammar {
-
-    @S4Component(type = LogMath.class)
-    public final static String PROP_LOG_MATH = "logMath";
-
+    
     private static final Logger LOGGER = Logger
             .getLogger(Sphinx4Recognizer.class.getName());
 
@@ -233,7 +229,7 @@ public class SRGSGrammarContainer extends Grammar {
                  */
                 for (GrammarArc transition : srgsStart.getSuccessors()) {
                     firstNode.add(transition.getGrammarNode(),
-                            LogMath.getLogOne());
+                            LogMath.LOG_ONE);
                 }
 
                 /**
