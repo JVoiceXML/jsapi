@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 import javax.speech.Engine;
 import javax.speech.EngineManager;
+import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerMode;
@@ -35,7 +36,7 @@ import org.jvoicexml.jsapi2.synthesis.freetts.FreeTTSEngineListFactory;
 
 /**
  * @author Dirk Schnelle-Walka
- *
+ * 
  */
 public final class InputDemo implements ResultListener {
     /** The synthesizer to use. */
@@ -52,36 +53,41 @@ public final class InputDemo implements ResultListener {
 
     /**
      * Working method for the demo.
+     * 
      * @throws Exception
-     *         error running the demo
+     *             error running the demo
      */
     public void run() throws Exception {
         // Create a synthesizer for the default Locale.
-        synthesizer = (Synthesizer)
-            EngineManager.createEngine(SynthesizerMode.DEFAULT);
+        synthesizer = (Synthesizer) EngineManager
+                .createEngine(SynthesizerMode.DEFAULT);
         // Create a recognizer for the default Locale.
-        recognizer = (Recognizer) EngineManager.createEngine(
-                RecognizerMode.DEFAULT);
+        recognizer = (Recognizer) EngineManager
+                .createEngine(RecognizerMode.DEFAULT);
 
         // Get it ready to speak
-        synthesizer.allocate();
-        synthesizer.resume();
-        synthesizer.waitEngineState(Engine.RESUMED);
+         synthesizer.allocate();
+         synthesizer.resume();
+         synthesizer.waitEngineState(Engine.RESUMED);
 
         recognizer.allocate();
         recognizer.addResultListener(this);
 
-        GrammarManager grammarManager = recognizer.getGrammarManager();
-        InputStream in = InputDemo.class.getResourceAsStream("hello.xml");
-        grammarManager.loadGrammar("grammar:greeting", null, in, "UTF-8");
+        final GrammarManager grammarManager = recognizer.getGrammarManager();
+        final InputStream in = InputDemo.class
+                .getResourceAsStream("yesno.srgs");
+        final Grammar grammar = grammarManager.loadGrammar("grammar:greeting",
+                null, in, "UTF-8");
+        grammar.setActivatable(true);
 
         recognizer.requestFocus();
+        recognizer.processGrammars();
         recognizer.resume();
         // Tell the user what to do as soon as the recognizer is ready.
         recognizer.waitEngineState(Engine.RESUMED);
         // Speak the intro string
-        synthesizer.speak("Please say something", null);
-        System.out.println("Please say something...");
+        synthesizer.speak("Please say yes or no", null);
+        System.out.println("Please say yes or no...");
         synchronized (lock) {
             lock.wait();
         }
@@ -94,11 +100,14 @@ public final class InputDemo implements ResultListener {
         System.out.println();
         recognizer.deallocate();
         synthesizer.deallocate();
+        System.exit(0);
     }
 
     /**
      * Starts this demo.
-     * @param args command line arguments.
+     * 
+     * @param args
+     *            command line arguments.
      */
     public static void main(final String[] args) {
         InputDemo demo = new InputDemo();
@@ -110,11 +119,13 @@ public final class InputDemo implements ResultListener {
         Logger.getLogger("").setLevel(Level.ALL);
 
         try {
-            EngineManager.registerEngineListFactory(
-                    FreeTTSEngineListFactory.class.getName());
+            EngineManager
+                    .registerEngineListFactory(FreeTTSEngineListFactory.class
+                            .getName());
 
-            EngineManager.registerEngineListFactory(
-                    SphinxEngineListFactory.class.getName());
+            EngineManager
+                    .registerEngineListFactory(SphinxEngineListFactory.class
+                            .getName());
 
             demo.run();
         } catch (Exception e) {
@@ -136,7 +147,7 @@ public final class InputDemo implements ResultListener {
                 lock.notifyAll();
             }
         } else {
-//            synthesizer.speak("I did not understand what you said", null);
+            // synthesizer.speak("I did not understand what you said", null);
         }
     }
 
