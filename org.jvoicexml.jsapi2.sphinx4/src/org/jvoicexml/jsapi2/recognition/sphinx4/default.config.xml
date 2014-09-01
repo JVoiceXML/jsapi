@@ -239,12 +239,6 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
         type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank">
     </component>
   
-	<component name="liveCMN"
-				type="edu.cmu.sphinx.frontend.feature.LiveCMN">
-    <property name="cmnWindow" value="50"/>
-    <property name="shiftWindow" value="25"/>
-	</component>
-    
     <component name="dct" 
             type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>
     
