@@ -119,8 +119,8 @@
   
   <component name="dictionary" 
              type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
-    <property name="dictionaryPath" value="resource:/speechdata2014/dict/speechdata2014.dic"/>
-    <property name="fillerPath" value="resource:/speechdata2014/dict/speechdata2014.filler"/>
+    <property name="dictionaryPath" value="resource:/speechdata2014.cd_cont_2000/dict/speechdata2014.dic"/>
+    <property name="fillerPath" value="resource:/speechdata2014.cd_cont_2000/dict/speechdata2014.filler"/>
     <property name="unitManager" value="unitManager"/>
   </component>
 
@@ -132,7 +132,7 @@
 
   <component name="acousticModelLoader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
     <property name="unitManager" value="unitManager"/>
-    <property name="location" value="resource:/speechdata2014"/>
+    <property name="location" value="resource:/speechdata2014.cd_cont_2000"/>
   </component>
 
   <component name="trivialPruner"
