@@ -104,6 +104,9 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
      */
     private RecognitionThread recognitionThread;
 
+    /** Possible error in the constructor. */
+    private Exception error;
+
     /**
      * Construct a new object.
      */
@@ -152,6 +155,7 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "error creating engine properties {0}",
                     ex.getMessage());
+            error = ex;
         }
 
         // hard-coded audio format
@@ -205,6 +209,9 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
      */
     public void handleAllocate() throws AudioException, EngineException,
             EngineStateException, SecurityException {
+        if (error != null) {
+            throw new EngineException(error.getMessage());
+        }
         if (recognizer == null) {
             throw new EngineException(
                     "cannot allocate: no recognizer configured!");
