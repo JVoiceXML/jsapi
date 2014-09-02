@@ -47,7 +47,7 @@ public class SphinxEngineListFactory implements EngineListFactory {
      */
     public SphinxEngineListFactory() {
         engineModes = new EngineMode[] {
-                new SphinxRecognizerMode(SpeechLocale.US),
+                new SphinxRecognizerMode(SpeechLocale.ENGLISH),
                 new SphinxRecognizerMode(SpeechLocale.GERMAN) };
     }
 
