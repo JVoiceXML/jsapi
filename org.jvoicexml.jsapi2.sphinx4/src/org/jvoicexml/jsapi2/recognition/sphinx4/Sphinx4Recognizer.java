@@ -165,7 +165,7 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
      * {@link javax.speech.recognition.RecognizerMode}.
      * <p>
      * The name of the configuration file is determined by
-     * <code>default-&lt;locale language&gt;.config.xml</code>
+     * <code>default-&lt;LOCALE LANGUAGE&gt;.config.xml</code>
      * </p>
      * @param recognizerMode
      *            the recognizer mode
