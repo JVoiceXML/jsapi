@@ -39,6 +39,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.speech.AudioException;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
+import javax.speech.SpeechLocale;
 import javax.speech.recognition.RecognizerEvent;
 import javax.speech.recognition.ResultEvent;
 import javax.speech.recognition.RuleGrammar;
@@ -70,6 +71,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  * 
  * @author Dirk Schnelle
  * @author Stefan Radomski
+ * @author Stephan Radeck-Arneth (adaptation for handling of different languages)
  * @version $Revision: 611 $
  */
 final class Sphinx4Recognizer extends BaseRecognizer
@@ -125,11 +127,11 @@ final class Sphinx4Recognizer extends BaseRecognizer
             }
         }
         
-        // There is no config, use default config
+        // There is no config, call dynamic URL handler
         if (url == null) {
-            LOGGER.info("Sphinx4Recognizer using default configuration.");
-            url = Sphinx4Recognizer.class.getResource("default.config.xml");
+            url = getConfiguration(recognizerMode);
         }
+     
 
         try {
             final ConfigurationManager configuration = new ConfigurationManager(
@@ -519,4 +521,39 @@ final class Sphinx4Recognizer extends BaseRecognizer
         LOGGER.warning("changing property '" + propName
                 + "' to '" + newValue + "' ignored");
     }
+    
+    protected URL getConfiguration(SphinxRecognizerMode recognizerMode) {
+        URL url = null;
+        SpeechLocale[] speechLocales = null;
+        
+        if(recognizerMode.getSpeakerProfiles() != null)
+            speechLocales = recognizerMode.getSpeechLocales();
+        
+        
+        String selectedLanguage = "";
+        
+        
+        if(speechLocales != null)
+        {
+            SpeechLocale speechLocale = speechLocales[0];
+            
+            selectedLanguage = speechLocale.getLanguage();
+        
+            String concatFilename = "default-" + selectedLanguage.toUpperCase() + ".config.xml";
+            
+            LOGGER.info("Sphinx4Recognizer using default configuration for identified language: " + selectedLanguage);
+            
+            url = Sphinx4Recognizer.class.getResource(concatFilename);
+            return url;
+            
+        }
+        
+        // Default Case if SpeechLocales = null
+        
+        LOGGER.info("Sphinx4Recognizer using default configuration.");
+        url = Sphinx4Recognizer.class.getResource("default-EN.config.xml");
+        return url;
+        
+    }
+    
 }
