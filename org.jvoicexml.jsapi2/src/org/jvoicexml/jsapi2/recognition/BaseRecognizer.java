@@ -540,14 +540,12 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
                     | DEFOCUSED | NOT_BUFFERING);
             postStateTransitionEngineEvent(states[0], states[1],
                     EngineEvent.ENGINE_ALLOCATED);
-        } catch (EngineStateException e) {
-            audioManager.audioStop();
-        } catch (EngineException e) {
-            audioManager.audioStop();
-        } catch (AudioException e) {
-            audioManager.audioStop();
-        } catch (SecurityException e) {
-            audioManager.audioStop();
+        } catch (EngineStateException | EngineException | AudioException
+                | SecurityException e) {
+            if (testEngineState(ALLOCATED | PAUSED)) {
+                audioManager.audioStop();
+            }
+            throw e;
         }
     }
 
