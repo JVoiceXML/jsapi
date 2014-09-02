@@ -17,6 +17,7 @@ import org.jvoicexml.jsapi2.recognition.BaseRuleGrammar;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.flat.GrammarState;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarArc;
@@ -40,7 +41,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  */
 
 public class SRGSGrammarContainer extends Grammar {
-    
+
     private static final Logger LOGGER = Logger
             .getLogger(Sphinx4Recognizer.class.getName());
 
@@ -149,11 +150,13 @@ public class SRGSGrammarContainer extends Grammar {
         for (SRGSGrammar grammar : grammars.values()) {
             final Collection<GrammarNode> nodes = grammar.getGrammarNodes();
             if (nodes != null) {
-                final GrammarState state = (GrammarState) token
-                        .getSearchState();
-                final GrammarNode node = state.getGrammarNode();
-                if (nodes.contains(node)) {
-                    return grammar.getRuleGrammar();
+                final SearchState state = token.getSearchState();
+                if (state instanceof GrammarState) {
+                    final GrammarState grammarState = (GrammarState) state;
+                    final GrammarNode node = grammarState.getGrammarNode();
+                    if (nodes.contains(node)) {
+                        return grammar.getRuleGrammar();
+                    }
                 }
             }
         }
@@ -228,8 +231,7 @@ public class SRGSGrammarContainer extends Grammar {
                  * transitions from our firstNode.
                  */
                 for (GrammarArc transition : srgsStart.getSuccessors()) {
-                    firstNode.add(transition.getGrammarNode(),
-                            LogMath.LOG_ONE);
+                    firstNode.add(transition.getGrammarNode(), LogMath.LOG_ONE);
                 }
 
                 /**
