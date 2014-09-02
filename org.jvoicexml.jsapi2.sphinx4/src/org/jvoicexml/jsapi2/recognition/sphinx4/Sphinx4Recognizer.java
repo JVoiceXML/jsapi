@@ -71,11 +71,11 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  * 
  * @author Dirk Schnelle
  * @author Stefan Radomski
- * @author Stephan Radeck-Arneth (adaptation for handling of different languages)
+ * @author Stephan Radeck-Arneth (adaptation for handling of different
+ *         languages)
  * @version $Revision: 611 $
  */
-final class Sphinx4Recognizer extends BaseRecognizer
-        implements StateListener {
+final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
     /** Logger for this class. */
     private static final Logger LOGGER = Logger
             .getLogger(Sphinx4Recognizer.class.getName());
@@ -110,7 +110,8 @@ final class Sphinx4Recognizer extends BaseRecognizer
     public Sphinx4Recognizer(SphinxRecognizerMode recognizerMode) {
         super(recognizerMode);
 
-        String configFile = System.getProperty(
+        // First check the system setting that may override any other setting
+        final String configFile = System.getProperty(
                 "org.jvoicexml.jsapi2.recognition.sphinx4.configPath",
                 "/sphinx4.config.xml");
 
@@ -126,12 +127,11 @@ final class Sphinx4Recognizer extends BaseRecognizer
                 url = null;
             }
         }
-        
+
         // There is no config, call dynamic URL handler
         if (url == null) {
             url = getConfiguration(recognizerMode);
         }
-     
 
         try {
             final ConfigurationManager configuration = new ConfigurationManager(
@@ -156,9 +156,43 @@ final class Sphinx4Recognizer extends BaseRecognizer
 
         // hard-coded audio format
         final AudioFormat format = getAudioFormat();
-        ((BaseAudioManager) getAudioManager())
-                .setEngineAudioFormat(format);
+        ((BaseAudioManager) getAudioManager()).setEngineAudioFormat(format);
         resultListener = new Sphinx4ResultListener(this);
+    }
+
+    /**
+     * Determine a configuration file from the
+     * {@link javax.speech.recognition.RecognizerMode}.
+     * <p>
+     * The name of the configuration file is determined by
+     * <code>default-&lt;locale language&gt;.config.xml</code>
+     * </p>
+     * @param recognizerMode
+     *            the recognizer mode
+     * @return URL of the configuration file to use.
+     */
+    private URL getConfiguration(SphinxRecognizerMode recognizerMode) {
+        // Determine the speech locale to use
+        SpeechLocale[] speechLocales = null;
+        if (recognizerMode.getSpeakerProfiles() != null) {
+            speechLocales = recognizerMode.getSpeechLocales();
+        }
+
+        // None given: use default
+        if (speechLocales == null) {
+            LOGGER.info("Sphinx4Recognizer using default configuration.");
+            return Sphinx4Recognizer.class.getResource("default-EN.config.xml");
+        }
+
+        // Determine the name from the locale
+        SpeechLocale speechLocale = speechLocales[0];
+        final String selectedLanguage = speechLocale.getLanguage();
+        final String concatFilename = "default-"
+                + selectedLanguage.toUpperCase() + ".config.xml";
+        LOGGER.info("Sphinx4Recognizer using default configuration for identified language: "
+                + selectedLanguage);
+
+        return Sphinx4Recognizer.class.getResource(concatFilename);
     }
 
     /**
@@ -219,8 +253,7 @@ final class Sphinx4Recognizer extends BaseRecognizer
 
         // start data source for sphinx if it is not running
         if (dataProcessor instanceof SphinxInputDataProcessor) {
-            final SphinxInputDataProcessor sidp =
-                (SphinxInputDataProcessor) dataProcessor;
+            final SphinxInputDataProcessor sidp = (SphinxInputDataProcessor) dataProcessor;
             sidp.setInputStream(in);
             sidp.isRunning(true);
         }
@@ -254,8 +287,7 @@ final class Sphinx4Recognizer extends BaseRecognizer
             microphone.stopRecording();
         }
         if (dataProcessor instanceof SphinxInputDataProcessor) {
-            final SphinxInputDataProcessor sidp =
-                    (SphinxInputDataProcessor) dataProcessor;
+            final SphinxInputDataProcessor sidp = (SphinxInputDataProcessor) dataProcessor;
             sidp.isRunning(false);
         }
 
@@ -384,14 +416,15 @@ final class Sphinx4Recognizer extends BaseRecognizer
      * @return boolean
      */
     @Override
-    protected boolean setGrammars(final Collection<GrammarDefinition> grammarDefinition) {
+    protected boolean setGrammars(
+            final Collection<GrammarDefinition> grammarDefinition) {
         if (grammar instanceof SRGSGrammar) {
             // old behavior with only a single active grammar
             if (grammarDefinition.size() == 1) {
                 try {
-                    final org.jvoicexml.jsapi2.recognition.GrammarDefinition definition = grammarDefinition.iterator().next();
-                    ((SRGSGrammar) grammar)
-                            .loadSRGS(definition.getGrammar());
+                    final org.jvoicexml.jsapi2.recognition.GrammarDefinition definition = grammarDefinition
+                            .iterator().next();
+                    ((SRGSGrammar) grammar).loadSRGS(definition.getGrammar());
                 } catch (IOException ex) {
                     return false;
                 }
@@ -498,8 +531,7 @@ final class Sphinx4Recognizer extends BaseRecognizer
     }
 
     /**
-     * {@inheritDoc}
-     * Not used but for compatibility.
+     * {@inheritDoc} Not used but for compatibility.
      */
     @Override
     public void newProperties(final PropertySheet ps) throws PropertyException {
@@ -507,7 +539,7 @@ final class Sphinx4Recognizer extends BaseRecognizer
 
     @Override
     protected AudioFormat getAudioFormat() {
-       return new AudioFormat(16000f, 16, 1, true, false);
+        return new AudioFormat(16000f, 16, 1, true, false);
     }
 
     /**
@@ -515,45 +547,9 @@ final class Sphinx4Recognizer extends BaseRecognizer
      */
     @Override
     protected void handlePropertyChangeRequest(
-            final BaseEngineProperties properties,
-            final String propName, final Object oldValue,
-            final Object newValue) {
-        LOGGER.warning("changing property '" + propName
-                + "' to '" + newValue + "' ignored");
+            final BaseEngineProperties properties, final String propName,
+            final Object oldValue, final Object newValue) {
+        LOGGER.warning("changing property '" + propName + "' to '" + newValue
+                + "' ignored");
     }
-    
-    protected URL getConfiguration(SphinxRecognizerMode recognizerMode) {
-        URL url = null;
-        SpeechLocale[] speechLocales = null;
-        
-        if(recognizerMode.getSpeakerProfiles() != null)
-            speechLocales = recognizerMode.getSpeechLocales();
-        
-        
-        String selectedLanguage = "";
-        
-        
-        if(speechLocales != null)
-        {
-            SpeechLocale speechLocale = speechLocales[0];
-            
-            selectedLanguage = speechLocale.getLanguage();
-        
-            String concatFilename = "default-" + selectedLanguage.toUpperCase() + ".config.xml";
-            
-            LOGGER.info("Sphinx4Recognizer using default configuration for identified language: " + selectedLanguage);
-            
-            url = Sphinx4Recognizer.class.getResource(concatFilename);
-            return url;
-            
-        }
-        
-        // Default Case if SpeechLocales = null
-        
-        LOGGER.info("Sphinx4Recognizer using default configuration.");
-        url = Sphinx4Recognizer.class.getResource("default-EN.config.xml");
-        return url;
-        
-    }
-    
 }
