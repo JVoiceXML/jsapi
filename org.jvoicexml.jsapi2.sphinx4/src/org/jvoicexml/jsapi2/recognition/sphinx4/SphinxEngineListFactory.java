@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,13 +28,13 @@ package org.jvoicexml.jsapi2.recognition.sphinx4;
 
 import javax.speech.EngineList;
 import javax.speech.EngineMode;
+import javax.speech.SpeechLocale;
 import javax.speech.recognition.RecognizerMode;
 import javax.speech.spi.EngineListFactory;
 
-
 /**
  * The engine list factory for sphinx.
- *
+ * 
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
  */
@@ -46,7 +46,9 @@ public class SphinxEngineListFactory implements EngineListFactory {
      * Constructs a new object.
      */
     public SphinxEngineListFactory() {
-        engineModes = new EngineMode[] {new SphinxRecognizerMode()};
+        engineModes = new EngineMode[] {
+                new SphinxRecognizerMode(new SpeechLocale("en_US")),
+                new SphinxRecognizerMode(new SpeechLocale("de")) };
     }
 
     /**
@@ -58,9 +60,8 @@ public class SphinxEngineListFactory implements EngineListFactory {
             return null;
         }
         EngineList engineList = new EngineList(engineModes);
-
         if (require != null) {
-            //Removes unwanted modes
+            // Removes unwanted modes
             engineList.requireMatch(require);
         }
 

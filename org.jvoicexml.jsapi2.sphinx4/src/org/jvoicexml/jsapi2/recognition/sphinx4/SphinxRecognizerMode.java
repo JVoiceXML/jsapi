@@ -42,9 +42,9 @@ public class SphinxRecognizerMode extends RecognizerMode
     /**
      * Constructs a new object.
      */
-    public SphinxRecognizerMode() {
+    public SphinxRecognizerMode(final SpeechLocale locale) {
         super("sphinx4", null, true, false, true, 10000,
-                new SpeechLocale[] {new SpeechLocale("en_US")}, null);
+                new SpeechLocale[] {locale}, null);
     }
 
     /**

@@ -109,22 +109,22 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
      */
     public Sphinx4Recognizer(SphinxRecognizerMode recognizerMode) {
         super(recognizerMode);
-
+        URL url = null;
         // First check the system setting that may override any other setting
         final String configFile = System.getProperty(
-                "org.jvoicexml.jsapi2.recognition.sphinx4.configPath",
-                "/sphinx4.config.xml");
-
-        URL url = Sphinx4Recognizer.class.getResource(configFile);
-        if (url == null) {
-            try {
-                File tmp = new File(configFile);
-                if (tmp.exists()) {
-                    url = tmp.toURI().toURL();
+                "org.jvoicexml.jsapi2.recognition.sphinx4.configPath");
+        if (configFile != null) {
+            url = Sphinx4Recognizer.class.getResource(configFile);
+            if (url == null) {
+                try {
+                    File tmp = new File(configFile);
+                    if (tmp.exists()) {
+                        url = tmp.toURI().toURL();
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    url = null;
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                url = null;
             }
         }
 
@@ -167,14 +167,16 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
      * The name of the configuration file is determined by
      * <code>default-&lt;LOCALE LANGUAGE&gt;.config.xml</code>
      * </p>
+     * 
      * @param recognizerMode
      *            the recognizer mode
      * @return URL of the configuration file to use.
      */
     private URL getConfiguration(SphinxRecognizerMode recognizerMode) {
         // Determine the speech locale to use
-        SpeechLocale[] speechLocales = null;
-        if (recognizerMode.getSpeakerProfiles() != null) {
+        SpeechLocale[] speechLocales = recognizerMode.getSpeechLocales();
+        if (speechLocales == null
+                && recognizerMode.getSpeakerProfiles() != null) {
             speechLocales = recognizerMode.getSpeechLocales();
         }
 
@@ -203,7 +205,6 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
      */
     public void handleAllocate() throws AudioException, EngineException,
             EngineStateException, SecurityException {
-
         if (recognizer == null) {
             throw new EngineException(
                     "cannot allocate: no recognizer configured!");
