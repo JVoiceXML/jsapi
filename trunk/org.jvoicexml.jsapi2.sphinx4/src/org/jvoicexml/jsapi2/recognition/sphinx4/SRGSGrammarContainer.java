@@ -143,10 +143,13 @@ public class SRGSGrammarContainer extends Grammar {
      * The {@link Sphinx4ResultListener} asked us for the grammar that produced
      * this list of tokens.
      * 
-     * @param token
+     * @param token the processed token
      * @return the rule grammar used to produce the list of tokens
      */
-    public synchronized RuleGrammar getRuleGrammar(Token token) {
+    public synchronized RuleGrammar getRuleGrammar(final Token token) {
+        if (token == null) {
+            return ruleGrammar;
+        }
         for (SRGSGrammar grammar : grammars.values()) {
             final Collection<GrammarNode> nodes = grammar.getGrammarNodes();
             if (nodes != null) {
