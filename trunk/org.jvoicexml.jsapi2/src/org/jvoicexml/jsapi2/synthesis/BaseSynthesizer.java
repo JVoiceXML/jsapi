@@ -49,6 +49,7 @@ import javax.speech.synthesis.SynthesizerListener;
 import javax.speech.synthesis.SynthesizerMode;
 import javax.speech.synthesis.SynthesizerProperties;
 
+import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseEngine;
 import org.jvoicexml.jsapi2.BaseVocabularyManager;
 import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
@@ -412,12 +413,12 @@ public abstract class BaseSynthesizer extends BaseEngine
     protected void baseDeallocate() throws EngineStateException,
             EngineException, AudioException {
 
-        // Stops AudioManager if audio management is supported.
-        if (isSupportsAudioManagement()) {
-            final AudioManager audioManager = getAudioManager();
+        // Stops the AudioManager
+        final BaseAudioManager audioManager = (BaseAudioManager) getAudioManager();
+        if (audioManager.isAudioStarted()) {
             audioManager.audioStop();
         }
-
+        
         // Procceed to real engine deallocation
         handleDeallocate();
         
@@ -443,6 +444,13 @@ public abstract class BaseSynthesizer extends BaseEngine
         return handleResume();
     }
 
+    /**
+     * Deallocates this {@link Synthesizer}. Methods must also make sure that
+     * any audio is stopped.
+     * @throws EngineStateException
+     * @throws EngineException
+     * @throws AudioException
+     */
     abstract protected void handleDeallocate() throws EngineStateException,
         EngineException, AudioException;
 

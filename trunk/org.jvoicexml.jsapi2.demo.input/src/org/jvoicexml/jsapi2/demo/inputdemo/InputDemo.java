@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 import javax.speech.Engine;
 import javax.speech.EngineManager;
+import javax.speech.SpeechLocale;
 import javax.speech.recognition.Grammar;
 import javax.speech.recognition.GrammarManager;
 import javax.speech.recognition.Recognizer;
@@ -63,7 +64,7 @@ public final class InputDemo implements ResultListener {
                 .createEngine(SynthesizerMode.DEFAULT);
         // Create a recognizer for the default Locale.
         recognizer = (Recognizer) EngineManager
-                .createEngine(RecognizerMode.DEFAULT);
+                .createEngine(new RecognizerMode(SpeechLocale.GERMAN));
 
         // Get it ready to speak
          synthesizer.allocate();

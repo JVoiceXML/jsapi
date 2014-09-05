@@ -41,6 +41,7 @@ import javax.speech.SpeechPermission;
  * {@link InputStream} or retrieved from the given media locator.
  * </p>
  * @author Renato Cassaca
+ * @author Dirk Schnelle-Walka
  * @version $Revision: 1370 $
 
  */
