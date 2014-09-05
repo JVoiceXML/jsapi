@@ -522,7 +522,7 @@ public abstract class BaseEngine implements Engine {
 
     /**
      * Sets the current operating properties and mode of
-     * this <code>Engine</code>.
+     * this {@link Engine}.
      *
      * @param mode the new operating mode of this <code>Engine</code>
      */
@@ -575,8 +575,8 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     * Removes an <code>EngineListener</code> from the list of
-     * <code>EngineListeners</code>.
+     * Removes an {@link EngineListener} from the list of
+     * {@link EngineListener}s.
      *
      * @param listener the listener to remove.
      */
@@ -589,6 +589,7 @@ public abstract class BaseEngine implements Engine {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void setEngineMask(final int mask) {
         engineMask = mask;
     }
@@ -596,6 +597,7 @@ public abstract class BaseEngine implements Engine {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final int getEngineMask() {
         return engineMask;
     }
@@ -629,9 +631,9 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     * Convenience method that throws an <code>EngineStateException</code>
+     * Convenience method that throws an {@link EngineStateException}
      * if any of the bits in the passed state are set in the
-     * <code>state</code>.
+     * {@code state}.
      *
      * @param state the <code>Engine</code> state to check
      * @exception EngineStateException
@@ -639,7 +641,7 @@ public abstract class BaseEngine implements Engine {
      */
     protected final void checkEngineState(final long state)
         throws EngineStateException {
-        long currentState = getEngineState();
+        final long currentState = getEngineState();
         if ((currentState & state) != 0) {
             throw new EngineStateException("Invalid EngineState: expected=("
                      + stateToString(state) + ") current state=("
@@ -649,7 +651,7 @@ public abstract class BaseEngine implements Engine {
 
     /**
      * Returns a <code>String</code> of the names of all the
-     * <code>Engine</code> states in the given <code>Engine</code>
+     * {@link Engine} states in the given {@link Engine}
      * state.
      *
      * @param state the bitmask of states
@@ -767,7 +769,7 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     * Called from the <code>deallocate</code> method.  Override this in
+     * Called from the {@link #deallocate()} method. Override this in
      * subclasses.
      *
      * @throws EngineException if this <code>Engine</code> cannot be

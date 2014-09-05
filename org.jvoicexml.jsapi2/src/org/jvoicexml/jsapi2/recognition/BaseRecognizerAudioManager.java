@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -52,8 +52,9 @@ import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.protocols.JavaSoundParser;
 
 /**
- * Supports the JSAPI 2.0 <code>AudioManager</code> interface. Actual JSAPI
- * implementations might want to extend or modify this implementation.
+ * Supports the JSAPI 2.0 {@link javax.speech.AudioManager} interface. Actual JSAPI
+ * implementations might want to extend or modify this implementation
+ * for {@link javx.speech.recognition.Recognizer}.
  */
 public class BaseRecognizerAudioManager extends BaseAudioManager {
     /** Logger instance. */

@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
 
@@ -18,18 +18,18 @@ import org.jvoicexml.jsapi2.BaseEngineProperties;
 
 /**
  * Base implementation of {@link RecognizerProperties}.
- *
+ * 
  * <p>
- * Actual JSAPI2 implementations may want to override this class to
- * apply other settings to the recognizer.
+ * Actual JSAPI2 implementations may want to override this class to apply other
+ * settings to the recognizer.
  * </p>
-
+ * 
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
  * @version $Revision: $
  */
-public class BaseRecognizerProperties
-    extends BaseEngineProperties implements RecognizerProperties {
+public class BaseRecognizerProperties extends BaseEngineProperties
+        implements RecognizerProperties {
     /** Name of the training provided property in events. */
     public static final String TRAINING_PROVIDED = "trainingProvided";
 
@@ -43,8 +43,7 @@ public class BaseRecognizerProperties
     public static final String SENSITIVITY = "sensitivity";
 
     /** Name of the num result alternatives property in events. */
-    public static final String NUM_RESULT_ALTERNATIVES =
-        "numResultAlternatives";
+    public static final String NUM_RESULT_ALTERNATIVES = "numResultAlternatives";
 
     /** Name of the incomplete timeout property in events. */
     public static final String INCOMPLETE_TIMEOUT = "incompleteTimeout";
@@ -69,7 +68,7 @@ public class BaseRecognizerProperties
 
     /**
      * This timeout value, in milliseconds, determines the length of silence
-     * required following user speech before the Recognizer  finalizes a Result.
+     * required following user speech before the Recognizer finalizes a Result.
      */
     private int completeTimeout;
 
@@ -101,10 +100,10 @@ public class BaseRecognizerProperties
 
     /**
      * The sensitivity can vary between MIN_SENSITIVITY and MAX_SENSITIVITY. A
-     * value of NORM_SENSITIVITY is the default for the Recognizer. A value
-     * of MAX_SENSITIVITY makes the Recognizer more sensitive to quiet input,
-     * but also more sensitive to noise. A value of MIN_SENSITIVITY may require
-     * the user to speak louder, but makes the Recognizer less sensitive to
+     * value of NORM_SENSITIVITY is the default for the Recognizer. A value of
+     * MAX_SENSITIVITY makes the Recognizer more sensitive to quiet input, but
+     * also more sensitive to noise. A value of MIN_SENSITIVITY may require the
+     * user to speak louder, but makes the Recognizer less sensitive to
      * background noise.
      */
     private int sensitivity;
@@ -130,7 +129,9 @@ public class BaseRecognizerProperties
 
     /**
      * Constructs a new object.
-     * @param recognizer reference to the recognizer
+     * 
+     * @param recognizer
+     *            reference to the recognizer
      */
     public BaseRecognizerProperties(final BaseRecognizer recognizer) {
         super(recognizer);
@@ -252,9 +253,9 @@ public class BaseRecognizerProperties
         if (adaptation == adapt) {
             return;
         }
-        
+
         handlePropertyChangeRequest(ADAPTATION, new Integer(adaptation),
-                                new Integer(adapt));
+                new Integer(adapt));
     }
 
     /**
@@ -263,16 +264,15 @@ public class BaseRecognizerProperties
     @Override
     public final void setCompleteTimeout(final int value) {
         if (value < 0) {
-            throw new IllegalArgumentException(
-                    "Invalid completeTimeout: " + value);
+            throw new IllegalArgumentException("Invalid completeTimeout: "
+                    + value);
         }
 
         if (completeTimeout == value) {
             return;
         }
-        handlePropertyChangeRequest(COMPLETE_TIMEOUT,
-                                new Integer(completeTimeout),
-                                new Integer(value));
+        handlePropertyChangeRequest(COMPLETE_TIMEOUT, new Integer(
+                completeTimeout), new Integer(value));
     }
 
     /**
@@ -280,17 +280,15 @@ public class BaseRecognizerProperties
      */
     @Override
     public final void setConfidenceThreshold(final int threshold) {
-        if ((threshold > MAX_CONFIDENCE)
-            || (threshold < MIN_CONFIDENCE)) {
+        if ((threshold > MAX_CONFIDENCE) || (threshold < MIN_CONFIDENCE)) {
             throw new IllegalArgumentException("Invalid confidenceThreshold: "
-                                               + threshold);
+                    + threshold);
         }
         if (confidenceThreshold == threshold) {
             return;
         }
-        handlePropertyChangeRequest(CONFIDENCE_THRESHOLD,
-                                new Integer(confidenceThreshold),
-                                new Integer(threshold));
+        handlePropertyChangeRequest(CONFIDENCE_THRESHOLD, new Integer(
+                confidenceThreshold), new Integer(threshold));
     }
 
     /**
@@ -299,17 +297,16 @@ public class BaseRecognizerProperties
     @Override
     public final void setEndpointStyle(final int style) {
         if ((style != ENDPOINT_SPEECH_DETECTION)
-            && (style != ENDPOINT_PUSH_TO_START)
-            && (style != ENDPOINT_PUSH_TO_TALK)) {
+                && (style != ENDPOINT_PUSH_TO_START)
+                && (style != ENDPOINT_PUSH_TO_TALK)) {
             throw new IllegalArgumentException("Invalid endpointStyle: "
-                                               + style);
+                    + style);
         }
         if (endpointStyle == style) {
             return;
         }
-        handlePropertyChangeRequest(ENDPOINT_STYLE,
-                                new Integer(endpointStyle),
-                                new Integer(style));
+        handlePropertyChangeRequest(ENDPOINT_STYLE, new Integer(endpointStyle),
+                new Integer(style));
     }
 
     /**
@@ -319,14 +316,13 @@ public class BaseRecognizerProperties
     public final void setIncompleteTimeout(final int timeout) {
         if (timeout < 0) {
             throw new IllegalArgumentException("Invalid incompleteTimeout: "
-                                               + timeout);
+                    + timeout);
         }
         if (incompleteTimeout == timeout) {
             return;
         }
-        handlePropertyChangeRequest(INCOMPLETE_TIMEOUT,
-                                new Integer(incompleteTimeout),
-                                new Integer(timeout));
+        handlePropertyChangeRequest(INCOMPLETE_TIMEOUT, new Integer(
+                incompleteTimeout), new Integer(timeout));
     }
 
     /**
@@ -337,9 +333,8 @@ public class BaseRecognizerProperties
         if (numResultAlternatives == num) {
             return;
         }
-        handlePropertyChangeRequest(NUM_RESULT_ALTERNATIVES,
-                                new Integer(numResultAlternatives),
-                                new Integer(num));
+        handlePropertyChangeRequest(NUM_RESULT_ALTERNATIVES, new Integer(
+                numResultAlternatives), new Integer(num));
     }
 
     /**
@@ -347,37 +342,31 @@ public class BaseRecognizerProperties
      */
     @Override
     public final void setSensitivity(final int value) {
-        if ((value > MAX_CONFIDENCE)
-            || (value < MIN_CONFIDENCE)) {
-            throw new IllegalArgumentException("Invalid sensitivity: "
-                                               + value);
+        if ((value > MAX_CONFIDENCE) || (value < MIN_CONFIDENCE)) {
+            throw new IllegalArgumentException("Invalid sensitivity: " + value);
         }
         if (sensitivity == value) {
             return;
         }
-        handlePropertyChangeRequest(SENSITIVITY,
-                                new Integer(sensitivity),
-                                new Integer(value));
+        handlePropertyChangeRequest(SENSITIVITY, new Integer(sensitivity),
+                new Integer(value));
     }
-
 
     /**
      * {@inheritDoc}
      */
     @Override
     public final void setSpeedVsAccuracy(final int value) {
-        if ((value != MAX_ACCURACY)
-            && (value != NORM_ACCURACY)
-            && (value != MAX_ACCURACY)) {
+        if ((value != MAX_ACCURACY) && (value != NORM_ACCURACY)
+                && (value != MAX_ACCURACY)) {
             throw new IllegalArgumentException("Invalid speedVsAccuracy: "
-                                               + value);
+                    + value);
         }
         if (speedVsAccuracy == value) {
             return;
         }
-        handlePropertyChangeRequest(SPEED_VS_ACCURACY,
-                                new Integer(speedVsAccuracy),
-                                new Integer(value));
+        handlePropertyChangeRequest(SPEED_VS_ACCURACY, new Integer(
+                speedVsAccuracy), new Integer(value));
     }
 
     /**
@@ -388,9 +377,8 @@ public class BaseRecognizerProperties
         if (resultAudioProvided == value) {
             return;
         }
-        handlePropertyChangeRequest(RESULT_AUDIO_PROVIDED,
-                                new Boolean(resultAudioProvided),
-                                new Boolean(value));
+        handlePropertyChangeRequest(RESULT_AUDIO_PROVIDED, new Boolean(
+                resultAudioProvided), new Boolean(value));
     }
 
     /**
@@ -401,17 +389,15 @@ public class BaseRecognizerProperties
         if (trainingProvided == value) {
             return;
         }
-        handlePropertyChangeRequest(TRAINING_PROVIDED,
-                                new Boolean(trainingProvided),
-                                new Boolean(value));
+        handlePropertyChangeRequest(TRAINING_PROVIDED, new Boolean(
+                trainingProvided), new Boolean(value));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final boolean setProperty(final String propName,
-            final Object value) {
+    public final boolean setProperty(final String propName, final Object value) {
         if (propName.equals(TRAINING_PROVIDED)) {
             final Boolean boolVal = (Boolean) value;
             trainingProvided = boolVal.booleanValue();
