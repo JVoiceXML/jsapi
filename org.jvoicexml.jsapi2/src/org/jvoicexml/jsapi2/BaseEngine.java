@@ -85,8 +85,8 @@ public abstract class BaseEngine implements Engine {
     private long engineState;
 
     /**
-     * An <code>Object</code> used for synchronizing access to
-     * <code>engineState</code>.
+     * An {@code Object} used for synchronizing access to
+     * {@link #engineState}.
      * @see #engineState
      */
     private final Object engineStateLock;
@@ -102,10 +102,10 @@ public abstract class BaseEngine implements Engine {
     private int pauses;
 
     /**
-     * List of <code>EngineListeners</code> registered for
-     * <code>EngineEvents</code> on this <code>Engine</code>.
+     * List of {@link EngineListener}s registered for
+     * {@link EngineEvent}s on this {@link Engine}.
      * <p>
-     * For a synthesizer this will contain only
+     * For a synthesizer this list will contain only
      * {@link javax.speech.synthesis.SynthesizerListener}s
      * and for a recognizer only
      * {@link javax.speech.recognition.RecognizerListener}s.
@@ -113,17 +113,17 @@ public abstract class BaseEngine implements Engine {
     private final Collection<EngineListener> engineListeners;
 
     /**
-     * The <code>AudioManager</code> for this <code>Engine</code>.
+     * The {@link AudioManager} for this {@link Engine}.
      */
     private AudioManager audioManager;
 
     /**
-     * The <code>VocabularyManager</code> for this <code>Engine</code>.
+     * The {@link VocabularyManager} for this {@link Engine}.
      */
     private VocabularyManager vocabularyManager;
 
     /**
-     * The <code>EngineModeDesc</code> for this <code>Engine</code>.
+     * The {@link EngineMode} for this {@link Engine}.
      */
     private EngineMode engineMode;
 
@@ -131,7 +131,7 @@ public abstract class BaseEngine implements Engine {
     private SpeechEventExecutor speechEventExecutor;
 
     /**
-     * Utility state for clearing the <code>engineState</code>.
+     * Utility state for clearing the {@link #engineState}.
      */
     protected static final long CLEAR_ALL_STATE = ~(0L);
 
@@ -139,7 +139,7 @@ public abstract class BaseEngine implements Engine {
     private int engineMask = EngineEvent.DEFAULT_MASK;
 
     /**
-     * Creates a new <code>Engine</code> in the
+     * Creates a new {@link Engine} in the
      * <code>DEALLOCATED</code> state.
      *
      * @param mode the operating mode of this <code>Engine</code>
@@ -215,7 +215,7 @@ public abstract class BaseEngine implements Engine {
     }
 
     /**
-     * Returns <code>true</code> if this state of this
+     * Returns {@code true} if this state of this
      * <code>Engine</code> matches the specified state.
      *
      * <p>The test performed is not an exact match to the current
@@ -262,6 +262,7 @@ public abstract class BaseEngine implements Engine {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void allocate() throws AudioException, EngineException,
         EngineStateException, SecurityException {
         // Validate current state
@@ -278,14 +279,13 @@ public abstract class BaseEngine implements Engine {
                 EngineEvent.ENGINE_ALLOCATING_RESOURCES);
 
         // Handle engine allocation
-        boolean success = false;
         try {
             pauses = 0;
             // Handle allocate
             baseAllocate();
-            success = true;
         } finally {
-            if (!success) {
+            // Roll back if allocation failed for any reason
+            if (!testEngineState(ALLOCATED)) {
                 states = setEngineState(CLEAR_ALL_STATE, DEALLOCATED);
                 postStateTransitionEngineEvent(states[0], states[1],
                         EngineEvent.ENGINE_DEALLOCATED);
@@ -318,6 +318,7 @@ public abstract class BaseEngine implements Engine {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void allocate(final int mode)
         throws AudioException, EngineException, EngineStateException,
         SecurityException, IllegalArgumentException {
@@ -391,6 +392,7 @@ public abstract class BaseEngine implements Engine {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void pause() {
         //Validate current state
         if (testEngineState(PAUSED)) {
@@ -477,6 +479,7 @@ public abstract class BaseEngine implements Engine {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final AudioManager getAudioManager() {
         if (audioManager == null) {
             audioManager = createAudioManager();
@@ -489,19 +492,6 @@ public abstract class BaseEngine implements Engine {
      * @return new audio manager for this engine.
      */
     protected abstract AudioManager createAudioManager();
-
-    /**
-     * Checks if audio management is supported.
-     * @return <code>true</code> if audio management is supported.
-     */
-    protected final boolean isSupportsAudioManagement() {
-        final String management =
-            System.getProperty("javax.speech.supports.audio.management");
-        if (management == null) {
-            return false;
-        }
-        return management.equals("true");
-    }
 
     /**
      * {@inheritDoc}

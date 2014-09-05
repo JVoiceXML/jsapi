@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,13 +46,12 @@ import javax.speech.SpeechEventExecutor;
 import javax.speech.SpeechPermission;
 
 /**
- * Supports the JSAPI 2.0 {@link AudioManager}
- * interface.  Actual JSAPI implementations might want to extend
- * or modify this implementation. Usually, this will be required for
- * {@link javax.speech.synthesis.Synthesizer}s and
+ * Supports the JSAPI 2.0 {@link AudioManager} interface. Actual JSAPI
+ * implementations might want to extend or modify this implementation. Usually,
+ * this will be required for {@link javax.speech.synthesis.Synthesizer}s and
  * {@link javax.speech.recognition.Recognizer}s to retrieve the
- * {@link OutputStream} (via {@link #getOutputStream()} or
- * {@link InputStream} (via {@link #getInputStream()}) respectively.
+ * {@link OutputStream} (via {@link #getOutputStream()} or {@link InputStream}
+ * (via {@link #getInputStream()}) respectively.
  */
 public abstract class BaseAudioManager implements AudioManager {
     /**
@@ -61,12 +60,12 @@ public abstract class BaseAudioManager implements AudioManager {
      */
     private final Collection<AudioListener> audioListeners;
 
-    /**  Mask to filter events. */ 
+    /** Mask to filter events. */
     private int audioMask;
 
     /** The media locator. */
     private String mediaLocator;
-    
+
     /** The associated engine. */
     private final Engine engine;
 
@@ -83,8 +82,11 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * Constructs a new object.
-     * @param eng the associated engine
-     * @param format native engine audio format
+     * 
+     * @param eng
+     *            the associated engine
+     * @param format
+     *            native engine audio format
      */
     public BaseAudioManager(final Engine eng, final AudioFormat format) {
         this(eng);
@@ -92,10 +94,11 @@ public abstract class BaseAudioManager implements AudioManager {
         targetAudioFormat = engineAudioFormat;
     }
 
-
     /**
      * Creates a new object.
-     * @param eng the associated engine
+     * 
+     * @param eng
+     *            the associated engine
      */
     protected BaseAudioManager(final Engine eng) {
         audioListeners = new java.util.ArrayList<AudioListener>();
@@ -106,8 +109,9 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * Requests notification of {@link AudioEvent}s from the
      * {@link AudioManager}.
-     *
-     * @param listener the listener to add
+     * 
+     * @param listener
+     *            the listener to add
      */
     public final void addAudioListener(final AudioListener listener) {
         synchronized (audioListeners) {
@@ -118,10 +122,11 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
-     * Removes an <code>AudioListener</code> from the list of
+     * Removes an {@link AudioListener} from the list of
      * <code>AudioListeners</code>.
-     *
-     * @param listener the listener to remove
+     * 
+     * @param listener
+     *            the listener to remove
      */
     public final void removeAudioListener(final AudioListener listener) {
         synchronized (audioListeners) {
@@ -146,8 +151,8 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public final void audioStart() throws SecurityException,
-            AudioException, EngineStateException {
+    public final void audioStart() throws SecurityException, AudioException,
+            EngineStateException {
         final SecurityManager security = System.getSecurityManager();
         if (security != null) {
             final Permission permission = new SpeechPermission(
@@ -165,29 +170,29 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
-     * Handles further processing if the audio output has to be started by
-     * a call to {@link #audioStart()}.
+     * Handles further processing if the audio output has to be started by a
+     * call to {@link #audioStart()}.
+     * 
      * @throws AudioException
-     *         error stopping
+     *             error stopping
      */
     protected abstract void handleAudioStart() throws AudioException;
 
     /**
      * {@inheritDoc}
      */
-    public final void audioStop() throws SecurityException,
-            AudioException, EngineStateException {
+    public final void audioStop() throws SecurityException, AudioException,
+            EngineStateException {
         final SecurityManager security = System.getSecurityManager();
         if (security != null) {
             final Permission permission = new SpeechPermission(
                     "javax.speech.AudioManager.control");
             security.checkPermission(permission);
         }
-        
-        if (!(engine.testEngineState(Engine.PAUSED)
-                || engine.testEngineState(Engine.DEALLOCATING_RESOURCES))) {
-            throw new EngineStateException(
-                    "The Engine has not been paused");
+
+        if (!(engine.testEngineState(Engine.PAUSED) || engine
+                .testEngineState(Engine.DEALLOCATING_RESOURCES))) {
+            throw new EngineStateException("The Engine has not been paused");
         }
 
         handleAudioStop();
@@ -200,22 +205,24 @@ public abstract class BaseAudioManager implements AudioManager {
     }
 
     /**
-     * Handles further processing if the audio output has to be stopped by
-     * a call to {@link #audioStop()}.
+     * Handles further processing if the audio output has to be stopped by a
+     * call to {@link #audioStop()}.
      * <p>
      * Closes the format converter. May be overridden to handle further cleanup.
      * </p>
+     * 
      * @throws AudioException
-     *         error stopping
+     *             error stopping
      */
     protected void handleAudioStop() throws AudioException {
     }
 
     /**
      * Checks if the audio has been started.
-     * @return <code>true</code> if the audio has been started.
+     * 
+     * @return {@code true} if the audio has been started.
      */
-    protected final boolean isAudioStarted() {
+    public final boolean isAudioStarted() {
         return audioStarted;
     }
 
@@ -223,8 +230,8 @@ public abstract class BaseAudioManager implements AudioManager {
      * {@inheritDoc}
      */
     public final void setMediaLocator(final String locator)
-        throws AudioException, EngineStateException, IllegalArgumentException,
-            SecurityException {
+            throws AudioException, EngineStateException,
+            IllegalArgumentException, SecurityException {
 
         final SecurityManager security = System.getSecurityManager();
         if (security != null) {
@@ -244,7 +251,7 @@ public abstract class BaseAudioManager implements AudioManager {
         }
 
         mediaLocator = locator;
-        
+
         final AudioEvent event = new AudioEvent(engine,
                 AudioEvent.AUDIO_CHANGED);
         postAudioEvent(event);
@@ -259,26 +266,26 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * {@inheritDoc}
+     * 
      * @todo This is just a dummy implementation
      */
     public String[] getSupportedMediaLocators(final String locator)
-        throws IllegalArgumentException {
-        return new String[] {mediaLocator};
+            throws IllegalArgumentException {
+        return new String[] { mediaLocator };
     }
 
     /**
      * {@inheritDoc}
      */
     public final boolean isSupportedMediaLocator(final String locator)
-        throws IllegalArgumentException {
-        final String[] supportedMediaLocators = getSupportedMediaLocators(
-                locator);
+            throws IllegalArgumentException {
+        final String[] supportedMediaLocators = getSupportedMediaLocators(locator);
         return supportedMediaLocators != null;
     }
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * TODO: This implementation checks only for equal media locators.
      */
     public boolean isSameChannel(final AudioManager audioManager) {
@@ -295,54 +302,58 @@ public abstract class BaseAudioManager implements AudioManager {
         return mediaLocator.equals(otherLocator);
     }
 
-    
     /**
      * Notifies all listeners about the audio event using the configured
      * {@link javax.speech.SpeechEventExecutor}.
-     * @param event the event to notify.
+     * 
+     * @param event
+     *            the event to notify.
      */
     protected final void postAudioEvent(final AudioEvent event) {
         final int eventId = event.getId();
-        if ((getAudioMask() & eventId) == eventId) {
-
-            final Runnable runnable = new Runnable() {
-                public void run() {
-                    synchronized (audioListeners) {
-                        for (AudioListener listener : audioListeners) {
-                            listener.audioUpdate(event);
-                        }
+        if ((getAudioMask() & eventId) != eventId) {
+            return;
+        }
+        final Runnable runnable = new Runnable() {
+            public void run() {
+                synchronized (audioListeners) {
+                    for (AudioListener listener : audioListeners) {
+                        listener.audioUpdate(event);
                     }
                 }
-            };
-
-            try {
-                final SpeechEventExecutor executor =
-                    engine.getSpeechEventExecutor();
-                executor.execute(runnable);
-            } catch (RuntimeException ex) {
-                //Ignore exception
-                ex.printStackTrace();
             }
+        };
+
+        try {
+            final SpeechEventExecutor executor = engine
+                    .getSpeechEventExecutor();
+            executor.execute(runnable);
+        } catch (RuntimeException ex) {
+            // Ignore exception
+            ex.printStackTrace();
         }
     }
 
     /**
      * Retrieves the output stream associated with the given media locator.
+     * 
      * @return output stream, <code>null</code> if streaming is not supported.
      */
     public abstract OutputStream getOutputStream();
 
     /**
      * Retrieves the input stream associated with the given media locator.
+     * 
      * @return input stream, <code>null</code> if streaming is not supported.
      */
     public abstract InputStream getInputStream();
 
     /**
      * Opens the connection to the configured media locator.
+     * 
      * @return opened connection
      * @throws IOException
-     *         error opening the connection.
+     *             error opening the connection.
      */
     protected final URLConnection openURLConnection() throws IOException {
         final String locator = getMediaLocator();
@@ -366,7 +377,9 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * Sets the audio format that is being used by this engine.
-     * @param format new audio format.
+     * 
+     * @param format
+     *            new audio format.
      */
     public final void setEngineAudioFormat(final AudioFormat format) {
         engineAudioFormat = format;
@@ -374,6 +387,7 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * Retrieves the audio format that is used by the associated engine.
+     * 
      * @return audio format used by this engine.
      */
     public final AudioFormat getEngineAudioFormat() {
@@ -382,19 +396,21 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * Retrieves the target audio format.
+     * 
      * @return target audio format.
      */
     public final AudioFormat getTargetAudioFormat() {
         return targetAudioFormat;
     }
-    
+
     /**
      * Sets the target audio format used by the stream that is consumed by the
      * associated engine.
-     * @param format the target audio format
+     * 
+     * @param format
+     *            the target audio format
      */
     protected final void setTargetAudioFormat(final AudioFormat format) {
         targetAudioFormat = format;
     }
 }
-

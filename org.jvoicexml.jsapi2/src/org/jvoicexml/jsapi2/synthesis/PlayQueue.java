@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,7 +34,6 @@ import java.util.List;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.speech.AudioManager;
 import javax.speech.AudioSegment;
 import javax.speech.Engine;
 import javax.speech.EngineStateException;
