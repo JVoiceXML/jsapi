@@ -541,19 +541,23 @@ public class BaseResult
      * @param rt
      *            the tokens
      */
-    public void setTokens(ResultToken rt[]) {
+    public void setTokens(final ResultToken rt[]) {
         setTokens(rt, false);
     }
 
     /**
-     * Utility function to set the resultTokens.
+     * Utility function to set the resultTokens. Does nothing if no tokens are 
+     * provided.
      * 
      * @param rt
      *            the tokens
      * @param replaceTags
      *            if true, tokens must be replaced by tags content.
      */
-    public void setTokens(ResultToken rt[], boolean replaceTags) {
+    public void setTokens(final ResultToken rt[], final boolean replaceTags) {
+        if (rt == null) {
+            return;
+        }
         System.arraycopy(rt, 0, tokens, 0, rt.length);
         if (replaceTags) {
             final RuleParse ruleParse = parse(0);
