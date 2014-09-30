@@ -294,7 +294,8 @@ public final class SapiRecognizer extends BaseRecognizer {
         postResultCreated();
         SapiResult result = new SapiResult();
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.log(Level.FINE, "SML Result String : {0}", utterance);
+            LOGGER.log(Level.FINE, "reporting SML Result String : {0}",
+                    utterance);
         }
 
         try {
