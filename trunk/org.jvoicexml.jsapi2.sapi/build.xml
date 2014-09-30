@@ -131,9 +131,9 @@ This file builds the JSR 113.jar.
 
   <target name="-copyReleaseDll">
     <copy file="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge/Release/Jsapi2SapiBridge.dll"
-      tofile="${dist}/Jsapi2SapiBridge.dll" overwrite="true"/>
+      tofile="${dist}/Jsapi2SapiBridge.dll" overwrite="true" failonerror="false"/>
     <copy file="../org.jvoicexml.jsapi2.sapi.jsapi2sapibridge/Release_x64/Jsapi2SapiBridge_x64.dll"
-      tofile="${dist}/Jsapi2SapiBridge_x64.dll" overwrite="true"/>
+      tofile="${dist}/Jsapi2SapiBridge_x64.dll" overwrite="true" failonerror="false"/>
   </target>
 
   <target name="-copydll" if="isWindows" depends="-copyReleaseDll">
