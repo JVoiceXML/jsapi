@@ -129,7 +129,8 @@ public final class SapiResult extends BaseResult {
             i++;
         }
         tags = smltags;
-        final ResultToken[] tokens = resultToResultToken(getUtterance());
+        final String utt = getUtterance();
+        final ResultToken[] tokens = resultToResultToken(utt);
         setTokens(tokens);
     }
 
