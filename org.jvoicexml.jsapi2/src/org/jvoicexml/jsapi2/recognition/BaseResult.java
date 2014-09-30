@@ -555,9 +555,7 @@ public class BaseResult
      *            if true, tokens must be replaced by tags content.
      */
     public void setTokens(final ResultToken rt[], final boolean replaceTags) {
-        if (rt == null) {
-            return;
-        }
+        tokens = new ResultToken[rt.length];
         System.arraycopy(rt, 0, tokens, 0, rt.length);
         if (replaceTags) {
             final RuleParse ruleParse = parse(0);
