@@ -353,7 +353,6 @@ public class BaseGrammarManager implements GrammarManager {
      *             if {@link RuleGrammar}s are not supported
      * 
      */
-    @SuppressWarnings("unchecked")
     public Grammar loadGrammar(final String grammarReference,
             final String mediaType, final Reader reader)
             throws GrammarException, IllegalArgumentException, IOException,

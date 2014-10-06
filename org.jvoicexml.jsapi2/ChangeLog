@@ -8,6 +8,7 @@ Version 0.6
 - refactoring: parsing of SML is done in the SapiResult to have all values in
   place and to avoid copying 
 - also parsing tags in the rule parse
+- SML results of SAPI are parsed into a JavaScript object hierarchy as tags
 
 Version 0.5
 ===========

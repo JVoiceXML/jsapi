@@ -177,30 +177,42 @@ public class BaseResult
             copy.nTokens = result.getNumTokens();
             copy.tokens = new ResultToken[copy.nTokens];
             for (int i = 0; i < result.getNumTokens(); i++) {
-                ResultToken sourceToken = result.getBestToken(i);
-                BaseResultToken destinationToken = new BaseResultToken(copy,
-                        sourceToken.getText());
-
+                final ResultToken sourceToken = result.getBestToken(i);
+                final BaseResultToken destinationToken = new BaseResultToken(
+                        copy, sourceToken.getText());
                 destinationToken.setConfidenceLevel(sourceToken
                         .getConfidenceLevel());
                 destinationToken.setStartTime(sourceToken.getStartTime());
                 destinationToken.setEndTime(sourceToken.getEndTime());
-
                 copy.tokens[i] = destinationToken;
             }
             return copy;
         }
     }
 
-    // ////////////////////
-    // Begin Result Methods
-    // ////////////////////
     /**
-     * Return the current state of the Result object. From
-     * javax.speech.recognition.Result.
+     * Return the current state of the Result object.
      */
+    @Override
     public int getResultState() {
         return state;
+    }
+
+    /**
+     * Retrieves a human readable representation of the state.
+     * 
+     * @return state as a string
+     */
+    private String getResultStateAsString() {
+        if (state == ACCEPTED) {
+            return "ACCEPTED";
+        } else if (state == REJECTED) {
+            return "REJECTED";
+        } else if (state == UNFINALIZED) {
+            return "UNFINALIZED";
+        } else {
+            return Integer.toString(state);
+        }
     }
 
     /**
@@ -500,39 +512,43 @@ public class BaseResult
      * 
      * @todo the tag information can not be only text! It can be anything.
      * 
-     * @param rt
+     * @param token
      *            the result tokens
-     * @param rc
+     * @param component
      *            the rule component that will be analyzed
-     * @param iPos
+     * @param pos
      *            the position in rt of next token that will be appear in the
      *            graph
      * @return int
      */
-    private int applyTags(ResultToken rt[], final RuleComponent rc, int iPos) {
-        if (rc instanceof RuleReference) {
-            return iPos;
-        } else if (rc instanceof RuleToken) {
-            return iPos + 1;
-        } else if (rc instanceof RuleAlternatives) {
-            return applyTags(rt,
-                    ((RuleAlternatives) rc).getRuleComponents()[0], iPos);
-        } else if (rc instanceof RuleSequence) {
-            for (RuleComponent r : ((RuleSequence) rc).getRuleComponents()) {
-                iPos = applyTags(rt, r, iPos);
+    private int applyTags(ResultToken token[], final RuleComponent component,
+            int pos) {
+        if (component instanceof RuleReference) {
+            return pos;
+        } else if (component instanceof RuleToken) {
+            return pos + 1;
+        } else if (component instanceof RuleAlternatives) {
+            return applyTags(token,
+                    ((RuleAlternatives) component).getRuleComponents()[0], pos);
+        } else if (component instanceof RuleSequence) {
+            for (RuleComponent r : ((RuleSequence) component)
+                    .getRuleComponents()) {
+                pos = applyTags(token, r, pos);
             }
-            return iPos;
-        } else if (rc instanceof RuleTag) {
-            String tag = (String) ((RuleTag) rc).getTag();
+            return pos;
+        } else if (component instanceof RuleTag) {
+            String tag = (String) ((RuleTag) component).getTag();
 
             // assumes that ruleTag component appears after RuleToken component
-            rt[iPos - 1] = new BaseResultToken(rt[iPos - 1].getResult(), tag);
-            return iPos;
-        } else if (rc instanceof RuleCount) {
-            return applyTags(rt, ((RuleCount) rc).getRuleComponent(), iPos);
+            token[pos - 1] = new BaseResultToken(token[pos - 1].getResult(),
+                    tag);
+            return pos;
+        } else if (component instanceof RuleCount) {
+            return applyTags(token, ((RuleCount) component).getRuleComponent(),
+                    pos);
         }
 
-        return iPos;
+        return pos;
     }
 
     /**
@@ -546,7 +562,7 @@ public class BaseResult
     }
 
     /**
-     * Utility function to set the resultTokens. Does nothing if no tokens are 
+     * Utility function to set the resultTokens. Does nothing if no tokens are
      * provided.
      * 
      * @param rt
@@ -596,8 +612,8 @@ public class BaseResult
      */
     protected void checkResultState(int state) throws ResultStateException {
         if (getResultState() == state) {
-            throw new ResultStateException("Invalid ResultState: "
-                    + getResultState());
+            final String str = getResultStateAsString();
+            throw new ResultStateException("Invalid result state: " + str);
         }
     }
 

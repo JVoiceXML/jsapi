@@ -6,7 +6,7 @@
  *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,7 +32,7 @@ import javax.speech.recognition.RecognizerProperties;
 
 /**
  * Basic implementation of a {@link ResultToken}.
- *
+ * 
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
  * @version 1.0
@@ -46,24 +46,42 @@ public class BaseResultToken implements ResultToken {
     private final String token;
 
     /**
-     * Constructs a new object
-     * @param res the result
-     * @param tok the token
+     * Constructs a new object using the given value and a confidence of
+     * {@code RecognizerProperties.NORM_CONFIDENCE}.
+     * 
+     * @param res
+     *            the result
+     * @param tok
+     *            the token
      */
     public BaseResultToken(final Result res, final String tok) {
+        this(res, tok, RecognizerProperties.NORM_CONFIDENCE);
+    }
+
+    /**
+     * Constructs a new object
+     * 
+     * @param res
+     *            the result
+     * @param tok
+     *            the token
+     * @param conf
+     *            the confidence
+     */
+    public BaseResultToken(final Result res, final String tok, final int conf) {
         result = res;
-        confidenceLevel = RecognizerProperties.NORM_CONFIDENCE;
+        confidenceLevel = conf;
         startTime = -1;
         endTime = -1;
         token = tok;
     }
 
     /**
-     * Retrieves the confidence level if the result was accepted. 
-     *
+     * Retrieves the confidence level if the result was accepted.
+     * 
      * @return the confidence level,
-     *          <code>RecognizerProperties.UNKNOWN_CONFIDENCE</code> if the
-     *          result was not accepted.
+     *         <code>RecognizerProperties.UNKNOWN_CONFIDENCE</code> if the
+     *         result was not accepted.
      */
     public int getConfidenceLevel() {
         if (result.getResultState() == Result.ACCEPTED) {
@@ -75,20 +93,24 @@ public class BaseResultToken implements ResultToken {
 
     /**
      * Sets the confidence level.
-     * @param the confidence level
+     * 
+     * @param the
+     *            confidence level
      */
     public void setConfidenceLevel(final int level) {
         if (level < RecognizerProperties.MIN_CONFIDENCE
                 || level > RecognizerProperties.MAX_CONFIDENCE) {
-            throw new IllegalArgumentException("Confidence must be between" +
-                    " MIN_CONFIDENCE and MAX_CONFIDENCE");
+            throw new IllegalArgumentException("Confidence must be between"
+                    + " MIN_CONFIDENCE and MAX_CONFIDENCE");
         }
         confidenceLevel = level;
     }
 
     /**
      * Sets the start time.
-     * @param time the start time
+     * 
+     * @param time
+     *            the start time
      */
     public void setStartTime(final long time) {
         startTime = time;
@@ -96,7 +118,7 @@ public class BaseResultToken implements ResultToken {
 
     /**
      * Retrieves the start time.
-     *
+     * 
      * @return the start time
      */
     public long getStartTime() {
@@ -105,7 +127,9 @@ public class BaseResultToken implements ResultToken {
 
     /**
      * Sets the end time.
-     * @param time the end time
+     * 
+     * @param time
+     *            the end time
      */
     public void setEndTime(final long time) {
         endTime = time;
@@ -113,7 +137,7 @@ public class BaseResultToken implements ResultToken {
 
     /**
      * Retrieves the end time.
-     *
+     * 
      * @return the end time.
      */
     public long getEndTime() {
@@ -122,7 +146,7 @@ public class BaseResultToken implements ResultToken {
 
     /**
      * Retrieves the result.
-     *
+     * 
      * @return the result.
      */
     public Result getResult() {
@@ -131,7 +155,7 @@ public class BaseResultToken implements ResultToken {
 
     /**
      * Retrieves the result token.
-     *
+     * 
      * @return the token
      */
     public String getText() {

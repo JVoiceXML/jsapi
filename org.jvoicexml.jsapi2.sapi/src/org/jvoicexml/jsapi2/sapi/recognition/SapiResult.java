@@ -31,6 +31,7 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.speech.recognition.Grammar;
 import javax.speech.recognition.ResultToken;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -59,6 +60,16 @@ public final class SapiResult extends BaseResult {
      * Constructs a new object.
      */
     public SapiResult() {
+    }
+
+    /**
+     * Constructs a new object.
+     * 
+     * @param grammar
+     *            the grammar
+     */
+    public SapiResult(final Grammar grammar) {
+        super(grammar);
     }
 
     /**
@@ -98,42 +109,63 @@ public final class SapiResult extends BaseResult {
         // iterate through tags and set resultTags
         final List<SmlInterpretation> interpretations = extractor
                 .getInterpretations();
-        final Object[] smltags;
-        int i = 0;
-        final String utteranceTag = extractor.getUtteranceTag();
-        if (utteranceTag.isEmpty()
-                || utteranceTag.equals(extractor.getUtterance())) {
-            smltags = new String[interpretations.size()];
-        } else {
-            smltags = new String[interpretations.size() + 1];
-            smltags[i] = utteranceTag;
-            i++;
-        }
-        for (SmlInterpretation interpretation : interpretations) {
-            final String tag = interpretation.getTag();
-            final String val = interpretation.getValue();
-
-            // SRGS-tags like <tag>FOO</tag>
-            smltags[i] = tag;
-
-            // for the time being, a help tag is of the form "*.help = 'help'",
-            // e.g. "out.help = 'help'"
-            boolean specialTag = (tag.equalsIgnoreCase("help") && val
-                    .equalsIgnoreCase("help"))
-                    || (tag.equalsIgnoreCase("cancel") && val
-                            .equalsIgnoreCase("cancel"));
-            // SRGS-tags like <tag>FOO="bar"</tag>
-            if (!specialTag && (val != null) && !val.isEmpty()) {
-                smltags[i] += "=" + val;
+        final List<String> smltags = new java.util.ArrayList<String>();
+        if (interpretations.isEmpty()) {
+            final String utterance = extractor.getUtterance();
+            final String tag = extractor.getUtteranceTag();
+            // Hmpf this way we will not be able to process things like
+            // <item>yes<tag>yes</tag></item>
+            if (!utterance.equals(tag)) {
+                smltags.add(tag);
             }
-            i++;
+        } else {
+            for (int k = 0; k < interpretations.size(); k++) {
+                final SmlInterpretation interpretation = interpretations.get(k);
+                final String tag = interpretation.getTag();
+                final String val = interpretation.getValue();
+                boolean addedObject = false;
+                if (k < interpretations.size() - 1) {
+                    final int currentLevel = interpretation
+                            .getObjectHierachyLevel();
+                    final SmlInterpretation next = interpretations.get(k + 1);
+                    final int nextLevel = next.getObjectHierachyLevel();
+                    if (currentLevel < nextLevel) {
+                        if (currentLevel == 0) {
+                            final String out = "out = new Object();";
+                            smltags.add(out);
+                        }
+                        final String str = "out." + tag + " = new Object();";
+                        smltags.add(str);
+                        addedObject = true;
+                    }
+                }
+
+                // for the time being, a help tag is of the form
+                // "*.help = 'help'",
+                // e.g. "out.help = 'help'"
+                boolean specialTag = (tag.equalsIgnoreCase("help") && val
+                        .equalsIgnoreCase("help"))
+                        || (tag.equalsIgnoreCase("cancel") && val
+                                .equalsIgnoreCase("cancel"));
+                // SRGS-tags like <tag>FOO="bar"</tag>
+                if (!specialTag && (val != null) && !val.isEmpty()) {
+                    final String str = "out." + tag + "=" + val + ";";
+                    smltags.add(str);
+                } else {
+                    if (!addedObject) {
+                        // SRGS-tags like <tag>FOO</tag>
+                        smltags.add(tag);
+                    }
+                }
+            }
         }
-        tags = smltags;
+        // Copy everything to tags.
+        tags = new Object[smltags.size()];
+        tags = smltags.toArray(tags);
         final String utt = getUtterance();
         final ResultToken[] tokens = resultToResultToken(utt);
         setTokens(tokens);
     }
-
 
     /**
      * Parses the given SML string.
@@ -180,7 +212,7 @@ public final class SapiResult extends BaseResult {
         }
         return res;
     }
-    
+
     /**
      * Retrieves the SML string.
      * 

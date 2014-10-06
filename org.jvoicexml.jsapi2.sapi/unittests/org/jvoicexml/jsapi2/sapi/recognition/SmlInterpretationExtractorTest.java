@@ -128,12 +128,12 @@ public final class SmlInterpretationExtractorTest {
         Assert.assertEquals(2, interpretations.size());
         final SmlInterpretation greet = interpretations.get(0);
         Assert.assertEquals("greet", greet.getTag());
-        Assert.assertEquals("general", greet.getValue());
+        Assert.assertEquals("\"general\"", greet.getValue());
         Assert.assertEquals(2.069468E-02f, greet.getConfidence(),
                 MAX_CONFIDENCE_DIFF);
         final SmlInterpretation who = interpretations.get(1);
         Assert.assertEquals("who", who.getTag());
-        Assert.assertEquals("Projectmanager", who.getValue());
+        Assert.assertEquals("\"Projectmanager\"", who.getValue());
         Assert.assertEquals(2.069468E-02f, who.getConfidence(),
                 MAX_CONFIDENCE_DIFF);
         Assert.assertEquals("", extractor.getUtteranceTag());
@@ -170,12 +170,12 @@ public final class SmlInterpretationExtractorTest {
                 MAX_CONFIDENCE_DIFF);
         final SmlInterpretation size = interpretations.get(1);
         Assert.assertEquals("order.size", size.getTag());
-        Assert.assertEquals("small", size.getValue());
+        Assert.assertEquals("\"small\"", size.getValue());
         Assert.assertEquals(0.8131593f, size.getConfidence(),
                 MAX_CONFIDENCE_DIFF);
         final SmlInterpretation topping = interpretations.get(2);
         Assert.assertEquals("order.topping", topping.getTag());
-        Assert.assertEquals("salami", topping.getValue());
+        Assert.assertEquals("\"salami\"", topping.getValue());
         Assert.assertEquals(0.8131593f, topping.getConfidence(),
                 MAX_CONFIDENCE_DIFF);
         Assert.assertEquals("", extractor.getUtteranceTag());

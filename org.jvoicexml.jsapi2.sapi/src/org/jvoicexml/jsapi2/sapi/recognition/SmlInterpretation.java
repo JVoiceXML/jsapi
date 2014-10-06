@@ -26,6 +26,8 @@
 
 package org.jvoicexml.jsapi2.sapi.recognition;
 
+import java.util.StringTokenizer;
+
 /**
  * Part of an interpretation result, consisting of a tag, an associated value
  * and a confidence value.
@@ -65,6 +67,15 @@ public final class SmlInterpretation {
     }
 
     /**
+     * Retrieves the level within a nested object hierarchy.
+     * @return level
+     */
+    public int getObjectHierachyLevel() {
+        final StringTokenizer tokenizer = new StringTokenizer(tag, ".");
+        return tokenizer.countTokens() - 1;
+    }
+    
+    /**
      * Retrieves the tag.
      * @return the tag
      */
@@ -88,7 +99,7 @@ public final class SmlInterpretation {
         if (value == null) {
             return null;
         }
-        return value.trim();
+        return "\"" + value.trim() + "\"";
     }
 
     /**
