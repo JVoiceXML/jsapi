@@ -292,7 +292,17 @@ public final class SapiRecognizer extends BaseRecognizer {
      */
     public void reportResult(final String ruleName, final String utterance) {
         postResultCreated();
-        SapiResult result = new SapiResult();
+        final Grammar grammar = getGrammar(ruleName);
+        if (grammar == null) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("Could not find the RuleGrammar");
+            }
+            final SapiResult result = new SapiResult();
+            postResultRejected(result);
+
+            return;
+        }
+        final SapiResult result = new SapiResult(grammar);
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "reporting SML Result String : {0}",
                     utterance);
@@ -327,22 +337,6 @@ public final class SapiRecognizer extends BaseRecognizer {
                 ResultEvent.RESULT_UPDATED, true, false);
         postResultEvent(tokensUpdated);
 
-        // Set the grammar, which led to recognition
-        final GrammarManager manager = getGrammarManager();
-        Grammar gram = manager.getGrammar("grammar:" + ruleName);
-        if (null == gram) {
-            gram = manager.getGrammar(ruleName);
-        }
-
-        result.setGrammar(gram);
-        if (null == result.getGrammar()) {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.fine("Could not find the RuleGrammar");
-            }
-            postResultRejected(result);
-
-            return;
-        }
         final ResultEvent grammarFinalized = new ResultEvent(result,
                 ResultEvent.GRAMMAR_FINALIZED);
         postResultEvent(grammarFinalized);
@@ -387,6 +381,20 @@ public final class SapiRecognizer extends BaseRecognizer {
                     ResultEvent.RESULT_ACCEPTED, false, false);
             postResultEvent(accepted);
         }
+    }
+
+    /**
+     * Obtain the grammar from the grammar manager.
+     * @param ruleName name of the rule
+     * @return determined grammar, maybe {@code null}
+     */
+    private Grammar getGrammar(final String ruleName) {
+        final GrammarManager manager = getGrammarManager();
+        final Grammar grammar = manager.getGrammar("grammar:" + ruleName);
+        if (grammar != null) {
+            return grammar;
+        }
+        return manager.getGrammar(ruleName);
     }
 
     /**
