@@ -3,10 +3,13 @@
  * and open the template in the editor.
  */
 
-package org.jvoicexml.jsapi2.jse.recognition.sphinx4;
+package org.jvoicexml.jsapi2.recognition.sphinx4;
+
+import javax.speech.SpeechLocale;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.jvoicexml.jsapi2.recognition.sphinx4.SphinxRecognizerMode;
 
 
 /**
@@ -21,7 +24,7 @@ public class SphinxRecognizerModeTest {
      */        
     @Test
     public void testCreateEngine() throws Exception {
-        final SphinxRecognizerMode mode = new SphinxRecognizerMode();
+        final SphinxRecognizerMode mode = new SphinxRecognizerMode(SpeechLocale.ENGLISH);
         Assert.assertEquals(Sphinx4Recognizer.class, mode.createEngine().getClass());
     }
 }
