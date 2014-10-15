@@ -112,7 +112,7 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
      */
     public AudioFormat getAudioFormat() {
         /** @todo AudioFormat is hardcoded */
-        return new AudioFormat(16000, 2, 1, true, false);
+        return new AudioFormat(16000, 16, 1, true, false);
     }
 
     /**
@@ -177,7 +177,7 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    throw new DataProcessingException(e.getMessage());
+                    throw new DataProcessingException(e.getMessage(), e);
                 }
             }
         }
@@ -188,23 +188,11 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
             return new DataEndSignal(duration);
         }
 
-        if (numBytesRead != frameSizeInBytes) {
-            if (numBytesRead % sampleSizeInBytes != 0) {
-                // Is it an error?
-                LOGGER.warning("Sphinx ReadData: Incomplete sample read.");
-            }
-
-            byte[] shrinked = new byte[numBytesRead];
-            System.arraycopy(data, 0, shrinked, 0, numBytesRead);
-            data = shrinked;
-        }
-
         totalSamplesRead += (numBytesRead / sampleSizeInBytes);
 
         // Convert it to double
         double[] samples = DataUtil.littleEndianBytesToValues(data, 0,
-                data.length, sampleSizeInBytes, signed);
-
+                numBytesRead, sampleSizeInBytes, signed);
         return new DoubleData(samples, (int) sampleRate, collectTime,
                 firstSampleNumber);
     }

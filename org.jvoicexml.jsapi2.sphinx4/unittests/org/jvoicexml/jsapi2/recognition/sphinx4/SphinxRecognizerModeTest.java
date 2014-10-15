@@ -18,7 +18,7 @@ import org.jvoicexml.jsapi2.recognition.sphinx4.SphinxRecognizerMode;
  */
 public class SphinxRecognizerModeTest {
     /**
-     * Test metod to create an engine.
+     * Test method to create an engine.
      * @throws Exception
      *         test failed
      */        
