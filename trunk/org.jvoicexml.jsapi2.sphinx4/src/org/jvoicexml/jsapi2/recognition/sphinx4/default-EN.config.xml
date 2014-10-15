@@ -221,6 +221,7 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     <component name="speechMarker" 
                type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" >
         <property name="speechTrailer" value="50"/>
+         <property name="endSilenceDecay" value="3600"/>
     </component>
     
     

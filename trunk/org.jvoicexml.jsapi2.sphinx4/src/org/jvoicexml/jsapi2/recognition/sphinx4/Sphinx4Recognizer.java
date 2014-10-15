@@ -547,7 +547,8 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
 
     @Override
     protected AudioFormat getAudioFormat() {
-        return new AudioFormat(16000f, 16, 1, true, false);
+        final SphinxInputDataProcessor input = (SphinxInputDataProcessor) dataProcessor;
+        return input.getAudioFormat();
     }
 
     /**
