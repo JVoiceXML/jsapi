@@ -26,17 +26,14 @@
 
 package org.jvoicexml.jsapi2.recognition.sphinx4;
 
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.ResultEvent;
-import javax.speech.recognition.ResultToken;
 import javax.speech.recognition.RuleGrammar;
 
 import org.jvoicexml.jsapi2.recognition.BaseResult;
-import org.jvoicexml.jsapi2.recognition.BaseResultToken;
 
 import edu.cmu.sphinx.decoder.ResultListener;
 import edu.cmu.sphinx.result.Result;
@@ -85,6 +82,11 @@ class Sphinx4ResultListener implements ResultListener {
             LOGGER.warning("result is not final or <sil>. forget about it.");
             return;
         }
+        
+        if(result.toString().contains("<unk>")) {
+            LOGGER.warning("result contains <unk> which represents negative result");
+            return;
+        }            
 
         /**
          * For the current implementation with the SRGSGrammarContainer in
