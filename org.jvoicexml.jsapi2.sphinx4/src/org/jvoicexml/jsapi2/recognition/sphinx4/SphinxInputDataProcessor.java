@@ -26,6 +26,8 @@
 
 package org.jvoicexml.jsapi2.recognition.sphinx4;
 
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -161,7 +163,6 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
             return null;
         }
 
-        long collectTime = System.currentTimeMillis();
         long firstSampleNumber = totalSamplesRead / channels;
 
         // Read data
@@ -191,8 +192,9 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
         totalSamplesRead += (numBytesRead / sampleSizeInBytes);
 
         // Convert it to double
-        double[] samples = DataUtil.littleEndianBytesToValues(data, 0,
+        final double[] samples = DataUtil.littleEndianBytesToValues(data, 0,
                 numBytesRead, sampleSizeInBytes, signed);
+        final long collectTime = System.currentTimeMillis();
         return new DoubleData(samples, (int) sampleRate, collectTime,
                 firstSampleNumber);
     }
