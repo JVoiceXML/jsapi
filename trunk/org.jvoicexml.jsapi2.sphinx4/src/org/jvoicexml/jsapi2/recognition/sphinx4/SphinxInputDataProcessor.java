@@ -26,8 +26,6 @@
 
 package org.jvoicexml.jsapi2.recognition.sphinx4;
 
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
