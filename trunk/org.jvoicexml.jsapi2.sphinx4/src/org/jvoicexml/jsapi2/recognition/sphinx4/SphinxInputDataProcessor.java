@@ -126,9 +126,9 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
     public Data getData() throws DataProcessingException {
         final AudioFormat format = getAudioFormat();
         int channels = format.getChannels();;
-        int sampleSizeInBytes = format.getSampleSizeInBits();
         boolean signed = true;
         int sampleRate = (int) format.getSampleRate();
+        int sampleSizeInBytes = format.getSampleSizeInBits() / 8;
         int frameSizeInBytes = sampleRate * sampleSizeInBytes * channels * 10
                 / 1000;
 
