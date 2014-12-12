@@ -270,7 +270,6 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
         recognitionThread = new RecognitionThread(this);
         recognitionThread.start();
         waitForRecognizerState(State.RECOGNIZING);
-
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("recognition started");
         }
