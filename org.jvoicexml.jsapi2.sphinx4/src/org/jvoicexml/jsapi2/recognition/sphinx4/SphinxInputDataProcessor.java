@@ -41,6 +41,10 @@ import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 /**
  * A data processor to read the data from a given input stream and
@@ -55,7 +59,22 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
     /** Logger for this class. */
     private static final Logger LOGGER = Logger
             .getLogger(SphinxInputDataProcessor.class.getName());
+    
+    @S4Integer(defaultValue=16000)
+    public static final String SAMPLING_RATE = "samplingRate";
 
+    @S4Integer(defaultValue=16)
+    public static final String SAMPLE_SIZE_IN_BITS = "sampleSizeInBits";
+
+    @S4Integer(defaultValue=1)
+    public static final String CHANNELS = "channels";
+
+    @S4Boolean(defaultValue=false)
+    public static final String SIGNED = "signed";
+    
+    @S4Boolean(defaultValue=false)
+    public static final String BIG_ENDIAN = "bigEndian";
+    
     /** The input stream from the audio manager. */
     private InputStream inputStream;
 
@@ -71,10 +90,23 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
     /** is running */
     private boolean running = true;
 
+    private AudioFormat format;
+    
     /**
      * Constructs a new object.
      */
     public SphinxInputDataProcessor() {
+    }
+
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        final int samplingRate = ps.getInt(SAMPLING_RATE);
+        final int sampleSizeInBits = ps.getInt(SAMPLE_SIZE_IN_BITS);
+        final int channels = ps.getInt(CHANNELS);
+        final boolean signed = ps.getBoolean(SIGNED);
+        final boolean bigEndian = ps.getBoolean(BIG_ENDIAN);
+        format = new AudioFormat(samplingRate, sampleSizeInBits, channels,
+                signed, bigEndian);
     }
 
     /**
@@ -111,8 +143,7 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
      * @return the audio format used by this data processor.
      */
     public AudioFormat getAudioFormat() {
-        /** @todo AudioFormat is hardcoded */
-        return new AudioFormat(16000, 16, 1, true, false);
+        return format;
     }
 
     /**

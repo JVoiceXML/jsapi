@@ -64,7 +64,7 @@ public final class InputDemo implements ResultListener {
                 .createEngine(SynthesizerMode.DEFAULT);
         // Create a recognizer for the default Locale.
         recognizer = (Recognizer) EngineManager
-                .createEngine(new RecognizerMode(SpeechLocale.GERMAN));
+                .createEngine(new RecognizerMode(SpeechLocale.ENGLISH));
 
         // Get it ready to speak
          synthesizer.allocate();

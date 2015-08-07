@@ -205,10 +205,9 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     <component name="speechMarker" 
                type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" >
         <property name="speechTrailer" value="50"/>
-         <property name="endSilenceDecay" value="3600"/>
+        <property name="endSilenceDecay" value="3600"/>
     </component>
-    
-    
+
     <component name="preemphasizer"
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
     
@@ -239,7 +238,13 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     </component>
 
     <component name="sphinxInputDataProcessor"
-               type="org.jvoicexml.jsapi2.recognition.sphinx4.SphinxInputDataProcessor"/>
+               type="org.jvoicexml.jsapi2.recognition.sphinx4.SphinxInputDataProcessor">
+        <property name="samplingRate" value="16000"/>
+        <property name="sampleSizeInBits" value="16"/>
+        <property name="channels" value="1"/>
+        <property name="signed" value="false"/>
+        <property name="bigEndian" value="false"/>
+    </component>
     
     <!-- ******************************************************* -->
     <!--  monitors                                               -->
@@ -255,8 +260,8 @@ recognizer (edu.cmu.sphinx.recognizer.Recognizer)
     <component name="memoryTracker" 
                 type="edu.cmu.sphinx.instrumentation.MemoryTracker">
         <property name="recognizer" value="${recognizer}"/>
-    <property name="showSummary" value="false"/>
-    <property name="showDetails" value="false"/>
+        <property name="showSummary" value="false"/>
+        <property name="showDetails" value="false"/>
     </component>
     
     <component name="speedTracker" 

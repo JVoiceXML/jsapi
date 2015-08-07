@@ -677,7 +677,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     public abstract Collection<Grammar> getBuiltInGrammars();
 
     /**
-     * Retrieves the audio format that is produced by this recognizer.
+     * Retrieves the audio format that is used by this recognizer.
      * 
      * @return audio format.
      */

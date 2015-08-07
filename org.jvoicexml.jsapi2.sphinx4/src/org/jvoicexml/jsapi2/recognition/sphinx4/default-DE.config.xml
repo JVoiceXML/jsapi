@@ -165,8 +165,14 @@
     </propertylist>
   </component>    
 
-<component name="sphinxInputDataProcessor"
-               type="org.jvoicexml.jsapi2.recognition.sphinx4.SphinxInputDataProcessor"/>
+    <component name="sphinxInputDataProcessor"
+               type="org.jvoicexml.jsapi2.recognition.sphinx4.SphinxInputDataProcessor">
+        <property name="samplingRate" value="16000"/>
+        <property name="sampleSizeInBits" value="16"/>
+        <property name="channels" value="1"/>
+        <property name="signed" value="false"/>
+        <property name="bigEndian" value="false"/>
+    </component>
 
   <component name="streamDataSource"
              type="edu.cmu.sphinx.frontend.util.StreamDataSource">
