@@ -97,25 +97,9 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
         }
         final URL url;
         AudioFormat targetFormat = null;
-        try {
-            url = new URL(locator);
-            final AudioFileFormat format =
-                AudioSystem.getAudioFileFormat(url);
-            targetFormat = format.getFormat();
-            setTargetAudioFormat(targetFormat);
-        } catch (MalformedURLException e) {
-            throw new AudioException(e.getMessage());
-        } catch (UnsupportedAudioFileException e) {
-            throw new AudioException(e.getMessage());
-        } catch (IOException e) {
-            throw new AudioException(e.getMessage());
-        }
-        if (targetFormat == null) {
+        if (locator.startsWith("capture")) {
             try {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "AudioFormat is unknown. "
-                            + "Trying to parse URI query...");
-                }
+                url = new URL(locator);
                 targetFormat = JavaSoundParser.parse(url);
                 setTargetAudioFormat(targetFormat);
                 if (LOGGER.isLoggable(Level.FINE)) {
@@ -124,11 +108,27 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
                 }
             } catch (URISyntaxException e) {
                 throw new AudioException(e.getMessage());
+            } catch (MalformedURLException e) {
+                throw new AudioException(e.getMessage());
+            }
+        } else {
+            try {
+                url = new URL(locator);
+                final AudioFileFormat format =
+                    AudioSystem.getAudioFileFormat(url);
+                targetFormat = format.getFormat();
+                setTargetAudioFormat(targetFormat);
+            } catch (MalformedURLException e) {
+                throw new AudioException(e.getMessage());
+            } catch (UnsupportedAudioFileException e) {
+                throw new AudioException(e.getMessage());
+            } catch (IOException e) {
+                throw new AudioException(e.getMessage());
             }
         }
         final URLConnection urlConnection;
         try {
-            urlConnection = openURLConnection();
+            urlConnection = openURLConnection(false);
         } catch (IOException e) {
             throw new AudioException(e.getMessage());
         }
@@ -172,12 +172,9 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
             final String locator = getMediaLocator();
             // Open URL described in locator
             if (locator == null || locator.isEmpty()) {
-                // Use the microphone
+                // Use the microphone with the engine audio format
                 format = getEngineAudioFormat();
                 setTargetAudioFormat(format);
-    //            final InputStream source =
-//                    new LineInputStream(targetAudioFormat);
-                /*******************************************************/
                 InputStream source;
                 try {
                     TargetDataLine lineLocalMic =
@@ -188,10 +185,10 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
                 } catch (LineUnavailableException e) {
                     throw new AudioException(e.getMessage());
                 }
-                /*******************************************************/
                 inputStream = new BufferedInputStream(source);
             } else {
                 inputStream = openUrl(locator);
+                format = getTargetAudioFormat();
             }
         }
         if (LOGGER.isLoggable(Level.FINE)) {

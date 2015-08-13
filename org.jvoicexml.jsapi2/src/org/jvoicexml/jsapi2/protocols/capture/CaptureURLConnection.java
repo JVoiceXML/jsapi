@@ -12,6 +12,7 @@
 
 package org.jvoicexml.jsapi2.protocols.capture;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -56,7 +57,7 @@ public final class CaptureURLConnection extends URLConnection {
     private TargetDataLine line;
 
     /** The audio input stream. */
-    private AudioInputStream inputStream;
+    private InputStream inputStream;
 
     /**
      * Constructs a new object.
@@ -106,7 +107,6 @@ public final class CaptureURLConnection extends URLConnection {
      *
      * @throws IOException
      *             if an I/O error occurs while opening the connection.
-     * @todo Implement this java.net.URLConnection method
      */
     public synchronized void connect() throws IOException {
         if (connected) {
@@ -123,16 +123,14 @@ public final class CaptureURLConnection extends URLConnection {
         // Obtain, open and start the line.
         try {
             line.open(audioFormat, AudioSystem.NOT_SPECIFIED);
-
             // Starts the line
             line.start();
         } catch (LineUnavailableException ex) {
-            throw new IOException("Line is unavailable");
+            throw new IOException("Line is unavailable for " + audioFormat);
         }
 
         // Marks this URLConnection as connected
         connected = true;
-
     }
 
     /**
@@ -143,13 +141,12 @@ public final class CaptureURLConnection extends URLConnection {
      *            error obtaining the line.
      */
     private TargetDataLine getLine() throws IOException {
-
         if (deviceName.equals("audio")) {
             try {
-                line = AudioSystem.getTargetDataLine(getAudioFormat());
+                AudioFormat format = getAudioFormat();
+                line = AudioSystem.getTargetDataLine(format);
             } catch (LineUnavailableException ex) {
-                ex.printStackTrace();
-                return null;
+                throw new IOException(ex.getMessage());
             }
         } else {
             // Get the mixer info for the device
@@ -161,18 +158,16 @@ public final class CaptureURLConnection extends URLConnection {
             Mixer mixer = AudioSystem.getMixer(mixerInfo);
             try {
                 mixer.open();
-            } catch (LineUnavailableException ex1) {
-                ex1.printStackTrace();
+            } catch (LineUnavailableException ex) {
+                throw new IOException(ex.getMessage());
             }
 
             DataLine.Info lineInfo = new DataLine.Info(TargetDataLine.class,
                     getAudioFormat());
-
             try {
                 line = (TargetDataLine) mixer.getLine(lineInfo);
             } catch (LineUnavailableException ex) {
-                ex.printStackTrace();
-                return null;
+                throw new IOException(ex.getMessage());
             }
         }
 
@@ -223,12 +218,13 @@ public final class CaptureURLConnection extends URLConnection {
     public InputStream getInputStream() throws IOException {
         // Get line associated with connection
         if (line == null) {
-            throw new IOException("Not connected to line");
+            connect();
         }
 
         // Setup the input stream
         if (inputStream == null) {
-            inputStream = new AudioInputStream(line);
+            AudioInputStream audioin = new AudioInputStream(line);
+            inputStream = new BufferedInputStream(audioin);
         }
         return inputStream;
     }

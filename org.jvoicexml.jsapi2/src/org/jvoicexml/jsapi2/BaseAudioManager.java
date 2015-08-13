@@ -349,13 +349,17 @@ public abstract class BaseAudioManager implements AudioManager {
     public abstract InputStream getInputStream();
 
     /**
-     * Opens the connection to the configured media locator.
+     * Opens the connection to the configured media locator. Does nothing if
+     * there is no media locateor
      * 
+     * @param doOutput {@code true} if the connection is intended to be used for
+     *                 output, i.e., speaker or similar.
      * @return opened connection
      * @throws IOException
      *             error opening the connection.
      */
-    protected final URLConnection openURLConnection() throws IOException {
+    protected final URLConnection openURLConnection(boolean doOutput)
+            throws IOException {
         final String locator = getMediaLocator();
         if (locator == null) {
             return null;
@@ -370,7 +374,7 @@ public abstract class BaseAudioManager implements AudioManager {
 
         // Open a connection to URL
         final URLConnection connection = url.openConnection();
-        connection.setDoOutput(true);
+        connection.setDoOutput(doOutput);
         connection.connect();
         return connection;
     }

@@ -31,7 +31,6 @@ public final class Handler extends URLStreamHandler {
      * Constructs a new object.
      */
     public Handler() {
-        super();
     }
 
     /**

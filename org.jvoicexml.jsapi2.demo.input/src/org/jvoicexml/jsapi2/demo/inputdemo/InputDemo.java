@@ -18,6 +18,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.speech.AudioManager;
 import javax.speech.Engine;
 import javax.speech.EngineManager;
 import javax.speech.SpeechLocale;
@@ -66,6 +67,8 @@ public final class InputDemo implements ResultListener {
         recognizer = (Recognizer) EngineManager
                 .createEngine(new RecognizerMode(SpeechLocale.ENGLISH));
 
+        final AudioManager manager = recognizer.getAudioManager();
+        manager.setMediaLocator("capture://audio?rate=8000&bits=16&channels=2&endian=big&encoding=pcm&signed=true");
         // Get it ready to speak
          synthesizer.allocate();
          synthesizer.resume();

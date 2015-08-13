@@ -72,7 +72,7 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
                 // Open URL described in locator
                 final URLConnection urlConnection;
                 try {
-                    urlConnection = openURLConnection();
+                    urlConnection = openURLConnection(true);
                     outputStream = urlConnection.getOutputStream();
                 } catch (IOException ex) {
                     throw new AudioException(
