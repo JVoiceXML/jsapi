@@ -3,11 +3,12 @@
  */
 package org.jvoicexml.jsapi2.protocols.capture;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.net.UnknownServiceException;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,10 +35,11 @@ public final class CaptureURLConnectionTest {
     @Test
     public void testGetInputStream() throws Exception {
         final URL url =
-            new URL("capture://audio?rate=8000&channels=1&encoding=pcm");
+            new URL("capture://audio?rate=16000&bits=16&channels=2&endian=big&encoding=pcm&signed=true");
         final CaptureURLConnection connection = new CaptureURLConnection(url);
-        connection.connect();
         final InputStream input = connection.getInputStream();
+        byte[] buffer = new byte[1024];
+        Assert.assertEquals(buffer.length, input.read(buffer));
     }
 
     /**
@@ -45,7 +47,7 @@ public final class CaptureURLConnectionTest {
      * @exception Exception
      *            test failed.
      */
-    @Test(expected = UnknownServiceException.class)
+    @Test(expected = IOException.class)
     public void testGetOutputStream() throws Exception {
         final URL url =
             new URL("playback://audio?rate=8000&channels=1&encoding=pcm");
