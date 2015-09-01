@@ -36,14 +36,13 @@ import javax.speech.AudioSegment;
 import javax.speech.EngineException;
 import javax.speech.EngineStateException;
 import javax.speech.synthesis.Speakable;
-import javax.speech.synthesis.SynthesizerProperties;
+import javax.speech.synthesis.SpeakableException;
 import javax.speech.synthesis.Voice;
 
 import org.jvoicexml.jsapi2.BaseAudioManager;
 import org.jvoicexml.jsapi2.BaseAudioSegment;
 import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.synthesis.BaseSynthesizer;
-import org.jvoicexml.jsapi2.synthesis.BaseSynthesizerProperties;
 
 /**
  * A SAPI compliant {@link javax.speech.synthesis.Synthesizer}.
@@ -68,7 +67,7 @@ public final class SapiSynthesizer extends BaseSynthesizer {
     }
 
     /**
-     * Do some cleanup
+     * Do some cleanup.
      * @throws Throwable
      *         error finalizing
      */
@@ -249,9 +248,11 @@ public final class SapiSynthesizer extends BaseSynthesizer {
 
     /**
      * {@inheritDoc}
+     * @throws SpeakableException 
      */
     @Override
-    protected AudioSegment handleSpeak(final int id, final Speakable item) {
+    protected AudioSegment handleSpeak(final int id, final Speakable item)
+            throws SpeakableException {
         final String markup = item.getMarkupText();
         final byte[] bytes = sapiHandleSpeakSsml(synthesizerHandle, id, markup);
         final BaseAudioManager manager =
@@ -280,9 +281,10 @@ public final class SapiSynthesizer extends BaseSynthesizer {
      * @param ssml
      *            the SSML markup to speak
      * @return byte array of the synthesized speech
+     * @throws SpeakableException error processing the SSML 
      */
     private native byte[] sapiHandleSpeakSsml(final long handle, final int id,
-            final String ssml);
+            final String ssml) throws SpeakableException;
 
     /**
      * {@inheritDoc}

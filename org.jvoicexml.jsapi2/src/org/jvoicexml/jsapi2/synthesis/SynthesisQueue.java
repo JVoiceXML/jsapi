@@ -31,6 +31,7 @@ import java.util.List;
 import javax.speech.AudioSegment;
 import javax.speech.synthesis.Speakable;
 import javax.speech.synthesis.SpeakableEvent;
+import javax.speech.synthesis.SpeakableException;
 import javax.speech.synthesis.SpeakableListener;
 import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerEvent;
@@ -301,7 +302,17 @@ final class SynthesisQueue implements Runnable {
                 removeQueueItem(item);
                 playQueue.addQueueItem(item);
                 // Synthesize it
-                synthesize(item);
+                try {
+                    synthesize(item);
+                } catch (SpeakableException e) {
+                    final int id = item.getId();
+                    final Speakable speakable = item.getSpeakable();
+                    final String textInfo = speakable.getMarkupText();
+                    SpeakableEvent event = new SpeakableEvent(this,
+                            SpeakableEvent.SPEAKABLE_FAILED, id, textInfo,
+                            SpeakableEvent.SPEAKABLE_FAILURE_UNRECOVERABLE, e);
+                    synthesizer.postSpeakableEvent(event, null);
+                }
                 // Notify the observers that something changed
                 playQueue.itemChanged(item);
             }
@@ -311,8 +322,9 @@ final class SynthesisQueue implements Runnable {
     /**
      * Synthesizes the given queue item.
      * @param item the queue item to synthesize
+     * @throws SpeakableException error processing the item
      */
-    private void synthesize(final QueueItem item) {
+    private void synthesize(final QueueItem item) throws SpeakableException {
         final Object itemSource = item.getSource();
         final int id = item.getId();
         final AudioSegment segment;

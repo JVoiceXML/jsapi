@@ -9,6 +9,7 @@ Version 0.6
   place and to avoid copying 
 - also parsing tags in the rule parse
 - SML results of SAPI are parsed into a JavaScript object hierarchy as tags
+- propagating synthesis errors
 
 Version 0.5
 ===========
