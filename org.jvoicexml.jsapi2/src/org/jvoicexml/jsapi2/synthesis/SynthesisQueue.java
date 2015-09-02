@@ -305,6 +305,7 @@ final class SynthesisQueue implements Runnable {
                 try {
                     synthesize(item);
                 } catch (SpeakableException e) {
+                    e.printStackTrace();
                     final int id = item.getId();
                     final Speakable speakable = item.getSpeakable();
                     final String textInfo = speakable.getMarkupText();

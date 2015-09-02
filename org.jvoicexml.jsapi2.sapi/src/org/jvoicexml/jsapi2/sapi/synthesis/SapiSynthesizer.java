@@ -248,7 +248,6 @@ public final class SapiSynthesizer extends BaseSynthesizer {
 
     /**
      * {@inheritDoc}
-     * @throws SpeakableException 
      */
     @Override
     protected AudioSegment handleSpeak(final int id, final Speakable item)

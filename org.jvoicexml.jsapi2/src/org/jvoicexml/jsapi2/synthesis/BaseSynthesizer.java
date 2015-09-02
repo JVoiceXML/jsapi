@@ -152,19 +152,17 @@ public abstract class BaseSynthesizer extends BaseEngine
      */
     protected final void postSpeakableEvent(final SpeakableEvent event,
             final SpeakableListener extraSpeakableListener) {
-        // Firstly, check if the event is filtered by the mask
+        // First, check if the event is filtered by the mask
         final int id = event.getId();
         if ((speakableMask & id) != id) {
             return;
         }
-        
         // Fire the event
         final Runnable runnable = new Runnable() {
             public void run() {
                 if (extraSpeakableListener != null) {
                     extraSpeakableListener.speakableUpdate(event);
                 }
-
                 if (speakableListeners != null) {
                     for (SpeakableListener listener : speakableListeners) {
                         listener.speakableUpdate(event);
