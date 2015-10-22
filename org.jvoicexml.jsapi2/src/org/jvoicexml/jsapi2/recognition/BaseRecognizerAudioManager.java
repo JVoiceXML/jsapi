@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.code.sf.net/p/jsapi/code/trunk/org.jvoicexml.jsapi2/src/org/jvoicexml/jsapi2/jse/recognition/BaseRecognizerAudioManager.java $
- * Version: $LastChangedRevision: 817 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2015 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -95,44 +91,30 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "opening locator at: '" + locator + "'");
         }
-        final URL url;
+        
+        // Determine the audio format
         AudioFormat targetFormat = null;
-        if (locator.startsWith("capture")) {
-            try {
-                url = new URL(locator);
-                targetFormat = JavaSoundParser.parse(url);
-                setTargetAudioFormat(targetFormat);
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "... Got AudioFormat: {0}",
-                            targetFormat.toString());
-                }
-            } catch (URISyntaxException e) {
-                throw new AudioException(e.getMessage());
-            } catch (MalformedURLException e) {
-                throw new AudioException(e.getMessage());
-            }
-        } else {
-            try {
-                url = new URL(locator);
-                final AudioFileFormat format =
-                    AudioSystem.getAudioFileFormat(url);
-                targetFormat = format.getFormat();
-                setTargetAudioFormat(targetFormat);
-            } catch (MalformedURLException e) {
-                throw new AudioException(e.getMessage());
-            } catch (UnsupportedAudioFileException e) {
-                throw new AudioException(e.getMessage());
-            } catch (IOException e) {
-                throw new AudioException(e.getMessage());
-            }
+        try {
+            final URL url = new URL(locator);
+            final AudioFileFormat format =
+                AudioSystem.getAudioFileFormat(url);
+            targetFormat = format.getFormat();
+            setTargetAudioFormat(targetFormat);
+        } catch (MalformedURLException e) {
+            throw new AudioException(e.getMessage());
+        } catch (UnsupportedAudioFileException e) {
+            throw new AudioException(e.getMessage());
+        } catch (IOException e) {
+            throw new AudioException(e.getMessage());
         }
+        
+        // Open the connection to retrieve an input stream
         final URLConnection urlConnection;
         try {
             urlConnection = openURLConnection(false);
         } catch (IOException e) {
             throw new AudioException(e.getMessage());
         }
-
         try {
             final InputStream source = urlConnection.getInputStream();
             return new BufferedInputStream(source);
@@ -171,10 +153,25 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
         } else {
             final String locator = getMediaLocator();
             // Open URL described in locator
-            if (locator == null || locator.isEmpty()) {
-                // Use the microphone with the engine audio format
-                format = getEngineAudioFormat();
-                setTargetAudioFormat(format);
+            if (locator == null || locator.isEmpty()
+                    || locator.startsWith("capture")) {
+                if (locator != null && locator.startsWith("capture")) {
+                    try {
+                        final URI uri = new URI(locator);
+                        format = JavaSoundParser.parse(uri);
+                        setTargetAudioFormat(format);
+                        if (LOGGER.isLoggable(Level.FINE)) {
+                            LOGGER.log(Level.FINE, "... Got AudioFormat: {0}",
+                                    format.toString());
+                        }
+                    } catch (URISyntaxException e) {
+                        throw new AudioException(e.getMessage());
+                    }
+                } else {
+                    // Use the microphone with the engine audio format
+                    format = getEngineAudioFormat();
+                    setTargetAudioFormat(format);
+                }
                 InputStream source;
                 try {
                     TargetDataLine lineLocalMic =

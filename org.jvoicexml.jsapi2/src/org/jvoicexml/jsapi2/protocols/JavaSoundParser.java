@@ -1,13 +1,21 @@
 /*
- * File:    $HeadURL$
- * Version: $LastChangedRevision$
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy$
+ * JSAPI - An independent reference implementation of JSR 113.
  *
- * JSAPI - An base implementation for JSR 113.
+ * Copyright (C) 2007-2015 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
- * Copyright (C) 2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 package org.jvoicexml.jsapi2.protocols;
@@ -63,12 +71,27 @@ public final class JavaSoundParser {
      */
     public static AudioFormat parse(final URL url) throws URISyntaxException {
         URI uri = url.toURI();
+        return parse(uri);
+    }
+    
+        /**
+     * Parses the given URI into an audio format.
+     *
+     * @param uri
+     *            the URI to parse.
+     * @return audio format.
+     * @throws URISyntaxException
+     *         error parsing the URL
+     */
+    public static AudioFormat parse(final URI uri) throws URISyntaxException {
         final Map<String, String> parameters = new HashMap<String, String>();
         if (uri.getQuery() != null) {
             String[] parametersString = uri.getQuery().split("\\&");
             for (String part : parametersString) {
                 String[] queryElement = part.split("\\=");
-                parameters.put(queryElement[0], queryElement[1]);
+                if (queryElement.length == 2) {
+                    parameters.put(queryElement[0], queryElement[1]);
+                }
             }
         }
 
@@ -107,7 +130,7 @@ public final class JavaSoundParser {
             } else if (encodingStr.equals("ulaw")) {
                 encoding = AudioFormat.Encoding.ULAW;
             } else if (encodingStr.equals("gsm")) {
-                throw new URISyntaxException(url.toString(),
+                throw new URISyntaxException(uri.toString(),
                         "gsm is currently not supported!");
             }
         }

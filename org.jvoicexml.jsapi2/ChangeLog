@@ -10,6 +10,8 @@ Version 0.6
 - also parsing tags in the rule parse
 - SML results of SAPI are parsed into a JavaScript object hierarchy as tags
 - propagating synthesis errors
+- capture is not handled by URL protocol handler to avoid problems when setting
+  the protocols
 
 Version 0.5
 ===========

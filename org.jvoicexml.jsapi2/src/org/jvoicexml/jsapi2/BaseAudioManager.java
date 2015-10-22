@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2015 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -350,7 +345,7 @@ public abstract class BaseAudioManager implements AudioManager {
 
     /**
      * Opens the connection to the configured media locator. Does nothing if
-     * there is no media locateor
+     * there is no media locator
      * 
      * @param doOutput {@code true} if the connection is intended to be used for
      *                 output, i.e., speaker or similar.
@@ -358,7 +353,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * @throws IOException
      *             error opening the connection.
      */
-    protected final URLConnection openURLConnection(boolean doOutput)
+    protected final URLConnection openURLConnection(final boolean doOutput)
             throws IOException {
         final String locator = getMediaLocator();
         if (locator == null) {
