@@ -1,12 +1,5 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 296 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
- * JSAPI - An independent reference implementation of JSR 113.
- *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,7 +37,6 @@ import org.jvoicexml.jsapi2.synthesis.freetts.FreeTTSEngineListFactory;
 /**
  * A demo to output a synthesized text to the speaker.
  * @author Dirk Schnelle-Walka
- * @version $Revision: 593 $
  */
 public final class HelloWorldDemo implements SpeakableListener, SynthesizerListener {
     /**
