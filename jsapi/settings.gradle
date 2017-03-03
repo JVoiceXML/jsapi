@@ -1,0 +1,5 @@
+include 'javax.speech', \
+	'javax.speech.security', \
+	'org.jvoicexml.jsapi2', \
+	'org.jvoicexml.jsapi2.freetts',
+	'org.jvoicexml.jsapi2.sphinx4'

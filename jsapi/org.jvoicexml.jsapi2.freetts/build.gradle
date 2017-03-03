@@ -1,0 +1,30 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://repository.ops4j.org/maven2/"
+    }
+}
+
+
+dependencies {
+    compile group: 'org.mozilla', name: 'rhino', version: '1.7R4'
+
+    compile fileTree(dir: './3rdparty/freetts1.2/lib', include: ['*.jar'])
+
+    compile project(':org.jvoicexml.jsapi2')
+}
+
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "FreeTTS JSAPI2 implementation",
+                   "Implementation-Vendor": "JVoiceXML group",
+                   "Implementation-Version": version)
+    }
+    baseName 'org.jvoicexml.jsapi2.freetts'
+}
+
+

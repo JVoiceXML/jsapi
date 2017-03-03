@@ -1,0 +1,35 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://repository.ops4j.org/maven2/"
+    }
+}
+
+
+dependencies {
+    compile group: 'javax.microedition', name: 'cldc', version: '1.0'
+    compile group: 'javax.microedition', name: 'midp', version: '1.0'
+
+    compile project(':javax.speech.security')
+}
+
+compileJava {
+	sourceCompatibility = 1.2
+	targetCompatibility = 1.1
+
+    options.bootClasspath = configurations.compile
+}
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "JSR 113 - Java Speech API 2.0",
+                   "Implementation-Vendor": "JVoiceXML group",
+                   "Implementation-Version": version)
+    }
+    baseName 'javax.speech'
+}
+
+
