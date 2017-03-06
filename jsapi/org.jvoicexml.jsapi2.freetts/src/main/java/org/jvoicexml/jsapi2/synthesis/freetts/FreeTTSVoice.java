@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://jsapi.svn.sourceforge.net/svnroot/jsapi/trunk/org.jvoicexml.jsapi2.jse/src/org/jvoicexml/jsapi2/jse/synthesis/freetts/FreeTTSVoice.java $
- * Version: $LastChangedRevision: 296 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An base implementation for JSR 113.
  *
- * Copyright (C) 2009 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2009-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
 
@@ -34,7 +29,7 @@ public class FreeTTSVoice extends javax.speech.synthesis.Voice {
     /**
      * Constructs a FreeTTSVoice
      * 
-     * @param freettsVoice
+     * @param voice
      *                the freetts voice
      */
     public FreeTTSVoice(com.sun.speech.freetts.Voice voice) {

@@ -55,8 +55,8 @@ public class FreeTTSEngineListFactory implements EngineListFactory {
      * domain, this method generates a new JSAPI SynthesizerModeDesc
      * with the following attributes:
      *   <ul>
-     *   <li>The engine name is of the form: "FreeTTS &lt;locale>
-     *   &lt;domain> synthesizer"  For example, "FreeTTS en_us general
+     *   <li>The engine name is of the form: "FreeTTS &lt;locale&gt;
+     *   &lt;domain&gt; synthesizer"  For example, "FreeTTS en_us general
      *   synthesizer"
      *   <li>The locale is the locale shared by all the voices (e.g.,
      *   Locale.US)

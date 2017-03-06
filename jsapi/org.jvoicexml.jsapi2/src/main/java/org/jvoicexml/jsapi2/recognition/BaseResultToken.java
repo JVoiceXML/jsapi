@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,7 +30,6 @@ import javax.speech.recognition.RecognizerProperties;
  * 
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
- * @version 1.0
  */
 public class BaseResultToken implements ResultToken {
 
@@ -59,7 +53,7 @@ public class BaseResultToken implements ResultToken {
     }
 
     /**
-     * Constructs a new object
+     * Constructs a new object.
      * 
      * @param res
      *            the result
@@ -94,8 +88,8 @@ public class BaseResultToken implements ResultToken {
     /**
      * Sets the confidence level.
      * 
-     * @param the
-     *            confidence level
+     * @param level
+     *            the confidence level
      */
     public void setConfidenceLevel(final int level) {
         if (level < RecognizerProperties.MIN_CONFIDENCE

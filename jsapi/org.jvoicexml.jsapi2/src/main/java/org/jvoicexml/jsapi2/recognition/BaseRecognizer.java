@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: $
- * Version: $LastChangedRevision:  $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: lyncher $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This class is based on work by SUN Microsystems and
  * Carnegie Mellon University
@@ -47,7 +42,6 @@ package org.jvoicexml.jsapi2.recognition;
 
 import java.io.InputStream;
 import java.security.Permission;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.sound.sampled.AudioFormat;
@@ -614,9 +608,10 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * Called from the {@link #resume()} method.
      * 
+     * @return {@code true} if resuming was ssuccessful
      * @exception EngineStateException
      *                when not in the standard Conditions for operation
-     * @todo Handle grammar updates
+     * TODO Handle grammar updates
      */
     protected final boolean baseResume() throws EngineStateException {
 

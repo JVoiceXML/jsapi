@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL$
- * Version: $LastChangedRevision$
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy$
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This class is based on work by SUN Microsystems and
  * Carnegie Mellon University
@@ -72,10 +67,8 @@ import javax.speech.VocabularyManager;
  * <li>{@link #createSpeechEventExecutor()} to create the {@link javax.speech.SpeechEventExecutor}</li>
  * <li>{@link #createVocabularyManager()} to create the {@link javax.speech.VocabularyManager}</li>
  * </ul>
- * </p>
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
- * @version $Revision$
  */
 public abstract class BaseEngine implements Engine {
 
@@ -221,7 +214,7 @@ public abstract class BaseEngine implements Engine {
      * <p>The test performed is not an exact match to the current
      * state.  Only the specified states are tested.  For
      * example the following returns true only if the
-     * <code>Synthesizer</code> queue is empty, irrespective
+     * {@link javax.speech.synthesis.Synthesizer} queue is empty, irrespective
      * of the pause/resume and allocation states.
      *
      * <PRE>
@@ -231,7 +224,7 @@ public abstract class BaseEngine implements Engine {
      * <p>The <code>testEngineState</code> method is equivalent to:
      *
      * <PRE>
-     *      if ((engine.getEngineState() & state) == state)
+     *      if ((engine.getEngineState() &amp; state) == state)
      * </PRE>
      *
      * {@inheritDoc}
@@ -748,10 +741,11 @@ public abstract class BaseEngine implements Engine {
 
 
     /**
-     * @todo Finish conditions
+     *Checks if the given engine state can be reached from the current engine
+     * state.
      *
-     * @param state long
-     * @return boolean
+     * @param state the state to reach
+     * @return {@code true} if the state can be reached
      */
     protected boolean isReachable(final long state) {
         if ((state & ERROR_OCCURRED) == ERROR_OCCURRED) {
@@ -810,8 +804,8 @@ public abstract class BaseEngine implements Engine {
      * @param event the event
      */
     protected abstract void fireEvent(
-            final Collection<EngineListener> listeners,
-            final EngineEvent event);
+            Collection<EngineListener> listeners,
+            EngineEvent event);
 
     /**
      * Notifies all registered listeners about a state transition.
@@ -838,7 +832,7 @@ public abstract class BaseEngine implements Engine {
      * @return created event
      */
     protected abstract EngineEvent createStateTransitionEngineEvent(
-            final long oldState, final long newState, final int id);
+            long oldState, long newState, int id);
 
     /**
      * Engines must override this method to apply a pending property change
@@ -862,7 +856,7 @@ public abstract class BaseEngine implements Engine {
      *            the requested new value
      */
     protected abstract void handlePropertyChangeRequest(
-            final BaseEngineProperties properties,
-            final String propName, final Object oldValue,
-            final Object newValue);
+            BaseEngineProperties properties,
+            String propName, Object oldValue,
+            Object newValue);
 }

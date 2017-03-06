@@ -42,7 +42,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
             .getName());
 
     protected Map<String, InternalRule> rules;
-    protected List<RuleGrammarOperation> uncommitedChanges = new java.util.ArrayList<RuleGrammarOperation>();
+    protected List<RuleGrammarOperation> uncommitedChanges =
+            new java.util.ArrayList<RuleGrammarOperation>();
 
     // Attributes of the rule grammar
     protected String root;
@@ -197,7 +198,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
     }
 
     /**
-     * Class that describes an uncommited enable of RuleGrammar
+     * Class that describes an uncommited enable of RuleGrammar.
      */
     private class GrammarEnablerOperation extends RuleGrammarOperation {
         private boolean status;
@@ -322,7 +323,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
 
     /**
      * Update the root rulename It defaults to the first PUBLIC_SCOPE rule that
-     * is enabled
+     * is enabled.
      */
     private void updateRootRule() {
         InternalRule nextRootCandidate = null;
@@ -337,36 +338,36 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
                 }
             }
         }
-        if (nextRootCandidate != null)
+        if (nextRootCandidate != null) {
             root = nextRootCandidate.getRulename();
+        }
     }
 
     /**
-     * Build a rule from text and add it in the grammar either by creating a new
-     * rule or updating an existing rule.
-     * 
-     * @param ruleText
-     *            String
-     * @throws GrammarException
+     * {@inheritDoc}
      */
-    public void addRule(String ruleText) throws GrammarException {
+    @Override
+    public void addRule(final String ruleText) throws GrammarException {
         final SrgsRuleGrammarParser srgsParser = new SrgsRuleGrammarParser();
-        final Rule[] rules = srgsParser.loadRule(new StringReader(ruleText));
-        addRules(rules);
+        final Rule[] loadedRules =
+                srgsParser.loadRule(new StringReader(ruleText));
+        addRules(loadedRules);
     }
 
     /**
-     * 
-     * @param ruleText
-     *            String
-     * @throws GrammarException
+     * {@inheritDoc}
      */
-    public void addRules(Rule[] rules) {
-        for (Rule rule : rules) {
+    @Override
+    public void addRules(final Rule[] rulesToAdd) {
+        for (Rule rule : rulesToAdd) {
             addRule(rule);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getRoot() {
         if (root == null) {
             updateRootRule();
@@ -375,10 +376,10 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
     }
 
     /**
-     * @param rulename
-     *            String
+     * {@inheritDoc}
      */
-    public void setRoot(String rulename) {
+    @Override
+    public void setRoot(final String rulename) {
         final RootSetterOperation rsgo = new RootSetterOperation(rulename);
         uncommitedChanges.add(rsgo);
 
@@ -404,33 +405,34 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
 
     public void setAttribute(String attribute, String value)
             throws IllegalArgumentException {
-        if (attribute.equals("root"))
+        if (attribute.equals("root")) {
             setRoot(value);
-        else if (attribute.equals("version"))
+        } else if (attribute.equals("version")) {
             version = value;
-        else if (attribute.equals("xmlns"))
+        } else if (attribute.equals("xmlns")) {
             xmlns = value;
-        else if (attribute.equals("xml:lang"))
+        } else if (attribute.equals("xml:lang")) {
             setSpeechLocale(new SpeechLocale(value));
-        else if (attribute.equals("xml:base"))
+        } else if (attribute.equals("xml:base")) {
             xmlBase = value;
-        else if (attribute.equals("mode"))
+        } else if (attribute.equals("mode")) {
             mode = value;
-        else if (attribute.equals("tag-format"))
+        } else if (attribute.equals("tag-format")) {
             tagFormat = value;
-        else if (attribute.equals("xmlns:xsi"))
+        } else if (attribute.equals("xmlns:xsi")) {
             xmlnsXsi = value;
-        else if (attribute.equals("xsi:schemaLocation"))
+        } else if (attribute.equals("xsi:schemaLocation")) {
             xsiSchemaLocation = value;
-        else if (attribute.equals("type") || attribute.equals("scope")
+        } else if (attribute.equals("type") || attribute.equals("scope") 
                 || attribute.equals("src") || attribute.equals("weight")
                 || attribute.equals("fetchtimeout")
                 || attribute.equals("maxage") || attribute.equals("maxstale")) {
             // Ignored for VoiceXml 2.0 compatibility
             // Visit: http://www.w3.org/TR/voicexml20/vxml.dtd
-        } else
+        } else {
             throw new IllegalArgumentException("Unknown atribute name: "
                     + attribute);
+        }
     }
 
     public String getAttribute(String attribute)
@@ -458,46 +460,48 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
     }
 
     /**
-     * @todo Implement it (have to parse the param)
-     * @param element
-     *            String
-     * @throws IllegalArgumentException
+     * {@inheritDoc}
      */
-    public void addElement(String element) throws IllegalArgumentException {
+    @Override
+    public void addElement(final String element)
+            throws IllegalArgumentException {
         throw new RuntimeException("NOT IMPLEMENTED");
     }
 
     /**
-     * @todo Implement it (have to parse the param)
-     * @param element
-     *            String
-     * @throws IllegalArgumentException
+     * {@inheritDoc}
      */
-    public void removeElement(String element) throws IllegalArgumentException {
+    @Override
+    public void removeElement(final String element)
+            throws IllegalArgumentException {
         throw new RuntimeException("NOT IMPLEMENTED");
     }
 
     /**
-     * @todo Implement it (have to parse the param)
-     * @param element
-     *            String
-     * @throws IllegalArgumentException
+     * {@inheritDoc}
      */
+    @Override
     public String[] getElements() {
         throw new RuntimeException("NOT IMPLEMENTED");
     }
 
+    /**
+     * Retrieves the document type.
+     * @return document type
+     */
     public String getDoctype() {
         return doctype;
     }
 
     /**
-     * @todo Implement it (have to parse the param)
-     * @param doctype
+     * Sets the document type.
+     * TODO Implement it (have to parse the param)
+     * @param type
      *            String
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if the doctype is invalid
      */
-    public void setDoctype(String doctype) throws IllegalArgumentException {
+    public void setDoctype(final String type)
+            throws IllegalArgumentException {
         throw new RuntimeException("NOT IMPLEMENTED");
     }
 
@@ -505,82 +509,58 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
      * Return a copy of the data structure for the named rule. From
      * javax.speech.recognition.RuleGrammar.
      * 
-     * @param ruleName
+     * @param name
      *            the name of the rule.
+     * @return named rule or {@code null} if a rule with the given name does 
+     *  not exist
      */
-    public Rule getRule(String ruleName) {
-        final InternalRule rule = rules.get(ruleName);
+    public Rule getRule(final String name) {
+        final InternalRule rule = rules.get(name);
         return rule != null ? rule.getRule() : null;
     }
 
     /**
-     * List the names of all rules define in this Grammar. From
-     * javax.speech.recognition.RuleGrammar.
+     * {@inheritDoc}
      */
+    @Override
     public String[] listRuleNames() {
         return rules.keySet().toArray(new String[] {});
     }
 
     /**
-     * Delete a rule from the grammar. From
-     * javax.speech.recognition.RuleGrammar.
-     * 
-     * @param ruleName
-     *            the name of the rule.
+     * {@inheritDoc}
      */
-    public void removeRule(String ruleName) {
+    @Override
+    public void removeRule(final String ruleName) {
         RemoveRuleOperation rro = new RemoveRuleOperation(ruleName);
         uncommitedChanges.add(rro);
     }
 
     /**
-     * Set the enabled state of the listed rule. From
-     * javax.speech.recognition.RuleGrammar.
-     * 
-     * @param ruleName
-     *            the name of the rule.
-     * @param enabled
-     *            the new enabled state.
+     * {@inheritDoc}
      */
-    public void setActivatable(String ruleName, boolean enabled) {
-        RuleEnablerOperation operation = new RuleEnablerOperation(ruleName, enabled);
+    @Override
+    public void setActivatable(final String ruleName, final boolean enabled) {
+        RuleEnablerOperation operation =
+                new RuleEnablerOperation(ruleName, enabled);
         uncommitedChanges.add(operation);
     }
 
     /**
-     * Set the enabled state of the listed rules. From
-     * javax.speech.recognition.RuleGrammar.
-     * 
-     * @param ruleNames
-     *            the names of the rules.
-     * @param enabled
-     *            the new enabled state.
+     * {@inheritDoc}
      */
-    public void setActivatable(String[] ruleNames, boolean enabled) {
-        for (String ruleName : ruleNames) {
-            setActivatable(ruleName, enabled);
-        }
-    }
-
-    /**
-     * Return enabled state of rule. From javax.speech.recognition.RuleGrammar.
-     * 
-     * @param ruleName
-     *            the name of the rule.
-     */
-    public boolean isActivatable(String ruleName) {
+    @Override
+    public boolean isActivatable(final String ruleName) {
         final InternalRule rule = rules.get(ruleName);
         return (rule != null ? rule.isActivable() : false);
     }
 
     /**
-     * Resolve a simple or qualified rulename as a full rulename. From
-     * javax.speech.recognition.RuleGrammar.
-     * 
-     * @param ruleName
-     *            the name of the rule.
+     * {@inheritDoc}
      */
-    public RuleReference resolve(RuleReference name) throws GrammarException {
+    @Override
+    public RuleReference resolve(final RuleReference name)
+            throws GrammarException {
         RuleReference rn = new RuleReference(name.getRuleName());
         /*
          * String simpleName = rn.getRuleName(); String grammarName =
@@ -694,15 +674,10 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
     }
 
     /**
-     * Parse the text string against the specified rule. Uses the RuleParser
-     * class from javax.speech.recognition.RuleGrammar.
-     * 
-     * @param text
-     *            the text to parse.
-     * @param ruleName
-     *            the name of rule to use for parsing.
+     * {@inheritDoc}
      */
-    public RuleParse parse(String text, String ruleName)
+    @Override
+    public RuleParse parse(final String text, final String ruleName)
             throws GrammarException {
         final Recognizer recognizer = getRecognizer();
         final GrammarManager manager = recognizer.getGrammarManager();
@@ -711,15 +686,10 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
     }
 
     /**
-     * Parse the tokens string against the specified rule. Uses the RuleParser
-     * class. From javax.speech.recognition.RuleGrammar.
-     * 
-     * @param tokens
-     *            the tokens to parse.
-     * @param ruleName
-     *            the name of rule to use for parsing.
+     * {@inheritDoc}
      */
-    public RuleParse parse(String tokens[], String ruleName)
+    @Override
+    public RuleParse parse(final String[] tokens, final String ruleName)
             throws GrammarException {
         final Recognizer recognizer = getRecognizer();
         final GrammarManager manager = recognizer.getGrammarManager();
@@ -728,12 +698,14 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
     }
 
     /**
-     * Return a String containing the specification for this Grammar, sorted by
-     * id rule
+     * Return a String containing the specification for this grammar, sorted by
+     * id rule.
      * 
-     * @param displayDisabledRules
+     * @param displayDisabledRules {@code true} if disabled rules should be
+     *                   considered
+     * @return string representation of this grammar.
      */
-    public String toString(boolean displayDisabledRules) {
+    public String toString(final boolean displayDisabledRules) {
         final StringBuffer str = new StringBuffer();
         // str.append("<?xml version=\"1.0\" encoding=\"");
         // str.append("UTF-8");
@@ -773,12 +745,17 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
         return str.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return toString(true);
     }
 
     /**
      * Resolve and linkup all rule references contained in all rules.
+     * @throws GrammarException error parsing the gramamr
      */
     protected void resolveAllRules() throws GrammarException {
         // StringBuffer b = new StringBuffer();
@@ -807,38 +784,41 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
 
     /**
      * Resolve the given rule.
+     * @param component the rule component to resolve
+     * @throws GrammarException error parsing the grammar
      */
-    protected void resolveRule(RuleComponent r) throws GrammarException {
+    protected void resolveRule(final RuleComponent component)
+            throws GrammarException {
 
-        if (r instanceof RuleToken) {
+        if (component instanceof RuleToken) {
             return;
         }
 
-        if (r instanceof RuleAlternatives) {
-            RuleAlternatives ra = (RuleAlternatives) r;
-            RuleComponent array[] = ra.getRuleComponents();
+        if (component instanceof RuleAlternatives) {
+            RuleAlternatives ra = (RuleAlternatives) component;
+            RuleComponent[] array = ra.getRuleComponents();
             for (int i = 0; i < array.length; i++) {
                 resolveRule(array[i]);
             }
             return;
         }
 
-        if (r instanceof RuleSequence) {
-            RuleSequence rs = (RuleSequence) r;
-            RuleComponent array[] = rs.getRuleComponents();
+        if (component instanceof RuleSequence) {
+            RuleSequence rs = (RuleSequence) component;
+            RuleComponent[] array = rs.getRuleComponents();
             for (int i = 0; i < array.length; i++) {
                 resolveRule(array[i]);
             }
             return;
         }
 
-        if (r instanceof RuleCount) {
-            RuleCount rc = (RuleCount) r;
+        if (component instanceof RuleCount) {
+            RuleCount rc = (RuleCount) component;
             resolveRule(rc.getRuleComponent());
             return;
         }
 
-        if (r instanceof RuleTag) {
+        if (component instanceof RuleTag) {
             // RuleTag rt = (RuleTag) r;
             // resolveRule(rt.getTag());
             return;
@@ -864,6 +844,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar {
      * 
      * @exception GrammarException
      *                if there is an error in the grammar
+     * @return {@code true} if changes were committed
      */
     public boolean commitChanges() throws GrammarException {
         final boolean existChanges = uncommitedChanges.size() > 0;

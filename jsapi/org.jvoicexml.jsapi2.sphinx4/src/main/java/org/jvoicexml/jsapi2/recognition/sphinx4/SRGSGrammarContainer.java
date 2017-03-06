@@ -37,7 +37,6 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  * 
  * @author Stefan Radomski
  * @author Dirk Schnelle-Walka
- * @version $Revision: 1 $
  */
 
 public class SRGSGrammarContainer extends Grammar {
@@ -90,9 +89,10 @@ public class SRGSGrammarContainer extends Grammar {
      * The argument contains all active grammars with their names, their XML
      * representation and an indication whether they have changed.
      * 
-     * @param grammarDefinition
+     * @param grammarDefinitions
      *            The set of all grammars from the GrammarManager
      * @throws IOException
+     *             error loading the gramamrs
      */
     public synchronized void loadGrammars(
             Collection<org.jvoicexml.jsapi2.recognition.GrammarDefinition> grammarDefinitions)
@@ -143,7 +143,8 @@ public class SRGSGrammarContainer extends Grammar {
      * The {@link Sphinx4ResultListener} asked us for the grammar that produced
      * this list of tokens.
      * 
-     * @param token the processed token
+     * @param token
+     *            the processed token
      * @return the rule grammar used to produce the list of tokens
      */
     public synchronized RuleGrammar getRuleGrammar(final Token token) {
@@ -175,6 +176,7 @@ public class SRGSGrammarContainer extends Grammar {
      * new grammars in grammars hash and adapt firstNaode and ruleGrammar.
      * 
      * @throws IOException
+     *             error creating the grammar
      */
     public synchronized void commitChanges() throws IOException {
 

@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -60,7 +55,6 @@ import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
  *
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
- * @version $Revision: $
  */
 public abstract class BaseSynthesizer extends BaseEngine
     implements Synthesizer {
@@ -436,7 +430,9 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * Called from the <code>resume</code> method. Override in subclasses.
      *
-     * @todo Handle grammar updates
+     * TODO Handle grammar updates
+     * 
+     * @return {@code true} if the synthesizer was resumed
      */
     protected boolean baseResume() {
         return handleResume();
@@ -446,15 +442,19 @@ public abstract class BaseSynthesizer extends BaseEngine
      * Deallocates this {@link Synthesizer}. Methods must also make sure that
      * any audio is stopped.
      * @throws EngineStateException
+     *          if the synthesizer state did not allow transitioning to the
+     *          deallocated state
      * @throws EngineException
+     *          general problems with the synthesizer
      * @throws AudioException
+     *          if audio output was currently in progress
      */
-    abstract protected void handleDeallocate() throws EngineStateException,
+    protected abstract void handleDeallocate() throws EngineStateException,
         EngineException, AudioException;
 
-    abstract protected void handlePause();
+    protected abstract void handlePause();
 
-    abstract protected boolean handleResume();
+    protected abstract boolean handleResume();
 
     /**
      * Speaks the item with the given id.
@@ -535,26 +535,27 @@ public abstract class BaseSynthesizer extends BaseEngine
      * @exception EngineStateException
      *            if the engine was in an invalid state
      */
-    protected abstract boolean handleCancel(final int id)
+    protected abstract boolean handleCancel(int id)
         throws EngineStateException;
 
     /**
      * Utility method to set words in a queue item.
      *
      * @param itemId the id of the queued item
-     * @param String[] words
+     * @param words the words to set
      */
-    protected void setWords(int itemId, String[] words) {
+    protected void setWords(final int itemId, final String[] words) {
         queueManager.setWords(itemId, words);
     }
 
     /**
-     * Set words times in a queueItem (Not JSAPI2)
+     * Set words times in a queueItem (Not JSAPI2).
      *
-     * @param itemId int
-     * @param float[] words
+     * @param itemId the id of the queued item
+     * @param starttimes the start times
      */
-    protected void setWordsStartTimes(int itemId, float[] starttimes) {
+    protected void setWordsStartTimes(final int itemId,
+            final float[] starttimes) {
         queueManager.setWordsStartTimes(itemId, starttimes);
     }
 

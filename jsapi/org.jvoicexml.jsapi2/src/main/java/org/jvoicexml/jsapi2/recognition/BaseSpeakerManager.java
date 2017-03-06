@@ -1,3 +1,24 @@
+/*
+ * JSAPI - An independent reference implementation of JSR 113.
+ *
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
 package org.jvoicexml.jsapi2.recognition;
 
 import java.util.Collection;
@@ -14,56 +35,56 @@ import javax.speech.recognition.SpeakerProfile;
  */
 public class BaseSpeakerManager implements SpeakerManager {
 
+    /** Known speaker profiles. */
     private Collection<SpeakerProfile> speakerProfiles;
 
+    /** The current speaker profile. */
     private SpeakerProfile currentSpeaker;
 
+    /**
+     * Constructs a new object.
+     */
     public BaseSpeakerManager() {
         speakerProfiles = new java.util.ArrayList<SpeakerProfile>();
         currentSpeaker = null;
     }
 
     /**
-     * createSpeaker
-     *
-     * @param speaker SpeakerProfile
+     * {@inheritDoc}
      */
+    @Override
     public void createSpeaker(final SpeakerProfile speaker) {
         speakerProfiles.add(speaker);
     }
 
     /**
-     * deleteSpeaker
-     *
-     * @param speaker SpeakerProfile
+     * {@inheritDoc}
      */
-    public void deleteSpeaker(SpeakerProfile speaker) {
+    @Override
+    public void deleteSpeaker(final SpeakerProfile speaker) {
         speakerProfiles.remove(speaker);
     }
 
     /**
-     * getCurrentSpeaker
-     *
-     * @return SpeakerProfile
+     * {@inheritDoc}
      */
+    @Override
     public SpeakerProfile getCurrentSpeaker() {
         return currentSpeaker;
     }
 
     /**
-     * getSpeakerManagerUI
-     *
-     * @return SpeakerManagerUI
+     * {@inheritDoc}
      */
+    @Override
     public SpeakerManagerUI getSpeakerManagerUI() {
         return null;
     }
 
     /**
-     * listKnownSpeakers
-     *
-     * @return SpeakerProfile[]
+     * {@inheritDoc}
      */
+    @Override
     public SpeakerProfile[] listKnownSpeakers() {
         final SpeakerProfile[] profiles =
                 new SpeakerProfile[speakerProfiles.size()];
@@ -72,38 +93,33 @@ public class BaseSpeakerManager implements SpeakerManager {
     }
 
     /**
-     * renameSpeaker
-     *
-     * @param oldSpeaker SpeakerProfile
-     * @param newSpeaker SpeakerProfile
+     * {@inheritDoc}
      */
-    public void renameSpeaker(SpeakerProfile oldSpeaker,
-                              SpeakerProfile newSpeaker) {
+    @Override
+    public void renameSpeaker(final SpeakerProfile oldSpeaker,
+                              final SpeakerProfile newSpeaker) {
     }
 
     /**
-     * restoreCurrentSpeaker
-     *
-     * @throws EngineStateException
+     * {@inheritDoc}
      */
+    @Override
     public void restoreCurrentSpeaker() throws EngineStateException {
     }
 
     /**
-     * saveCurrentSpeaker
-     *
-     * @throws EngineStateException
+     * {@inheritDoc}
      */
+    @Override
     public void saveCurrentSpeaker() throws EngineStateException {
     }
 
     /**
-     * setCurrentSpeaker
-     *
-     * @param speaker SpeakerProfile
+     * {@inheritDoc}
      */
-    public void setCurrentSpeaker(SpeakerProfile speaker) {
-        if (speakerProfiles.contains(speaker) == false) {
+    @Override
+    public void setCurrentSpeaker(final SpeakerProfile speaker) {
+        if (!speakerProfiles.contains(speaker)) {
             createSpeaker(speaker);
         }
         currentSpeaker = speaker;

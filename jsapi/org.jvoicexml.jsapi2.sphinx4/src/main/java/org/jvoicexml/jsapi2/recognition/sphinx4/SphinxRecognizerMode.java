@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +29,7 @@ import javax.speech.spi.EngineFactory;
 
 /**
  * The recognizer mode for Sphinx.
+ * 
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
  */
@@ -41,10 +37,13 @@ public class SphinxRecognizerMode extends RecognizerMode
         implements EngineFactory {
     /**
      * Constructs a new object.
+     * 
+     * @param locale
+     *            the locale of this recognizer
      */
     public SphinxRecognizerMode(final SpeechLocale locale) {
         super("sphinx4", null, true, false, true, 10000,
-                new SpeechLocale[] {locale}, null);
+                new SpeechLocale[] { locale }, null);
     }
 
     /**

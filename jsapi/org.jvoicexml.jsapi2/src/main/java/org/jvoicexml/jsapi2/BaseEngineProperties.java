@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision$
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy$
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2013 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,7 +46,6 @@ import javax.speech.SpeechEventExecutor;
  * 
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
- * @version $Revision$
  */
 public abstract class BaseEngineProperties implements EngineProperties {
     /** Name of the base property in events. */
@@ -219,8 +213,7 @@ public abstract class BaseEngineProperties implements EngineProperties {
      *            value to set
      * @return <code>true</code> if the value has been set.
      */
-    protected abstract boolean setProperty(final String propName,
-            final Object value);
+    protected abstract boolean setProperty(String propName, Object value);
 
     /**
      * Forwards the change request to the enine.
@@ -242,20 +235,12 @@ public abstract class BaseEngineProperties implements EngineProperties {
      * posts it to the event queue using the configured
      * {@link SpeechEventExecutor}.
      * 
-     * <p>
-     * Registered listeners are notified using the
-     * {@link #firePropertyChangeEvent(EnginePropertyEvent)} method.
-     * </p>
-     * 
      * @param propName
      *            the name of the property
      * @param oldValue
      *            the old value
      * @param newValue
      *            the new value
-     * 
-     * @see #firePropertyChangeEvent
-     * @see #dispatchSpeechEvent
      */
     protected final void postPropertyChangeEvent(final String propName,
             final Object oldValue, final Object newValue) {
@@ -268,7 +253,8 @@ public abstract class BaseEngineProperties implements EngineProperties {
                 propName, oldValue, newValue);
         final Runnable runnable = new Runnable() {
             public void run() {
-                for (EnginePropertyListener listener : propertyChangeListeners) {
+                for (EnginePropertyListener listener
+                        : propertyChangeListeners) {
                     listener.propertyUpdate(event);
                 }
             }

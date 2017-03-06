@@ -15,7 +15,8 @@ package javax.speech;
  * Implementations are requested to keep the signature of this method and
  * perform a security check with the help of a class
  * <code>SpeechPermissiony</code> that needs to be written and integrated into
- * the implementation.
+ * the implementation
+ * </p>.
  * <pre>
  * package javax.speech;
  * 
@@ -25,8 +26,6 @@ package javax.speech;
  *    ...
  * }
  * </pre>
- * </p>
- * 
  * 
  * @author Dirk Schnelle-Walka
  * 

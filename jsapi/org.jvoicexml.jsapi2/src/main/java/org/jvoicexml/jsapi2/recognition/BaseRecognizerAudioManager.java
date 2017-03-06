@@ -50,7 +50,7 @@ import org.jvoicexml.jsapi2.protocols.JavaSoundParser;
 /**
  * Supports the JSAPI 2.0 {@link javax.speech.AudioManager} interface. Actual JSAPI
  * implementations might want to extend or modify this implementation
- * for {@link javx.speech.recognition.Recognizer}.
+ * for {@link javax.speech.recognition.Recognizer}.
  */
 public class BaseRecognizerAudioManager extends BaseAudioManager {
     /** Logger instance. */

@@ -1,7 +1,7 @@
 /*
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2015 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -224,6 +224,7 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final void setMediaLocator(final String locator)
             throws AudioException, EngineStateException,
             IllegalArgumentException, SecurityException {
@@ -255,6 +256,7 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final String getMediaLocator() {
         return mediaLocator;
     }
@@ -262,7 +264,7 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      * 
-     * @todo This is just a dummy implementation
+     * TODO This is just a dummy implementation
      */
     public String[] getSupportedMediaLocators(final String locator)
             throws IllegalArgumentException {
@@ -272,6 +274,7 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean isSupportedMediaLocator(final String locator)
             throws IllegalArgumentException {
         final String[] supportedMediaLocators = getSupportedMediaLocators(locator);
@@ -283,6 +286,7 @@ public abstract class BaseAudioManager implements AudioManager {
      * 
      * TODO: This implementation checks only for equal media locators.
      */
+    @Override
     public boolean isSameChannel(final AudioManager audioManager) {
         if (audioManager == null) {
             return false;

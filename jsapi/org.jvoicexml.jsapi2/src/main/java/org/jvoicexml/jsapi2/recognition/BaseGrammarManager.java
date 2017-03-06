@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2014 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -159,8 +154,9 @@ public class BaseGrammarManager implements GrammarManager {
      * 
      * @param grammar
      *            Grammar
-     * @throws IllegalArgumentException
-     * @throws EngineStateException
+     * @throws IllegalArgumentException if the grammar is unknown
+     * @throws EngineStateException if the current engine state does not allow
+     *  deleting the grammar
      */
     public void deleteGrammar(final Grammar grammar)
             throws IllegalArgumentException, EngineStateException {
@@ -189,8 +185,9 @@ public class BaseGrammarManager implements GrammarManager {
     /**
      * Lists the Grammars known to this Recognizer.
      * 
-     * @return Grammar[]
-     * @throws EngineStateException
+     * @return kown gramamrs
+     * @throws EngineStateException if the engine state does not allow
+     *          listing the grammars
      */
     public Grammar[] listGrammars() throws EngineStateException {
 
@@ -223,8 +220,9 @@ public class BaseGrammarManager implements GrammarManager {
      * 
      * @param grammarReference
      *            String
-     * @return RuleGrammar
-     * @throws EngineStateException
+     * @return referenced garamamr
+     * @throws EngineStateException if the engine state does not allow
+     *          obtaining the grammar
      */
     public Grammar getGrammar(final String grammarReference)
             throws EngineStateException {
@@ -439,24 +437,12 @@ public class BaseGrammarManager implements GrammarManager {
     }
 
     /**
-     * 
-     * @param grammarReference
-     *            String
-     * @param mediaType
-     *            String
-     * @param byteStream
-     *            InputStream
-     * @param encoding
-     *            String
-     * @return Grammar
-     * @throws GrammarException
-     * @throws IllegalArgumentException
-     * @throws IOException
-     * @throws EngineStateException
-     * @throws EngineException
+     * {@inheritDoc}
      */
-    public Grammar loadGrammar(String grammarReference, String mediaType,
-            InputStream byteStream, String encoding) throws GrammarException,
+    @Override
+    public Grammar loadGrammar(final String grammarReference,
+            final String mediaType, final InputStream byteStream,
+            final String encoding) throws GrammarException,
             IllegalArgumentException, IOException, EngineStateException,
             EngineException {
         if (byteStream == null) {
@@ -467,10 +453,18 @@ public class BaseGrammarManager implements GrammarManager {
         return loadGrammar(grammarReference, mediaType, reader);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void setGrammarMask(int mask) {
         grammarMask = mask;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int getGrammarMask() {
         return grammarMask;
     }

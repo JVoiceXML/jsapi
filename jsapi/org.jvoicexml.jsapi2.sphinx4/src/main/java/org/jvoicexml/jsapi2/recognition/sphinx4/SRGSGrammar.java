@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -67,34 +62,31 @@ import edu.cmu.sphinx.util.props.S4String;
 
 /**
  * Defines a XML-style grammar based on SRGS grammar rules in a file.
- * <p/>
- * <p/>
+ * <p>
  * The Speech Recognition Grammar Specification (SRGS) is a XML-style,
  * platform-independent, and vendor-independent textual representation of
  * grammars for use in speech recognition.
- * <p/>
- * <p/>
+ * </p>
+ * <p>
  * You can quickly learn to write your own grammars. For analyse a complete
  * specification of SRGS, go to
  * <p>
  * <a href="http://www.w3.org/TR/speech-grammar/">http://www.w3.org/TR/speech-
  * grammar/</a>.
- * <p/>
- * <p/>
+ * </p>
  * <h3>From SRGS to Grammar Graph</h3>
- * <p/>
+ * <p>
  * After the SRGS grammar is read in, it is converted to a graph of words
  * representing the grammar. Lets call this the grammar graph. It is from this
  * grammar graph that the eventual search structure used for speech recognition
  * is built. Below, we show the grammar graphs created from the above SRGS
  * grammars. The nodes <code>"&lt;sil&gt;"</code> means "silence".
- * <p/>
- * <p/>
+ * </p>
  * <h3>Limitations</h3>
- * <p/>
+ * <p>
  * There are some known limitations with the current SRGS support: RuleTag,
  * RuleSpecial and RuleLocale.
- * <p/>
+ * </p>
  * <h3>Implementation Notes</h3>
  * <ol>
  * <li>All internal probabilities are maintained in LogMath log base.
@@ -114,7 +106,7 @@ public class SRGSGrammar extends Grammar {
     public final static String PROP_GRAMMAR_NAME = "grammarName";
 
     /** Sphinx property that defines the logMath component. */
-    //@S4Component(type = LogMath.class)
+    // @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     /** The JSAPI recognizer. */
@@ -195,7 +187,11 @@ public class SRGSGrammar extends Grammar {
         grammarName = newName;
     }
 
-    /** Returns the name of this grammar. */
+    /**
+     * Retrieves the name of this grammar.
+     * 
+     * @return name of this grammar
+     */
     public String getGrammarName() {
         return grammarName;
     }
@@ -204,8 +200,8 @@ public class SRGSGrammar extends Grammar {
      * The SRGS grammar specified by grammarName will be loaded from the base
      * url (tossing out any previously loaded grammars)
      * 
-     * @param grammarName
-     *            the name of the grammar
+     * @param grammarURL
+     *            URL of the grammar
      * @throws IOException
      *             if an error occurs while loading or compiling the grammar
      */
@@ -224,6 +220,8 @@ public class SRGSGrammar extends Grammar {
      * Creates the grammar.
      * 
      * @return the initial node of the Grammar
+     * @throws IOException
+     *             error creating the gramamr
      */
     protected GrammarNode createGrammar() throws IOException {
         commitChanges();
@@ -273,8 +271,8 @@ public class SRGSGrammar extends Grammar {
             throw new IllegalArgumentException(
                     "Unsupported Rule type: RuleParse: " + rule.toString());
         } else {
-            throw new IllegalArgumentException("Unsupported Rule type: "
-                    + rule.toString());
+            throw new IllegalArgumentException(
+                    "Unsupported Rule type: " + rule.toString());
         }
         return result;
     }
@@ -335,8 +333,8 @@ public class SRGSGrammar extends Grammar {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("parseRuleName: " + initialRule.toString());
         }
-        GrammarGraph result = (GrammarGraph) ruleStack.contains(initialRule
-                .getRuleName());
+        GrammarGraph result = (GrammarGraph) ruleStack
+                .contains(initialRule.getRuleName());
 
         if (result != null) { // its a recursive call
             return result;
@@ -450,10 +448,11 @@ public class SRGSGrammar extends Grammar {
      *            the RuleAlternatives to parse
      * @return a grammar graph
      */
-    private GrammarGraph parseRuleAlternatives(RuleAlternatives ruleAlternatives)
-            throws GrammarException {
+    private GrammarGraph parseRuleAlternatives(
+            RuleAlternatives ruleAlternatives) throws GrammarException {
         if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("parseRuleAlternatives: " + ruleAlternatives.toString());
+            LOGGER.fine(
+                    "parseRuleAlternatives: " + ruleAlternatives.toString());
         }
         GrammarGraph result = new GrammarGraph();
 
@@ -616,10 +615,12 @@ public class SRGSGrammar extends Grammar {
     /**
      * Commit changes to all loaded grammars and all changes of grammar since
      * the last commitChange
+     * 
+     * @throws IOException
+     *             error creating the grammar
      */
     public void commitChanges() throws IOException {
         try {
-
             SrgsRuleGrammarParser srgsRuleGrammarParser = new SrgsRuleGrammarParser();
 
             Rule rules[];
@@ -692,9 +693,9 @@ public class SRGSGrammar extends Grammar {
          * RuleReference rname = ruleGrammar.resolve(new
          * RuleReference(ruleName)); return rname.getRuleName();
          *//**
-         * @todo review this implementation; our implementation of base
-         *       engines not implementation resolve method
-         */
+           * @todo review this implementation; our implementation of base
+           *       engines not implementation resolve method
+           */
         return ruleName;
     }
 
@@ -720,7 +721,9 @@ public class SRGSGrammar extends Grammar {
             this.endNode = endNode;
         }
 
-        /** Creates a graph with non-word nodes for the start and ending nodes */
+        /**
+         * Creates a graph with non-word nodes for the start and ending nodes
+         */
         GrammarGraph() {
             startNode = createGrammarNode(false);
             endNode = createGrammarNode(false);
@@ -745,7 +748,9 @@ public class SRGSGrammar extends Grammar {
         }
     }
 
-    /** Manages a stack of grammar graphs that can be accessed by grammar name */
+    /**
+     * Manages a stack of grammar graphs that can be accessed by grammar name
+     */
     class RuleStack {
         private List<String> stack;
         private HashMap<String, GrammarGraph> map;

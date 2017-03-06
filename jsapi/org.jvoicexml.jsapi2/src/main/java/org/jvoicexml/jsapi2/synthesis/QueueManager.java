@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 296 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,7 +40,6 @@ import org.jvoicexml.jsapi2.BaseAudioManager;
  *
  * @author Renato Cassaca
  * @author Dirk Schnelle-Walka
- * @version $Revision: 296 $
  */
 public class QueueManager {
     /** Reference to the synthesizer. */
@@ -157,10 +151,15 @@ public class QueueManager {
      * Add an item to be spoken to the output queue. Fires the appropriate queue
      * events
      *
-     * @param item
-     *                the item to add to the queue
+     * @param audioSegment
+     *                the audio segment to add to the queue
+     * @param listener 
+     *                the listener to inform about the change
+     * @return id of the audio segment
+     *                
      */
-    public int appendItem(AudioSegment audioSegment, SpeakableListener listener) {
+    public int appendItem(final AudioSegment audioSegment,
+            final SpeakableListener listener) {
         return synthQueue.appendItem(audioSegment, listener);
     }
 
@@ -207,6 +206,7 @@ public class QueueManager {
 
     /**
      * Cancels all items in the queue.
+     * @return {@code true} if at least one item was canceled
      */
     public boolean cancelAllItems() {
         synthesizer.handleCancelAll();

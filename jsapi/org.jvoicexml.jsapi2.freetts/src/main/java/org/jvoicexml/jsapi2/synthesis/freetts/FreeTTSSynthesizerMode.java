@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,14 +27,13 @@ import javax.speech.EngineException;
 import javax.speech.spi.EngineFactory;
 import javax.speech.synthesis.SynthesizerMode;
 
-
 /**
- * Represents a SynthesizerModeDesc for the
- * FreeTTSSynthesizer. A FreeTTSSynthesizerModeDesc adds
- * an audio player to the standard mode items.
+ * Represents a SynthesizerModeDesc for the FreeTTSSynthesizer. A
+ * FreeTTSSynthesizerModeDesc adds an audio player to the standard mode items.
+ * @author Dirk Schnelle-Walka
  */
-public class FreeTTSSynthesizerMode extends SynthesizerMode implements
-        EngineFactory {
+public class FreeTTSSynthesizerMode extends SynthesizerMode
+        implements EngineFactory {
     /**
      * Constructs a new object.
      */
@@ -47,18 +41,22 @@ public class FreeTTSSynthesizerMode extends SynthesizerMode implements
     }
 
     /**
-     * Creates a fully-specified descriptor.
-     * Any of the features may be <code>null</code>.
+     * Creates a fully-specified descriptor. Any of the features may be
+     * <code>null</code>.
      *
-     * @param engineName  the name of the engine
-     * @param modeName   the name of the mode
-     * @param locale  the locale associated with this mode
+     * @param engineName
+     *            the name of the engine
+     * @param modeName
+     *            the name of the mode
+     * @param locale
+     *            the locale associated with this mode
+     * @param voices
+     *            the known voices
      */
     public FreeTTSSynthesizerMode(String engineName, String modeName,
-                                  Locale locale, FreeTTSVoice[] voices) {
+            Locale locale, FreeTTSVoice[] voices) {
         super(engineName, modeName, null, null, null, voices);
     }
-
 
     /**
      * Constructs a FreeTTSSynthesizer with the properties of this mode
@@ -66,11 +64,14 @@ public class FreeTTSSynthesizerMode extends SynthesizerMode implements
      *
      * @return a synthesizer that matches the mode
      *
-     * @throws IllegalArgumentException  if the properties of this
-     * 		descriptor do not match any known engine or mode
-     * @throws EngineException if the engine could not be created
-     * @throws SecurityException if the caller does not have
-     * 		permission to use the speech engine
+     * @throws IllegalArgumentException
+     *             if the properties of this descriptor do not match any known
+     *             engine or mode
+     * @throws EngineException
+     *             if the engine could not be created
+     * @throws SecurityException
+     *             if the caller does not have permission to use the speech
+     *             engine
      */
     @Override
     public Engine createEngine() throws IllegalArgumentException,

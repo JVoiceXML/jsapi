@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,8 +42,8 @@ import edu.cmu.sphinx.util.props.S4Boolean;
 import edu.cmu.sphinx.util.props.S4Integer;
 
 /**
- * A data processor to read the data from a given input stream and
- * feed it into the sphinx system.
+ * A data processor to read the data from a given input stream and feed it into
+ * the sphinx system.
  * 
  * @author Renato Cassaca
  * @author Stefan Radomski
@@ -59,22 +54,22 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
     /** Logger for this class. */
     private static final Logger LOGGER = Logger
             .getLogger(SphinxInputDataProcessor.class.getName());
-    
-    @S4Integer(defaultValue=16000)
+
+    @S4Integer(defaultValue = 16000)
     public static final String SAMPLING_RATE = "samplingRate";
 
-    @S4Integer(defaultValue=16)
+    @S4Integer(defaultValue = 16)
     public static final String SAMPLE_SIZE_IN_BITS = "sampleSizeInBits";
 
-    @S4Integer(defaultValue=1)
+    @S4Integer(defaultValue = 1)
     public static final String CHANNELS = "channels";
 
-    @S4Boolean(defaultValue=false)
+    @S4Boolean(defaultValue = false)
     public static final String SIGNED = "signed";
-    
-    @S4Boolean(defaultValue=false)
+
+    @S4Boolean(defaultValue = false)
     public static final String BIG_ENDIAN = "bigEndian";
-    
+
     /** The input stream from the audio manager. */
     private InputStream inputStream;
 
@@ -91,7 +86,7 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
     private boolean running = true;
 
     private AudioFormat format;
-    
+
     /**
      * Constructs a new object.
      */
@@ -111,7 +106,9 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
 
     /**
      * Sets the input stream to read the audio from.
-     * @param in the input stream.
+     * 
+     * @param in
+     *            the input stream.
      */
     public void setInputStream(final InputStream in) {
         inputStream = in;
@@ -126,6 +123,10 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
      * 
      * This way, we can stop this processor and have calls to recognize() return
      * immediately.
+     * 
+     * @param running
+     *            {@code true} if notifications about the status change should
+     *            be sent
      */
     public synchronized void isRunning(final boolean running) {
         if (this.running != running) {
@@ -140,6 +141,7 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
 
     /**
      * Retrieves the audio format.
+     * 
      * @return the audio format used by this data processor.
      */
     public AudioFormat getAudioFormat() {
@@ -156,7 +158,8 @@ public class SphinxInputDataProcessor extends BaseDataProcessor
     @Override
     public Data getData() throws DataProcessingException {
         final AudioFormat format = getAudioFormat();
-        int channels = format.getChannels();;
+        int channels = format.getChannels();
+        ;
         boolean signed = true;
         int sampleRate = (int) format.getSampleRate();
         int sampleSizeInBytes = format.getSampleSizeInBits() / 8;
