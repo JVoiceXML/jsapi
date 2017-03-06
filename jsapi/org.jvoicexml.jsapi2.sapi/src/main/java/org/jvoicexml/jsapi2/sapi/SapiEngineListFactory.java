@@ -67,8 +67,7 @@ public final class SapiEngineListFactory implements EngineListFactory {
 
             final SynthesizerMode[] features = new SynthesizerMode[] {
                     new SapiSynthesizerMode(null, mode.getEngineName(),
-                            mode.getRunning(), mode.getSupportsLetterToSound(),
-                            Boolean.TRUE, voices)
+                            mode.getRunning(), voices)
             };
             return new EngineList(features);
         }            

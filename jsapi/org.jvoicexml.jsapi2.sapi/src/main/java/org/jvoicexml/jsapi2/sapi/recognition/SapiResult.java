@@ -101,6 +101,8 @@ public final class SapiResult extends BaseResult {
      * 
      * @param value
      *            the SML string
+     * @throws TransformerException
+     *             error transforming the obtained result
      */
     public void setSml(final String value) throws TransformerException {
         sml = value;
@@ -143,10 +145,10 @@ public final class SapiResult extends BaseResult {
                 // for the time being, a help tag is of the form
                 // "*.help = 'help'",
                 // e.g. "out.help = 'help'"
-                boolean specialTag = (tag.equalsIgnoreCase("help") && val
-                        .equalsIgnoreCase("help"))
-                        || (tag.equalsIgnoreCase("cancel") && val
-                                .equalsIgnoreCase("cancel"));
+                boolean specialTag = (tag.equalsIgnoreCase("help")
+                        && val.equalsIgnoreCase("help"))
+                        || (tag.equalsIgnoreCase("cancel")
+                                && val.equalsIgnoreCase("cancel"));
                 // SRGS-tags like <tag>FOO="bar"</tag>
                 if (!specialTag && (val != null) && !val.isEmpty()) {
                     final String str = "out." + tag + "=" + val + ";";

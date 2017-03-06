@@ -59,13 +59,15 @@ public final class SapiSynthesizerMode extends SynthesizerMode
      * Constructs a new object.
      * @param engineName the name of the engine
      * @param modeName the name of the mode
+     * @param running {@code Boolean.TRUE} if this synthesizer is running
+     * @param voices known voices
+     * 
      */
     public SapiSynthesizerMode(final String engineName,
             final String modeName,
-            final Boolean running, final Boolean supportsLetterToSound,
-            final Boolean supportsMarkup, final Voice[] voices) {
-        super(engineName, modeName, running, supportsLetterToSound,
-                supportsMarkup, voices);
+            final Boolean running, final Voice[] voices) {
+        super(engineName, modeName, running, Boolean.TRUE,
+                Boolean.TRUE, voices);
     }
 
     /**

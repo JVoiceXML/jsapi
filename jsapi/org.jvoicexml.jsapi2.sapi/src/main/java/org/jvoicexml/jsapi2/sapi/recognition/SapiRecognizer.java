@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2010-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2010-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -114,9 +109,10 @@ public final class SapiRecognizer extends BaseRecognizer {
     }
 
     /**
-     * Sets the input stream for the recognizer.
+     * Sets the input stream for the recognizer to the default input stream
+     * from the {@link javax.speech.AudioManager}.
      * 
-     * @return
+     * @return {@code true} if the stream has been set
      */
     protected boolean setRecognizerInputStream() {
         // Get the source audioStream
@@ -128,8 +124,8 @@ public final class SapiRecognizer extends BaseRecognizer {
 
     /**
      * Sets the input stream for the recognizer.
-     * 
-     * @return
+     * @param in the input stream
+     * @return {@code true} if the stream has been set
      */
     private boolean setRecognizerInputStream(final InputStream in) {
         /* problem: TypeMismatch JSAPI2-AudioFormat <-> JAVAX-AudioFormat */
