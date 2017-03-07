@@ -1,7 +1,17 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.ullink.gradle:gradle-msbuild-plugin:2.9"
+    }
+}
+
 apply plugin: 'java'
+apply plugin: 'msbuild'
 apply plugin: 'maven'
 apply plugin: 'signing'
-
 
 repositories {
     mavenCentral()
@@ -9,7 +19,6 @@ repositories {
         url "http://repository.ops4j.org/maven2/"
     }
 }
-
 
 dependencies {
     compile project(':org.jvoicexml.jsapi2')
@@ -32,8 +41,66 @@ task generateJniHeaders(type: Exec) {
         "org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizer"
 }
 
-jar {
+task cleanJniWin32(type: com.ullink.Msbuild) {
     dependsOn generateJniHeaders
+
+    solutionFile = "${projectDir}/src/main/cpp/Jsapi2SapiBridge.sln"
+    projectName = "Jsapi2SapiBridge"
+    targets = ['Clean']
+    configuration = 'Release'
+    platform = 'Win32'
+    destinationDir = "$buildDir/jni"
+}
+
+task cleanJniWin64(type: com.ullink.Msbuild) {
+    dependsOn generateJniHeaders
+
+    solutionFile = "${projectDir}/src/main/cpp/Jsapi2SapiBridge.sln"
+    projectName = "Jsapi2SapiBridge"
+    targets = ['Clean']
+    configuration = 'Release'
+    platform = 'x64'
+    destinationDir = "$buildDir/jni"
+}
+
+task cleanJni {
+    dependsOn cleanJniWin32
+    dependsOn cleanJniWin64
+}
+
+clean {
+    dependsOn cleanJni
+}
+
+task buildJniWin32(type: com.ullink.Msbuild) {
+    dependsOn generateJniHeaders
+
+    solutionFile = "${projectDir}/src/main/cpp/Jsapi2SapiBridge.sln"
+    projectName = "Jsapi2SapiBridge"
+    targets = ['Build']
+    configuration = 'Release'
+    platform = 'Win32'
+    destinationDir = "$buildDir/jni"
+}
+
+task buildJniWin64(type: com.ullink.Msbuild) {
+    dependsOn generateJniHeaders
+
+    solutionFile = "${projectDir}/src/main/cpp/Jsapi2SapiBridge.sln"
+    projectName = "Jsapi2SapiBridge"
+    targets = ['Build']
+    configuration = 'Release'
+    platform = 'x64'
+    destinationDir = "$buildDir/jni"
+}
+
+task buildJni {
+    dependsOn buildJniWin32
+    dependsOn buildJniWin64
+}
+
+jar {
+    dependsOn buildJni
     
     manifest {
         attributes("Implementation-Title": "SAPI JSAPI2 implementation",
