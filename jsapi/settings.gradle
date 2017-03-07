@@ -1,6 +1,9 @@
-include 'javax.speech', \
-	'javax.speech.security', \
-	'org.jvoicexml.jsapi2', \
+include 'javax.speech', 
+	'javax.speech.security',
+	'org.jvoicexml.jsapi2', 
 	'org.jvoicexml.jsapi2.freetts',
 	'org.jvoicexml.jsapi2.sphinx4',
-	'org.jvoicexml.jsapi2.sapi'
+	'org.jvoicexml.jsapi2.sapi',
+    'org.jvoicexml.jsapi2.sapi',
+    'org.jvoicexml.jsapi2.demo.helloworld'
+	

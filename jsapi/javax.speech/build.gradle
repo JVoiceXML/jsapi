@@ -10,10 +10,10 @@ repositories {
 }
 
 dependencies {
-    compile group: 'javax.microedition', name: 'cldc', version: '1.0'
-    compile group: 'javax.microedition', name: 'midp', version: '1.0'
+    compileOnly group: 'javax.microedition', name: 'cldc', version: '1.0'
+    compileOnly group: 'javax.microedition', name: 'midp', version: '1.0'
 
-    compile project(':javax.speech.security')
+    compileOnly project(':javax.speech.security')
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
@@ -47,7 +47,6 @@ task sourcesJar(type: Jar) {
 artifacts {
     archives javadocJar, sourcesJar
 }
-
 
 signing {
     sign configurations.archives

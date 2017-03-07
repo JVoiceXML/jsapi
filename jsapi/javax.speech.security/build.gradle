@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-    compile group: 'javax.microedition', name: 'cldc', version: '1.0'
-    compile group: 'javax.microedition', name: 'midp', version: '1.0'
+    compileOnly group: 'javax.microedition', name: 'cldc', version: '1.0'
+    compileOnly group: 'javax.microedition', name: 'midp', version: '1.0'
 }
 
 
