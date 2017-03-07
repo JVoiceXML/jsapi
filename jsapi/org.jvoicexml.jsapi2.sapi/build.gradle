@@ -99,6 +99,20 @@ task buildJniWin64(type: com.ullink.Msbuild) {
 task buildJni {
     dependsOn buildJniWin32
     dependsOn buildJniWin64
+    
+    doLast {
+        copy {
+            from 'src/main/cpp/Release'
+            into "$buildDir/jni"
+            include '*.dll'
+        }
+
+        copy {
+            from 'src/main/cpp/Release_x64'
+            into "$buildDir/jni"
+            include '*.dll'
+        }
+    }
 }
 
 jar {
