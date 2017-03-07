@@ -15,8 +15,26 @@ dependencies {
     compile project(':org.jvoicexml.jsapi2')
 }
 
+task generateJniHeaders(type: Exec) {
+    dependsOn classes
+    
+    def FileCollection classpath = files(sourceSets.main.compileClasspath,
+                                         sourceSets.main.output.classesDir) 
+    def nativeIncludes = "$buildDir/include"
+    
+    commandLine "javah", "-d", nativeIncludes,
+        "-classpath", classpath.getAsPath(),
+        "org.jvoicexml.jsapi2.sapi.SapiEngineListFactory",
+        "org.jvoicexml.jsapi2.sapi.SapiEngineListFactory",
+        "org.jvoicexml.jsapi2.sapi.logging.Log4CPlus2JavaLoggingAdapter",    
+        "org.jvoicexml.jsapi2.sapi.recognition.SapiRecognizer",
+        "org.jvoicexml.jsapi2.sapi.recognition.SapiRecognitionThread",
+        "org.jvoicexml.jsapi2.sapi.synthesis.SapiSynthesizer"
+}
 
 jar {
+    dependsOn generateJniHeaders
+    
     manifest {
         attributes("Implementation-Title": "SAPI JSAPI2 implementation",
                    "Implementation-Vendor": "JVoiceXML group",
