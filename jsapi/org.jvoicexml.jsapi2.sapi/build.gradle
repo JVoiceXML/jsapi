@@ -118,6 +118,9 @@ task buildJni {
 jar {
     dependsOn buildJni
     
+    from("$buildDir/jni") {
+        include '*.dll'
+    }
     manifest {
         attributes("Implementation-Title": "SAPI JSAPI2 implementation",
                    "Implementation-Vendor": "JVoiceXML group",
