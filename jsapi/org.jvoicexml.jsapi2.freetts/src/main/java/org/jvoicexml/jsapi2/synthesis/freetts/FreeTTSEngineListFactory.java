@@ -41,7 +41,7 @@ public class FreeTTSEngineListFactory implements EngineListFactory {
      * synthesizers.  The mapping of FreeTTS VoiceDirectories and
      * Voices to JSAPI Synthesizers and Voices is as follows:
      *
-     * <p><ul>
+     * <ul>
      * <li>Each FreeTTS VoiceDirectory specifies the list of FreeTTS
      * Voices supported by that directory.  Each Voice in that
      * directory specifies its name (e.g., "kevin" "kevin16" "alan"),
