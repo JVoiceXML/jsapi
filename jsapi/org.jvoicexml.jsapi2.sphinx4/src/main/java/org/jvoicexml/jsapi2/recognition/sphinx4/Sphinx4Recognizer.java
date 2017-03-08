@@ -187,13 +187,13 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
         // None given: use default
         if (speechLocales == null) {
             LOGGER.info("Sphinx4Recognizer using default configuration.");
-            return Sphinx4Recognizer.class.getResource("default-EN.config.xml");
+            return Sphinx4Recognizer.class.getResource("/default-EN.config.xml");
         }
 
         // Determine the name from the locale
         SpeechLocale speechLocale = speechLocales[0];
         final String selectedLanguage = speechLocale.getLanguage();
-        final String concatFilename = "default-"
+        final String concatFilename = "/default-"
                 + selectedLanguage.toUpperCase() + ".config.xml";
         LOGGER.info("Sphinx4Recognizer using default configuration for identified language: "
                 + selectedLanguage);
