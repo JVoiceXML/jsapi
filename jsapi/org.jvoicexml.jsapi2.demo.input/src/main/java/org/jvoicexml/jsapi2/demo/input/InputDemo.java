@@ -10,7 +10,7 @@
  *
  */
 
-package org.jvoicexml.jsapi2.demo.inputdemo;
+package org.jvoicexml.jsapi2.demo.input;
 
 import java.io.InputStream;
 import java.util.logging.ConsoleHandler;
@@ -79,7 +79,7 @@ public final class InputDemo implements ResultListener {
 
         final GrammarManager grammarManager = recognizer.getGrammarManager();
         final InputStream in = InputDemo.class
-                .getResourceAsStream("yesno.srgs");
+                .getResourceAsStream("/yesno.srgs");
         final Grammar grammar = grammarManager.loadGrammar("grammar:greeting",
                 null, in, "UTF-8");
         grammar.setActivatable(true);
