@@ -46,8 +46,8 @@ public class EngineManager {
 
         final InputStream input;
         try {
-            final Class clazz = Class.forName("javax.speech.EngineManager"); 
-            input = clazz.getResourceAsStream( "/speech.properties");
+            final Class clazz = Class.forName("javax.speech.EngineManager");
+            input = clazz.getResourceAsStream("/speech.properties");
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
@@ -56,12 +56,12 @@ public class EngineManager {
             try {
                 props.load(input);
 
-                //Close input
+                // Close input
                 input.close();
             } catch (IOException e) {
                 // Ignore.
             }
-            
+
             final Enumeration keys = props.keys();
             while (keys.hasMoreElements()) {
                 final String key = (String) keys.nextElement();
@@ -158,34 +158,34 @@ public class EngineManager {
 
     public static void registerEngineListFactory(String className)
             throws IllegalArgumentException, EngineException,
-                SecurityException {
+            SecurityException {
         JavaSpeechSecurity.checkPermission(
                 "javax.speech.EngineManager.registerEngineListFactory");
         final Class clazz;
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("'" + className
-                    + "' cannot be loaded!");
+            throw new IllegalArgumentException(
+                    "'" + className + "' cannot be loaded!");
         }
 
         final EngineListFactory engineListFactory;
         try {
             engineListFactory = (EngineListFactory) clazz.newInstance();
         } catch (InstantiationException e) {
-            throw new IllegalArgumentException("'" + className
-                    + "' cannot be created!");
+            throw new IllegalArgumentException(
+                    "'" + className + "' cannot be created!");
         } catch (IllegalAccessException e) {
-            throw new SecurityException("'" + className
-                    + "' cannot be created!");
+            throw new SecurityException(
+                    "'" + className + "' cannot be created!");
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("'" + className
                     + "' does not implement EngineListFactory!");
         }
 
         if (!(engineListFactory instanceof EngineListFactory)) {
-            throw new IllegalArgumentException("'" + className
-                    + "' does not implement EngineListFactory");
+            throw new IllegalArgumentException(
+                    "'" + className + "' does not implement EngineListFactory");
         }
 
         final Enumeration enumeration = ENGINE_LIST_FACTORIES.elements();

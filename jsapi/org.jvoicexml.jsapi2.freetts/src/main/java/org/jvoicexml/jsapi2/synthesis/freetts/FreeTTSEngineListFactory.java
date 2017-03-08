@@ -107,7 +107,6 @@ public class FreeTTSEngineListFactory implements EngineListFactory {
         // combination
         for (int i = 0; i < domainLocaleVector.size(); i++) {
             DomainLocale dl = (DomainLocale) domainLocaleVector.get(i);
-
             Vector<FreeTTSVoice> modeVoices = new Vector<FreeTTSVoice>();
 
             // iterate through the voices in a different order
@@ -117,13 +116,13 @@ public class FreeTTSEngineListFactory implements EngineListFactory {
                 modeVoices.add(jsapiVoice);
             }
 
-            FreeTTSSynthesizerMode desc = new FreeTTSSynthesizerMode("FreeTTS "
+            FreeTTSSynthesizerMode mode = new FreeTTSSynthesizerMode("FreeTTS "
                     + dl.getLocale().toString() + " " + dl.getDomain()
                     + " synthesizer", dl.getDomain(), dl.getLocale(),
                     modeVoices.toArray(new FreeTTSVoice[] {}));
 
-            if (require == null || desc.match(require)) {
-                synthesizerModes.addElement(desc);
+            if (require == null || mode.match(require)) {
+                synthesizerModes.addElement(mode);
             }
         }
 

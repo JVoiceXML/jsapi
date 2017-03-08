@@ -28,8 +28,8 @@ import javax.speech.spi.EngineFactory;
 import javax.speech.synthesis.SynthesizerMode;
 
 /**
- * Represents a SynthesizerModeDesc for the FreeTTSSynthesizer. A
- * FreeTTSSynthesizerModeDesc adds an audio player to the standard mode items.
+ * Represents a SynthesizerMode for the FreeTTSSynthesizer. A
+ * FreeTTSSynthesizerMode adds an audio player to the standard mode items.
  * @author Dirk Schnelle-Walka
  */
 public class FreeTTSSynthesizerMode extends SynthesizerMode

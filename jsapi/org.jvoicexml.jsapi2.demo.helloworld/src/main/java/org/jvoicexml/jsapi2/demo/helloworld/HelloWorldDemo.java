@@ -24,6 +24,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.speech.EngineList;
 import javax.speech.EngineManager;
 import javax.speech.synthesis.SpeakableEvent;
 import javax.speech.synthesis.SpeakableListener;
@@ -60,6 +61,8 @@ public final class HelloWorldDemo implements SpeakableListener, SynthesizerListe
             EngineManager
                     .registerEngineListFactory(FreeTTSEngineListFactory.class
                             .getName());
+            EngineList list = 
+                    EngineManager.availableEngines(SynthesizerMode.DEFAULT);
             // Create a synthesizer for the default Locale
             Synthesizer synthesizer = (Synthesizer) EngineManager
                     .createEngine(SynthesizerMode.DEFAULT);
