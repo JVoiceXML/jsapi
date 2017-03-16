@@ -117,7 +117,7 @@ public class SRGSGrammar extends Grammar {
     private String grammarName;
     private URL baseURL;
     private URL grammarURL;
-    private String grammarSTR;
+    private String grammarString;
 
     private GrammarNode firstNode;
 
@@ -212,7 +212,7 @@ public class SRGSGrammar extends Grammar {
 
     public void loadSRGS(String grammar) throws IOException {
         this.grammarURL = null;
-        grammarSTR = grammar;
+        grammarString = grammar;
         commitChanges();
     }
 
@@ -221,7 +221,7 @@ public class SRGSGrammar extends Grammar {
      * 
      * @return the initial node of the Grammar
      * @throws IOException
-     *             error creating the gramamr
+     *             error creating the grammar
      */
     protected GrammarNode createGrammar() throws IOException {
         commitChanges();
@@ -344,11 +344,12 @@ public class SRGSGrammar extends Grammar {
         }
         RuleReference ruleName = initialRule;
         Rule rule;
-        if (ruleName.getGrammarReference() == null)
+        if (ruleName.getGrammarReference() == null) {
             rule = ruleGrammar.getRule(ruleName.getRuleName());
-        else
+        } else {
             rule = getExternalGrammar(ruleName.getGrammarReference(),
                     ruleName.getRuleName());
+        }
 
         if (rule == null) {
             throw new GrammarException("Can't resolve grammar reference: "
@@ -630,7 +631,7 @@ public class SRGSGrammar extends Grammar {
                 rules = srgsRuleGrammarParser.load(grammarStream);
             } else {
                 rules = srgsRuleGrammarParser.load(new InputStreamReader(
-                        new ByteArrayInputStream(grammarSTR.getBytes())));
+                        new ByteArrayInputStream(grammarString.getBytes())));
             }
 
             if (rules != null) {

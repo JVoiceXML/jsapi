@@ -68,11 +68,12 @@ public final class InputDemo implements ResultListener {
                 .createEngine(new RecognizerMode(SpeechLocale.ENGLISH));
 
         final AudioManager manager = recognizer.getAudioManager();
-        manager.setMediaLocator("capture://audio?rate=8000&bits=16&channels=2&endian=big&encoding=pcm&signed=true");
+        manager.setMediaLocator(
+                "capture://audio?rate=16000&bits=16&channels=2&endian=big&encoding=pcm&signed=true");
         // Get it ready to speak
-         synthesizer.allocate();
-         synthesizer.resume();
-         synthesizer.waitEngineState(Engine.RESUMED);
+        synthesizer.allocate();
+        synthesizer.resume();
+        synthesizer.waitEngineState(Engine.RESUMED);
 
         recognizer.allocate();
         recognizer.addResultListener(this);
@@ -83,9 +84,9 @@ public final class InputDemo implements ResultListener {
         final Grammar grammar = grammarManager.loadGrammar("grammar:greeting",
                 null, in, "UTF-8");
         grammar.setActivatable(true);
+        recognizer.processGrammars();
 
         recognizer.requestFocus();
-        recognizer.processGrammars();
         recognizer.resume();
         // Tell the user what to do as soon as the recognizer is ready.
         recognizer.waitEngineState(Engine.RESUMED);
@@ -123,13 +124,11 @@ public final class InputDemo implements ResultListener {
         Logger.getLogger("").setLevel(Level.ALL);
 
         try {
-            EngineManager
-                    .registerEngineListFactory(FreeTTSEngineListFactory.class
-                            .getName());
+            EngineManager.registerEngineListFactory(
+                    FreeTTSEngineListFactory.class.getName());
 
-            EngineManager
-                    .registerEngineListFactory(SphinxEngineListFactory.class
-                            .getName());
+            EngineManager.registerEngineListFactory(
+                    SphinxEngineListFactory.class.getName());
 
             demo.run();
         } catch (Exception e) {

@@ -310,8 +310,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * @param executor
      *            the speech event executor
      */
-    protected void postResultEvent(final Result result,
-            final ResultEvent event, final SpeechEventExecutor executor) {
+    protected void postResultEvent(final Result result, final ResultEvent event,
+            final SpeechEventExecutor executor) {
         final BaseResult base = (BaseResult) result;
         base.postResultEvent(executor, event);
     }
@@ -336,7 +336,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * {@inheritDoc}
      */
     @Override
-    public final void removeRecognizerListener(final RecognizerListener listener) {
+    public final void removeRecognizerListener(
+            final RecognizerListener listener) {
         removeEngineListener(listener);
     }
 
@@ -421,7 +422,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         boolean existChanges = false;
 
         // Build a new grammar set, with all enabled grammars
-        Collection<GrammarDefinition> newGrammars = new java.util.ArrayList<GrammarDefinition>();
+        Collection<GrammarDefinition> newGrammars =
+                new java.util.ArrayList<GrammarDefinition>();
 
         // Commit all grammars pending changes
         final Grammar[] grammars = grammarManager.listGrammars();
@@ -530,8 +532,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
         // Proceed to real engine allocation
         try {
             handleAllocate();
-            long[] states = setEngineState(CLEAR_ALL_STATE, ALLOCATED | PAUSED
-                    | DEFOCUSED | NOT_BUFFERING);
+            long[] states = setEngineState(CLEAR_ALL_STATE,
+                    ALLOCATED | PAUSED | DEFOCUSED | NOT_BUFFERING);
             postStateTransitionEngineEvent(states[0], states[1],
                     EngineEvent.ENGINE_ALLOCATED);
         } catch (EngineStateException | EngineException | AudioException
@@ -567,8 +569,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * @throws EngineException
      *             if this {@link javax.speech.Engine} cannot be deallocated.
      */
-    protected final void baseDeallocate() throws EngineStateException,
-            EngineException, AudioException {
+    protected final void baseDeallocate()
+            throws EngineStateException, EngineException, AudioException {
 
         // Procceed to real engine deallocation
         try {
@@ -591,8 +593,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     @Override
     protected final void basePause() {
         handlePause();
-        setEngineState(LISTENING | PROCESSING, getEngineState() & ~LISTENING
-                & ~PROCESSING);
+        setEngineState(LISTENING | PROCESSING,
+                getEngineState() & ~LISTENING & ~PROCESSING);
         setEngineState(BUFFERING, NOT_BUFFERING);
     }
 
@@ -601,20 +603,19 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     protected final void basePause(final int flags) {
         handlePause(flags);
-        setEngineState(LISTENING | PROCESSING, getEngineState() & ~LISTENING
-                & ~PROCESSING);
+        setEngineState(LISTENING | PROCESSING,
+                getEngineState() & ~LISTENING & ~PROCESSING);
     }
 
     /**
      * Called from the {@link #resume()} method.
      * 
-     * @return {@code true} if resuming was ssuccessful
+     * @return {@code true} if resuming was successful
      * @exception EngineStateException
-     *                when not in the standard Conditions for operation
-     * TODO Handle grammar updates
+     *                when not in the standard Conditions for operation TODO
+     *                Handle grammar updates
      */
     protected final boolean baseResume() throws EngineStateException {
-
         // Process grammars
         processGrammars();
         final AudioManager manager = getAudioManager();

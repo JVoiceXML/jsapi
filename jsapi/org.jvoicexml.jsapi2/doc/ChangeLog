@@ -12,6 +12,8 @@ Version 0.6
 - propagating synthesis errors
 - capture is not handled by URL protocol handler to avoid problems when setting
   the protocols
+- update to the new sphinx4 API
+- switching to gradle as the main build system
 
 Version 0.5
 ===========

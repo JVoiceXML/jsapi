@@ -277,7 +277,8 @@ public abstract class BaseAudioManager implements AudioManager {
     @Override
     public final boolean isSupportedMediaLocator(final String locator)
             throws IllegalArgumentException {
-        final String[] supportedMediaLocators = getSupportedMediaLocators(locator);
+        final String[] supportedMediaLocators =
+                getSupportedMediaLocators(locator);
         return supportedMediaLocators != null;
     }
 

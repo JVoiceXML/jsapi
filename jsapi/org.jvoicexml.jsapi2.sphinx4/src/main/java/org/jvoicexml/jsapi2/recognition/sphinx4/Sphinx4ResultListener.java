@@ -82,11 +82,12 @@ class Sphinx4ResultListener implements ResultListener {
             LOGGER.warning("result is not final or <sil>. forget about it.");
             return;
         }
-        
+
         if(result.toString().contains("<unk>")) {
-            LOGGER.warning("result contains <unk> which represents negative result");
+            LOGGER.warning(
+                    "result contains <unk> which represents negative result");
             return;
-        }            
+        }
 
         /**
          * For the current implementation with the SRGSGrammarContainer in

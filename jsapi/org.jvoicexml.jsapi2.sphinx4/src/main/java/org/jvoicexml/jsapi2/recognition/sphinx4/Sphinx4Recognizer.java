@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,11 +21,8 @@
 
 package org.jvoicexml.jsapi2.recognition.sphinx4;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,16 +41,10 @@ import org.jvoicexml.jsapi2.BaseEngineProperties;
 import org.jvoicexml.jsapi2.recognition.BaseRecognizer;
 import org.jvoicexml.jsapi2.recognition.GrammarDefinition;
 
+import edu.cmu.sphinx.api.Configuration;
+import edu.cmu.sphinx.api.Context;
 import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
-import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.recognizer.Recognizer.State;
-import edu.cmu.sphinx.recognizer.StateListener;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
 
 /**
  * JSAPI wrapper for sphinx4.
@@ -73,9 +59,8 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  * @author Stefan Radomski
  * @author Stephan Radeck-Arneth (adaptation for handling of different
  *         languages)
- * @version $Revision: 611 $
  */
-final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
+final class Sphinx4Recognizer extends BaseRecognizer {
     /** Logger for this class. */
     private static final Logger LOGGER = Logger
             .getLogger(Sphinx4Recognizer.class.getName());
@@ -87,13 +72,12 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
     private static final long SLEEP_MSEC = 50;
 
     /** The encapsulated recognizer. */
-    private Recognizer recognizer;
-
-    /** The input device. */
-    private DataProcessor dataProcessor;
+    private Jsapi2Recognizer recognizer;
 
     /** The grammar manager. */
     private Grammar grammar;
+
+    private Configuration configuration;
 
     /** The result listener. */
     private final Sphinx4ResultListener resultListener;
@@ -112,50 +96,33 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
      */
     public Sphinx4Recognizer(SphinxRecognizerMode recognizerMode) {
         super(recognizerMode);
-        URL url = null;
         // First check the system setting that may override any other setting
-        final String configFile = System.getProperty(
+        String resource = System.getProperty(
                 "org.jvoicexml.jsapi2.recognition.sphinx4.configPath");
-        if (configFile != null) {
-            url = Sphinx4Recognizer.class.getResource(configFile);
-            if (url == null) {
-                try {
-                    File tmp = new File(configFile);
-                    if (tmp.exists()) {
-                        url = tmp.toURI().toURL();
-                    }
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    url = null;
-                }
-            }
-        }
-
         // There is no config, call dynamic URL handler
-        if (url == null) {
-            url = getConfiguration(recognizerMode);
+        if (resource == null) {
+            resource = getConfiguration(recognizerMode);
         }
+        configuration = new Configuration();
+
+        // Set path to acoustic model.
+        configuration.setAcousticModelPath(
+                "resource:/edu/cmu/sphinx/models/en-us/en-us");
+        // Set path to dictionary.
+        configuration.setDictionaryPath(
+                "resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+        // Set language model.
+        configuration.setLanguageModelPath(
+                "resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
 
         try {
-            final ConfigurationManager configuration = new ConfigurationManager(
-                    url);
-
-            recognizer = (Recognizer) configuration.lookup("recognizer");
-            dataProcessor = (DataProcessor) configuration
-                    .lookup("sphinxInputDataProcessor");
-            if (!(dataProcessor instanceof SphinxInputDataProcessor)) {
-                throw new EngineException("Unsupported input type");
-            }
-            grammar = (Grammar) configuration.lookup("srgsGrammar");
-            if (grammar instanceof SRGSGrammarContainer) {
-                final SRGSGrammarContainer container = (SRGSGrammarContainer) grammar;
-                container.setRecognizer(this);
-            }
-
-        } catch (Exception ex) {
+            Context context = new Context("resource:/default-EN.config.xml",
+                    configuration);
+            recognizer = new Jsapi2Recognizer(context);
+        } catch (IOException e) {
             LOGGER.log(Level.WARNING, "error creating engine properties {0}",
-                    ex.getMessage());
-            error = ex;
+                    e.getMessage());
+            error = e;
         }
 
         // hard-coded audio format
@@ -176,7 +143,7 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
      *            the recognizer mode
      * @return URL of the configuration file to use.
      */
-    private URL getConfiguration(SphinxRecognizerMode recognizerMode) {
+    private String getConfiguration(final SphinxRecognizerMode recognizerMode) {
         // Determine the speech locale to use
         SpeechLocale[] speechLocales = recognizerMode.getSpeechLocales();
         if (speechLocales == null
@@ -187,18 +154,14 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
         // None given: use default
         if (speechLocales == null) {
             LOGGER.info("Sphinx4Recognizer using default configuration.");
-            return Sphinx4Recognizer.class.getResource("/default-EN.config.xml");
+            return "resource:/default-EN.config.xml";
         }
 
         // Determine the name from the locale
-        SpeechLocale speechLocale = speechLocales[0];
+        final SpeechLocale speechLocale = speechLocales[0];
         final String selectedLanguage = speechLocale.getLanguage();
-        final String concatFilename = "/default-"
-                + selectedLanguage.toUpperCase() + ".config.xml";
-        LOGGER.info("Sphinx4Recognizer using default configuration for identified language: "
-                + selectedLanguage);
-
-        return Sphinx4Recognizer.class.getResource(concatFilename);
+        return "resource:/default-" + selectedLanguage.toUpperCase()
+                + ".config.xml";
     }
 
     /**
@@ -212,26 +175,34 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
         if (error != null) {
             throw new EngineException(error.getMessage());
         }
-        if (recognizer == null) {
-            throw new EngineException(
-                    "cannot allocate: no recognizer configured!");
-        }
-
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("allocating recognizer...");
         }
+        configuration = new Configuration();
 
-        // allocate recognizer and wait for State.READY
-        recognizer.allocate();
-        waitForRecognizerState(State.READY);
+        // Set path to acoustic model.
+        configuration.setAcousticModelPath(
+                "resource:/edu/cmu/sphinx/models/en-us/en-us");
+        // Set path to dictionary.
+        configuration.setDictionaryPath(
+                "resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+        // Set language model.
+        configuration.setLanguageModelPath(
+                "resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
 
-        // Register state and result listener
+        try {
+            final Context context = new Context(
+                    "resource:/default-EN.config.xml", configuration);
+            recognizer = new Jsapi2Recognizer(context);
+            recognizer.allocate();
+        } catch (IOException e) {
+            throw new EngineException(e.getMessage());
+        }
+
+        // Register result listener
         recognizer.addResultListener(resultListener);
-        recognizer.addStateListener(this);
-
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("...allocated");
-            LOGGER.log(Level.FINE, "state: {0}", recognizer.getState());
         }
 
         setEngineState(CLEAR_ALL_STATE, ALLOCATED);
@@ -251,25 +222,11 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
             LOGGER.warning("recognition thread already started.");
             return false;
         }
-
-        if (recognizer.getState() != State.READY) {
-            LOGGER.log(Level.WARNING,
-                    "Cannot resume, recognizer not ready, but in state: {0}",
-                    recognizer.getState());
-            return false;
-        }
-
-        // start data source for sphinx if it is not running
-        if (dataProcessor instanceof SphinxInputDataProcessor) {
-            final SphinxInputDataProcessor sidp = (SphinxInputDataProcessor) dataProcessor;
-            sidp.setInputStream(in);
-            sidp.isRunning(true);
-        }
+        recognizer.startRecognition(in);
 
         // start the recognizer thread and wait for the recognizer to recognize
         recognitionThread = new RecognitionThread(this);
         recognitionThread.start();
-        waitForRecognizerState(State.RECOGNIZING);
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("recognition started");
         }
@@ -287,19 +244,7 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
 
         // prevent further calls to recognize()
         recognitionThread.stopRecognition();
-
-        // stop the sphinx4 frontend
-        if (dataProcessor instanceof Microphone) {
-            final Microphone microphone = (Microphone) dataProcessor;
-            microphone.stopRecording();
-        }
-        if (dataProcessor instanceof SphinxInputDataProcessor) {
-            final SphinxInputDataProcessor sidp = (SphinxInputDataProcessor) dataProcessor;
-            sidp.isRunning(false);
-        }
-
-        // wait for the recognizer to transit from RECOGNIZING to READY
-        waitForRecognizerState(State.READY);
+        recognizer.stopRecognition();
 
         // get rid of the recognizer thread
         stopRecognitionThread();
@@ -327,16 +272,12 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
             LOGGER.fine("deallocating recognizer...");
         }
 
-        // pause is not called before dealloc obviously
-        if (recognizer.getState() != State.READY)
-            handlePause();
-
-        // Deallocate the recognizer and wait until it stops recognizing.
+        // // pause is not called before dealloc obviously
+        // if (recognizer.getState() != State.READY)
+        // handlePause();
+        //
         recognizer.deallocate();
-        waitForRecognizerState(State.DEALLOCATED);
-        recognizer.resetMonitors();
-
-        // recognizer.removeResultListener(resultListener);
+        recognizer.removeResultListener(resultListener);
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("...deallocated");
@@ -345,20 +286,11 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
     }
 
     /**
-     * Selector for the data processor.
-     * 
-     * @return The used data processor.
-     */
-    DataProcessor getDataProcessor() {
-        return dataProcessor;
-    }
-
-    /**
      * Selector for the wrapped sphinx4 recognizer.
      * 
      * @return Recognizer
      */
-    Recognizer getRecognizer() {
+    Jsapi2Recognizer getRecognizer() {
         return recognizer;
     }
 
@@ -424,33 +356,8 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
      */
     @Override
     protected boolean setGrammars(
-            final Collection<GrammarDefinition> grammarDefinition) {
-        if (grammar instanceof SRGSGrammar) {
-            // old behavior with only a single active grammar
-            if (grammarDefinition.size() == 1) {
-                try {
-                    final org.jvoicexml.jsapi2.recognition.GrammarDefinition definition = grammarDefinition
-                            .iterator().next();
-                    ((SRGSGrammar) grammar).loadSRGS(definition.getGrammar());
-                } catch (IOException ex) {
-                    return false;
-                }
-                return true;
-            } else {
-                return false;
-            }
-        } else if (grammar instanceof SRGSGrammarContainer) {
-            // the big one-of dispatcher
-            try {
-                ((SRGSGrammarContainer) grammar)
-                        .loadGrammars(grammarDefinition);
-            } catch (IOException ex) {
-                System.err.println(ex);
-                return false;
-            }
-            return true;
-        }
-        return false;
+            final Collection<GrammarDefinition> grammarDefinitions) {
+        return recognizer.setGrammars(grammarDefinitions);
     }
 
     /**
@@ -508,46 +415,10 @@ final class Sphinx4Recognizer extends BaseRecognizer implements StateListener {
     protected void handleReleaseFocus() {
     }
 
-    /**
-     * This method gets called by the Sphinx4 Recognizer, when its status
-     * changes. We just notify all threads waiting in waitForRecognizerState on
-     * this object.
-     * 
-     * @param status
-     */
-    @Override
-    public synchronized void statusChanged(State status) {
-        notifyAll();
-    }
-
-    /**
-     * Wait for the recognizer to enter the given state.
-     * 
-     * @param status
-     *            The state of the recognizer to wait for.
-     */
-    private synchronized void waitForRecognizerState(final State status) {
-        while (recognizer.getState() != status) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        LOGGER.log(Level.INFO, "Sphinx4Recognizer in state: {0}", status);
-    }
-
-    /**
-     * {@inheritDoc} Not used but for compatibility.
-     */
-    @Override
-    public void newProperties(final PropertySheet ps) throws PropertyException {
-    }
-
     @Override
     protected AudioFormat getAudioFormat() {
-        final SphinxInputDataProcessor input = (SphinxInputDataProcessor) dataProcessor;
-        return input.getAudioFormat();
+        return recognizer.getAudioFormat();
+        // return new AudioFormat(16000, 16, 1, true, false);
     }
 
     /**

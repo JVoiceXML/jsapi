@@ -192,8 +192,7 @@ public class SRGSGrammarContainer extends Grammar {
         activeGrammarNames.addAll(grammarDefs.keySet());
 
         // is an active grammar to be removed?
-        for (Object obj : grammars.keySet()) {
-            String name = (String) obj;
+        for (String name : grammars.keySet()) {
             if (!activeGrammarNames.contains(name)) {
                 grammars.remove(name);
                 existsChanges = true;
@@ -221,16 +220,15 @@ public class SRGSGrammarContainer extends Grammar {
 
         // rebuild ruleGrammar, firstNode and the set of all grammar nodes
         if (existsChanges) {
-            // new first node, so the linguist will rebuild its searchgraph
-            firstNode = createGrammarNode("<sil>");
-            firstNode.setFinalNode(false);
-
-            grammarNodes.clear();
-            grammarNodes.add(firstNode);
+            // If we did not yet create a firstnode, create an empty one
+            if (firstNode == null) {
+                firstNode = createGrammarNode("<sil>");
+                grammarNodes.clear();
+                grammarNodes.add(firstNode);
+            }
 
             for (SRGSGrammar grammar : grammars.values()) {
                 GrammarNode srgsStart = grammar.getInitialNode();
-
                 /**
                  * Every SRGS Grammar starts with <sil>, drop it and add
                  * transitions from our firstNode.
@@ -249,13 +247,13 @@ public class SRGSGrammarContainer extends Grammar {
                 // Gather all grammar nodes
                 grammarNodes.addAll(grammar.getGrammarNodes());
             }
+            
         }
 
-        // If we did not yet create a firstnode, create an empty one
+        // Create an empty grammar if none exists so far since sphinx is not
+        // able to start up without a grammar
         if (firstNode == null) {
-            newGrammar();
             firstNode = createGrammarNode("<sil>");
-            firstNode.setFinalNode(false);
             grammarNodes.clear();
             grammarNodes.add(firstNode);
         }

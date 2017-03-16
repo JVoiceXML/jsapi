@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL: https://svn.sourceforge.net/svnroot/jvoicexml/trunk/src/org/jvoicexml/Application.java$
- * Version: $LastChangedRevision: 68 $
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy: schnelle $
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007-2012 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,14 +24,13 @@ package org.jvoicexml.jsapi2.recognition.sphinx4;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.api.SpeechResult;
 
 /**
  * Recognition thread to run the recognizer in parallel.
  * 
  * @author Dirk Schnelle-Walka
  * @author Stefan Radomski
- * @version $Revision: 614 $
  */
 final class RecognitionThread extends Thread {
     /** Logger for this class. */
@@ -69,32 +63,30 @@ final class RecognitionThread extends Thread {
         }
 
         // Start the Sphinx recognizer
-        final Recognizer rec = recognizer.getRecognizer();
+        final Jsapi2Recognizer rec = recognizer.getRecognizer();
         started = true;
 
         // send start of speech and processing event
         // @todo change this;
         recognizer.postStartOfSpeechEvent();
         recognizer.postProcessingEvent();
-        if (started) {
-            while (started) {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("calling sphinx4 recognize() ..");
-                }
-                rec.recognize();
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("returned from sphinx4  recognize() ..");
-                }
+        while (started) {
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("obtaining a result ..");
+            }
+            final SpeechResult speechResult = rec.getResult();
+            final String hypothesis = speechResult.getHypothesis();
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine("received result " + hypothesis);
+            }
+            if (!hypothesis.equalsIgnoreCase("<sil>")) {
                 recognizer.postEndOfSpeechEvent();
                 recognizer.postListeningEvent();
+                started = false;
             }
         }
         // send end of speech and listening event
         // @todo change this;
-
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine("stopping recognition thread...");
-        }
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("recognition thread terminated");

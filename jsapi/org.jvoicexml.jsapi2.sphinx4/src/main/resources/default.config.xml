@@ -26,13 +26,13 @@
     <component name="recognizer" type="edu.cmu.sphinx.recognizer.Recognizer">
         <property name="decoder" value="decoder" />
         <propertylist name="monitors">
-            <item>speedTracker </item>
-            <item>memoryTracker </item>
+            <item>speedTracker</item>
+            <item>memoryTracker</item>
         </propertylist>
     </component>
 
     <component name="decoder" type="edu.cmu.sphinx.decoder.Decoder">
-        <property name="searchManager" value="simpleSearchManager" />
+        <property name="searchManager" value="wordPruningLookaheadSearchManager" />
     </component>
 
     <component name="alignerSearchManager"
@@ -158,7 +158,7 @@
 
     <component name="flatLinguist"
         type="edu.cmu.sphinx.linguist.flat.FlatLinguist">
-        <property name="grammar" value="srgsGrammar" />
+        <property name="grammar" value="jsgfGrammar" />
         <property name="acousticModel" value="acousticModel" />
         <property name="wordInsertionProbability" value="${wordInsertionProbability}" />
         <property name="silenceInsertionProbability" value="${silenceInsertionProbability}" />
@@ -168,7 +168,8 @@
         <property name="addOutOfGrammarBranch" value="true" />
         <property name="outOfGrammarProbability" value="${oogProbability}" />
         <property name="phoneInsertionProbability" value="${oogLoopProbability}" />
-        <property name="phoneLoopAcousticModel" value="acousticModel" />    </component>
+        <property name="phoneLoopAcousticModel" value="acousticModel" />
+    </component>
 
     <component name="lexTreeLinguist"
         type="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist">
@@ -236,11 +237,6 @@
         <property name="addSilenceWords" value="true" />
     </component>
 
-    <component name="srgsGrammar"
-        type="org.jvoicexml.jsapi2.recognition.sphinx4.SRGSGrammarContainer">
-        <property name="dictionary" value="dictionary" />
-    </component>
-
     <component name="dictionary"
         type="edu.cmu.sphinx.linguist.dictionary.TextDictionary">
         <property name="dictionaryPath" value="" />
@@ -260,13 +256,13 @@
         <property name="location" value="" />
         <property name="topGaussiansNum" value="4" />
     </component>
-    
+
     <component name="unitManager"
         type="edu.cmu.sphinx.linguist.acoustic.UnitManager" />
 
     <component name="liveFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
-            <item>sphinxInputDataProcessor </item>
+            <item>dataSource </item>
             <item>dataBlocker </item>
             <item>speechClassifier </item>
             <item>speechMarker </item>
@@ -294,8 +290,6 @@
 
     <component name="speechMarker"
         type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker">
-        <property name="speechTrailer" value="50" />
-        <property name="endSilenceDecay" value="3600" />
     </component>
 
     <component name="preemphasizer"
@@ -323,15 +317,6 @@
     <component name="featureTransform"
         type="edu.cmu.sphinx.frontend.feature.FeatureTransform">
         <property name="loader" value="acousticModelLoader" />
-    </component>
-
-    <component name="sphinxInputDataProcessor"
-        type="org.jvoicexml.jsapi2.recognition.sphinx4.SphinxInputDataProcessor">
-        <property name="samplingRate" value="16000" />
-        <property name="sampleSizeInBits" value="16" />
-        <property name="channels" value="1" />
-        <property name="signed" value="true" />
-        <property name="bigEndian" value="false" />
     </component>
 
     <component name="speedTracker"
