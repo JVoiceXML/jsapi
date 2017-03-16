@@ -133,8 +133,8 @@ public class BaseGrammarManager implements GrammarManager {
         ensureValidEngineState();
 
         if (grammars.containsKey(grammarReference)) {
-            throw new IllegalArgumentException("Duplicate grammar name: "
-                    + grammarReference);
+            throw new IllegalArgumentException(
+                    "Duplicate grammar name: " + grammarReference);
         }
 
         // Create grammar
@@ -154,9 +154,11 @@ public class BaseGrammarManager implements GrammarManager {
      * 
      * @param grammar
      *            Grammar
-     * @throws IllegalArgumentException if the grammar is unknown
-     * @throws EngineStateException if the current engine state does not allow
-     *  deleting the grammar
+     * @throws IllegalArgumentException
+     *             if the grammar is unknown
+     * @throws EngineStateException
+     *             if the current engine state does not allow deleting the
+     *             grammar
      */
     public void deleteGrammar(final Grammar grammar)
             throws IllegalArgumentException, EngineStateException {
@@ -186,8 +188,8 @@ public class BaseGrammarManager implements GrammarManager {
      * Lists the Grammars known to this Recognizer.
      * 
      * @return kown gramamrs
-     * @throws EngineStateException if the engine state does not allow
-     *          listing the grammars
+     * @throws EngineStateException
+     *             if the engine state does not allow listing the grammars
      */
     public Grammar[] listGrammars() throws EngineStateException {
 
@@ -221,8 +223,8 @@ public class BaseGrammarManager implements GrammarManager {
      * @param grammarReference
      *            String
      * @return referenced garamamr
-     * @throws EngineStateException if the engine state does not allow
-     *          obtaining the grammar
+     * @throws EngineStateException
+     *             if the engine state does not allow obtaining the grammar
      */
     public Grammar getGrammar(final String grammarReference)
             throws EngineStateException {
@@ -234,18 +236,11 @@ public class BaseGrammarManager implements GrammarManager {
     }
 
     /**
-     * Loads a RuleGrammar from a URI or named resource.
-     * 
-     * @param grammarReference
-     *            String
-     * @return RuleGrammar
-     * @throws GrammarException
-     * @throws IllegalArgumentException
-     * @throws IOException
-     * @throws EngineStateException
-     * @throws EngineException
+     * {@inheritDoc}
      */
-    public Grammar loadGrammar(String grammarReference, String mediaType)
+    @Override
+    public Grammar loadGrammar(final String grammarReference,
+            final String mediaType)
             throws GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
 
@@ -258,28 +253,13 @@ public class BaseGrammarManager implements GrammarManager {
     }
 
     /**
-     * Loads a RuleGrammar from a URI or named resource and optionally loads any
-     * referenced Grammars.
-     * 
-     * @param grammarReference
-     *            String
-     * @param loadReferences
-     *            boolean
-     * @param reloadGrammars
-     *            boolean
-     * @param loadedGrammars
-     *            Vector
-     * @return RuleGrammar
-     * @throws GrammarException
-     * @throws IllegalArgumentException
-     * @throws IOException
-     * @throws EngineStateException
-     * @throws EngineException
+     * {@inheritDoc}
      */
     @Override
-    public Grammar loadGrammar(String grammarReference, String mediaType,
-            boolean loadReferences, boolean reloadGrammars,
-            @SuppressWarnings("rawtypes") Vector loadedGrammars)
+    public Grammar loadGrammar(final String grammarReference,
+            final String mediaType, final boolean loadReferences,
+            final boolean reloadGrammars,
+            @SuppressWarnings("rawtypes") final Vector loadedGrammars)
             throws GrammarException, IllegalArgumentException, IOException,
             EngineStateException, EngineException {
 
@@ -378,8 +358,8 @@ public class BaseGrammarManager implements GrammarManager {
         final SrgsRuleGrammarParser parser = new SrgsRuleGrammarParser();
         final Rule[] rules = parser.load(reader);
         if (rules == null) {
-            throw new IOException("Unable to load grammar '" + grammarReference
-                    + "'");
+            throw new IOException(
+                    "Unable to load grammar '" + grammarReference + "'");
         }
 
         if (LOGGER.isLoggable(Level.FINE)) {
@@ -415,25 +395,15 @@ public class BaseGrammarManager implements GrammarManager {
     }
 
     /**
-     * Creates a RuleGrammar from grammar text provided as a String.
-     * 
-     * @param grammarReference
-     *            String
-     * @param grammarText
-     *            String
-     * @return RuleGrammar
-     * @throws GrammarException
-     * @throws IllegalArgumentException
-     * @throws IOException
-     * @throws EngineStateException
-     * @throws EngineException
+     * {@inheritDoc}
      */
-    public Grammar loadGrammar(String grammarReference, String mediaType,
-            String grammarText) throws GrammarException,
-            IllegalArgumentException, IOException, EngineStateException,
-            EngineException {
-        return loadGrammar(grammarReference, mediaType, new StringReader(
-                grammarText));
+    @Override
+    public Grammar loadGrammar(final String grammarReference,
+            final String mediaType, final String grammarText)
+            throws GrammarException, IllegalArgumentException, IOException,
+            EngineStateException, EngineException {
+        return loadGrammar(grammarReference, mediaType,
+                new StringReader(grammarText));
     }
 
     /**
@@ -442,9 +412,9 @@ public class BaseGrammarManager implements GrammarManager {
     @Override
     public Grammar loadGrammar(final String grammarReference,
             final String mediaType, final InputStream byteStream,
-            final String encoding) throws GrammarException,
-            IllegalArgumentException, IOException, EngineStateException,
-            EngineException {
+            final String encoding)
+            throws GrammarException, IllegalArgumentException, IOException,
+            EngineStateException, EngineException {
         if (byteStream == null) {
             throw new IOException("Unable to read from a null stream!");
         }
@@ -482,12 +452,12 @@ public class BaseGrammarManager implements GrammarManager {
             return;
         }
         // Validate current state
-        if (recognizer.testEngineState(Recognizer.DEALLOCATED
-                | Recognizer.DEALLOCATING_RESOURCES)) {
+        if (recognizer.testEngineState(
+                Recognizer.DEALLOCATED | Recognizer.DEALLOCATING_RESOURCES)) {
             throw new EngineStateException(
                     "Cannot execute GrammarManager operation: invalid engine state: "
-                            + recognizer.stateToString(recognizer
-                                    .getEngineState()));
+                            + recognizer.stateToString(
+                                    recognizer.getEngineState()));
         }
 
         // Wait until end of allocating (if it's currently allocating)
