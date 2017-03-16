@@ -427,7 +427,7 @@ public class BaseGrammarManager implements GrammarManager {
      * {@inheritDoc}
      */
     @Override
-    public void setGrammarMask(int mask) {
+    public void setGrammarMask(final int mask) {
         grammarMask = mask;
     }
 
@@ -442,7 +442,7 @@ public class BaseGrammarManager implements GrammarManager {
     /**
      * Checks if the recognizer is in a valid state to perform grammar
      * operations. If the recognizer is currently allocating resources, this
-     * methods waits until the the resoucres are allocated.
+     * methods waits until the the resources are allocated.
      * 
      * @throws EngineStateException
      *             invalid engine state
