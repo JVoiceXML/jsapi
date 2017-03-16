@@ -52,6 +52,7 @@ public class SphinxRecognizerModeTest {
         
 
         AudioFormat format = new AudioFormat(16000, 16, 2, true, false);
+        System.out.println(format);
         TargetDataLine lineLocalMic = AudioSystem.getTargetDataLine(format);
         AudioInputStream input = new AudioInputStream(lineLocalMic);
         AudioFormat recformat = new AudioFormat(16000, 16, 1, true, false);

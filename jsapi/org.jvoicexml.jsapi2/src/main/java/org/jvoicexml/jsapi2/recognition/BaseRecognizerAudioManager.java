@@ -161,7 +161,7 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
                         format = JavaSoundParser.parse(uri);
                         setTargetAudioFormat(format);
                         if (LOGGER.isLoggable(Level.FINE)) {
-                            LOGGER.log(Level.FINE, "... Got AudioFormat: {0}",
+                            LOGGER.log(Level.FINE, "Got AudioFormat: {0}",
                                     format.toString());
                         }
                     } catch (URISyntaxException e) {
