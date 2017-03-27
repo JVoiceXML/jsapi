@@ -246,7 +246,7 @@ public class BaseGrammarManager implements GrammarManager {
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Load Grammar : {0} with media Type:{1}",
-                    new Object[] { grammarReference, mediaType });
+                    new Object[] {grammarReference, mediaType});
         }
 
         return loadGrammar(grammarReference, mediaType, true, false, null);
@@ -265,9 +265,9 @@ public class BaseGrammarManager implements GrammarManager {
 
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Load Grammar : {0} with media Type:{1}",
-                    new Object[] { grammarReference, mediaType });
+                    new Object[] {grammarReference, mediaType});
             LOGGER.log(Level.FINE, "loadReferences : {0} reloadGrammars:{1}",
-                    new Object[] { loadReferences, reloadGrammars });
+                    new Object[] {loadReferences, reloadGrammars});
             LOGGER.log(Level.FINE, "there are {0} loaded grammars:",
                     loadedGrammars.size());
         }

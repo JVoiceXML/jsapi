@@ -228,7 +228,7 @@ public abstract class BaseAudioManager implements AudioManager {
     public final void setMediaLocator(final String locator)
             throws AudioException, EngineStateException,
             IllegalArgumentException, SecurityException {
-
+        // Check audio permission
         final SecurityManager security = System.getSecurityManager();
         if (security != null) {
             final Permission permission = new SpeechPermission(
@@ -246,8 +246,8 @@ public abstract class BaseAudioManager implements AudioManager {
             throw new IllegalStateException("Audio has not been stopped!");
         }
 
+        // Set the locator and notify the change
         mediaLocator = locator;
-
         final AudioEvent event = new AudioEvent(engine,
                 AudioEvent.AUDIO_CHANGED);
         postAudioEvent(event);
@@ -268,7 +268,7 @@ public abstract class BaseAudioManager implements AudioManager {
      */
     public String[] getSupportedMediaLocators(final String locator)
             throws IllegalArgumentException {
-        return new String[] { mediaLocator };
+        return new String[] {mediaLocator};
     }
 
     /**
@@ -277,6 +277,9 @@ public abstract class BaseAudioManager implements AudioManager {
     @Override
     public final boolean isSupportedMediaLocator(final String locator)
             throws IllegalArgumentException {
+        if (locator == null) {
+            return true;
+        }
         final String[] supportedMediaLocators =
                 getSupportedMediaLocators(locator);
         return supportedMediaLocators != null;
@@ -357,21 +360,17 @@ public abstract class BaseAudioManager implements AudioManager {
      * @return opened connection
      * @throws IOException
      *             error opening the connection.
+     * @throws MalformedURLException
+     *             error creating a URL from the media locator
      */
     protected final URLConnection openURLConnection(final boolean doOutput)
-            throws IOException {
+            throws IOException, MalformedURLException {
         final String locator = getMediaLocator();
         if (locator == null) {
             return null;
         }
-
-        final URL url;
-        try {
-            url = new URL(locator);
-        } catch (MalformedURLException ex) {
-            throw new IllegalArgumentException(ex.getMessage(), ex);
-        }
-
+        final URL url = new URL(locator);
+        
         // Open a connection to URL
         final URLConnection connection = url.openConnection();
         connection.setDoOutput(doOutput);

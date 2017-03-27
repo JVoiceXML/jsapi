@@ -65,9 +65,8 @@ public class BaseSynthesizerAudioManager extends BaseAudioManager {
             // Gets IO from that connection if not already present
             if (outputStream == null) {
                 // Open URL described in locator
-                final URLConnection urlConnection;
                 try {
-                    urlConnection = openURLConnection(true);
+                    final URLConnection urlConnection = openURLConnection(true);
                     outputStream = urlConnection.getOutputStream();
                 } catch (IOException ex) {
                     throw new AudioException(

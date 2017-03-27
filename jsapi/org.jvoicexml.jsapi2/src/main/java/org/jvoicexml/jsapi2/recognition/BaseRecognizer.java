@@ -76,8 +76,10 @@ import org.jvoicexml.jsapi2.ThreadSpeechEventExecutor;
 /**
  * Skeletal Implementation of the JSAPI Recognizer interface.
  * 
+ * <p>
  * This class is useful by itself for debugging, e.g. you can load grammars and
  * simulate a recognizer recognizing some text, etc.
+ * </p>
  * 
  * <p>
  * Actual JSAPI recognizer implementations might want to extend or modify this
@@ -251,7 +253,8 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
             final EngineEvent event) {
         final RecognizerEvent recognizerEvent = (RecognizerEvent) event;
         for (EngineListener listener : listeners) {
-            RecognizerListener recognizerListener = (RecognizerListener) listener;
+            RecognizerListener recognizerListener =
+                    (RecognizerListener) listener;
             recognizerListener.recognizerUpdate(recognizerEvent);
         }
     }
@@ -526,6 +529,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      */
     protected final void baseAllocate() throws EngineStateException,
             EngineException, AudioException, SecurityException {
+        // start audio processing
         final AudioManager audioManager = getAudioManager();
         audioManager.audioStart();
 
@@ -572,11 +576,11 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     protected final void baseDeallocate()
             throws EngineStateException, EngineException, AudioException {
 
-        // Procceed to real engine deallocation
+        // Proceed to real engine deallocation
         try {
             handleDeallocate();
         } finally {
-            // Stops AudioManager
+            // Stop AudioManager
             final AudioManager audioManager = getAudioManager();
             audioManager.audioStop();
         }
@@ -655,7 +659,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
      * @throws EngineStateException
      *             error resuming the recognizer
      */
-    protected abstract boolean handleResume(final InputStream in)
+    protected abstract boolean handleResume(InputStream in)
             throws EngineStateException;
 
     protected abstract boolean setGrammars(
@@ -668,7 +672,7 @@ public abstract class BaseRecognizer extends BaseEngine implements Recognizer {
     /**
      * Returns a list of engine built-in grammars.
      * 
-     * @return list of buildtin grammars
+     * @return list of built-in grammars
      */
     public abstract Collection<Grammar> getBuiltInGrammars();
 

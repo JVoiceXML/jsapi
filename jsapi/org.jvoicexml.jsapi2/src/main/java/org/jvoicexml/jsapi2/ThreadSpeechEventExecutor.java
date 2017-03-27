@@ -1,12 +1,7 @@
 /*
- * File:    $HeadURL$
- * Version: $LastChangedRevision$
- * Date:    $LastChangedDate $
- * Author:  $LastChangedBy$
- *
  * JSAPI - An independent reference implementation of JSR 113.
  *
- * Copyright (C) 2007 JVoiceXML group - http://jvoicexml.sourceforge.net
+ * Copyright (C) 2007-2017 JVoiceXML group - http://jvoicexml.sourceforge.net
  *
  */
 package org.jvoicexml.jsapi2;
@@ -21,7 +16,6 @@ import java.util.List;
  * commands asynchronously.
  * </p>
  * @author Renato Cassaca
- * @version $Revision$
  */
 public final class ThreadSpeechEventExecutor
     implements TerminatableSpeechEventExecutor, Runnable {

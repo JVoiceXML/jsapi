@@ -57,7 +57,6 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
     private static final Logger LOGGER =
         Logger.getLogger(BaseRecognizerAudioManager.class.getCanonicalName());
 
-
     /** The input stream for the recognizer. */
     private InputStream inputStream;
 
@@ -86,6 +85,7 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
      *         error opening the stream
      */
     private InputStream openUrl(final String locator) throws AudioException {
+        // Clear a possible previous audio format
         setTargetAudioFormat(null);
         
         if (LOGGER.isLoggable(Level.FINE)) {
@@ -109,13 +109,8 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
         }
         
         // Open the connection to retrieve an input stream
-        final URLConnection urlConnection;
         try {
-            urlConnection = openURLConnection(false);
-        } catch (IOException e) {
-            throw new AudioException(e.getMessage());
-        }
-        try {
+            final URLConnection urlConnection = openURLConnection(false);
             final InputStream source = urlConnection.getInputStream();
             return new BufferedInputStream(source);
         } catch (IOException ex) {
