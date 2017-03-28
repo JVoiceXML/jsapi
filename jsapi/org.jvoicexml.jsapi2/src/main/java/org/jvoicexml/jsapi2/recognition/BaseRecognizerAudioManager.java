@@ -120,11 +120,27 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
     }
 
     /**
-     * Retrieves a stream that matches the engine audio format.
+     * {@inheritDoc}
+     */
+    @Override
+    public final void handleAudioStart() throws AudioException {
+        // Just convert samples if we already have the correct stream
+        if (inputStream instanceof AudioInputStream) {
+            final AudioInputStream stream = (AudioInputStream) inputStream;
+            inputStream = handleAudioStart(stream);
+            return;
+        } else {
+            final String locator = getMediaLocator();
+            handleAudioStart(locator);
+        }
+    }
+
+    /**
+     * Starts audio for the given audio input stream.
      * @param stream the current stream
      * @return a converting stream
      */
-    private AudioInputStream getConvertedStream(
+    private AudioInputStream handleAudioStart(
             final AudioInputStream stream) {
         final AudioFormat format = stream.getFormat();
         setTargetAudioFormat(format);
@@ -132,56 +148,37 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
         return AudioSystem.getAudioInputStream(engineFormat, stream);
     }
 
+
     /**
-     * {@inheritDoc}
+     * Starts audio processing for the given media locator.
+     * @param locator the media locator to use
+     * @throws AudioException
+     *          error starting the audio
      */
-    @Override
-    public final void handleAudioStart() throws AudioException {
-        // Just convert samples if we already have the correct stream
-        AudioFormat format = null;
-        if (inputStream instanceof AudioInputStream) {
-            final AudioInputStream stream = (AudioInputStream) inputStream;
-            inputStream = getConvertedStream(stream);
-            format = stream.getFormat();
-            setTargetAudioFormat(format);
-            return;
-        } else {
-            final String locator = getMediaLocator();
-            // Open URL described in locator
-            if (locator == null || locator.isEmpty()
-                    || locator.startsWith("capture")) {
-                if (locator != null && locator.startsWith("capture")) {
-                    try {
-                        final URI uri = new URI(locator);
-                        format = JavaSoundParser.parse(uri);
-                        setTargetAudioFormat(format);
-                        if (LOGGER.isLoggable(Level.FINE)) {
-                            LOGGER.log(Level.FINE, "Got AudioFormat: {0}",
-                                    format.toString());
-                        }
-                    } catch (URISyntaxException e) {
-                        throw new AudioException(e.getMessage());
-                    }
-                } else {
-                    // Use the microphone with the engine audio format
-                    format = getEngineAudioFormat();
-                    setTargetAudioFormat(format);
-                }
-                InputStream source;
+    private void handleAudioStart(final String locator) throws AudioException {
+        final AudioFormat format;
+        // Open URL described in locator
+        if (locator == null || locator.isEmpty()
+                || locator.startsWith("capture")) {
+            if (locator != null && locator.startsWith("capture")) {
                 try {
-                    TargetDataLine lineLocalMic =
-                        AudioSystem.getTargetDataLine(format);
-                    source = new AudioInputStream(lineLocalMic);
-                    lineLocalMic.open();
-                    lineLocalMic.start();
-                } catch (LineUnavailableException e) {
+                    format = parseAudioFormat(locator);
+                } catch (URISyntaxException e) {
                     throw new AudioException(e.getMessage());
                 }
-                inputStream = new BufferedInputStream(source);
             } else {
-                inputStream = openUrl(locator);
-                format = getTargetAudioFormat();
+                // Use the microphone with the engine audio format
+                format = getEngineAudioFormat();
+                setTargetAudioFormat(format);
             }
+            try {
+                inputStream = openMicrophone(format);
+            } catch (LineUnavailableException e) {
+                throw new AudioException(e.getMessage());
+            }
+        } else {
+            inputStream = openUrl(locator);
+            format = getTargetAudioFormat();
         }
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "using target audio format {0}",
@@ -194,6 +191,42 @@ public class BaseRecognizerAudioManager extends BaseAudioManager {
                         stream);
     }
 
+    /**
+     * Opens the microphone with the given audio format.
+     * @param format the audio format to use.
+     * @return opened input stream to the microphone
+     * @throws LineUnavailableException
+     *          error opening the microphone
+     */
+    private InputStream openMicrophone(final AudioFormat format)
+            throws LineUnavailableException {
+        final TargetDataLine lineLocalMic =
+                AudioSystem.getTargetDataLine(format);
+        final InputStream source = new AudioInputStream(lineLocalMic);
+        lineLocalMic.open();
+        lineLocalMic.start();
+        return new BufferedInputStream(source);
+    }
+
+    /**
+     * Parses the audio format from the given media locator.
+     * @param locator the media locator with the audio format
+     * @return parsed audio format
+     * @throws URISyntaxException 
+     *           error converting the locator into a URI representation
+     */
+    private AudioFormat parseAudioFormat(final String locator)
+            throws URISyntaxException {
+        final URI uri = new URI(locator);
+        final AudioFormat format = JavaSoundParser.parse(uri);
+        setTargetAudioFormat(format);
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.FINE, "Got AudioFormat: {0}",
+                    format.toString());
+        }
+        return format;
+    }
+    
     /**
      * {@inheritDoc}
      */
