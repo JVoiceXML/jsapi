@@ -146,14 +146,16 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public final void audioStart() throws SecurityException, AudioException,
-            EngineStateException {
+    public final void audioStart()
+            throws SecurityException, AudioException, EngineStateException {
         final SecurityManager security = System.getSecurityManager();
         if (security != null) {
             final Permission permission = new SpeechPermission(
                     "javax.speech.AudioManager.control");
             security.checkPermission(permission);
         }
+
+        validatePaused();
 
         handleAudioStart();
         audioStarted = true;
@@ -176,8 +178,8 @@ public abstract class BaseAudioManager implements AudioManager {
     /**
      * {@inheritDoc}
      */
-    public final void audioStop() throws SecurityException, AudioException,
-            EngineStateException {
+    public final void audioStop()
+            throws SecurityException, AudioException, EngineStateException {
         final SecurityManager security = System.getSecurityManager();
         if (security != null) {
             final Permission permission = new SpeechPermission(
@@ -185,11 +187,8 @@ public abstract class BaseAudioManager implements AudioManager {
             security.checkPermission(permission);
         }
 
-        if (!(engine.testEngineState(Engine.PAUSED) || engine
-                .testEngineState(Engine.DEALLOCATING_RESOURCES))) {
-            throw new EngineStateException("The Engine has not been paused");
-        }
-
+        validatePaused();
+        
         handleAudioStop();
         audioStarted = false;
 
@@ -199,6 +198,20 @@ public abstract class BaseAudioManager implements AudioManager {
         postAudioEvent(event);
     }
 
+    /**
+     * Validates that the engine is not in an active state.
+     * @throws EngineStateException
+     *          if the engine is active
+     */
+    private void validatePaused() throws EngineStateException {
+        if (!engine.testEngineState(Engine.PAUSED)
+                && !engine.testEngineState(Engine.DEALLOCATING_RESOURCES)
+                && !engine.testEngineState(Engine.ALLOCATING_RESOURCES)
+                && !engine.testEngineState(Engine.DEALLOCATED)) {
+            throw new EngineStateException("the Engine has not been paused!");
+        }
+
+    }
     /**
      * Handles further processing if the audio output has to be stopped by a
      * call to {@link #audioStop()}.
@@ -268,7 +281,7 @@ public abstract class BaseAudioManager implements AudioManager {
      */
     public String[] getSupportedMediaLocators(final String locator)
             throws IllegalArgumentException {
-        return new String[] {mediaLocator};
+        return new String[] { mediaLocator };
     }
 
     /**
@@ -280,8 +293,8 @@ public abstract class BaseAudioManager implements AudioManager {
         if (locator == null) {
             return true;
         }
-        final String[] supportedMediaLocators =
-                getSupportedMediaLocators(locator);
+        final String[] supportedMediaLocators = getSupportedMediaLocators(
+                locator);
         return supportedMediaLocators != null;
     }
 
@@ -355,8 +368,9 @@ public abstract class BaseAudioManager implements AudioManager {
      * Opens the connection to the configured media locator. Does nothing if
      * there is no media locator
      * 
-     * @param doOutput {@code true} if the connection is intended to be used for
-     *                 output, i.e., speaker or similar.
+     * @param doOutput
+     *            {@code true} if the connection is intended to be used for
+     *            output, i.e., speaker or similar.
      * @return opened connection
      * @throws IOException
      *             error opening the connection.
@@ -370,7 +384,7 @@ public abstract class BaseAudioManager implements AudioManager {
             return null;
         }
         final URL url = new URL(locator);
-        
+
         // Open a connection to URL
         final URLConnection connection = url.openConnection();
         connection.setDoOutput(doOutput);

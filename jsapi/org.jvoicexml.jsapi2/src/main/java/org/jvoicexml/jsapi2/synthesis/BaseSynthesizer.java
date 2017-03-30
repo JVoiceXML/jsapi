@@ -402,6 +402,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void baseDeallocate() throws EngineStateException,
             EngineException, AudioException {
 
@@ -423,6 +424,7 @@ public abstract class BaseSynthesizer extends BaseEngine
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void basePause() {
         handlePause();
     }

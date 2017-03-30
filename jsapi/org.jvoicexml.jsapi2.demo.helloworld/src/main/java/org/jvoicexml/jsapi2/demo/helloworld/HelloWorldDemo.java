@@ -24,6 +24,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.speech.Engine;
 import javax.speech.EngineList;
 import javax.speech.EngineManager;
 import javax.speech.synthesis.SpeakableEvent;
@@ -70,6 +71,7 @@ public final class HelloWorldDemo implements SpeakableListener, SynthesizerListe
             synthesizer.addSynthesizerListener(demo);
             // Get it ready to speak
             synthesizer.allocate();
+            synthesizer.waitEngineState(Engine.ALLOCATED);
             synthesizer.resume();
             synthesizer.waitEngineState(Synthesizer.RESUMED);
 
