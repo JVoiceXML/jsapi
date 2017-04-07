@@ -62,8 +62,6 @@ public final class HelloWorldDemo implements SpeakableListener, SynthesizerListe
             EngineManager
                     .registerEngineListFactory(FreeTTSEngineListFactory.class
                             .getName());
-            EngineList list = 
-                    EngineManager.availableEngines(SynthesizerMode.DEFAULT);
             // Create a synthesizer for the default Locale
             Synthesizer synthesizer = (Synthesizer) EngineManager
                     .createEngine(SynthesizerMode.DEFAULT);

@@ -3,12 +3,20 @@ apply plugin: 'application'
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 dependencies {
     compile project(':javax.speech')
     compile project(':org.jvoicexml.jsapi2')
     compile project(':org.jvoicexml.jsapi2.freetts')
+
+    runtime group: 'org.jvoicexml', name: 'en_us', version: '1.2.3-SNAPSHOT'
+    runtime group: 'org.jvoicexml', name: 'cmulex', version: '1.2.3-SNAPSHOT'
+    runtime group: 'org.jvoicexml', name: 'cmudict04', version: '1.2.3-SNAPSHOT'
+    runtime group: 'org.jvoicexml', name: 'cmu_us_kal', version: '1.2.3-SNAPSHOT'
 }
 
 jar {
@@ -21,4 +29,5 @@ jar {
 }
 
 mainClassName = "org.jvoicexml.jsapi2.demo.helloworld.HelloWorldDemo"
+applicationDefaultJvmArgs = ["-Dfreetts.voices=com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory" ]
 

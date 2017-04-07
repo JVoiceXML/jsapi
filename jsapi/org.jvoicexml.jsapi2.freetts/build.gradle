@@ -4,14 +4,18 @@ apply plugin: 'signing'
 
 
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 
 dependencies {
     compile group: 'org.mozilla', name: 'rhino', version: '1.7R4'
 
-    compile fileTree(dir: './3rdparty/freetts1.2/lib', include: ['*.jar'])
+    compile group: 'org.jvoicexml', name: 'freetts', version: '1.2.3-SNAPSHOT'
 
     compile project(':org.jvoicexml.jsapi2')
 }
