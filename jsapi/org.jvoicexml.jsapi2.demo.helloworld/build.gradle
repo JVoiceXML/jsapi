@@ -29,5 +29,4 @@ jar {
 }
 
 mainClassName = "org.jvoicexml.jsapi2.demo.helloworld.HelloWorldDemo"
-applicationDefaultJvmArgs = ["-Dfreetts.voices=com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory" ]
 
